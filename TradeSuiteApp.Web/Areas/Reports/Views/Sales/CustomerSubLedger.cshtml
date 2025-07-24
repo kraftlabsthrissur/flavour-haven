@@ -1,0 +1,113 @@
+﻿@model TradeSuiteApp.Web.Areas.Reports.Models.SalesModel
+@{
+    ViewBag.ReportTitle = "Customer SubLedger";
+}
+@Scripts.Render("~/Js/Page/Sales")
+
+<div id="page_content_inner">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-2-10">
+                            <form action="/Reports/Sales/CustomerSubLedger" id="report-filter-form" method="POST">
+                                @Html.HiddenFor(m => m.LocationID)
+                                @Html.HiddenFor(m => m.UserID)
+                                <div class="uk-form-row">
+                                    <div class="panel">
+                                        <label>Report Type</label>
+                                    </div>
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <input type="radio" name="ReportType" class="report_type" data-md-icheck checked="" value="summary" /> @Html.Label("Summary ")
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <input type="radio" name="ReportType" class="report_type" data-md-icheck value="detail" /> @Html.Label("Detail")
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="uk-form-row ">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.Fromdate</label>
+                                                @Html.TextBoxFor(model => model.FromDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.Todate</label>
+                                                @Html.TextBoxFor(model => model.ToDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row ">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1 ">
+                                            <div class="uk-autocomplete " id="customer-autocomplete">
+                                                <label for="uk_dp_start">@Reports.CustomerName</label>
+                                                @Html.TextBox("Customer", "", new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Name }}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Name }}
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.CustomerID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row ">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-input-group">
+                                                <label>@Reports.Location</label>
+                                                @Html.DropDownListFor(Model => Model.ItemLocationID, Model.LocationList, "Select", new { @class = "md-input label-fixed" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="report-filter-submit">Show</button>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <a class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light " id="Refresh">Reset</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="uk-width-medium-8-10 ">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="" id="report-viewer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

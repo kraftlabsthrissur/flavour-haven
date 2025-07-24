@@ -1,0 +1,85 @@
+  
+  
+ALTER proc [Common].[SpCreateBatchForDirectInvoice](  
+ @ItemType char(2),  
+ @ItemID int,  
+ @BatchNo varchar(20),  
+ @CustomBatchNo varchar(20),  
+ @ManufacturingDate DateTime,  
+ @ExpiryDate DateTime,  
+ @BatchTypeID int,  
+ @UnitID INT,  
+ @MRP Numeric(18,4),  
+ @Rate Numeric(18,4),  
+ @RetailMRP Numeric(18,4),  
+ @RetailRate Numeric(18,4),  
+ @CreatedUserID int,  
+ @LocationID int,  
+ @ApplicationID int,  
+ @BatchID int OUT  
+)  
+AS Begin  
+IF @UnitID= 0 OR @unitID is null  
+begin  
+ Set @UnitID = 32;  
+end  
+Declare @ShelfLifeMonths int,@FirstDay Datetime  
+Select @ShelfLifeMonths = ShelfLifeMonths - 1 from Item where ID = @ItemID  
+if @ShelfLifeMonths is null OR @ShelfLifeMonths = 0 OR @ShelfLifeMonths > 9999  
+begin  
+ Set @ShelfLifeMonths = 1094  
+end  
+SET @FirstDay = DATEADD(month, DATEDIFF(month, 0, Current_Timestamp), 0) + @ShelfLifeMonths   
+if @ExpiryDate is null  
+begin  
+ SET @ExpiryDate = DATEADD(d, -1, DATEADD(m, DATEDIFF(m, 0, @FirstDay) + 1, 0))  
+end  
+  
+---Select @ExpiryDate = Current_Timestamp + @ShelfLifeMonths  
+--select * from Batch order by ID desc --19343  
+   
+Declare @BasePriceListID int, @IsBatchRequired BIT  
+if (Select Count(ID) from BasePriceList where FromDate <=  CURRENT_TIMESTAMP AND ToDate >= CURRENT_TIMESTAMP AND IsActive = 1) = 0  
+ begin  
+  Update BasePriceList set IsActive = 0 where  FromDate <=  CURRENT_TIMESTAMP AND ToDate <= CURRENT_TIMESTAMP AND IsActive = 1  
+  update BasePriceList set IsActive = 1 where  FromDate <=  CURRENT_TIMESTAMP AND ToDate >= CURRENT_TIMESTAMP AND IsActive = 0  
+ End  
+ Select @BasePriceListID = ISNULL(ID,0) from BasePriceList where IsActive = 1  
+    
+ if(Select CategoryID from Item where ID = @ItemID) = 222  
+ begin  
+  Declare @tempBatchNo varchar(20)  
+  Set @tempBatchNo = @BatchNo  
+  Set @BatchNo = @CustomBatchNo  
+  Set @CustomBatchNo  = @tempBatchNo  
+ end  
+ IF (SELECT CAST(ConfigValue AS BIT) FROM Configuration WHERE ConfigName LIKE 'IsBatchRequired' AND ApplicationID = @ApplicationID) = 1   
+ BEGIN   
+  if (Select Count(*) From Batch Where ItemID = @ItemID and LocationID = @LocationID  and ApplicationID = @ApplicationID) > 0  --and BatchNo = @BatchNo 
+  begin  
+   Select @BatchID = ID From Batch Where ItemID = @ItemID and LocationID = @LocationID  and ApplicationID = @ApplicationID  --and BatchNo = @BatchNo 
+  end  
+  else  
+  begin   
+   INSERT INTO Batch (ItemType,ItemID,BatchNo,CustomBatchNo,ManufacturingDate,ExpiryDate,BatchType,IsSuspended,CreatedUserID,CreatedDate,LocationID,ApplicationID,UnitID,BasePriceListID,RetailMRP,RetailLooseRate,PurchaseMRP,PurchaseLooseRate)  
+   VALUES (@ItemType,@ItemID,@BatchNo,@CustomBatchNo,@ManufacturingDate,@ExpiryDate,@BatchTypeID,0,@CreatedUserID,CURRENT_TIMESTAMP,@LocationID,@ApplicationID,@UnitID,@BasePriceListID,@RetailMRP,@RetailRate,@MRP,@Rate)   
+   Set @BatchID = SCOPE_IDENTITY();  
+  end  
+ END  
+ ELSE  
+ BEGIN  
+  if (Select Count(*) From Batch Where ItemID = @ItemID and LocationID = @LocationID  and ApplicationID = @ApplicationID) > 0  
+  begin  
+   Select @BatchID = ID From Batch Where ItemID = @ItemID and LocationID = @LocationID  and ApplicationID = @ApplicationID  
+  end  
+  ELSE  
+  BEGIN  
+   SELECT @BatchNo = Code FROM Item WHERE ID = @ItemID  
+   SET @ExpiryDate = DATEADD(YY, 80, GETDATE())  
+  
+   INSERT INTO Batch (ItemType,ItemID,BatchNo,CustomBatchNo,ManufacturingDate,ExpiryDate,BatchType,IsSuspended,CreatedUserID,CreatedDate,LocationID,ApplicationID,BasePriceListID,UnitID,RetailMRP,RetailLooseRate,PurchaseMRP,PurchaseLooseRate)  
+   VALUES (@ItemType,@ItemID,@BatchNo,@CustomBatchNo,@ManufacturingDate,@ExpiryDate,@BatchTypeID,0,@CreatedUserID,CURRENT_TIMESTAMP,1,@ApplicationID,@BasePriceListID,@UnitID,@RetailMRP,@RetailRate,@MRP,@Rate)   
+   Set @BatchID = SCOPE_IDENTITY();  
+  END  
+ END  
+END  

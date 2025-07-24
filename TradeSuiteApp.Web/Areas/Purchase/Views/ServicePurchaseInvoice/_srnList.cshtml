@@ -1,0 +1,32 @@
+﻿@model List<BusinessObject.SRNBO>
+<table id="service-purchase-requisition-list" class="uk-table" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th class="width-20">@Common.SerialNo</th>
+            <th class="width-10"></th>
+            <th class="width-30">@Purchase.SRNNO</th>
+            <th class="width-40">@Purchase.SRNDate</th>
+            <th class="width-80">@Purchase.Supplier</th>
+            <th class="width-40">@Purchase.Place</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count() > 0)
+        {
+            foreach (var srnBO in Model.Select((value, i) => new { i = (i + 1), dynID = "chk_srn_" + value.ID, value }))
+            {
+                <tr>
+                    <td class="uk-text-center">@srnBO.i</td>
+                    <td class="uk-text-center checked" data-md-icheck>
+                        <input type="checkbox" class="chkSRNBO" id="@srnBO.dynID" value="@srnBO.value.ID" />
+                        <input type="hidden" class="Date"  value="@srnBO.value.PurchaseOrderDate.ToString("dd-MM-yyyy")" />
+                    </td>
+                    <td>@srnBO.value.Code</td>
+                    <td>@srnBO.value.Date.ToString("dd-MMM-yyyy")</td>
+                    <td>@srnBO.value.SupplierName</td>                    
+                    <td>@srnBO.value.Location</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

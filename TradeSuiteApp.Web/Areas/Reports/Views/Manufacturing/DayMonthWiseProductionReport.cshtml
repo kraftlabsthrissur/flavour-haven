@@ -1,0 +1,161 @@
+﻿@model TradeSuiteApp.Web.Areas.Reports.Models.ManufacturingModel
+@{
+    ViewBag.ReportTitle = "Day-Month Wise Production Report";
+}
+
+@Scripts.Render("~/Js/Page/ManufacturingReport")
+
+<div id="page_content_inner">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-2-10 ">
+                            <form action="/Reports/Manufacturing/DayMonthWiseProductionReport" id="report-filter-form" method="POST">
+                                <div class="uk-form-row">
+                                    <div class="panel">
+                                        <label>Production Type</label>
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-1-2">
+                                                <input type="radio" name="ProductionType" class="day-month-production-type" data-md-icheck checked="" value="DayWise" /> @Html.Label("Day Wise")
+                                            </div>
+                                            <div class="uk-width-medium-1-2">
+                                                <input type="radio" name="ProductionType" class="day-month-production-type" data-md-icheck value="MonthWise" /> @Html.Label("Month Wise")
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="panel">
+                                        <label>Report Type</label>
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-1-2">
+                                                <input type="radio" name="ReportType" class="day-month-report-type" data-md-icheck checked="" value="Summary" /> @Html.Label("Summary")
+                                            </div>
+                                            <div class="uk-width-medium-1-2">
+
+                                                <input type="radio" name="ReportType" class="day-month-report-type" data-md-icheck value="Detail" /> @Html.Label("Detail")
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="filters uk-form-row Summary Detail" >
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.Fromdate</label>
+                                                @Html.TextBoxFor(model => model.FromDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.Todate</label>
+                                                @Html.TextBoxFor(model => model.ToDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="filters uk-form-row Summary Detail">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-1-1">
+                                            <div class="uk-autocomplete " id="production-groupname-autocomplete">
+                                                <label for="uk_dp_start">@Reports.ProductionGroupName</label>
+                                                @Html.TextBoxFor(Model => Model.ProductionGroupName, new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Code }}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.ProductionGroupID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="filters uk-form-row uk-hidden Detail">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-1-1">
+                                            <label for="uk_dp_start">@Reports.SalesCategory</label>
+                                            @Html.DropDownListFor(Model => Model.SalesCategoryID, Model.SalesCategoryList, "Select", new { @class = "md-input label-fixed", })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="filters uk-form-row uk-hidden Detail">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-1-1">
+                                            <label for="uk_dp_start">@Reports.ProductionCategory</label>
+                                            @Html.DropDownListFor(Model => Model.ProductionCategoryID, Model.ProductionCategoryList, "Select", new { @class = "md-input label-fixed", })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="filters uk-form-row uk-hidden Detail">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-autocomplete " id="fg-items-autocomplete">
+                                                <label for="uk_dp_start">@Reports.ItemName</label>
+                                                @Html.TextBoxFor(Model=>Model.ItemName, new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Name }}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Name }} ({{{ $item.Code }}})
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                        </div>
+                                        @Html.HiddenFor(m => m.ItemID)
+                                    </div>
+                                </div>
+                                <div class="filters uk-form-row uk-hidden Detail">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-1-1">
+                                            <label for="uk_dp_start">@Reports.BatchType</label>
+                                            @Html.DropDownListFor(Model => Model.BatchTypeID, Model.BatchTypeList, "Select", new { @class = "md-input label-fixed", })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="report-filter-submit">Show</button>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <a class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light " id="Refresh">Reset</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="uk-width-medium-8-10 ">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="" id="report-viewer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

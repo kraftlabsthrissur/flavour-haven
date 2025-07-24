@@ -1,0 +1,194 @@
+﻿@model TradeSuiteApp.Web.Areas.Sales.Models.GatePassModel
+@{
+    ViewBag.Title = "Form";
+}
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.TransNo</label>
+                            @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.TransDate</label>
+                            @Html.TextBoxFor(model => model.TransDate, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label>@Sales.TransFromDate<span>*</span></label>
+                                @Html.TextBoxFor(m => m.FromDate, @DateTime.Now.ToString("dd-MM-yyyy"), new { @class = "md-input label-fixed  past-date date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label>@Sales.TransToDate<span>*</span></label>
+                                @Html.TextBoxFor(m => m.ToDate, @DateTime.Now.ToString("dd-MM-yyyy"), new { @class = "md-input label-fixed  past-date date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                                <label>@Sales.DocumentType<span>*</span></label>
+                                @Html.DropDownListFor(Model => Model.Type, new SelectList(Model.TypeList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label>&nbsp;</label>
+                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddInvoiceDetails">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label>@Sales.SalesMan<span>*</span></label>
+                                @Html.TextBoxFor(m => m.Salesman, new { @class = "md-input label-fixed" })
+                            </div>
+                        </div>
+
+                        @*<div class="uk-width-medium-1-10">
+                                <label>@Sales.VehicleNo<span>*</span></label>
+                                @Html.DropDownList("DDLVehicleNo", new SelectList(Model.DDLVehicleNo, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @title = "@Sales.GatePass.VehicleNo" })
+                            </div>*@
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.VehicleNo<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.VehicleNoID, new SelectList(Model.DDLVehicleNo, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label>@Sales.DespatchDateTime<span>*</span></label>
+                                @Html.TextBoxFor(m => m.DespatchDateTime, @DateTime.Now.ToString("dd-MM-yyyy"), new { @class = "md-input label-fixed  past-date date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                            </div>
+                        </div>
+                        @*<div class="uk-width-medium-1-10">
+                                <label>@Sales.Driver</label>
+                                @Html.DropDownList("DDLDriver", new SelectList(Model.DDLDriver, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @title = "@Sales.GatePass.Driver" })
+                            </div>*@
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.Driver<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.DriverID, new SelectList(Model.DDLDriver, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.DrivingLicenseNo</label>
+                            @Html.TextBoxFor(m => m.DrivingLicense, new { @class = "md-input label-fixed" })
+                        </div>
+
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.VehicleOwner</label>
+                            @Html.TextBoxFor(m => m.VehicleOwner, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.TransportingAgency</label>
+                            @Html.TextBoxFor(m => m.TransportingAgency, new { @class = "md-input label-fixed" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.Helper</label>
+                            @Html.TextBoxFor(m => m.HelperName, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.Area</label>
+                            @Html.TextBoxFor(m => m.Area, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.StartingKilometer</label>
+                            @Html.TextBoxFor(m => m.StartingKilometer, new { @class = "md-input label-fixed mask-numeric", @maxlength = "10" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.IssuedBy<span>*</span></label>
+                            @Html.TextBoxFor(m => m.IssuedBy, new { @class = "md-input label-fixed" })
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.Time</label>
+                            @Html.TextBoxFor(m => m.Time, new { @class = "md-input label-fixed time"  })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.BoxCount</label>
+                            @Html.TextBoxFor(m => m.BoxCount, new { @class = "md-input label-fixed mask-numeric", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.CanCount</label>
+                            @Html.TextBoxFor(m => m.CanCount, new { @class = "md-input label-fixed mask-numeric", @disabled = "disabled" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <label>Bag/BundleCount</label>
+                            @Html.TextBoxFor(m => m.BagCount, new { @class = "md-input label-fixed mask-numeric", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section-group">
+    <table id="gatepass-invoice-list" class="uk-table" cellspacing="0">
+        <thead>
+            <tr>
+                <th class="width-10">@Common.SerialNo</th>
+                <th class="width-10"></th>
+                <th class="width-40">TransNo</th>
+                <th class="width-40">TransDate</th>
+                <th class="width-120">Name</th>
+                <th class="width-40">Amount</th>
+                <th class="width-40">Area</th>
+                <th class="width-40">NoOfBoxes</th>
+                <th class="width-40">NoOfCans</th>
+                <th class="width-40">NoOfBags/Bundles</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @if (Model.GatepassItems != null)
+            {
+
+                foreach (var item in Model.GatepassItems.Select((value, i) => new { i = (i + 1), value }))
+                {
+                    <tr class="included">
+                        <td class="uk-text-center">@Html.DisplayFor(modelItem => (item.i))</td>
+                        <td class="uk-text-center checked chkValid" data-md-icheck readonly>
+                            <input type="checkbox" class="include-item" checked />
+                            <input type="hidden" class="trans-id" value="@item.value.ID" />
+                            <input type="hidden" class="trans-type" value="@item.value.Type" />
+                            <input type="hidden" class="gatepass-trans-id" value="@item.value.GatePassTransID" />
+                        </td>
+                        <td>@item.value.TransNo</td>
+                        <td class="trans-date">@item.value.TransDate</td>
+                        <td class="name">@item.value.Name</td>
+                        <td class="net-amount">@item.value.Amount</td>
+                        <td class="area">@item.value.Area</td>
+                        <td><input type='text' class='md-input mask-postive  box-no' value=@item.value.NoOfboxes  /></td>
+                        <td><input type='text' class='md-input mask-postive can-no' value= @item.value.NoOfCans  /></td>
+                        <td><input type='text' class='md-input mask-postive bag-no' value=@item.value.NoOfBags  /></td>
+                    </tr>
+                }
+
+            }
+        </tbody>
+    </table>
+    @if (Model.GatepassItems != null)
+    {
+        <input type="hidden" id="item-count" value="@Model.GatepassItems.Count" />
+    }
+    <input type="hidden" id="item-count" />
+</div>
+
+@Scripts.Render("~/Js/Page/GatePass")

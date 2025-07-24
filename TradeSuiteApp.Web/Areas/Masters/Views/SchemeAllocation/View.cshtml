@@ -1,0 +1,186 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.SchemeAllocationModel
+@{
+    ViewBag.Title = "_form";
+}
+
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_item">@Masters.Code</label>
+                            @Html.TextBoxFor(m => m.Code, "", new { @class = "md-input", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label for="uk_dp_item">@Masters.Scheme</label>
+                            @Html.TextBoxFor(m => m.Scheme, "", new { @class = "md-input", @disabled = "disabled" })
+                        </div>
+                        @Html.HiddenFor(m => m.ID)
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label>@Masters.StartDate </label>
+                                @Html.TextBoxFor(m => m.StartDate, new { @class = "md-input label-fixed past-date date", @disabled = "disabled" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label>@Masters.EndDate </label>
+                                @Html.TextBoxFor(m => m.EndDate, new { @class = "md-input label-fixed future-date date", @disabled = "disabled" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-grid">
+        <div class="uk-width-1-1">
+            <ul class="uk-tab" data-uk-tab="{connect:'#tabs-invoice-content',animation:'slide-horizontal'}" id="tabs-invoice">
+                <li class="uk-active" id="item-tab"><a>Basic Details</a></li>
+                <li id="amount-tab"><a id="item-details">@Masters.ItemDetails</a></li>
+            </ul>
+            <ul id="tabs-invoice-content" class="uk-switcher uk-margin">
+                <li>
+                    <input type="hidden" id="customer-count" value="0">
+                    <table id="tbl_Customer" class="uk-table" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="width-50">@Common.SerialNo</th>
+                                <th>@Masters.CustomerName</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cust in Model.Customers)
+                            {
+                                <tr class="">
+                                    <td class="uk-text-center">
+                                        @(1 + @Model.Customers.IndexOf(cust))
+                                        <input type="hidden" class="ID" value="@cust.CustomerID" />
+                                    </td>
+                                    <td>@cust.Customer</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="uk-form-row  customer-category-container ">
+                        <div class="uk-grid">
+                            <div class="uk-width-1-1">
+                                <label>@Masters.CustomerCategory </label>
+                                <div id="customer-Category-Container">
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            @foreach (var customerCategory in Model.CustomerCategory)
+                                            {
+                                                <div class="uk-width-medium-2-10 ">
+                                                    <input type="checkbox" class="icheckbox customercategory" value="@customerCategory.CustomerCategoryID" data-md-icheck disabled checked />&nbsp;
+                                                    <label id="customercategoryLabel">@customerCategory.CustomerCategory</label>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="uk-form-row countryName ">
+                        <div class="uk-grid">
+                            <div class="uk-width-1-1">
+                                <div class="uk-width-medium-2-10 ">
+                                    <label>@Masters.CountryName</label>
+                                    @Html.DropDownListFor(Model => Model.CountryID, new SelectList(Model.CountryList, "Value", "Text"), "All", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="uk-form-row state-container">
+                        <div class="uk-width-1-1">
+                            <label>@Masters.States </label>
+                            <div id="state-Container" class="">
+                                <div class="uk-width-medium-1-1">
+                                    <div class="uk-grid statediv " data-uk-grid-margin>
+                                        @foreach (var state in Model.States)
+                                        {
+                                            <div class="uk-width-medium-2-10 ">
+                                                <input type="checkbox" class="icheckbox state" value="@state.StateID" data-md-icheck disabled checked />&nbsp;
+                                                <label id="StateLabel">@state.State</label>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="uk-form-row district-container">
+                        <div class="uk-grid">
+                            <div class="uk-width-1-1">
+                                <label>@Masters.Districts</label>
+                                <br />
+                                <div id="district-Container" class="">
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-grid districtdiv" data-uk-grid-margin>
+                                            @foreach (var district in Model.Districts)
+                                            {
+                                                <div class="uk-width-medium-2-10 ">
+                                                    <input type="checkbox" class="icheckbox district" value="@district.DistrictID" data-md-icheck disabled checked />&nbsp;
+                                                    <label>@district.District</label>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <table id="tbl_scheme" class="uk-table" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="width-10">@Common.SerialNo</th>
+                                <th class="width-100">@Masters.Item</th>
+                                <th class="width-60">@Masters.SalesCategory</th>
+                                <th class="width-60">@Masters.InvoiceQty</th>
+                                <th class="width-60">@Masters.OfferQty</th>
+                                <th class="width-60">@Masters.StartDate</th>
+                                <th class="width-30">@Masters.EndDate</th>
+                            </tr>
+                        </thead>
+                        <thead class="search">
+                            <tr>
+                                <th class="width-10">@Common.SerialNo</th>
+                                <th class="width-100">@Masters.Item</th>
+                                <th class="width-60">@Masters.SalesCategory</th>
+                                <th class="width-60">@Masters.InvoiceQty</th>
+                                <th class="width-60">@Masters.OfferQty</th>
+                                <th class="width-60">@Masters.StartDate</th>
+                                <th class="width-30">@Masters.EndDate</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+

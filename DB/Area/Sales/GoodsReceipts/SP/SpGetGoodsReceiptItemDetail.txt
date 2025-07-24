@@ -1,0 +1,20 @@
+              
+ALTER PROCEDURE [Sales].[SpGetGoodsReceiptItemDetail](                          
+ @GoodReceiptNoteID INT                
+)                
+AS                
+BEGIN                
+      
+              
+  SELECT P.ID,I.Code,ISNULL(SO.SalesOrderNo,'')SalesOrderNo, ISNULL(SI.TransNo,'') SalesInvoiceNo,ISNULL(SC.TransNo,'')  CounterSalesNo,P.ItemName,P.PartsNumber,      
+  P.Model,ISNULL(C.Name,'')  CurrencyName,p.CurrencyID,P.IsVat,P.IsGST,P.PrintWithItemName,P.GrossAmount,P.MRP,P.BasicPrice,P.Quantity,P.OfferQty,P.DiscountPercentage,      
+  p.DiscountAmount,P.TaxableAmount,P.SGSTAmount,P.CGSTAmount,P.IGSTAmount,p.CessAmount,P.VATPercentage,P.NetAmount,p.SecondaryMRP,p.SecondaryQty,p.SecondaryUnit             
+  FROM sales.GoodsReceiptNoteItemTrans P
+  LEFt JOIN Item I on i.ID=p.ItemID
+  LEFT JOIN Sales.SalesOrder SO on P.SalesOrdersID=SO.ID      
+  LEFT JOIN Sales.SalesInvoice SI on P.SalesInvoiceID=SI.ID      
+  LEFT JOIN Sales.CounterSales SC on P.CounterSalesID=SC.ID      
+  LEFT JOIN Currency C on P.CurrencyID=C.ID      
+  WHERE p.GoodsReceiptNoteID=@GoodReceiptNoteID              
+              
+END 

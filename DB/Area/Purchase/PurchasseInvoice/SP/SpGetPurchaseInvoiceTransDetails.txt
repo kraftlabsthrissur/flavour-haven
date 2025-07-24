@@ -1,0 +1,50 @@
+ALTER procedure [Purchase].[SpGetPurchaseInvoiceTransDetails](@PurchaseID int,@FinYear int,@LocationID int,@ApplicationID int) AS      
+Begin      
+declare @GRNID int      
+select @GRNID =GRNID from PurchaseInvoiceTrans where PurchaseInvoiceID=@PurchaseID      
+if @GRNID>0      
+begin      
+ Select PT.Id,PT.PurchaseInvoiceID,PT.GRNID,PT.GRNTransID,PT.ItemID,I.Code ItemCode,    
+ PT.ItemName,PT.PartsNumber,PT.Remarks,PT.Model,PT.IsGST,PT.IsVat,    
+ U.UOM as  Unit, PT.InvoiceQty,PT.InvoiceRate,PT.InvoiceValue,PT.AcceptedQty,PT.ApprovedQty, PT.UnMatchedQty AS UnMatchedQty,       
+ PT.PORate,PT.Difference,PT.SGSTAmount AS SGSTAmt,PT.CGSTAmount AS CGSTAmt,PT.IGSTAmount AS IGSTAmt,      
+ PT.IGSTPercent AS IGSTPercent,PT.VATPercentage,PT.VATAmount,PT.SecondaryUnit,PT.SecondaryInvoiceQty,PT.SecondaryRate,PT.SecondaryOfferQty,
+ PT.SecondaryUnitSize,PT.CGSTPercent AS CGSTPercent,PT.SGSTPercent AS SGSTPercent,     
+ ISNULL(PT.InvoiceGSTPercent,0) AS InvoiceGSTPercent,PO.FreightAmt-PO.FreightAmountMet AS FreightAmt ,    
+ Case When (PO.OtherCharges-PO.OtherChargesMet)<0 then 0 else PO.OtherCharges-PO.OtherChargesMet End AS OtherCharges,PT.UnitID,      
+ PO.PackingShippingCharge -PO.PackingChargesMet AS PackingShippingCharge,POT.PurchaseOrderID,PO.PurchaseOrderNo, PO.InclusiveGST,PT.MilkPurchaseID ,      
+ PT.OfferQty,PT.GrossAmount,PT.DiscountPercentage,PT.DiscountAmount,PT.NetAmount,B.BatchNo,B.ID as BatchID,B.RetailMRP,Isnull(GT.NetProfitRatio,0.0) as NetProfitRatio,      
+ B.PurchaseMRP,B.PurchaseLooseRate,I.IGSTPercent as GSTPercent,I.CessPercentage,      
+ (POT.Quantity*PU.Packsize) as POLooseQty, ((GT.ReceivedQty)*U.PackSize) as GRNLooseQty      
+ from PurchaseInvoiceTrans PT       
+ inner JOIN GoodsReceiptNoteTrans GT ON PT.GRNTransID =  GT.ID      
+ inner join  PurchaseOrderTrans POT on POT.ID = GT.POTransID AND POT.ItemID = GT.ItemID      
+ inner join  PurchaseOrder PO on PO.ID = POT.PurchaseOrderID      
+ inner join viItem I on I.ID = PT.ItemID      
+ inner join Unit U on U.ID=PT.UnitID      
+ Inner join Batch b on B.ID=PT.BatchID       
+ Inner Join Unit PU on PU.ID=POT.UnitID       
+ Where PT.PurchaseInvoiceID = @PurchaseID  and PT.LocationID = @LocationID and PT.ApplicationID = @ApplicationID      
+ end      
+ else      
+ begin      
+ Select PT.Id,PT.PurchaseInvoiceID,PT.GRNID,PT.GRNTransID,PT.ItemID, I.Name AS ItemName,U.UOM as  Unit, PT.InvoiceQty,      
+ PT.InvoiceRate,PT.InvoiceValue,PT.AcceptedQty,PT.ApprovedQty, PT.UnMatchedQty AS UnMatchedQty,       
+ PT.PORate,PT.Difference,PT.Remarks ,0.0 as SGSTAmt,0.0 as CGSTAmt, 0.0 as IGSTAmt,ISNULL(I.IGSTPercent,0) AS IGSTPercent,      
+ 0.0 AS CGSTPercent,0.0 AS SGSTPercent, ISNULL(PT.InvoiceGSTPercent,0) AS InvoiceGSTPercent,
+ PT.VATPercentage,PT.VATAmount,PT.SecondaryUnit,PT.SecondaryInvoiceQty,PT.SecondaryRate,PT.SecondaryOfferQty,
+ PT.SecondaryUnitSize,0.0 as FreightAmt,0.0 as FreightAmt ,0.0 AS OtherCharges,PT.UnitID,      
+ 0.0 AS PackingShippingCharge,0 as PurchaseOrderID,'0' as PurchaseOrderNo, cast(0 as bit)as InclusiveGST,PT.MilkPurchaseID,      
+  PT.OfferQty,PT.DiscountPercentage,PT.DiscountAmount,B.BatchNo,B.ID as BatchID,RetailMRP,Isnull(GT.NetProfitRatio,0.0) as NetProfitRatio,      
+  B.PurchaseMRP,B.PurchaseLooseRate,I.IGSTPercent as GSTPercent,I.CessPercentage,0.0 POLooseQty,0.0 GRNLooseQty      
+ from PurchaseInvoiceTrans PT        
+ inner JOIN GoodsReceiptNoteTrans GT ON PT.GRNTransID =  GT.ID      
+ inner join viItem I on I.ID = PT.ItemID      
+ inner join Unit U on U.ID=PT.UnitID      
+ Inner join Batch b on B.ID=PT.BatchID      
+ Where PT.PurchaseInvoiceID = @PurchaseID  and PT.LocationID = @LocationID and PT.ApplicationID = @ApplicationID      
+      
+ end      
+      
+      
+End      

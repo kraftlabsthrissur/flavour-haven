@@ -1,0 +1,223 @@
+  
+--EXEC [Reports]. [SpRptPurchaseOrder] '2018-04-01 00:00:00.000','2019-07-27 00:00:00.000','Service',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,9,2018,1,1    
+ALTER PROCEDURE [Reports].[SpRptPurchaseOrder]                                    
+(      
+ @FromDate DateTime,@ToDate DateTime,  -----------Not Using                                 
+ @Type varchar(20), --'All','Stock','Service'                            
+ @PONOFrom int,@PONOTo int,                            
+ @PRNOFrom int,@PRNOTo int,                            
+ @SupplierFromRange VARCHAR(10),@SupplierToRange VARCHAR(10),                            
+ @SupplierID int,                                     
+ @ItemCategoryID int,--0                             
+ @ItemFromRange VARCHAR(10),@ItemToRange VARCHAR(10),                                      
+ @ItemID int,  --0                              
+ @PRDateFrom DateTime, @PRDateTo DateTime,                             
+ @PODateFrom DateTime, @PODateTo DateTime,                                 
+ @UserID int,   -- 1                                    
+ @FinYear int, -- 1                                     
+ @LocationID int,                                      
+ @ApplicationID int                                    
+  )                                      
+AS                                      
+ BEGIN                               
+  if @PONOFrom = 0 begin Set @PONOFrom = Null End                             
+  if @PONOTo = 0 begin Set @PONOTo = Null End                             
+  if @PRNOFrom = 0 begin Set @PRNOFrom = Null End                             
+  if @PRNOTo = 0 begin Set @PRNOTo = Null End                             
+  if @SupplierID = 0 begin Set @SupplierID= Null End                                
+  if @ItemCategoryID = 0 begin  Set @ItemCategoryID = NULL end                                    
+  if @ItemID = 0   Begin   Set @ItemID = NULL End                               
+                            
+--------------------------------------------------------------------------------------------------------------------------------------                               
+If @Type = 'Stock'                                  
+  BEGIN        
+  if  @PRDateFrom is not null OR  @PRDateTo is not null OR  @PRNOFrom is not null OR  @PRNOTo  is not null      
+  begin                
+      SELECT 'Stock' As Type,PO.ID,PO.PurchaseOrderDate,PO.PurchaseOrderNo As PONumber,PO.ISDraft AS IsDraft,                         
+       E.UserName AS RequestedBy,S.Name as Supplier,ISNULL(PD.Days,0) AS PaymentDays,PO.SGSTAmt as TotalSGSTAmt,PO.CGSTAmt as  totalCGSTAmt,                                
+       PO.IGSTAmt as TotalIGSTAmt, PO.FreightAmt as TotalFreightAmt,PO.OtherCharges,PO.PackingShippingCharge,                                
+       PO.NetAmt as TotalAmt,PO.Remarks as PORemarks,POT.Rate,POT.Amount,  
+    Case when (S.IsGSTRegistered=1) Then ISNULL(G.SGSTPercent,0) Else 0 End As SGSTPercent,  
+    Case when (S.IsGSTRegistered=1) Then ISNULL(G.CGSTPercent,0) Else 0 End As CGSTPercent,                             
+       0.0 IGSTPercent,POT.SGSTAmt,POT.CGSTAmt,POT.IGSTAmt,POT.NetAmount, PO.DeliveryWithin as DeliveryWithin,ISNULL(pm.Name,'') AS PaymentMode,                            
+       PO.TermsOfPrice,ISNULL(POT.Remarks,'') AS Remarks,VI.Code AS ItemCode,VI.Name as Item,U.UOM AS Unit,ISNULL(C.Name,'') AS ItemCategory,                            
+       ISNULL(C.Name,'') PurchaseCategory,POT.QtyMet, POT.LastPurchaseRate,POT.LowestPurchaseRate,POT.Quantity, PR.Code AS PRNo,                            
+       PR.Date AS PRDate,PRT.RequiredDate AS ExpectedDate,PRT.Quantity AS RequestedQty,'' AS LocationName,                            
+       '' AS DepartmentName,'' AS EmployeeName,'' AS CompanyName,'' AS ProjectName ,  APT.Comment AS RemarksApproval,      
+    --AU.UserName AS RemarksApproval,      
+       PO.Remarks As RemarksHeader,POT.Remarks AS RemarksLine                               
+  from PurchaseOrder PO                                    
+     inner join PurchaseOrderTrans POT on PO.ID=POT.PurchaseOrderID AND PO.FinYear = POT.FinYear and  PO.LocationID =POT.LocationID and PO.ApplicationID = POT.ApplicationID 
+     inner join Item VI on POT.ItemID=VI.ID   
+     Inner join Unit U on U.ID=POT.UnitID                                     
+     inner join Supplier S on S.ID=PO.SupplierID                                  
+     Inner join AspNetUsers E on E.ID = PO.CreatedUserID
+	 left join paymentmode pm on pm.Id = PO.paymentmodeId      
+     left join PaymentDays PD on PD.ID = PO.PaymentWithinID   
+	 left join GstCategory G on G.ID=VI.GstCategoryID      
+     left join Category C on C.ID = VI.CategoryID  
+     left join Category CC on CC.ID = VI.PurchaseCategoryID  
+     Left join PurchaseRequisitionTrans PRT ON PRT.ID=POT.PRTransID                                 
+     Left join PurchaseRequisition PR ON PR.ID=PRT.PurchaseRequisitionID                                   
+     Left join Approvals.Approvals AP ON AP.TransNo=PO.PurchaseOrderNo                        
+     Left join AspNetUsers AU ON AU.ID=AP.LastActionUserID     
+  Left join Approvals.ApprovalTrans APT on APT.ApprovalID=Ap.ID AND APT.UserID=AP.LastActionUserID  AND APT.IsActive=1  
+  Where PO.Cancelled = 0  AND PO.IsDraft = 0  AND PO.IsSuspended = 0                         
+     and POT.ItemID = ISNULL(@ItemID,POT.ItemID) and VI.CategoryID = ISNULL(@ItemCategoryID,VI.CategoryID)                          
+     and PO.SupplierID = ISNULL(@SupplierID,PO.SupplierID)                            
+     and PO.ID Between ISNULL(@PONOFrom,PO.ID) AND ISNULL(@PONOTo,PO.ID) and                          
+     PO.PurchaseOrderDate Between ISNULL(@FromDate,PO.PurchaseOrderDate) AND ISNULL(@ToDate,PO.PurchaseOrderDate) and  S.Name LIKE '['+ISNULL(@SupplierFromRange,'0')+'-'+ISNULL(@SupplierToRange,'Z')+']%'                           
+     and  VI.Name LIKE '['+ISNULL(@ItemFromRange,'0')+'-'+ISNULL(@ItemToRange,'Z')+']%'                            
+     and  PR.Date Between ISNULL(@PRDateFrom,PR.Date) AND ISNULL(@PRDateTo,PR.Date)                            
+     AND  PR.ID Between ISNULL(@PRNOFrom,PR.ID) AND ISNULL(@PRNOTo,PR.ID)      
+  AND PO.FinYear = @FinYear AND PO.LocationID = @LocationID AND PO.ApplicationID =@ApplicationID      
+  AND PO.CreatedUserID = ISNULL(@UserID,PO.CreatedUserID)         
+  end      
+  else       
+  begin      
+    SELECT 'Stock' As Type,PO.ID,PO.PurchaseOrderDate,PO.PurchaseOrderNo As PONumber,PO.ISDraft AS IsDraft,                          
+     E.UserName AS RequestedBy,S.Name as Supplier,ISNULL(PD.Days,0)  PaymentDays,PO.SGSTAmt as TotalSGSTAmt,PO.CGSTAmt as  totalCGSTAmt,                                
+     PO.IGSTAmt as TotalIGSTAmt, PO.FreightAmt as TotalFreightAmt,PO.OtherCharges,PO.PackingShippingCharge,                                
+     PO.NetAmt as TotalAmt,PO.Remarks as PORemarks,POT.Rate,POT.Amount,  
+  Case when (S.IsGSTRegistered=1) Then ISNULL(G.SGSTPercent,0) Else 0 End As SGSTPercent,  
+  Case when (S.IsGSTRegistered=1) Then ISNULL(G.CGSTPercent,0) Else 0 End As CGSTPercent,                              
+     0.0 IGSTPercent,POT.SGSTAmt,POT.CGSTAmt,POT.IGSTAmt,POT.NetAmount,PO.DeliveryWithin as DeliveryWithin,ISNULL(pm.Name,'') AS PaymentMode,                            
+     PO.TermsOfPrice,ISNULL(POT.Remarks,'') AS Remarks,VI.Code AS ItemCode,VI.Name as Item,U.UOM AS Unit,ISNULL(C.Name ,'')AS ItemCategory,                            
+     ISNULL(CC.Name,'') PurchaseCategory,POT.QtyMet, POT.LastPurchaseRate,POT.LowestPurchaseRate,POT.Quantity, PR.Code AS PRNo,                            
+     PR.Date AS PRDate,PRT.RequiredDate AS ExpectedDate,PRT.Quantity AS RequestedQty,'' AS LocationName,                            
+     '' AS DepartmentName,'' AS EmployeeName,'' AS CompanyName,'' AS ProjectName , APT.Comment AS RemarksApproval,    
+  --AU.UserName AS RemarksApproval,    
+  PO.Remarks As RemarksHeader, POT.Remarks AS RemarksLine                               
+    from PurchaseOrder PO    
+      inner join PurchaseOrderTrans POT on PO.ID=POT.PurchaseOrderID AND PO.FinYear = POT.FinYear and  PO.LocationID =POT.LocationID and PO.ApplicationID = POT.ApplicationID                              
+      inner join Item VI on POT.ItemID=VI.ID    
+      Inner join Unit U on U.ID=POT.UnitID                                      
+      inner join Supplier S on S.ID=PO.SupplierID  
+      Inner join AspNetUsers E on E.ID = PO.CreatedUserID     
+	  left join paymentmode pm on pm.Id = PO.paymentmodeId    
+      left join PaymentDays PD on PD.ID = PO.PaymentWithinID     
+	  left join GstCategory G on G.ID=VI.GstCategoryID      
+      left join Category C on C.ID = VI.CategoryID  
+      left join Category CC on CC.ID = VI.PurchaseCategoryID  
+      Left join PurchaseRequisitionTrans PRT ON PRT.ID=POT.PRTransID                                 
+      Left join PurchaseRequisition PR ON PR.ID=PRT.PurchaseRequisitionID  AND PR.ID Between ISNULL(@PRNOFrom,PR.ID) AND ISNULL(@PRNOTo,PR.ID)                    
+      AND PR.Date Between ISNULL(@PRDateFrom,PR.Date) AND ISNULL(@PRDateTo,PR.Date)                                 
+      Left join Approvals.Approvals AP ON AP.TransNo=PO.PurchaseOrderNo                        
+      Left join AspNetUsers AU ON AU.ID=AP.LastActionUserID      
+   Left join Approvals.ApprovalTrans APT on APT.ApprovalID=Ap.ID AND APT.UserID=AP.LastActionUserID AND APT.IsActive=1              
+    Where PO.Cancelled = 0  AND PO.IsDraft = 0 AND PO.IsSuspended = 0                        
+       and POT.ItemID = ISNULL(@ItemID,POT.ItemID) and VI.CategoryID = ISNULL(@ItemCategoryID,VI.CategoryID)                          
+       and PO.SupplierID = ISNULL(@SupplierID,PO.SupplierID)                            
+       and PO.ID Between ISNULL(@PONOFrom,PO.ID) AND ISNULL(@PONOTo,PO.ID) and                          
+       PO.PurchaseOrderDate Between ISNULL(@FromDate,PO.PurchaseOrderDate) AND ISNULL(@ToDate,PO.PurchaseOrderDate) and  S.Name LIKE '['+ISNULL(@SupplierFromRange,'0')+'-'+ISNULL(@SupplierToRange,'Z')+']%'                           
+       and  VI.Name LIKE '['+ISNULL(@ItemFromRange,'0')+'-'+ISNULL(@ItemToRange,'Z')+']%'                            
+      --and  PR.Date Between ISNULL(@PRDateFrom,PR.Date) AND ISNULL(@PRDateTo,PR.Date)                            
+      --AND  PR.ID Between ISNULL(@PRNOFrom,PR.ID) AND ISNULL(@PRNOTo,PR.ID)     
+   AND PO.FinYear = @FinYear AND PO.LocationID = @LocationID AND PO.ApplicationID =@ApplicationID    
+    AND PO.CreatedUserID = ISNULL(@UserID,PO.CreatedUserID)       
+  end                             
+ End                          
+ELSE                                  
+ If @Type = 'Service'                                  
+  Begin      
+   if  @PRDateFrom is not null OR  @PRDateTo is not null OR  @PRNOFrom is not null OR  @PRNOTo  is not null      
+  begin                                    
+   SELECT 'Service' As Type,PO.ID,PO.PurchaseOrderDate,PO.PurchaseOrderNo As PONumber,PO.ISDraft AS IsDraft,                             
+     E.UserName AS RequestedBy,S.Name as Supplier,IsNull(PD.Days,0) AS PaymentDays,PO.SGSTAmt as TotalSGSTAmt,PO.CGSTAmt as  totalCGSTAmt,                                
+     PO.IGSTAmt as TotalIGSTAmt,0.0 as TotalFreightAmt,0.0 as OtherCharges,0.0 as PackingShippingCharge,                                
+     PO.NetAMt as TotalAmt,PO.Remarks as PORemarks,POT.Rate,POT.Amount,POT.SGSTPercent,POT.CGSTPercent,                                
+     POT.IGSTPercent,POT.SGSTAmt,POT.CGSTAmt,POT.IGSTAmt,POT.NetAmount,IsNull(PO.DeliveryWithin,0) as DeliveryWithin,pm.Name AS PaymentMode,                            
+     PO.TermsOfPrice,ISNULL(POT.Remarks,'') AS Remarks,VI.Code AS ItemCode,VI.Name as Item,U.UOM Unit,C.Name AS ItemCategory,                            
+     CC.Name PurchaseCategory,POT.QtyMet,0.00 AS LastPurchaseRate,0.00 AS LowestPurchaseRate,POT.Quantity, PRS.Code AS PRNo,           
+     PRS.Date AS PRDate,PRT.ExpectedDate,PRT.Quantity AS RequestedQty,LT.Name AS LocationName,                              
+     DT.Name AS DepartmentName,EY.Name AS EmployeeName,IY.Name AS CompanyName,PJ.Name AS ProjectName,APT.Comment AS RemarksApproval,    
+  --AU.UserName AS RemarksApproval,                        
+     PO.Remarks As RemarksHeader,POT.Remarks AS RemarksLine                        
+   from PurchaseOrderForService PO                                    
+     inner join PurchaseOrderTransForService POT on PO.ID=POT.POServiceID AND PO.FinYear = POT.FinYear and  PO.LocationID =POT.LocationID and PO.ApplicationID = POT.ApplicationID                              
+     inner join paymentmode pm on pm.Id = PO.paymentmodeId      
+     inner join PaymentDays PD on PD.ID = PO.PaymentWithinID                               
+     inner join Item VI on POT.ItemID=VI.ID      
+  inner join Unit U on U.ID=VI.UnitID    
+  Inner join Category C on C.ID = VI.CategoryID  
+  Inner join Category CC on CC.ID = VI.PurchaseCategoryID    
+     inner join Supplier S on S.ID=PO.SupplierID                                  
+     Inner join AspNetUsers E on E.ID = PO.CreatedUserID       
+     Left join PurchaseRequisitionTransForService PRT on PRT.ID = POT.PRServiceTransID                             
+     Left join PurchaseRequisitionForService PRS ON PRS.ID=PRT.PurchaseRequisitionServiceID                                 
+     --Left join PurchaseRequisitionForService PRS ON PRS.ID=POT.PRServiceID       
+     --and PRS.Date Between ISNULL(@PRDateFrom,PRS.Date) AND ISNULL(@PRDateTo,PRS.Date)                     
+     --and PRS.ID Between ISNULL(@PRNOFrom,PRS.ID) AND ISNULL(@PRNOTo,PRS.ID)                          
+     --LEFT join PurchaseRequisitionTransForService PRT ON PRT.PurchaseRequisitionServiceID=PRS.ID                              
+     Left join Location LT ON LT.ID=POT.LocationID                               
+     Left join Department DT on DT.ID =POT.DepartmentID                              
+     Left join Employee EY ON EY.ID=POT.EmployeeID                               
+     Left join Intercompany IY ON IY.ID=POT.CompanyID                              
+     Left join Project PJ ON PJ.ID=POT.ProjectID                           
+     Left join Approvals.Approvals AP ON AP.TransNo=PO.PurchaseOrderNo                        
+     Left join AspNetUsers AU ON AU.ID=AP.LastActionUserID      
+  Left join Approvals.ApprovalTrans APT on APT.ApprovalID=Ap.ID AND APT.UserID=AP.LastActionUserID  AND APT.IsActive=1  
+   Where  PO.Cancelled = 0  AND PO.IsDraft = 0 AND PO.IsSuspended = 0               
+       and POT.ItemID = ISNULL(@ItemID,POT.ItemID) and VI.CategoryID = ISNULL(@ItemCategoryID,VI.CategoryID)                          
+       and PO.SupplierID = ISNULL(@SupplierID,PO.SupplierID)                          
+       and PO.ID Between ISNULL(@PONOFrom,PO.ID) AND ISNULL(@PONOTo,PO.ID)                           
+       AND PO.PurchaseOrderDate Between ISNULL(@FromDate,PO.PurchaseOrderDate) AND ISNULL(@ToDate,PO.PurchaseOrderDate)                      
+       and PRS.ID Between ISNULL(@PRNOFrom,PRS.ID) AND ISNULL(@PRNOTo,PRS.ID)                             
+       and PRS.Date Between ISNULL(@PRDateFrom,PRS.Date) AND ISNULL(@PRDateTo,PRS.Date)                           
+       and  S.Name LIKE '['+ISNULL(@SupplierFromRange,'0')+'-'+ISNULL(@SupplierToRange,'Z')+']%'                           
+       and VI.Name LIKE '['+ISNULL(@ItemFromRange,'0')+'-'+ISNULL(@ItemToRange,'Z')+']%'       
+       AND PO.FinYear = @FinYear AND PO.LocationID = @LocationID AND PO.ApplicationID =@ApplicationID      
+    AND PO.CreatedUserID = ISNULL(@UserID,PO.CreatedUserID)                           
+   end      
+ else       
+  begin      
+   SELECT 'Service' As Type,PO.ID,PO.PurchaseOrderDate,PO.PurchaseOrderNo As PONumber,PO.ISDraft AS IsDraft,                          
+       E.UserName AS RequestedBy,S.Name as Supplier,IsNull(PD.Days,0) AS PaymentDays,PO.SGSTAmt as TotalSGSTAmt,PO.CGSTAmt as  totalCGSTAmt,                                
+       PO.IGSTAmt as TotalIGSTAmt,0.0 as TotalFreightAmt,0.0 as OtherCharges,0.0 as PackingShippingCharge,                                
+       PO.NetAMt as TotalAmt,PO.Remarks as PORemarks,POT.Rate,POT.Amount,POT.SGSTPercent,POT.CGSTPercent,                                
+       POT.IGSTPercent,POT.SGSTAmt,POT.CGSTAmt,POT.IGSTAmt,POT.NetAmount,IsNull(PO.DeliveryWithin,0) as DeliveryWithin,pm.Name AS PaymentMode,                            
+       PO.TermsOfPrice,ISNULL(POT.Remarks,'') AS Remarks,VI.Code AS ItemCode,VI.Name as Item,U.Name Unit,C.Name AS ItemCategory,                            
+       CC.Name PurchaseCategory,POT.QtyMet,0.00 AS LastPurchaseRate,0.00 AS LowestPurchaseRate,POT.Quantity, PRS.Code AS PRNo,                            
+       PRS.Date AS PRDate,PRT.ExpectedDate,PRT.Quantity AS RequestedQty,LT.Name AS LocationName,                              
+       DT.Name AS DepartmentName,EY.Name AS EmployeeName,IY.Name AS CompanyName,PJ.Name AS ProjectName, APT.Comment AS RemarksApproval,    
+    --AU.UserName AS RemarksApproval,                        
+       PO.Remarks As RemarksHeader,POT.Remarks AS RemarksLine                        
+   from PurchaseOrderForService PO                                    
+     inner join PurchaseOrderTransForService POT on PO.ID=POT.POServiceID AND PO.FinYear = POT.FinYear and  PO.LocationID =POT.LocationID and PO.ApplicationID = POT.ApplicationID                              
+     Left join paymentmode pm on pm.Id = PO.paymentmodeId      
+     Left JOIN PaymentDays PD on PD.ID = PO.PaymentWithinID                                
+     inner join Item VI on POT.ItemID=VI.ID       
+  inner join UNIT U on U.ID=VI.UnitID     
+  Inner join Category C on C.ID = VI.CategoryID  
+  Inner join Category CC on CC.ID = VI.PurchaseCategoryID   
+     inner join Supplier S on S.ID=PO.SupplierID                                  
+     Inner join AspNetUsers E on E.ID = PO.CreatedUserID       
+     Left join PurchaseRequisitionTransForService PRT on PRT.ID = POT.PRServiceTransID                             
+     Left join PurchaseRequisitionForService PRS ON PRS.ID=PRT.PurchaseRequisitionServiceID                                 
+     --Left join PurchaseRequisitionForService PRS ON PRS.ID=POT.PRServiceID                        
+     and PRS.Date Between ISNULL(@PRDateFrom,PRS.Date) AND ISNULL(@PRDateTo,PRS.Date)                     
+     and PRS.ID Between ISNULL(@PRNOFrom,PRS.ID) AND ISNULL(@PRNOTo,PRS.ID)                          
+     --LEFT join PurchaseRequisitionTransForService PRT ON PRT.PurchaseRequisitionServiceID=PRS.ID                              
+     Left join Location LT ON LT.ID=POT.LocationID                               
+     Left join Department DT on DT.ID =POT.DepartmentID                              
+     Left join Employee EY ON EY.ID=POT.EmployeeID                               
+     Left join Intercompany IY ON IY.ID=POT.CompanyID                              
+     Left join Project PJ ON PJ.ID=POT.ProjectID                           
+     Left join Approvals.Approvals AP ON AP.TransNo=PO.PurchaseOrderNo                        
+     Left join AspNetUsers AU ON AU.ID=AP.LastActionUserID       
+  Left join Approvals.ApprovalTrans APT on APT.ApprovalID=Ap.ID AND APT.UserID=AP.LastActionUserID AND APT.IsActive=1  
+   Where  PO.Cancelled = 0  AND PO.IsDraft = 0 AND PO.IsSuspended = 0                
+       and POT.ItemID = ISNULL(@ItemID,POT.ItemID) and VI.CategoryID = ISNULL(@ItemCategoryID,VI.CategoryID)                          
+       and PO.SupplierID = ISNULL(@SupplierID,PO.SupplierID)                          
+       and PO.ID Between ISNULL(@PONOFrom,PO.ID) AND ISNULL(@PONOTo,PO.ID)                           
+       and PO.PurchaseOrderDate Between ISNULL(@FromDate,PO.PurchaseOrderDate) AND ISNULL(@ToDate,PO.PurchaseOrderDate)                      
+       --and PRS.ID Between ISNULL(@PRNOFrom,PRS.ID) AND ISNULL(@PRNOTo,PRS.ID)                    
+       --and PRS.Date Between ISNULL(@PRDateFrom,PRS.Date) AND ISNULL(@PRDateTo,PRS.Date)                           
+       and  S.Name LIKE '['+ISNULL(@SupplierFromRange,'0')+'-'+ISNULL(@SupplierToRange,'Z')+']%'                           
+       and VI.Name LIKE '['+ISNULL(@ItemFromRange,'0')+'-'+ISNULL(@ItemToRange,'Z')+']%'        
+       and PO.FinYear = @FinYear AND PO.LocationID = @LocationID AND PO.ApplicationID =@ApplicationID       
+    AND PO.CreatedUserID = ISNULL(@UserID,PO.CreatedUserID)      
+  end      
+   End                                    
+END     
+  

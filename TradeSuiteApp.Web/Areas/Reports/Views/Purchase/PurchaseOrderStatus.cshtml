@@ -1,0 +1,129 @@
+﻿@model TradeSuiteApp.Web.Areas.Reports.Models.PurchaseOrderStatusReportModel
+@{
+    ViewBag.ReportTitle = "Purchase Order Status Report";
+}
+
+<div id="page_content_inner">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-2-10 ">
+                            <form action="/Reports/Purchase/PurchaseOrderStatus" id="report-filter-form" method="POST" data-name="PurchaseOrderStatus">
+                                @Html.HiddenFor(m => m.LocationID)
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.Fromdate</label>
+                                                @Html.TextBoxFor(model => model.FromDateString, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.Todate</label>
+                                                @Html.TextBoxFor(model => model.ToDateString, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row ">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.Location</label>
+                                                @Html.DropDownListFor(Model => Model.ItemLocationID, Model.LocationList, "Select", new { @class = "md-input label-fixed" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid " data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1  ">
+                                            <div class="uk-autocomplete " id="suppliername-autocomplete">
+                                                <label>@Reports.Supplier</label>
+                                                @Html.TextBoxFor(Model=>Model.SupplierName, "", new { @class = "md-input label-fixed" })
+                                                <span></span>
+                                            </div>
+                                            @Html.HiddenFor(m => m.SupplierID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid " data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-autocomplete " id="pono-from-autocomplete">
+                                                <label>@Reports.PONOFrom</label>
+                                                @Html.TextBoxFor(Model => Model.PONOFrom, "", new { @class = "md-input label-fixed" })
+                                                <span></span>
+                                            </div>
+                                            @Html.HiddenFor(m => m.PONOFromID)
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-autocomplete " id="pono-to-autocomplete">
+                                                <label>@Reports.PONOTo</label>
+                                                @Html.TextBoxFor(Model => Model.PONOTo, "", new { @class = "md-input label-fixed" })
+                                                <span></span>
+                                            </div>
+                                            @Html.HiddenFor(m => m.PONOToID)
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                                    <div class="uk-form-row">
+                                        <div class="uk-grid ">
+                                            <div class="uk-width-medium-1-1  ">
+                                                <div class="uk-autocomplete " id="item-name-autocomplete">
+                                                    <label>@Stock.Item</label>
+                                                    @Html.TextBoxFor(Model => Model.ItemName, "", new { @class = "md-input label-fixed" })
+                                                    <span></span>
+                                                </div>
+                                                @Html.HiddenFor(m => m.ItemID)
+                                            </div>
+                                        </div>
+                                    </div>
+ 
+                                <div class="filters uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start" class="batch-type">@Reports.Status</label>
+                                                @Html.DropDownListFor(Model => Model.Status, Model.StatusList, "All", new { @class = "md-input label-fixed" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="report-filter-submit">Show</button>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <a class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light " id="Refresh">Reset</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="uk-width-medium-8-10 ">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="" id="report-viewer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/PurchaseOrderStatusReport")

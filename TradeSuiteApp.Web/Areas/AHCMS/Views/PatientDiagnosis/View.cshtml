@@ -1,0 +1,139 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@AHCMS.TransNo</label>
+                            @Html.TextBoxFor(model => model.TransNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            @Html.HiddenFor(model=>model.AppointmentProcessID)
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@AHCMS.Date</label>
+                            @Html.TextBoxFor(model => model.Date, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@AHCMS.Patient</label>
+                            @Html.TextBoxFor(model => model.PatientName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            @Html.HiddenFor(model=>model.PatientID)
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@AHCMS.Doctor</label>
+                            @Html.TextBoxFor(model => model.Doctor, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@AHCMS.Time</label>
+                            @Html.TextBoxFor(model => model.Time, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@AHCMS.TokenNo</label>
+                            @Html.TextBoxFor(model => model.TokenNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-grid">
+        <div class="uk-width-1-1">
+            <ul class="uk-tab" data-uk-tab="{connect:'#tabs-treatmentDetails_print',animation:'slide-horizontal'}" id="tabs-treatmentDetails">
+                <li class="uk-active" id="Medicine-tab"><a>@AHCMS.MedicineDetails</a></li>
+                <li  id="Treatment-tab"><a>@AHCMS.TreatmentDetails</a></li>
+            </ul>
+            <ul id="tabs-treatmentDetails_print" class="uk-switcher uk-margin">
+                <li>
+                    <table id="Medicine-Prescription-list" class="uk-table" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="width-10">@Common.SerialNo</th>
+                                <th class="width-10">@AHCMS.Medicine</th>
+                                <th class="width-250">@AHCMS.Qty</th>
+                                @*<th class="width-60">@AHCMS.Unit</th>*@
+                                <th class="width-60">@AHCMS.Instructions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Medicines != null)
+                            {
+                                foreach (var item in Model.Medicines.Select((value, i) => new { i = (i + 1), value }))
+                                {
+                                    <tr>
+                                        <td class="uk-text-center">
+                                            @item.i
+                                        </td>
+                                        <td>
+                                            <input type="hidden" class="TreatmentID" value="@item.value.MedicinesID" />
+                                            @item.value.Medicine
+                                        </td>
+                                        <td>
+                                            @item.value.Qty
+                                        </td>
+                                        @*<td>
+                                            @item.value.Unit
+                                        </td>*@
+                                        <td>
+                                            @item.value.Prescription
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </li>
+                <li>
+                    <table id="Treatment-items-list" class="uk-table" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="width-10">@Common.SerialNo</th>
+                                <th class="width-250">@AHCMS.Treatment</th>
+                                <th class="width-10">@AHCMS.TreatmentRoom</th>
+                                <th class="width-10">@AHCMS.Therapist</th>
+                                <th class="width-40">@AHCMS.StartDate</th>
+                                <th class="width-60">@AHCMS.EndDate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          @if (Model.TreatmentItems != null)
+                          {
+                              foreach (var item in Model.TreatmentItems.Select((value, i) => new { i = (i + 1), value }))
+                              {
+                                <tr>
+                                    <td class="uk-text-center">
+                                        @item.i
+                                    </td>
+                                    <td>
+                                        <input type="hidden" class="TreatmentID" value="@item.value.TreatmentID" />
+                                        @item.value.Name
+                                    </td>
+                                    <td>
+                                        @item.value.TreatmentRoomName
+                                    </td>
+                                    <td>
+                                        @item.value.TherapistName
+                                    </td>
+                                    <td>
+                                        @item.value.StartDate
+                                    </td>
+                                    <td>
+                                        @item.value.EndDate
+                                    </td>
+                                </tr>
+                              }
+                          }
+
+                        </tbody>
+                    </table>
+                </li>
+               
+            </ul>
+        </div>
+    </div>
+</div>

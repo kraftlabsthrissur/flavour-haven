@@ -1,0 +1,81 @@
+﻿
+@model   IEnumerable<TradeSuiteApp.Web.Areas.Accounts.Models.AdvancePaymentModel>
+
+<div class="uk-modal" id="add-payment" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog uk-modal-dialog-large" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Select Advance Payment<i class="material-icons" data-uk-tooltip="{pos:'top'}" title="headline tooltip"></i></h3>
+        </div>
+        <br />
+
+        <table id="payment-list" class="uk-table" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="width-30">@Common.SerialNo</th>
+                    <th class="width-20"></th>
+
+                    <th class="width-40">@Accounts.AdvancePaymentNo</th>
+                    <th class="width-40">@Accounts.AdvancePaymentDate</th>
+                    <th class="width-150">@Accounts.Name</th>
+                    <th class="width-40">@Accounts.Category</th>
+                    <th class="width-40">@Accounts.Purpose</th>
+                    <th class="width-40">@Accounts.Amount</th>
+
+                </tr>
+            </thead>
+            <thead class="search">
+                <tr>
+
+                    <th class="width-30">@Common.SerialNo</th>
+                    <th class="width-20"></th>
+
+                    <th class="width-40">@Accounts.AdvancePaymentNo</th>
+                    <th class="width-40">@Accounts.AdvancePaymentDate</th>
+                    <th class="width-150">@Accounts.Name</th>
+                    <th class="width-40">@Accounts.Category</th>
+                    <th class="width-40">@Accounts.Purpose</th>
+                    <th class="width-40">@Accounts.Amount</th>
+                </tr>
+
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    if (Model != null)
+                    {
+                        foreach (var item in Model.Select((value, i) => new { i = (i + 1), value }))
+                        {
+
+
+                            <tr>
+                                <td class="uk-text-center">
+                                    <input type="hidden" class="RequisitionID" value="@item.value.ID" />
+                                    @item.i
+                                </td>
+
+                                <td class="uk-text-center spclCheck" data-md-icheck><input type="checkbox" name="inputrequestno" id="requestno-id" class="spclCheckItem" value="@item.value.ID" /></td>
+
+                                <td class="uk-text-right">@item.value.AdvancePaymentNo</td>
+
+                                <td class="uk-text-right"> @item.value.AdvancePaymentDate</td>
+                                <td class="uk-text-right"> @item.value.EmployeeName</td>
+                                <td class="uk-text-right"> @item.value.Category</td>
+                                <td class="uk-text-right"> @item.value.Purpose</td>
+                                <td class="uk-text-right"> @item.value.Amount</td>
+
+                            </tr>
+                        }
+                    }
+                }
+
+            </tbody>
+        </table>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn md-btn-flat uk-modal-close">Close</button>
+            <button type="button" class="md-btn md-btn-flat uk-modal-close" id="btnOkPaymentList">Ok</button>
+        </div>
+    </div>
+</div>
+
+
+

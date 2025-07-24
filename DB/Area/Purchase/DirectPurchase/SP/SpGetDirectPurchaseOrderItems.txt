@@ -1,0 +1,25 @@
+-- =============================================              
+-- Author:  <Author,,neethu@kraftlabs>              
+-- Create date: <Create 06-02-19,,>              
+-- Description: <Description,,>              
+-- =============================================              
+ALTER PROCEDURE [Purchase].[SpGetDirectPurchaseOrderItems]              
+(              
+@PurchaseOrderID INT,              
+@FinYear INT,              
+@LocationID INT,              
+@ApplicationID INT              
+)              
+AS              
+BEGIN              
+ SELECT PT.ItemID,PT.ItemName,PT.ItemCode,PT.PartsNumber,PT.Remark,PT.Model,I.HSNCode,PT.Quantity,  
+  PT.Rate,PT.Amount,PT.Remarks,PT.UnitID,U.Name AS Unit,PT.NetAmount,PT.IGSTPercent,PT.CGSTPercent,  
+  PT.SGSTPercent,C.Name As CurrencyName,(PT.IGSTPercent+PT.SGSTPercent+PT.SGSTPercent) GSTPercent,  
+  PT.SGSTAmt,PT.CGSTAmt,PT.IGSTAmt,(PT.SGSTAmt+PT.CGSTAmt+PT.IGSTAmt) GSTAmt,PT.VATAmount,PT.VATPercent,  
+  PT.IsGST,PT.IsVAT,ISNULL(PT.BatchNo,'') BatchNo,PT.MRP,PT.RetailMRP,PT.RetailLoosePrice,PT.Discount,PT.DiscountPercent          
+  FROM PurchaseOrderTrans PT               
+ INNER JOIN viItem I On PT.ItemID=I.ID              
+ INNER JOIN Unit U On PT.UnitID=U.ID         
+ INNER JOIN Currency C on PT.CurrencyID=C.ID      
+ WHERE PT.PurchaseOrderID=@PurchaseOrderID  and PT.ApplicationID=@ApplicationID and PT.LocationID=@LocationID            
+END 

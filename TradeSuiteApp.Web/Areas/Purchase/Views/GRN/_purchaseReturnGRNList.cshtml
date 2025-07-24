@@ -1,0 +1,27 @@
+﻿@model List<BusinessObject.GRNBO>
+    <table id="tblGRNList" class="uk-table" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th class="width-30">@Common.SerialNo</th>
+                <th class="width-30"></th>
+                <th class="width-40">@Purchase.Supplier</th>
+                <th class="width-40">@Purchase.GRNDate</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (var grnBO in Model.Select((value, i)=>new { i=(i+1), dynID="chk_grn_"+value.ID, value}))
+                {
+                    <tr>
+                        <td class="uk-text-center">@grnBO.i</td>
+                        <td class="uk-text-center checked" data-md-icheck><input type="checkbox" class="chkGRNItem" id="@grnBO.dynID" value="@grnBO.value.ID" /></td>
+                        <td>@grnBO.value.SupplierName</td>
+                        <td>@grnBO.value.Date.ToString("dd-MM-yyyy")</td>
+                    </tr>
+                }
+            }
+           
+        </tbody>
+    </table>
+   

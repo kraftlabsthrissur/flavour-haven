@@ -1,0 +1,278 @@
+﻿@model TradeSuiteApp.Web.Areas.Purchase.Models.LocalPurchaseInvoiceModel
+@{
+    ViewBag.Title = "Form";
+}
+
+<div class="section-group">
+    <div class="uk-form-row">
+        @Html.HiddenFor(model => model.ID)
+        @Html.HiddenFor(model => model.SupplierID)
+        @Html.HiddenFor(model => model.GrossAmnt)
+        @Html.HiddenFor(model => model.IsGSTRegistered)
+        @Html.HiddenFor(model => model.LocationID)
+        @Html.HiddenFor(model => model.CountryID)
+        @Html.HiddenFor(model => model.CurrencyID)
+
+        @Html.HiddenFor(model => model.CurrencyName)
+        @Html.HiddenFor(model => model.TaxTypeID)
+        @Html.HiddenFor(model => model.IsGST)
+        @Html.HiddenFor(model => model.IsVat)
+        @*@Html.HiddenFor(model => model.PatientID, new { @disabled = "disabled" })*@
+        @Html.HiddenFor(model => model.BatchTypeID)
+        @Html.HiddenFor(model => model.BatchTypeID, new { @id = "BatchTypeIDTemp" })
+
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8 uk-row-first">
+                            <label>@Purchase.TransNo</label>
+                            @Html.TextBoxFor(model => model.PurchaseOrderNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Purchase.PODate</label>
+                            @Html.TextBoxFor(model => model.PurchaseOrderDate, "{0:dd-MMM-yyyy}", new { @class = "md-input", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <div class="uk-input-group">
+                                <label>@Purchase.Supplier<span>*</span></label>
+                                @Html.TextBoxFor(model => model.SupplierReference, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Purchase.Store</label>
+                            @Html.DropDownListFor(Model => Model.StoreID, Model.StoreList, "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.CurrencyCode</label>
+                            @Html.TextBoxFor(model => model.CurrencyCode, new { @class = "md-input label-fixed", @tabindex = "-1", @Disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-1">
+                            @Html.HiddenFor(model => model.GSTAmount)
+                            <label>@Purchase.NetAmount</label>
+                            @Html.TextBoxFor(model => model.NetAmount, new { @class = "md-input mask-common-currency label-fixed x-large", @tabindex = "-1", @readonly = "readonly" })
+                        </div>
+               
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uk-form-row">
+            <div class="uk-grid" data-uk-grid-margin>
+
+                <div class="uk-width-medium-1-10">
+                    <label>@Purchase.TaxableAmount</label>
+                    @Html.TextBoxFor(m => m.TaxableAmount, new { @class = "md-input label-fixed mask-currency", @disabled = "disabled" })
+                </div>
+                @if (Model.IsGST == 1)
+                {
+                    <div class="uk-width-medium-1-10">
+                        <label>@Purchase.IGSTAmt</label>
+                        @Html.TextBoxFor(m => m.IGSTAmount, new { @class = "md-input label-fixed mask-currency", @disabled = "disabled" })
+                    </div>
+
+                    <div class="uk-width-medium-1-10">
+                        <label>@Purchase.SGSTAmt</label>
+                        @Html.TextBoxFor(m => m.SGSTAmount, new { @class = "md-input label-fixed mask-currency", @disabled = "disabled" })
+                    </div>
+
+                    <div class="uk-width-medium-1-10">
+                        <label>@Purchase.CGSTAmt</label>
+                        @Html.TextBoxFor(m => m.CGSTAmount, new { @class = "md-input label-fixed mask-currency", @disabled = "disabled" })
+                    </div>}
+                else if (Model.IsVat == 1)
+                {
+
+                    <div>
+                        <label>@Purchase.VATAmount</label>
+                        @Html.TextBoxFor(model => model.VATAmount, new { @class = "md-input label-fixed mask-currency", @disabled = "disabled" })
+                    </div>
+                }
+                <div class="uk-width-medium-1-10">
+                    <label>@Purchase.Discount</label>
+                    @Html.TextBoxFor(m => m.Discount, new { @class = "md-input label-fixed uk-text-right mask-currency", @disabled = "disabled" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Purchase.OtherDeductions</label>
+                    @Html.TextBoxFor(m => m.OtherDeductions, new { @class = "md-input label-fixed uk-text-right mask-currency", @disabled = "disabled" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Purchase.InvoiceNo</label>
+                    @Html.TextBoxFor(m => m.InvoiceNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Purchase.InvoiceDate</label>
+                    @Html.TextBoxFor(m => m.InvoiceDate, "{0:dd-MMM-yyyy}", new { @class = "md-input", @disabled = "disabled" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section-group">
+    <div class="tablescroll">
+        <table id="purchase-order-items-list" class="uk-table" cellspacing="0" width="100%">
+            <thead>
+                @if (Model.IsGST == 1)
+                {
+                    <tr>
+                        <th class="width-10">@Common.SerialNo</th>
+                        <th class="width-150">@Purchase.ItemCode</th>
+                        <th class="width-150">@Purchase.ItemName</th>
+                        <th class="width-150">@Sales.PartsNumber</th>
+                        <th class="width-150">@Masters.Remarks</th>
+                        <th class="width-150">@Masters.Model</th>
+                        <th class="width-20">@Purchase.Unit</th>
+                        <th class="width-100">@Purchase.Batch</th>
+                        <th class="width-50">@Purchase.Qty</th>
+                        <th class="width-80">@Purchase.PurchaseMRP</th>
+                        @*<th class="width-80">@Purchase.MRP</th>*@
+                        <th class="width-50">@Purchase.DiscountPercentage</th>
+                        <th class="width-50">@Purchase.Discount</th>
+                        <th class="width-80">@Purchase.Value</th>
+                        <th class="width-40">@Purchase.GSTper</th>
+                        <th class="width-80">@Purchase.GSTAmount</th>
+                        <th class="width-100">@Purchase.Total</th>
+                        @*<th class="width-100">@Purchase.ExpDate</th>*@
+                    </tr>
+                }
+                else if (Model.IsVat == 1)
+                {
+                    <tr>
+                        <th class="width-10">@Common.SerialNo</th>
+                        <th class="width-150">@Purchase.ItemCode</th>
+                        <th class="width-150">@Purchase.ItemName</th>
+                        <th class="width-150">@Sales.PartsNumber</th>
+                        <th class="width-150">@Masters.Remarks</th>
+                        <th class="width-150">@Masters.Model</th>
+                        @*<th class="width-80">@Purchase.Batch</th>*@
+                        <th class="width-40">@Purchase.Unit</th>
+                        <th class="width-50">@Masters.CurrencyName</th>
+                        <th class="width-60">@Purchase.Qty</th>
+                        <th class="width-50">@Purchase.MRP</th>
+                        @*<th class="width-50">@Purchase.BasicPrice</th>*@
+                        @*<th class="width-80">@Purchase.GrossAmount</th>*@
+                        <th class="width-50">@Purchase.DiscountPercentage</th>
+                        <th class="width-50">@Purchase.Discount</th>
+                        <th class="width-80">@Purchase.TaxableAmount</th>
+                        <th class="width-40">@Sales.VAT</th>
+                        <th class="width-40">@Sales.VATAmount</th>
+                        @*<th class="width-50">@Purchase.Cess</th>
+                            <th class="width-50">@Purchase.CessAmount</th>*@
+                        <th class="width-80">@Purchase.NetAmount</th>
+                        @*<th class="width-100">@Purchase.ExpDate</th>*@
+                        <th class="width-10"></th>
+                    </tr>
+                }
+            </thead>
+            <tbody>
+                @if (Model.Items != null)
+                {
+                    foreach (var item in Model.Items)
+                    {
+                        if (Model.IsGST == 1)
+                        {
+                            <tr>
+                                <td class="uk-text-center serial-no">@(1 + @Model.Items.IndexOf(item))</td>
+                                <td class="item-name">
+                                    @item.ItemName
+                                    <input type="hidden" class="ItemID" value=@item.ItemID />
+                                    <input type="hidden" class="ItemCode" value=@item.ItemCode />
+                                    <input type="hidden" class="ItemName" value=@item.ItemName />
+                                    <input type="hidden" class="PartsNumber" value=@item.PartsNumber />
+                                    <input type="hidden" class="Remark" value=@item.Remark />
+                                    <input type="hidden" class="Model" value=@item.Model />
+                                    <input type="hidden" class="UnitID" value="@item.UnitID" />
+                                    <input type="hidden" class="CGSTPercent" value="@item.CGSTPercent" />
+                                    <input type="hidden" class="SGSTPercent" value="@item.SGSTPercent" />
+                                    <input type="hidden" class="IGSTPercent" value="@item.IGSTPercent" />
+                                    <input type="hidden" class="SGSTAmt" value="@item.SGSTAmount" />
+                                    <input type="hidden" class="IGSTAmt" value="@item.IGSTAmount" />
+                                    <input type="hidden" class="CGSTAmt" value="@item.CGSTAmount" />
+                                </td>
+                                <td>@item.PartsNumber</td>
+                                <td>@item.Remark</td>
+                                <td>@item.Model</td>
+                                <td>@item.Unit</td>
+                                <td>@item.CurrencyName</td>
+                                <td><input type="text" class="md-input BatchNo" value="@item.BatchNo" disabled /></td>
+                                <td><input type="text" class="md-input mask-production-qty Qty" value="@item.Qty" disabled /></td>
+                                @*<td><input type="text" class="md-input mask-production-qty Rate" value="@item.Rate" disabled/></td>*@
+                                <td><input type="text" class="md-input mask-production-qty MRP" value="@item.MRP" disabled /></td>
+                                <td><input type="text" class="md-input mask-positive-currency DiscountPercent" value="@item.DiscountPercent" disabled /></td>
+                                <td><input type="text" class="md-input mask-positive-currency Discount" value="@item.Discount" disabled /></td>
+                                <td><input type="text" class="md-input mask-production-qty TaxableAmount" value="@item.TaxableAmount" disabled /></td>
+                                <td><input type="text" class="md-input mask-production-qty GSTPercentage" value="@item.GSTPercentage" disabled /></td>
+                                <td><input type="text" class="md-input mask-production-qty GSTAmnt" value="@item.GSTAmount" disabled /></td>
+                                <td><input type="text" class="md-input mask-production-qty TotalAmnt" value="@item.TotalAmount" disabled /></td>
+                                @*<td><input type="text" class="md-input ExpDate" value="@item.ExpDate" disabled /></td>*@
+                            </tr>
+                        }
+                        else if (Model.IsVat == 1)
+                        {
+                            <tr>
+                                <td class="uk-text-center serial-no">@(1 + @Model.Items.IndexOf(item))</td>
+                                <td class="Unit">@item.ItemCode</td>
+                                <td class="item-name">
+                                    @item.ItemName
+                                    <input type="hidden" class="ItemID" value=@item.ItemID />
+                                    <input type="hidden" class="ItemCode" value=@item.ItemCode />
+                                    <input type="hidden" class="ItemName" value=@item.ItemName />
+                                    <input type="hidden" class="PartsNumber" value=@item.PartsNumber />
+                                    <input type="hidden" class="Remark" value=@item.Remark />
+                                    <input type="hidden" class="Model" value=@item.Model />
+                                    <input type="hidden" class="UnitID" value="@item.UnitID" />
+                                    <input type="hidden" class="CGSTPercent" value="@item.CGSTPercent" />
+                                    <input type="hidden" class="SGSTPercent" value="@item.SGSTPercent" />
+                                    <input type="hidden" class="IGSTPercent" value="@item.IGSTPercent" />
+                                    <input type="hidden" class="SGSTAmt" value="@item.SGSTAmount" />
+                                    <input type="hidden" class="IGSTAmt" value="@item.IGSTAmount" />
+                                    <input type="hidden" class="CGSTAmt" value="@item.CGSTAmount" />
+                                </td>
+                                <td>@item.PartsNumber</td>
+                                <td>@item.Remark</td>
+                                <td>@item.Model</td>
+                                <td>@item.Unit</td>
+                                <td>@item.CurrencyName</td>
+                                @*<td><input type="text" class="md-input BatchNo" value="@item.BatchNo" disabled /></td>*@
+                                <td><input type="text" class="md-input mask-production-qty Qty" value="@item.Qty" disabled /></td>
+                                @*<td><input type="text" class="md-input mask-production-qty Rate" value="@item.Rate" disabled/></td>*@
+                                <td><input type="text" class="md-input mask-production-qty MRP" value="@item.MRP" disabled /></td>
+                                <td><input type="text" class="md-input mask-positive-currency DiscountPercent" value="@item.DiscountPercent" disabled /></td>
+                                <td><input type="text" class="md-input mask-positive-currency Discount" value="@item.Discount" disabled /></td>
+                                <td><input type="text" class="md-input mask-production-qty TaxableAmount" value="@item.TaxableAmount" disabled /></td>
+                                <td><input type="text" class="md-input mask-production-qty GSTPercentage" value="@item.VATPercentage" disabled /></td>
+                                <td><input type="text" class="md-input mask-production-qty GSTAmnt" value="@item.VATAmount" disabled /></td>
+                                <td><input type="text" class="md-input mask-production-qty TotalAmnt" value="@item.TotalAmount" disabled /></td>
+                                @*<td><input type="text" class="md-input ExpDate" value="@item.ExpDate" disabled /></td>*@
+                            </tr>
+                        }
+                    }
+                }
+
+
+            </tbody>
+        </table>
+        <input type="hidden" id="item-count" value="0" />
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/DirectPurchaseInvoice")
+@Html.Partial("~/Areas/Masters/Views/Supplier/PartialList.cshtml")
+@Scripts.Render("~/Js/Page/Supplier")
+
+@Scripts.Render("~/Js/Page/Item")
+@Html.Partial("~/Areas/Masters/Views/Item/ItemList.cshtml")
+<script type="text/javascript">
+    DirectPurchaseInvoice.init();
+</script>
+
+
+
+

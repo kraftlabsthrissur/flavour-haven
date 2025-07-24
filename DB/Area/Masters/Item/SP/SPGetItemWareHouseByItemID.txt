@@ -1,0 +1,10 @@
+ALTER PROCEDURE [Master].[SPGetItemWareHouseByItemID]      
+(      
+ @ItemID int    
+)      
+AS          
+BEGIN          
+ SELECT i.ID,i.ItemID,i.WareHouseID,w.Name WareHouse,i.BinID,b.BinCode Bin,i.LotID,l.LotNumber Lot,i.IsDefault,(CASE WHEN i.IsDefault=1 THEN 'Yes' ELSE '' END)[Default]    
+ FROM ItemWareHouse i join WareHouse w on i.WareHouseID=w.ID   JOIN Bin b on i.BinID=b.ID  join Lot l on i.LotID=l.ID  
+ where i.ItemID=@ItemID     
+END 

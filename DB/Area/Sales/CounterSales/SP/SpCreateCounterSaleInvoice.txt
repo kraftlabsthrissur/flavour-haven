@@ -1,0 +1,382 @@
+CREATE PROCEDURE [Sales].[SpCreateCounterSaleInvoice](                            
+       @TransNo varchar(50),                            
+       @TransDate datetime,                            
+       @PartyName varchar(100),              
+    @CustomerID INT,         
+ @ContactID INT,         
+    @CivilID varchar(150),              
+    @MobileNumber varchar(50),          
+ @PrintWithItemName BIT,          
+       @PatientID int,                         
+       @PackingPrice numeric(18,4),                            
+       @DoctorID int,                     
+       @DoctorName varchar(50),                            
+       @WarehouseID int,                            
+       @GrossAmount numeric(18,4),                            
+       @DiscountAmt numeric(18,4),             
+    @DiscountPercent numeric(18,2),             
+       @TaxableAmt numeric(18,4),                            
+       @IsDraft bit,                            
+       @CurrencyID int,                  
+      @IsVAT int,                  
+      @IsGST int,                  
+       @SGSTAmount numeric(18,4),                            
+       @CGSTAmount numeric(18,4),                            
+       @IGSTAmount numeric(18,4),                            
+       @CessAmount numeric(18,4),                  
+       @TotalVATAmount numeric(18,4),                   
+       @RoundOff numeric(18,4),                            
+       @NetAmount numeric(18,4),                            
+       @BalanceAmount numeric(18,4),                            
+       @Remarks varchar(100),                          
+       @EmployeeID int,                     
+    @SalesTypeID int,                      
+    @BankID int,                       
+    @DiscountCategoryID INT,                        
+       @AmountDetails XML,                            
+       @CreatedUserID int,                            
+       @FinYear int,                            
+       @LocationID int,                            
+       @ApplicationID int,                            
+       @TotalAmountReceived numeric(18,4),                            
+       @PaymentModeID int,                            
+       @BalanceToBePaid numeric(18,4),                            
+       @CounterSalesTrans xml,                            
+       @ERR VARCHAR(1000) OUTPUT,                            
+       @RetValue int out,                        
+       @CounterSalesID INT OUTPUT                            
+)                            
+AS                            
+BEGIN                            
+ DECLARE @ErrorCode int                     
+ ----SELECT TREASURY AccountCode For SLA-----------------------------                    
+ DECLARE @AccountCode VARCHAR(25)                         
+ SELECT @AccountCode = AccountCode FROM Treasury WHERE ID=@BankID                      
+ ---------------------------------------------------------------------                         
+ DECLARE @ERROR varchar(500);                            
+ declare @ItemID int,@BatchID int,@BatchTypeID int,@ID int,@Quantity numeric(18,4),@UnitID int,@Stock numeric(18,4),@SalesType VARCHAR(50),                    
+ @PaymentMode VARCHAR(30), @InventoryUnitID int, @ItemName varchar(100),  @BatchNo varchar(30),@Rate Numeric(18,4),                    
+ @Particulars VARCHAR(30),@TaxAmount Numeric(18,4),@Percentage Numeric(18,4),@AmountDetID  int,@KeyValue varchar(100)=''                    
+          DECLARE @Balance NUMERIC(18,4)                    
+ SET NOCOUNT ON;                
+ IF(@CustomerID>0)              
+ BEGIN              
+ SET @CustomerID= (select TOP 1 c.ID from Customer c where c.Name = @PartyName)              
+ END              
+  IF(@CustomerID=0)              
+ BEGIN        
+ SET @CustomerID= NULL          
+ SET @ContactID= NULL              
+ END        
+ IF(@ContactID=0)              
+ BEGIN        
+  SET @ContactID= NULL              
+ END       
+         
+                             
+ INSERT INTO sales.CounterSales(TransNo,TransDate,PartyName,PatientID,PackingPrice,           
+ DoctorID,WarehouseID,GrossAmount,DiscountAmt,DiscountPercentage,TaxableAmt,IsDraft,SGSTAmount,CGSTAmount,IGSTAmount,                          
+ RoundOff,NetAmount,BalanceAmount,IsCancelled,CancelledDate,Remarks,CreatedDate,CreatedUserID,                      
+ FinYear,LocationID,                            
+ ApplicationID,TotalAmountReceived,BalanceToBePaid,PaymentModeID,CessAmount,EmployeeID,SalesType,BankID,DoctorName,DiscountCategoryID,                  
+ CurrencyID,IsGST,IsVAT,TotalVATAmount,CivilID,MobileNumber,CustomerID,ContactID,PrintWithItemName)                           
+ VALUES(@TransNo, @TransDate,  @PartyName, isnull(@PatientID,0), @PackingPrice, isnull(@DoctorID,0),                      
+ @WarehouseID, @GrossAmount, isnull(@DiscountAmt,0),ISNULL(@DiscountPercent,0), isnull(@TaxableAmt,0), @IsDraft, @SGSTAmount,                        
+ @CGSTAmount, @IGSTAmount, isnull(@RoundOff,0), @NetAmount, isnull(@BalanceAmount,0), 0, NULL,                       
+ @Remarks, current_timestamp, @CreatedUserID,                       
+ @FinYear, @LocationID, @ApplicationID,@TotalAmountReceived,@BalanceToBePaid,@PaymentModeID,                      
+ @CessAmount,@EmployeeID,@SalesTypeID,@BankID,@DoctorName,@DiscountCategoryID,                  
+ @CurrencyID,@IsGST,@IsVAT,@TotalVATAmount,@CivilID,@MobileNumber,@CustomerID,@ContactID,@PrintWithItemName)                            
+ SELECT @CounterSalesID = SCOPE_IDENTITY();                            
+                     
+ SELECT @ErrorCode = @@ERROR                            
+ IF (@ErrorCode <> 0) GOTO PROBLEM                           
+                     
+ SET @RetValue=0                            
+ --update used amount in EmployeeFreeMedicineCreditAmount                        
+ SELECT @SalesType=Type From CounterSalesType where ID=@SalesTypeID                        
+                        
+                        
+ IF (@SalesType = 'Employee' AND @IsDraft=0)                        
+ BEGIN                        
+  Set @KeyValue = 'EmployeeSales_'                    
+  Declare @balanceAmt Numeric(18,4),@EmployeeFreeMedicineCreditAmountID INT                        
+  SELECT @balanceAmt=SUM(ISNULL(BalAmount,0)) FROM EmployeeFreeMedicineCreditAmount WHERE EmployeeID=@EmployeeID AND current_timestamp BETWEEN StartDate and EndDate                        
+  IF @NetAmount >@balanceAmt                        
+  BEGIN                        
+   SET @RetValue = -3                        
+  END                      
+  ELSE                        
+  BEGIN                        
+   WHILE @NetAmount > 0                        
+   BEGIN                        
+    Select top 1 @balanceAmt = BalAmount,@EmployeeFreeMedicineCreditAmountID=ID                     
+    from EmployeeFreeMedicineCreditAmount                     
+    where EmployeeID=@EmployeeID AND BalAmount > 0 and  current_timestamp BETWEEN StartDate and EndDate                        
+    IF @balanceAmt >= @NetAmount                        
+    BEGIN                        
+     UPDATE EmployeeFreeMedicineCreditAmount                     
+     SET UsedAmount=UsedAmount +@NetAmount, BalAmount = BalAmount - @NetAmount                         
+     WHERE ID=@EmployeeFreeMedicineCreditAmountID                         
+     Set @NetAmount = 0                        
+    END                        
+    ELSE                        
+    BEGIN                        
+     UPDATE EmployeeFreeMedicineCreditAmount                     
+     SET UsedAmount=UsedAmount + @balanceAmt , BalAmount = BalAmount - @balanceAmt                        
+     WHERE ID=@EmployeeFreeMedicineCreditAmountID                         
+     Set @NetAmount = @NetAmount - @balanceAmt                        
+    END                        
+   END                        
+  END                        
+ END                            
+                        
+ INSERT INTO sales.CounterSalesTrans                  
+ (CounterSalesID,FullOrLoose,ItemID,BatchID,Quantity,Rate,MRP,GrossAmount,DiscountPercentage,DiscountAmount,                  
+ TaxableAmount,SGSTPercentage,CGSTPercentage,IGSTPercentage,SGSTAmount,CGSTAmount,IGSTAmount,IsVAT,IsGST,CurrencyID,                  
+ VATPercentage,VATAmount,NetAmount,FinYear,LocationID,ApplicationID,BatchTypeID,WareHouseID,UnitID,CessPercentage,                  
+ CessAmount,BasicPrice,ItemName,PartsNumber,DeliveryTerm,Model,ReturnQtyMet,SecondaryUnit,SecondaryOfferQty,SecondaryUnitSize,SecondaryRate,SecondaryQty,COGS)                            
+ SELECT                             
+ @CounterSalesID,                            
+ CONVERT(Char(1), CounterSalesTrans.item.query('FullOrLoose').value('.','VARCHAR(20)')),                             
+ CONVERT(INT, CounterSalesTrans.item.query('ItemID').value('.','VARCHAR(20)')),                            
+ CONVERT(INT, CounterSalesTrans.item.query('BatchID').value('.','VARCHAR(20)')),                            
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('Quantity').value('.','VARCHAR(20)')),                            
+CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('Rate').value('.','VARCHAR(20)')),                            
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('MRP').value('.','VARCHAR(20)')),                            
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('GrossAmount').value('.','VARCHAR(20)')),                            
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('DiscountPercentage').value('.','VARCHAR(20)')),                            
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('DiscountAmount').value('.','VARCHAR(20)')),                    
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('TaxableAmount').value('.','VARCHAR(20)')),                    
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('SGSTPercentage').value('.','VARCHAR(20)')),                            
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('CGSTPercentage').value('.','VARCHAR(20)')),                            
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('IGSTPercentage').value('.','VARCHAR(20)')),                            
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('SGSTAmount').value('.','VARCHAR(20)')),                            
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('CGSTAmount').value('.','VARCHAR(20)')),                            
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('IGSTAmount').value('.','VARCHAR(20)')),                   
+ CONVERT(INT, CounterSalesTrans.item.query('IsVAT').value('.','VARCHAR(20)')),                  
+ CONVERT(INT, CounterSalesTrans.item.query('IsGST').value('.','VARCHAR(20)')),                  
+ CONVERT(INT, CounterSalesTrans.item.query('CurrencyID').value('.','VARCHAR(20)')),                  
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('VATPercentage').value('.','VARCHAR(20)')),                  
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('VATAmount').value('.','VARCHAR(20)')),                  
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('NetAmount').value('.','VARCHAR(20)')),                              
+ @FinYear,                            
+ @LocationID,                          
+ @ApplicationID,                            
+ CONVERT(INT, CounterSalesTrans.item.query('BatchTypeID').value('.','VARCHAR(20)')),                            
+ CONVERT(INT, CounterSalesTrans.item.query('WareHouseID').value('.','VARCHAR(20)')),                            
+ CONVERT(INT, CounterSalesTrans.item.query('UnitID').value('.','VARCHAR(20)')),                              
+ CONVERT(Numeric(18,2), CounterSalesTrans.item.query('CessPercentage').value('.','VARCHAR(20)')),                  
+ CONVERT(Numeric(18,4), CounterSalesTrans.item.query('CessAmount').value('.','VARCHAR(20)')) ,                    
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('BasicPrice').value('.','VARCHAR(20)')),            
+ CONVERT(NVARCHAR(250), CounterSalesTrans.item.query('ItemName').value('.','VARCHAR(250)')),              
+ CONVERT(NVARCHAR(250), CounterSalesTrans.item.query('PartsNumber').value('.','VARCHAR(250)')),              
+ CONVERT(NVARCHAR(250), CounterSalesTrans.item.query('DeliveryTerm').value('.','VARCHAR(250)')),    
+ CONVERT(NVARCHAR(250), CounterSalesTrans.item.query('Model').value('.','VARCHAR(250)')),              
+ 0.00,    
+ CONVERT(NVARCHAR(250), CounterSalesTrans.item.query('SecondaryUnit').value('.','VARCHAR(200)')),    
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('SecondaryOfferQty').value('.','VARCHAR(20)')),    
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('SecondaryUnitSize').value('.','VARCHAR(20)')),    
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('SecondaryRate').value('.','VARCHAR(20)')),    
+ CONVERT(NUMERIC(18,4), CounterSalesTrans.item.query('SecondaryQty').value('.','VARCHAR(20)')),    
+ 0.00                       
+ FROM @CounterSalesTrans.nodes('/counterSalesTrans/Items') as CounterSalesTrans(item)                            
+                        
+ SELECT @ErrorCode = @@ERROR                            
+ IF (@ErrorCode <> 0) GOTO PROBLEM                            
+                              
+ INSERT INTO Sales.CounterSalesInvoiceAmountDetails                            
+ SELECT                             
+ @CounterSalesID,                            
+ CONVERT(Numeric(18,4), AmountDetails.item.query('Amount').value('.','VARCHAR(30)')),                            
+ AmountDetails.item.query('Particulars').value('.','VARCHAR(40)'),                            
+ CONVERT(Numeric(18,4), AmountDetails.item.query('Percentage').value('.','VARCHAR(30)')),                            
+ @FinYear,                            
+ @LocationID,                            
+ @ApplicationID                            
+ FROM @AmountDetails.nodes('/AmountDetails/Item') as AmountDetails(item)                          
+                        
+                           
+ if @IsDraft<>1                            
+ Begin                      
+  IF (OBJECT_ID('tempdb..#tempSales') IS NOT NULL)                            
+  BEGIN                            
+   DROP TABLE #tempSales                            
+  END                    
+  IF (OBJECT_ID('tempdb..#tempAmountDet') IS NOT NULL)                            
+  BEGIN                            
+   DROP TABLE #tempAmountDet                            
+  END                            
+                            
+  SELECT TOP 1000 CST.ID,I.Name ItemName, B.BatchNo,  CST.ItemID, BatchID, Quantity,Rate,TaxableAmount, WareHouseID, BatchTypeID, CST.UnitID, I.InventoryUnitID                     
+  INTO #tempSales                      
+  FROM  Sales.CounterSalesTrans CST                     
+  INNER JOIN Item I ON I.ID = CST.ItemID                    
+  INNER JOIN Batch B ON B.ID = CST.BatchID                    
+  WHERE CounterSalesID = @CounterSalesID                    
+                      
+  Select Top 1000 CT.ID,Amount,Particulars,Percentage                     
+  INTO #tempAmountDet                     
+  From Sales.CounterSalesInvoiceAmountDetails CT                             
+  INNER JOIN Sales.CounterSales C ON CT.SalesInvoiceID = C.ID                     
+  Where C.ID = @CounterSalesID                    
+                    
+  Declare @SLARemarks varchar(100)                    
+  Set @SLARemarks = 'CounterSales:'+@TransNo                    
+                    
+  WHILE EXISTS (select ID from #tempAmountDet)                    
+  BEGIN                    
+   Select @Particulars = Particulars,--                    
+   @TaxAmount = Amount,                    
+   @Percentage = Case when Particulars = 'SGST' OR  Particulars = 'CGST'then Percentage *2 else Percentage end,                    
+   @AmountDetID = ID                    
+   From #tempAmountDet                     
+                      
+   Set @Particulars = @KeyValue + @Particulars+'_'+CAST(cast(@Percentage as int) AS Varchar)+'%'                    
+                    
+   --exec SpInsertSLAMappingItem 'CTI_Approve',@Particulars                    
+   --,@SLARemarks,@TaxAmount,'CounterSalesInvoiceAmountDetails','CounterSales',                    
+   --@TransNo,@CounterSalesID,@FinYear ,@LocationID ,@ApplicationID ,-2 ,-2,-2,                    
+   ---2,-2,0,0,0,0,0,0,0,0,@BankID,0,0,0,0,@PaymentModeID,@TransDate,1                    
+                       
+                    
+       IF @SalesType <> 'Employee'                    
+     BEGIN                      
+    UPDATE Treasury SET BalanceAmount = BalanceAmount + @TaxAmount WHERE ID = @BankID            
+           END                    
+                        
+   Delete from #tempAmountDet where ID = @AmountDetID                    
+  END                    
+                    
+  Declare @Amount Numeric(18,4),@TransactionNo varchar(20),@BatchPrefixID int = -2,@KeyValueNew varchar(100) = ''                    
+                       
+  WHILE EXISTS (select ID from #tempSales)                    
+  BEGIN                    
+   SELECT TOP 1 @ItemID = ItemID,                     
+    @ItemName = ItemName,                    
+    @BatchNo = BatchNo,                    
+    @BatchID =  BatchID,                     
+    @BatchTypeID =  BatchTypeID,                     
+    @WarehouseID = WarehouseID,                     
+    @ID = ID,                     
+    @Quantity = Quantity,                    
+    @Rate =Round(TaxableAmount/Quantity,2),                    
+    @Amount = TaxableAmount,                    
+    @UnitID=UnitID,                    
+    @InventoryUnitID = InventoryUnitID                    
+   FROM #tempSales                       
+                       
+------------------------------------------------------------------------SLA--------------------------------------                    
+   Set @BatchPrefixID = dbo.FnGetLocationHeadIDFromBatch(@ItemID,@BatchID,@LocationID)                    
+   SET @KeyValueNew = @KeyValue + 'Cashsale_GrossTransValue'                    
+                    
+   --exec SpInsertSLAMappingItemV3 'CTI_Approve',@KeyValueNew                    
+   -- ,@SLARemarks,@Amount,'CounterSalesTrans','CounterSales',                    
+   --@TransNo,@CounterSalesID,@FinYear ,@LocationID ,@ApplicationID ,-2 ,-2,@BatchPrefixID,                    
+   ---2,@ItemID,0,@Quantity,@Rate,0,0,0,0,0,@BankID,0,0,0,0,@PaymentModeID,@TransDate,1 ,@AccountCode                    
+                    
+   IF @SalesType <> 'Employee'                    
+    BEGIN                    
+      UPDATE Treasury SET BalanceAmount = BalanceAmount + @Amount WHERE ID = @BankID                     
+          END                    
+                    
+-------------------------------------------------------------------------------------------------                     
+   --DECLARE @InventoryUnitPackSize int,@SalesUnitPackSize int                    
+   --SELECT @SalesUnitPackSize FROM Unit Where ID=@UnitID                    
+   SELECT @Stock=dbo.FnConvertUnit(ItemID, SUM(Value),@InventoryUnitID,@UnitID)                     
+   --SELECT @Stock=SUM(Value)/@SalesUnitPackSize              
+   FROM Stock WHERE ItemID = @ItemID AND BatchID = @BatchID AND BatchTypeID = @BatchTypeID AND WareHouseID = @WarehouseID                    
+   GROUP BY ItemID                         
+                            
+--------------------------------------------------------------------------------------------------------------------------------------                            
+   IF (@Stock >= @Quantity)                            
+   BEGIN                        
+    --SELECT @InventoryUnitPackSize=PackSize from Unit Where ID= @InventoryUnitID                    
+    SELECT @Quantity=dbo.FnConvertUnit(@ItemID, @Quantity,@UnitID, @InventoryUnitID)                     
+   --SELECT @Quantity=@Quantity*@InventoryUnitPackSize                    
+    exec SpStockUpdate @TransDate, 'F', @ItemID, @BatchID, @WarehouseID, 0, @Quantity, 'CounterSales', @LocationID,@FinYear,5,@ApplicationID,'Issues',1,@BatchTypeID,@TransNo                            
+    DELETE FROM #tempSales WHERE ID = @ID        
+   END                            
+   ELSE                             
+   BEGIN                            
+    SET @RetValue = -2                            
+    set @ERR = @ItemName + ' - ' + @BatchNo + ' is out of stock'                    
+    DELETE FROM #tempSales                            
+   END                            
+  END                     
+                    
+  Set @RoundOff = @RoundOff * -1                    
+  if @SalesType = 'Employee'                    
+  begin                    
+   exec SpInsertSLAMappingItem 'CTI_Approve','Employee_Roundoff'                    
+     ,@SLARemarks, @RoundOff,'CounterSales','CounterSales',                    
+   @TransNo,@CounterSalesID,@FinYear ,@LocationID ,@ApplicationID ,-2 ,-2,-2,                    
+   -2,-2,0,0,0,0,0,0,0,0,@BankID,0,0,0,0,@PaymentModeID,@TransDate,1                    
+  end                    
+  else                    
+  begin                    
+                       
+   if @SGSTAmount>0                    
+   begin                    
+   exec SpInsertSLAMappingItemV3 'CTI_Approve','SGST'                    
+   ,@SLARemarks,@SGSTAmount,'CounterSalesInvoiceAmountDetails','CounterSales',                    
+   @TransNo,@CounterSalesID,@FinYear ,@LocationID ,@ApplicationID ,-2 ,-2,-2,                    
+   -2,-2,0,0,0,0,0,0,0,0,@BankID,0,0,0,0,@PaymentModeID,@TransDate,1,@AccountCode                    
+   end                    
+                    
+   if @CGSTAmount>0                    
+   begin                    
+   exec SpInsertSLAMappingItemV3 'CTI_Approve','CGST'                    
+   ,@SLARemarks,@CGSTAmount,'CounterSalesInvoiceAmountDetails','CounterSales',                    
+   @TransNo,@CounterSalesID,@FinYear ,@LocationID ,@ApplicationID ,-2 ,-2,-2,                    
+   -2,-2,0,0,0,0,0,0,0,0,@BankID,0,0,0,0,@PaymentModeID,@TransDate,1,@AccountCode          
+   end                    
+                    
+   if @IGSTAmount>0                    
+   begin                    
+   exec SpInsertSLAMappingItemV3 'CTI_Approve','IGST'                    
+   ,@SLARemarks,@IGSTAmount,'CounterSalesInvoiceAmountDetails','CounterSales',                    
+   @TransNo,@CounterSalesID,@FinYear ,@LocationID ,@ApplicationID ,-2 ,-2,-2,                    
+   -2,-2,0,0,0,0,0,0,0,0,@BankID,0,0,0,0,@PaymentModeID,@TransDate,1,@AccountCode                    
+   end                    
+                       
+   exec SpInsertSLAMappingItemV3 'CTI_Approve','GrossAmount'                    
+    ,@SLARemarks,@GrossAmount,'CounterSales','CounterSales',                    
+   @TransNo,@CounterSalesID,@FinYear ,@LocationID ,@ApplicationID ,-2 ,-2,@BatchPrefixID,              
+   -2,@ItemID,0,@Quantity,@Rate,0,0,0,0,0,@BankID,0,0,0,0,@PaymentModeID,@TransDate,1 ,@AccountCode                    
+                    
+   if @RoundOff>0                    
+   begin                    
+   exec SpInsertSLAMappingItemV3 'CTI_Approve','Roundoff'                    
+    ,@SLARemarks, @RoundOff,'CounterSales','CounterSales',                    
+   @TransNo,@CounterSalesID,@FinYear ,@LocationID ,@ApplicationID ,-2 ,-2,-2,                    
+   -2,-2,0,0,0,0,0,0,0,0,@BankID,0,0,0,0,@PaymentModeID,@TransDate,1,@AccountCode                    
+   end                    
+                    
+   if @DiscountAmt>0                    
+   begin                    
+   exec SpInsertSLAMappingItemV3 'CTI_Approve','Discount'                    
+    ,@SLARemarks, @DiscountAmt,'CounterSales','CounterSales',                    
+   @TransNo,@CounterSalesID,@FinYear ,@LocationID ,@ApplicationID ,-2 ,-2,-2,                    
+   -2,-2,0,0,0,0,0,0,0,0,@BankID,0,0,0,0,@PaymentModeID,@TransDate,1,@AccountCode                    
+   end                    
+                    
+   if @CessAmount>0                    
+   begin                    
+   exec SpInsertSLAMappingItemV3 'CTI_Approve','Cess'                    
+    ,@SLARemarks, @CessAmount,'CounterSales','CounterSales',                    
+   @TransNo,@CounterSalesID,@FinYear ,@LocationID ,@ApplicationID ,-2 ,-2,-2,                    
+   -2,-2,0,0,0,0,0,0,0,0,@BankID,0,0,0,0,@PaymentModeID,@TransDate,1,@AccountCode                    
+   end                    
+    UPDATE Treasury SET BalanceAmount = BalanceAmount + @RoundOff WHERE ID = @BankID                     
+                    
+  end                         
+ End                     
+                            
+ PROBLEM:                            
+ IF (@ErrorCode <> 0)               
+ BEGIN                      
+  set @ERR = @@ERROR                             
+  SET @RetValue = -1                            
+ END                            
+END 

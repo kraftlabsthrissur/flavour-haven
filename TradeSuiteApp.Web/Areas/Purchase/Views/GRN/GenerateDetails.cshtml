@@ -1,0 +1,215 @@
+﻿@model TradeSuiteApp.Web.Areas.Purchase.Models.GRNModel
+@{
+    ViewBag.Title = @Purchase.GoodsReceiptNoteDetails;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Purchase.GRNForStockItems</h1>
+            <span class="uk-text-upper uk-text-small">@Purchase.GoodsReceiptNoteDetails</span>
+        </div>
+        <div class="heading_actions">
+            @if (!Model.IsPurchaseCompleted)
+            {
+                @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "GenerateEdit", "GRN", new { Area = "Purchase", id = (Model != null) ? Model.Id : 0 }, new { @class = "md-btn " }))
+                @ActionAuthorization.IsAuthorized("Cancel", "<a class='md-btn cancel'>" + @Common.Cancel + "</a>")
+            }
+
+            @ActionAuthorization.IsAuthorized("GRNPrintPdf", " <a class='md-btn printpdf'>Print As PDF</a>")
+            @Html.HiddenFor(m => m.Id)
+            @Html.ActionLink(Common.Back, "Index", "GRN", new { Area = "Purchase" }, new { @class = "md-btn " })
+            <form action="/Purchase/GRN/Print" method="POST">
+                @*<input type="hidden" name="SupplierIDPrint" />*@
+                @Html.Hidden("SupplierID")
+                @Html.Hidden("Code")
+                @Html.HiddenFor(m => m.Id)
+                @if (Model.SupplierCode == "S00736")
+                {
+                    @ActionAuthorization.IsAuthorized("Print", "<input type='submit'class='md-btn' value='Print' />")
+
+                }
+
+
+            </form>
+
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page_content_inner" class="details-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>GRN No</label>
+                                            <input type="text" class="md-input label-fixed" value="@Model.Code" disabled />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label for="uk_dp_start">@Purchase.GRNDate</label>
+                                            @Html.TextBoxFor(model => model.GRNDate, "{0:dd-MMM-yyyy}", new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Purchase.Supplier</label>
+                                            <input type="text" class="md-input label-fixed" value="@Model.SupplierName" disabled />
+                                        </div>
+
+                                        <div class="uk-width-medium-1-8 ">
+                                            <label>@Purchase.Location</label>
+                                            <input type="text" class="md-input label-fixed" value="@Model.Warehouse" disabled />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.ChallanNo</label>
+                                            <input type="text" class="md-input label-fixed" value="@Model.InvoiceNo" disabled />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Purchase.ChallanDate</label>
+                                                <input class="md-input label-fixed" type="text" id="uk_dp_start" value="@Model.InvoiceDate" disabled />
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-8" style="display:none">
+                                            <div class="uk-input-group">
+                                                <label>@Purchase.SelectPurchaseOrder</label>
+                                                <input type="text" class="md-input label-fixed" />
+                                                <span class="uk-input-group-addon"><a data-uk-modal="{target:'#select_po'}"><i class="material-icons md-24"><b></b></i></a></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.SGST</label>
+                                            <input type="text" class="md-input label-fixed mask-currency" id="SGSTAmt" value="@Model.SGSTAmt" disabled />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.CGST</label>
+                                            <input type="text" class="md-input label-fixed mask-currency" id="CGSTAmt" value="@Model.CGSTAmt" disabled />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.IGST</label>
+                                            <input type="text" class="md-input label-fixed mask-currency" id="IGSTAmt" value="@Model.IGSTAmt" disabled />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.Discount</label>
+                                            <input type="text" class="md-input label-fixed mask-currency" id="DiscountAmt" value="@Model.DiscountAmt" disabled />
+
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.GrossAmount</label>
+                                            <input type="text" class="md-input label-fixed mask-currency" id="GrossAmt" value="@Model.GrossAmt" disabled />
+
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.RoundOff</label>
+                                            <input type="text" class="md-input label-fixed mask-currency" id="RoundOff" value="@Model.RoundOff" disabled />
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+
+                                        <div class="uk-width-medium-8-10">
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin>
+
+                                                   
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                                <div class="right-block">
+
+                                    <div class="uk-form-row">
+                                        <div class="uk-grid" data-uk-grid-margin="">
+                                            <div class="uk-width-medium-1-1">
+                                                <label>@Purchase.NetAmount</label>
+                                                <input type="text" class="md-input label-fixed mask-currency x-large" id="NetAmt" value="@Model.NetAmount" disabled />
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-group">
+                    <table id="GRN-list" class="uk-table" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="width-10">@Common.SerialNo</th>
+
+                                <th class="width-250">@Purchase.ItemName</th>
+                                <th class="width-80">@Purchase.Unit</th>
+
+                                <th class="width-100">@Purchase.Batch</th>
+                                <th class="width-40">@Purchase.POQty</th>
+                                <th class="width-80">@Purchase.PurchaseRate</th>
+
+                                <th class="width-80">@Purchase.MRP</th>
+                                <th class="width-40">@Purchase.ReceivedQty</th>
+                                <th class="width-40">@Purchase.OfferQty</th>
+
+                                <th class="width-40 ">@Purchase.DiscountPer</th>
+
+                                <th class="width-40 ">@Purchase.Discount</th>
+                                <th class="width-60">@Purchase.GSTper</th>
+                                <th class="width-60">@Purchase.SGSTAmt</th>
+                                <th class="width-60">@Purchase.SGSTAmt</th>
+                                <th class="width-60">@Purchase.IGSTAmt</th>
+                                <th class="width-40 ">@Purchase.LooseQty</th>
+
+                                <th class="width-80">@Purchase.ExpDate</th>
+                                <th class="width-150">@Purchase.Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.grnItems.Select((value, i) => new { i = (i + 1), value }))
+                            {
+                                <tr>
+                                    <td class="uk-text-center">@Html.DisplayFor(modelItem => (item.i))</td>
+                                    <td>@item.value.ItemName</td>
+                                    <td>@item.value.Unit</td>
+                                    <td class="batch_type">@item.value.Batch</td>
+                                    <td class="uk-text-right mask-currency">@item.value.PurchaseOrderQty</td>
+                                    <td class="mask-currency">@item.value.PurchaseRate</td>
+                                    <td class="mask-currency">@item.value.RetailMRP</td>
+                                    <td class="uk-text-right mask-currency">@item.value.ReceivedQty</td>
+                                    <td class="uk-text-right mask-currency">@item.value.OfferQty</td>
+                                    <td class="uk-text-right mask-currency">@item.value.DiscountPercent</td>
+                                    <td class="uk-text-right mask-currency">@item.value.DiscountAmount</td>
+                                    <td class="uk-text-right mask-currency">@item.value.GSTPercentage</td>
+                                    <td class="uk-text-right mask-currency">@item.value.SGSTAmt</td>
+                                    <td class="uk-text-right mask-currency">@item.value.SGSTAmt</td>
+                                    <td class="uk-text-right mask-currency">@item.value.CGSTAmt</td>
+                                    <td class="uk-text-right mask-currency">@item.value.LooseQty</td>
+                                    <td>@item.value.ExpiryDate</td>
+                                    <td>@item.value.Remarks</td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/GRN")
+<script type="text/javascript">
+    GRN.details();
+</script>

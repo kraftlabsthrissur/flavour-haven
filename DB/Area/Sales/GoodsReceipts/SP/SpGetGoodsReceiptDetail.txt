@@ -1,0 +1,17 @@
+        
+ALTER PROCEDURE [Sales].[SpGetGoodsReceiptDetail](                    
+ @GoodReceiptNoteID INT          
+)          
+AS          
+BEGIN          
+
+        
+  SELECT P.ID, P.TransNo, p.ReceiptDate,c.Name CustomerName,p.SalesOrders,P.GrossAmount,P.DiscountAmount,
+  P.TaxableAmount,P.SGSTAmount,P.CGSTAmount,P.IGSTAmount,P.RoundOff,P.IsCancelled,P.IsDraft,
+  P.CessAmount,P.NetAmount,P.GoodsReceiptStatus,P.Remarks,P.ReceiptReferenceNo        
+  FROM sales.GoodsReceiptNote P
+  LEFT JOIN Customer C ON C.ID=P.CustomerID
+  WHERE p.ID=@GoodReceiptNoteID        
+        
+END     
+   

@@ -1,0 +1,90 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.SupplierModel
+@{
+    ViewBag.Title = "Edit Supplier";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.Suppliers</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.EditSupplier</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn BtnSave'>" + Common.Save + "</a>")
+            @if (!Model.IsActiveSupplier)
+            {
+                @ActionAuthorization.IsAuthorized("SaveAsDraft", "<a class='md-btn btnSaveAsDraft'>" + Common.SaveAsDraft + "</a>")
+                @ActionAuthorization.IsAuthorized("Delete", "<a class='md-btn btnDelete'>" + Common.Delete + "</a>")
+            }
+           
+            
+            @Html.HiddenFor(m => m.ID)
+
+            @Html.ActionLink(Common.Close, "Index", "Supplier", new { Area = "Masters" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="" class="form-view">
+        <div class="md-card uk-margin-medium-bottom remove-box-shadow">
+            <div class="md-card-content">
+                <div class="uk-grid" data-uk-grid-margin>
+                    @{Html.RenderPartial("/Areas/Masters/Views/Supplier/Form.cshtml", Model); }
+                    <div class="uk-width-medium-2-10">
+                        <div class="md-card">
+                            <div class="md-card-content small-padding">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-1">
+                                        <label>@Masters.CreatedDate</label>
+                                        @Html.TextBoxFor(m => m.CreatedDate, "{0:dd-MMM-yyyy}", new { @class = "md-input", @disabled = "disabled" })
+                                    </div>
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        @Html.HiddenFor(m => m.IsDeactivated)
+                                        <input type="checkbox" class="icheckbox IsDeactivated" data-md-icheck />&nbsp;@Html.Label("Deactivated")
+                                    </div>
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        @Html.HiddenFor(m => m.IsBlockForPurcahse)
+                                        <input type="checkbox" class="icheckbox IsBlockForPurcahse" data-md-icheck />&nbsp;@Html.Label("Block For Purchase")
+                                    </div>
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        @Html.HiddenFor(m => m.IsBlockForPayment)
+                                        <input type="checkbox" class="icheckbox IsBlockForPayment" data-md-icheck />&nbsp;@Html.Label("Block For Payment")
+                                    </div>
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        @Html.HiddenFor(m => m.IsBlockForReceipt)
+                                        <input type="checkbox" class="icheckbox IsBlockForReceipt" data-md-icheck />&nbsp;@Html.Label("Block For Receipt")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/Supplier")
+@Scripts.Render("~/Js/Page/Customer")
+@Scripts.Render("~/Js/Page/Employee")
+<script type="text/javascript">
+    supplier.init();
+</script>
+

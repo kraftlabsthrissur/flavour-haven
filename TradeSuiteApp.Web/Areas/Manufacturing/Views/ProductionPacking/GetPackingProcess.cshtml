@@ -1,0 +1,116 @@
+﻿@model  List<TradeSuiteApp.Web.Areas.Manufacturing.Models.PackingProcessModel>
+@{
+    bool isViewOnly = ViewBag.IsViewOnly ?? false;  //Set in View page.
+    Layout = null;
+
+}
+
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+               
+            var standardskilled = item.PackedQty / item.BatchSize * item.SkilledLaboursStandard;
+            var standardunskilled = item.PackedQty / item.BatchSize * item.UnSkilledLabourStandard;
+            var standardmachine = item.PackedQty / item.BatchSize * item.MachineHoursStandard;
+
+
+            if (isViewOnly)
+            {
+            <tr>
+                <td>
+                    @(1 + @Model.IndexOf(item) )
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Stage)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.ProcessName)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.StartTimeStr)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.EndTimeStr)
+                </td>
+                <td class="uk-text-right">
+                    @Html.DisplayFor(a => item.SkilledLaboursStandard)
+                </td>
+                <td class="uk-text-right">
+                    @Html.DisplayFor(a => item.SkilledLaboursActual)
+                </td>
+                <td class="uk-text-right">
+                    @Html.DisplayFor(a => item.UnSkilledLabourStandard)
+                </td>
+                <td class="uk-text-right">
+                    @Html.DisplayFor(a => item.UnSkilledLabourActual)
+                </td>
+                <td class="uk-text-right">
+                    @Html.DisplayFor(a => item.MachineHoursStandard)
+                </td>
+                <td class="uk-text-right">
+                    @Html.DisplayFor(a => item.MachineHoursActual)
+                </td>
+                <td class="uk-text-right">
+                    @Html.DisplayFor(a => item.DoneBy)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Status)
+                </td>
+            </tr>
+        }
+        else
+        {
+
+            <tr class="@(item.IsDraft ? "new":"saved")">
+                 <td>
+                    @(1 + @Model.IndexOf(item) )
+                </td>
+                <td class="Stage">
+                    @item.Stage
+
+                </td>
+                <td class="ProcessName">
+                    @item.ProcessName
+                </td>
+                <td>
+                    <input type="text" class="md-input time txtStartTime" value="@item.StartTimeStr" />
+                    <input type="hidden" class="PackingIssueID" value="@item.PackingIssueID" />
+                    <input type="hidden" class="BatchTypeID" value="@item.BatchTypeID" />
+                    <input type="hidden" class="BatchSize" value="@item.BatchSize" />
+                    <input type="hidden" class="SkilledLaboursStandard mask-qty" value="@item.SkilledLaboursStandard" />
+                    <input type="hidden" class="UnSkilledLabourStandard mask-qty" value="@item.UnSkilledLabourStandard" />
+                    <input type="hidden" class="MachineHoursStandard mask-qty" value="@item.MachineHoursStandard" />
+                    <input type="hidden" class="PackingProcessDefinitionTransID" value="@item.PackingProcessDefinitionTransID" />
+                </td>
+                <td>
+                    <input type="text" class="md-input time txtEndTime" value="@item.EndTimeStr" />
+                </td>
+                <td>
+                    <input type="text" class="md-input mask-qty txtStandardSkilledLabourHour" value="@standardskilled" readonly />
+                </td>
+                <td>
+                    <input type="text" class="md-input mask-qty txtActualSkilledLabourHour" value="@item.SkilledLaboursActual" />
+                </td>
+                <td>
+                    <input type="text" class="md-input mask-qty txtStandardUnSkilledLabourHour" value="@standardunskilled" readonly />
+                </td>
+                <td>
+                    <input type="text" class="md-input mask-qty txtActualUnSkilledLabourHour" value="@item.UnSkilledLabourActual" />
+                </td>
+                <td>
+                    <input type="text" class="md-input mask-qty txtStandardMachineHour" value="@standardmachine" readonly />
+                </td>
+                <td>
+                    <input type="text" class="md-input mask-qty txtActualMachineHour" value="@item.MachineHoursActual" />
+                </td>
+                <td class="uk-text-right">
+                    <input type="text" class="md-input uk-text txtDoneBy" value="@item.DoneBy" />
+                </td>
+                <td>
+                    <input type="text" class="md-input uk-text txtStatus" value="@item.Status" />
+                </td>
+            </tr>
+        }
+    }
+}

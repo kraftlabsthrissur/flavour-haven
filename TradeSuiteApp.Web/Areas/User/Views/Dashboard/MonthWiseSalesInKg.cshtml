@@ -1,0 +1,45 @@
+﻿
+@model TradeSuiteApp.Web.Areas.User.Models.DashboardModel
+<div class="md-card">
+    <div class="md-card-content statistics">
+
+        <div class="uk-width-medium-10-10">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-8-10 heading_a uk-margin-bottom">
+                    <label>@Masters.Sales {Kgs} </label>
+                    <span class="actual-py"></span><span class="text">@Masters.ActualPY</span>
+                    <span class="budget"></span><span class="text">@Masters.BudgetCY</span>
+                    <span class="actual-to-date"></span><span class="text">@Masters.ActualCY</span>
+                </div>
+                <div class="uk-width-medium-2-10">
+                    @Html.DropDownListFor(Model => Model.BatchType, new SelectList(Model.BatchTypeList, "Value", "Text"), new { @class = "md-input label-fixed", @id = "sales-in-kg-batchtype" })
+                </div>
+            </div>
+        </div>
+        <div class="uk-width-1-1">
+           
+            <ul class="uk-tab" data-uk-tab="{connect:'#month-wise-sales-in-kg'}" id="month-wise-sales-in-kg-tab">
+                <li class="uk-active" data-tab="VOS TKY"><a class="month-wise-sales-kg-tky">TKY</a></li>
+                <li data-tab="VOS POL"><a class="month-wise-sales-kg-pol">POL</a></li>
+                <li data-tab="VOS CHU"><a class="month-wise-sales-kg-chu">CHU</a></li>
+            </ul>
+            <ul id="month-wise-sales-in-kg" class="uk-switcher uk-margin">
+                <li aria-hidden="false" class="uk-active">
+                    <div id="ct-chart-kg-tky" class="chartist">
+                    </div>
+                </li>
+                <li aria-hidden="true">
+                    <div id="ct-chart-kg-pol" class="chartist">
+
+                    </div>
+                </li>
+                <li aria-hidden="true">
+                    <div id="ct-chart-kg-chu" class="chartist">
+
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+

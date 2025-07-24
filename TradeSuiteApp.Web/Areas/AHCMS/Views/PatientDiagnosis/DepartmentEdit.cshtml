@@ -1,0 +1,36 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+<input type="button" id="show-edit-department" data-uk-modal="{target:'#edit-department', center:false}" />
+<div class="uk-modal" id="edit-department" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Edit Department<i class="material-icons"></i></h3>
+        </div>
+        <div class="uk-modal-content">
+            <div class="uk-form-row">
+                <div class="uk-grid text-center uk-margin">
+                    <div class="uk-width-medium-2-10">
+                        <div class="uk-input-group">
+                            <label for="uk_dp_start">@AHCMS.Date</label>
+                            @Html.TextBoxFor(model => model.Date, new { @class = "md-input label-fixed current-date date", Name = "FromDateString", @disabled = "disable" })
+                            @*<span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>*@
+                        </div>
+                    </div>
+                    <div class="uk-width-medium-2-6">
+                        <label>@AHCMS.Patient</label>
+                        @Html.TextBoxFor(m => m.PatientName, "", new { @class = "md-input label-fixed", @disabled = "disable" })
+                    </div>
+                    <div class="uk-width-medium-2-6">
+                        <label>@Common.Department<span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.DepartmentID, Model.DepartmentList, "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn  uk-modal-close">@Common.Close</button>
+            <button type="button" class="md-btn md-btn-primary" id="btnEditDepartment">Save</button>
+            @Html.Hidden("PatientID")
+            @Html.Hidden("AppointmentScheduleItemID")
+        </div>
+    </div>
+</div>

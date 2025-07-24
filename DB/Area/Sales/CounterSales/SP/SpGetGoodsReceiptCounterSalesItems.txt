@@ -1,0 +1,32 @@
+                      
+                        
+ALTER PROCEDURE  [Sales].[SpGetGoodsReceiptCounterSalesItems]                            
+(                            
+@CounterSalesIDs VARCHAR(MAX),                            
+@FinYear int,                            
+@LocationID int,                            
+@ApplicationID int                            
+)                            
+AS                        
+BEGIN                             
+                             
+ SELECT CST.ID,S.TransNo,S.TransDate,CST.CounterSalesID,I.Code ItemCode,CST.ItemName,CST.PartsNumber,CST.Remark,CST.Model,CST.DiscountAmount,CST.DiscountPercentage,  
+ CST.WarehouseID,FullOrLoose,I.ID as ItemID,B.ID as BatchID,Quantity,Rate,CST.MRP,(CST.CGSTPercentage + CST.SGSTPercentage) AS GSTPercent,                      
+  CST.SGSTAmount,CST.CGSTAmount,CST.VATAmount,CST.UnitID, CST.IGSTAmount,CST.NetAmount,W.Name AS warehouseName , ISNULL(CU.Name,'')CurrencyName,CST.CurrencyID,                      
+  CST.IGSTPercentage IGSTPercent,CST.CGSTPercentage CGSTPercent,CST.SGSTPercentage SGSTPercent,CST.VATPercentage,CST.TaxableAmount,            
+  I.Code,CST.IsGST,CST.IsVAT, B.CustomBatchNO BatchNo,CST.BatchTypeID,CST.SecondaryQty,CST.SecondaryRate,CST.SecondaryUnit,                      
+  b.ExpiryDate,CST.GrossAmount,U.UOM as  Unit,dbo.FnGetAvailableStock(I.ID, B.ID, BT.ID,W.ID,@FinYear,@LocationID,@ApplicationID) as Stock,                       
+  CST.CessAmount,CST.CessPercentage,ISNULL(CST.BasicPrice, 0.0) BasicPrice ,I.HSNCode AS HSNCode,                         
+  Case when I.SalesUnitID=CST.UnitID then I.MinSalesQtyFull else I.MinSalesQtyLoose end as MinSalesQty,                      
+  Case when I.SalesUnitID=CST.UnitID then I.MaxSalesQty else 5000 end as MaxSalesQty,S.PrintWithItemName                      
+ FROM Sales.CounterSalesTrans CST      
+ INNER JOIN Sales.CounterSales S ON S.ID=CST.CounterSalesID     
+ INNER JOIN Item I ON I.ID = CST.ItemID                          
+ INNER JOIN Unit U on U.ID=CST.UnitID                                
+ INNER JOIN WareHouse W ON W.ID = CST.WareHouseID                            
+ INNER JOIN BatchType BT on BT.ID=CST.BatchTypeID                            
+ INNER JOIN Batch B on B.ID=CST.BatchID                 
+ LEFT JOIN Currency CU on CU.ID=CST.CurrencyID              
+ WHERE CST.CounterSalesID  IN (Select * from dbo.fnSplitString(@CounterSalesIDs,','))                       
+  ORDER BY CST.ID ASC                           
+END 

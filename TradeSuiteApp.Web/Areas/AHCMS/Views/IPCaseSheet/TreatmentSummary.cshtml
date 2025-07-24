@@ -1,0 +1,48 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+
+
+@if (Model.TreatmentItems != null)
+{
+    foreach (var item in Model.TreatmentItems.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+                <input type="hidden" class="TreatmentID" value="@item.value.TreatmentID" />
+                <input type="hidden" class="TherapistID" value="@item.value.TherapistID" />
+                <input type="hidden" class="TreatmentRoomID" value="@item.value.TreatmentRoomID" />
+                <input type="hidden" class="NoofTreatmentsID" value="@item.value.NoOfTreatment" />
+            </td>
+            <td class="Treatment">
+                @item.value.Name
+            </td>
+            <td class="Therapist uk-hidden">
+                @item.value.TherapistName
+            </td>
+            <td class="TreatmentRoom uk-hidden">
+                @item.value.TreatmentRoomName
+            </td>
+            <td class="Instructions uk-hidden">
+                @item.value.Instructions
+            </td>
+            <td class="StartDate uk-hidden">
+                @item.value.StartDate
+            </td>
+            <td class="EndDate uk-hidden">
+                @item.value.EndDate
+            </td>
+            <td>
+                @item.value.NoOfTreatment/@item.value.TreatmentNo
+            </td>
+            <td class="uk-hidden">
+                @item.value.Status
+            </td>
+            <td class="uk-text-center">
+                <button class="edit_treatment"><i class="material-icons">create</i></button>
+            </td>
+        </tr>
+    }
+}
+
+
+

@@ -1,0 +1,83 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.TreatmentScheduleModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+
+
+
+    <div class="uk-form-row">
+        <div class="uk-width-medium-1-1">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-10">
+                        <input type="radio" name="filtertype" class="filtertype" data-md-icheck checked="" value="DateWise" /> @Html.Label("DateWise")
+                    </div>
+                    <div class="uk-width-medium-1-10">
+                        <input type="radio" name="filtertype" class="filtertype" data-md-icheck value="PatientWise" /> @Html.Label("PatientWise")
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-1-10 DateWise">
+                        <div class="uk-input-group">
+                            <label for="uk_dp_start">@AHCMS.Date</label>
+                            @Html.TextBox("Date","", new { @class = "md-input label-fixed current-date date", @ID= "FromDate" })
+                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                        </div>
+                    </div>
+                    <div class="uk-width-medium-1-5 PatientWise uk-hidden">
+                        <label>@AHCMS.Patient</label>
+                        <div class="uk-input-group">
+                            @Html.TextBox("PatientName", "",new { @class = "md-input label-fixed" })
+                            <span class="uk-input-group-addon">
+                                <a data-uk-modal="{target:'#select-appointment-process',center:false}">
+                                    <i class="uk-input-group-icon uk-icon-search"></i>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                    @Html.Hidden("PatientID", new { @disabled = "disabled" })
+                    @Html.Hidden("AppointmentProcessID", new { @disabled = "disabled" }) 
+                    <div class="uk-width-medium-1-10">
+                        <div class="md-input-wrapper md-input-filled">
+                            <label>&nbsp;</label>
+                            <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnView">@Common.View</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="uk-form-row">
+    <div>
+        <table id="treatment-schedule-list" class="uk-table" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-10"></th>
+                    <th class="width-80">@AHCMS.Patient</th>
+                    <th class="width-80">@AHCMS.Doctor</th>
+                    <th class="width-80">@AHCMS.Treatment</th>
+                    <th class="width-10">@AHCMS.Stage</th>
+                    <th class="width-40">@AHCMS.PrefTreatmentRoom</th>
+                    <th class="width-40">@AHCMS.SelectedTreatmentRoom</th>
+                    <th class="width-10">@AHCMS.Date</th>
+                    <th class="width-10">@AHCMS.StartTime</th>
+                    <th class="width-50">@AHCMS.Duration</th>
+                    <th class="width-50">@AHCMS.PrefTherapist</th>
+                    <th class="width-50">@AHCMS.AssignedTherapist</th>
+                    <th class="width-10">@AHCMS.Status</th>
+                </tr>
+            </thead>
+            <tbody>
+               @Html.Partial("~/Areas/AHCMS/Views/TreatmentSchedule/ScheduledTreatmentList.cshtml", Model)
+            </tbody>
+        </table>
+        <input type="hidden" id="item-count" value=""/>
+    </div>
+</div>

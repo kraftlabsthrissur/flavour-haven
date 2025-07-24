@@ -1,0 +1,63 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Purchase.Models.PurchaseReturnProcessingModel
+
+@if (Model != null)
+{
+    foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr class="included">
+            <td class="uk-text-center">
+                @item.i
+            </td>
+            <td class="uk-text-center"><input type="checkbox" name="items" data-md-icheck class="md-input check-box chkCheck" checked /></td>
+            <td>
+                <input type="hidden" class="ItemID" value="@item.value.ItemID" />
+                <input type="hidden" class="BatchID" value="@item.value.BatchID" />
+                <input type="hidden" class="SupplierID" value="@item.value.SupplierID" />
+                <input type="hidden" class="InvoiceID" value="@item.value.InvoiceID" />
+                <input type="hidden" class="IsGSTRegistered" value="@item.value.IsGSTRegistered" />
+                <input type="hidden" class="SupplierStateID" value="@item.value.SupplierStateID" />
+                <input type="hidden" class="IGSTPercentage" value="@item.value.IGSTPercentage" />
+                <input type="hidden" class="CGSTPercentage" value="@item.value.CGSTPercentage" />
+                <input type="hidden" class="SGSTPercentage" value="@item.value.SGSTPercentage" />
+                <input type="hidden" class="md-input  CGSTAmount" value="@item.value.CGSTAmount" />
+                <input type="hidden" class="md-input  SGSTAmount" value="@item.value.SGSTAmount" />
+                <input type="hidden" class="md-input  IGSTAmount" value="@item.value.IGSTAmount" />
+                <input type="hidden" class="md-input  UnitID" value="@item.value.UnitID" />
+                <input type="hidden" class="md-input  InvoiceTransID" value="@item.value.InvoiceTransID" />
+                @item.value.ItemName
+            </td>
+            <td>
+                
+                @item.value.BatchNo
+            </td>
+            <td>
+                @item.value.Supplier
+            </td>
+            <td>
+                @item.value.InvoiceNo
+            </td>
+            <td>
+                @item.value.InvoiceDate
+            </td>
+            <td>@item.value.ExpiryDate</td>
+            <td>@item.value.Unit</td>
+            <td><input type="text" class="md-input uk-text-right mask-currency PurchaseRate" value="@item.value.PurchaseRate" readonly disabled="disabled"/></td>
+            <td><input type="text" class="md-input uk-text-right mask-currency InvoiceQty" value="@item.value.InvoiceQty" readonly disabled="disabled"/></td>
+            <td><input type="text" class="md-input uk-text-right mask-currency OfferQty" value="@item.value.OfferQty" readonly disabled="disabled"/></td>
+            <td><input type="text" class="md-input uk-text-right mask-currency Stock" value="@item.value.Stock" readonly disabled="disabled"/></td>
+            <td><input type="text" class="md-input uk-text-right mask-currency GSTAmount" value="@item.value.GSTAmount" readonly disabled="disabled"/></td>
+            <td><input type="text" class="md-input uk-text-right mask-currency Value" value="@item.value.Value" readonly disabled="disabled" /></td>
+            <td>@item.value.NoOFDaysInventoryHeld</td>
+            @if ((item.value.InvoiceQty + item.value.OfferQty) > item.value.Stock)
+            {
+                <td><input type="text" class="md-input uk-text-right mask-currency ReturnQty" value="@item.value.Stock" /></td>
+            }
+            else
+            {
+                <td><input type="text" class="md-input uk-text-right mask-currency ReturnQty" value="@item.value.ReturnQty" /></td>
+            }
+
+        </tr>
+    }
+}

@@ -1,0 +1,42 @@
+          
+          
+-- =============================================          
+-- Author:  <neethu@kraftlabs.com>          
+-- Create date: <12/06/2020>          
+-- Description: <GetGRNItemsForPurchaseInvoice>          
+-- =============================================          
+ALTER PROCEDURE [Purchase].[SpGetGRNItemsForPurchaseInvoice]            
+(@GRNID int,            
+@FinYear int,            
+@LocationID int,            
+@ApplicationID int)            
+AS                      
+BEGIN            
+ DECLARE @ProfitTolerance numeric(18,2)            
+ SET @ProfitTolerance=ISNULL((select configValue from configuration where ConfigName='Profit Ratio Tolerance' ),0)  
+ Select GT.ID AS GRNTransID,GT.ItemID,I.Code ItemCode,GT.ItemName,GT.PartsNumber,GT.Remark,GT.Model,GT.IsGST,GT.IsVat,        
+ GT.CurrencyID,Cu.Code CurrencyCode,Cu.Name CurrencyName,POT.ExchangeRate,          
+ GT.UnitID,U.UOM AS Unit,GT.LooseRate,GT.LooseQty,ISNULL(B.ProfitPrice,0) ProfitPrice,ISNULL(B.PurchaseMRP,0)PurchaseMRP,ISNULL(B.PurchaseLooseRate,0)PurchaseLooseRate,0.0 SGSTPercent,    
+ 0.0 CGSTPercent,I.IGSTPercent,GT.SGSTAmt,GT.IGSTAmt,GT.CGSTAmt,           
+ GT.ReceivedQty,GT.OfferQty,GT.PurchaseRate,PO.PurchaseOrderNo,PO.ID PurchaseOrderID,GT.GrossAmount,GT.DiscountAmount,GT.DiscPercent DiscountPercentage,      
+ GT.VATPercentage,GT.VATAmount, GT.SecondaryRate,GT.SecondaryUnit,GT.SecondaryUnitSize,GT.TaxableAmount,      
+ G.SuppDocAmount,G.SuppShipAmount,G.SuppOtherCharge,G.SuppFreight,G.LocalCustomsDuty,G.LocalFreight,G.LocalMiscCharge,G.LocalOtherCharges,G.PackingForwarding,      
+ (ISNULL(B.PurchaseMRP,0)*GT.ReceivedQty) InvoiceAmount,(ISNULL(B.PurchaseMRP,0)*GT.ReceivedQty)-GT.DiscountAmount NetAmount,ISNULL(B.ID,0) BatchID,            
+ PO.InclusiveGST,ISNULL(B.BatchNo,'')BatchNo,ISNULL(B.RetailMRP,0)RetailMRP,Isnull(GT.NetProfitRatio,0.0) as NetProfitRatio,I.IGSTPercent as GSTPercent,I.CessPercentage,            
+ ISNULL((SELECT BatchNetProfitRatio FROM PurchaseInvoicetrans where ID= PI.ID),0) PrevoiusBatchNetProfitRatio,            
+ ((ISNULL(B.PurchaseMRP,0)*GT.ReceivedQty)-GT.DiscountAmount)/((GT.ReceivedQty+GT.OfferQty)) NetPurchasePrice,            
+ (ISNULL(B.RetailMRP,0) * (100 / (100 + I.IGSTPercent + I.CessPercentage))) Salesrate,                  
+ ((((ISNULL(B.RetailMRP,0) * (100 / (100 + I.IGSTPercent + I.CessPercentage))) - ((ISNULL(B.PurchaseMRP,0)*GT.ReceivedQty)-GT.DiscountAmount)/((GT.ReceivedQty+GT.OfferQty))) / (ISNULL(B.RetailMRP,0) * (100 / (100 + I.IGSTPercent + I.CessPercentage)))) * 100) CurrentBatchNetProfit,    
+ ((((((ISNULL(B.RetailMRP,0) * (100 / (100 + I.IGSTPercent + I.CessPercentage))) - ((ISNULL(B.PurchaseMRP,0)*GT.ReceivedQty)-GT.DiscountAmount)/((GT.ReceivedQty+GT.OfferQty))) / (ISNULL(B.RetailMRP,0) * (100 / (100 + I.IGSTPercent + I.CessPercentage)))) * 100) *@ProfitTolerance)/100)+
+ ((((ISNULL(B.RetailMRP,0) * (100 / (100 + I.IGSTPercent + I.CessPercentage))) - ((ISNULL(B.PurchaseMRP,0)*GT.ReceivedQty)-GT.DiscountAmount)/((GT.ReceivedQty+GT.OfferQty))) / (ISNULL(B.RetailMRP,0) * (100 / (100 + I.IGSTPercent + I.CessPercentage)))) * 100) CurrentProfitTolerance    
+ ,(POT.Quantity* ISNULL(PU.Packsize,0)) as POLooseQty, ((GT.ReceivedQty)*U.PackSize) as GRNLooseQty            
+ from GoodsReceiptNoteTrans GT            
+ INNER JOIN GoodsReceiptNote G on G.ID = GT.GoodsReceiptNoteID             
+ INNER JOIN  PurchaseOrderTrans POT on POT.ID = GT.POTransID AND POT.ItemID = GT.ItemID            
+ INNER JOIN  PurchaseOrder PO on PO.ID = POT.PurchaseOrderID            
+ INNER JOIN VIItem I on I.ID = GT.ItemID  Inner join Unit U on U.ID = GT.UnitID            
+ LEFT JOIN Batch B On B.ID=GT.Batch Inner Join Unit PU on PU.ID=POT.UnitID           
+ LEFT JOIN Currency Cu on GT.CurrencyID=Cu.ID           
+ LEFT JOIN (SELECT max(ID) ID,ItemID FROM  PurchaseInvoicetrans PIT GROUP BY ItemID) AS PI ON PI.ItemID=B.ItemID               
+ where G.IsDraft = 0 AND GT.GoodsReceiptNoteID = @GRNID            
+END 

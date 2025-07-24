@@ -1,0 +1,92 @@
+--Modified By   : Rakesh        
+--Modified Date : 04-May-2019        
+--Desc          : Change in View, Commented the existing query, Can delete after testing new on 01-Jun          
+        
+--exec [Purchase].[SpItemByItemANDPurchaseCategories] null,null,'A',2018,1,1        
+ALTER PROCEDURE [Purchase].[SpItemByItemANDPurchaseCategories](        
+@ItemCategoryID int,        
+@PurchaseCategoryID int,        
+@ItemHint varchar(50),        
+@FinYear int,        
+@LocationID int,        
+@ApplicationID int        
+)        
+AS        
+Begin        
+ SET NOCOUNT ON         
+         
+ if @ItemCategoryID = 0         
+ begin        
+ Set @ItemCategoryID = Null        
+ end        
+ if @PurchaseCategoryID = 0         
+ begin        
+ Set @PurchaseCategoryID = Null        
+ end        
+         
+  Select Top 20 ID,ISNULL(Code,'')Code, Name,PartsNumber,Remark,Model,ISNULL(Unit,'') as PrimaryUnit,PrimaryUnitID,  
+  PurchaseUnit,PurchaseUnitID,dbo.FnGetStockByItemID(ID,@FinYear,@LocationID,@ApplicationID) AS Stock,        
+  dbo.FnGetStockQuantityUnderQC(ID,@FinYear,@LocationID,@ApplicationID) AS QtyUnderQC,        
+  dbo.FnGetStockQuantityOrdered(ID,@FinYear,@LocationID,@ApplicationID) AS QtyOrdered,        
+  IGSTPercent  as GSTPercentage,V.VATPercentage, (select TOP 1 B.RetailMRP from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)RetailMRP,        
+  (select TOP 1 B.RetailLooseRate from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)RetailLooseRate      
+  FROM viGoodsItem  V   
+  WHERE ( @ItemCategoryID IS NULL OR CategoryID =@ItemCategoryID )  
+  AND  ( @PurchaseCategoryID IS NULL OR PurchaseCategoryID =@PurchaseCategoryID )       
+  and V.Name Like '%'+@ItemHint+'%'         
+  --and CategoryID IN (Select ItemCategoryID from StockOrServiceType where Type = 'Stock')        
+  Order by CASE WHEN V.Name  = ISNULL(@ItemHint,'A') THEN 1 WHEN name LIKE ISNULL(@ItemHint,'A')+'%' THEN 2 ELSE 3 END ASC,V.Name ASC          
+             
+         
+ --if @ItemCategoryID > 0 and @PurchaseCategoryID > 0        
+ --begin        
+ -- Select TOP 20 ID,Code,Name,Unit as PrimaryUnit,UnitID as PrimaryUnitID,PurchaseUnit,PurchaseUnitID,        
+ --  dbo.FnGetStockByItemID(ID,@FinYear,@LocationID,@ApplicationID) AS Stock,        
+ --  dbo.FnGetStockQuantityUnderQC(ID,@FinYear,@LocationID,@ApplicationID) AS QtyUnderQC,        
+ --  dbo.FnGetStockQuantityOrdered(ID,@FinYear,@LocationID,@ApplicationID) AS QtyOrdered         
+ -- from viItem           
+ -- where CategoryID = @ItemCategoryID and PurchaseCategoryID = @PurchaseCategoryID and IsStockValue = 1          
+ -- and viItem.Name Like '%'+@ItemHint+'%'         
+ -- and CategoryID IN (Select ItemCategoryID from StockOrServiceType where Type = 'Stock')        
+ -- Order by CASE WHEN viItem.Name  = ISNULL(@ItemHint,'A') THEN 1 WHEN name LIKE ISNULL(@ItemHint,'A')+'%' THEN 2 ELSE 3 END ASC,viItem.Name ASC          
+             
+ --end        
+ --else if @ItemCategoryID > 0 and @PurchaseCategoryID = 0        
+ --begin        
+ -- Select TOP 20 ID,Code,Name,Unit as PrimaryUnit,UnitID as PrimaryUnitID,PurchaseUnit,PurchaseUnitID,        
+ --  dbo.FnGetStockByItemID(ID,@FinYear,@LocationID,@ApplicationID) AS Stock,        
+ --  dbo.FnGetStockQuantityUnderQC(ID,@FinYear,@LocationID,@ApplicationID) AS QtyUnderQC,        
+ --  dbo.FnGetStockQuantityOrdered(ID,@FinYear,@LocationID,@ApplicationID) AS QtyOrdered         
+ -- from viItem           
+ -- where CategoryID = @ItemCategoryID and IsStockValue = 1          
+ -- and viItem.Name Like '%'+@ItemHint+'%' and CategoryID IN (Select ItemCategoryID from StockOrServiceType where Type = 'Stock')        
+ -- Order by CASE WHEN viItem.Name  = ISNULL(@ItemHint,'A') THEN 1 WHEN name LIKE ISNULL(@ItemHint,'A')+'%' THEN 2 ELSE 3 END ASC,viItem.Name ASC          
+             
+ --end        
+ --else if @ItemCategoryID = 0 and @PurchaseCategoryID > 0        
+ --begin        
+ -- Select TOP 20 ID,Code,Name,Unit as PrimaryUnit,UnitID as PrimaryUnitID,PurchaseUnit,PurchaseUnitID,        
+ --  dbo.FnGetStockByItemID(ID,@FinYear,@LocationID,@ApplicationID) AS Stock,        
+ --  dbo.FnGetStockQuantityUnderQC(ID,@FinYear,@LocationID,@ApplicationID) AS QtyUnderQC,        
+ --  dbo.FnGetStockQuantityOrdered(ID,@FinYear,@LocationID,@ApplicationID) AS QtyOrdered         
+ -- from viItem           
+ -- where  PurchaseCategoryID = @PurchaseCategoryID and IsStockValue = 1          
+ -- and viItem.Name Like '%'+@ItemHint+'%' and CategoryID IN (Select ItemCategoryID from StockOrServiceType where Type = 'Stock')        
+ -- Order by CASE WHEN viItem.Name  = ISNULL(@ItemHint,'A') THEN 1 WHEN name LIKE ISNULL(@ItemHint,'A')+'%' THEN 2 ELSE 3 END ASC,viItem.Name ASC          
+             
+ --end        
+ --else        
+ --begin        
+ -- Select TOP 20 ID,Code,Name,Unit as PrimaryUnit,UnitID as PrimaryUnitID,PurchaseUnit,PurchaseUnitID,        
+ --  dbo.FnGetStockByItemID(ID,@FinYear,@LocationID,@ApplicationID) AS Stock,        
+ --  dbo.FnGetStockQuantityUnderQC(ID,@FinYear,@LocationID,@ApplicationID) AS QtyUnderQC,        
+ --  dbo.FnGetStockQuantityOrdered(ID,@FinYear,@LocationID,@ApplicationID) AS QtyOrdered         
+ -- from viItem          
+ -- where  IsStockValue = 1  and viItem.Name Like '%'+@ItemHint+'%' and CategoryID IN (Select ItemCategoryID from StockOrServiceType where Type = 'Stock')        
+ -- Order by CASE WHEN viItem.Name  = ISNULL(@ItemHint,'A') THEN 1 WHEN name LIKE ISNULL(@ItemHint,'A')+'%' THEN 2 ELSE 3 END ASC,viItem.Name ASC          
+             
+ --end        
+End        
+        
+        
+        

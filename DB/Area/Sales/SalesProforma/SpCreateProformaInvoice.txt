@@ -1,0 +1,175 @@
+ALTER PROCEDURE [Sales].[SpCreateProformaInvoice]    
+(    
+ @Invoice XML,    
+ @Items XML,    
+ @AmountDetails XML,    
+ @PackingDetails XML,  
+ @CreatedUserID int,    
+ @FinYear int,    
+ @LocationID int,    
+ @ApplicationID int,    
+ @ProformaInvoiceID int OUT,    
+ @RetValue INT = 0 OUT    
+ )    
+AS    
+BEGIN    
+ DECLARE @SerialNo VARCHAR(20)     
+ DECLARE @ErrorCode INT;    
+ DECLARE @FormName VARCHAR(30), @FieldName varchar(100) = 'Code' ,@IsDraft bit   
+ DECLARE @return_value int, @Stock Numeric(18,4) = 0, @BatchID INT = -1, @IssueDate DateTime = CURRENT_TIMESTAMP, @FromWarehouseID int, @ToWarehouseID int = 0    
+ DECLARE @count int = 0, @i int = 1, @ItemID int, @Quantity Numeric(18,4), @OfferQuantity Numeric(18,4), @SortOrder int, @SalesOrderItemID int, @SalesOrderID int     
+ SET NOCOUNT ON;    
+  
+ SELECT  @IsDraft =  convert(BIT, Invoices.Invoice.query('IsDraft').value('.','VARCHAR(10)'))   
+ FROM @Invoice.nodes('/Invoices/Invoice') AS Invoices(Invoice)    
+  
+ IF (@IsDraft = 0)  
+ BEGIN  
+  SET @FormName = 'ProformaInvoice'  
+ END  
+ ELSE  
+ BEGIN  
+  SET @FormName = 'DraftProformaInvoice'  
+ END  
+    
+ EXEC @return_value = [Common].[SpUpdateSerialNo] @FormName, @FieldName, @FinYear, @LocationID, @ApplicationID,@SerialNo = @SerialNo OUTPUT    
+     
+ INSERT INTO Sales.ProformaInvoice (TransNo,InvoiceDate,CustomerID,SalesOrders,PaymentModeID, PaymentTypeID,SchemeID,     
+  DespatchDate,GrossAmt,DiscountAmt,DiscountPercentage,VATAmount,VatPercentage,TurnoverDiscount, AdditionalDiscount, TaxableAmt,SGSTAmt,CGSTAmt,IGSTAmt,RoundOff,    
+  NetAmt,IsProcessed,IsDraft,ModifiedDate,IsCancelled,CancelledDate,CreatedUserID,CreatedDate,FinYear,LocationID,ApplicationID,HoldStock,     
+  SalesTypeID, BillingAddressID, ShippingAddressID,NoOfBags,NoOfBoxes,NoOfCans,CheckedBy,PackedBy,CessAmount,FreightAmount,ProformaStatus,PrintWithItemCode,Remarks)    
+ SELECT    
+ @SerialNo,    
+ convert(datetime, Invoices.Invoice.query('TransDate').value('.','VARCHAR(30)')),    
+ convert(int, Invoices.Invoice.query('CustomerID').value('.','VARCHAR(16)')),    
+ convert(VARCHAR(100), Invoices.Invoice.query('SalesOrderNos').value('.','VARCHAR(100)')),    
+ convert(int, Invoices.Invoice.query('PaymentModeID').value('.','VARCHAR(16)')),    
+ convert(int, Invoices.Invoice.query('PaymentTypeID').value('.','VARCHAR(16)')),    
+ convert(int, Invoices.Invoice.query('SchemeID').value('.','VARCHAR(16)')),    
+ isnull(Invoices.Invoice.query('DespatchDate').value('.','VARCHAR(30)'), convert(datetime, Invoices.Invoice.query('DespatchDate').value('.','VARCHAR(30)'))),    
+ convert(Numeric(18,4), Invoices.Invoice.query('GrossAmount').value('.','VARCHAR(40)')),    
+ convert(Numeric(18,4), Invoices.Invoice.query('DiscountAmount').value('.','VARCHAR(40)')),    
+ convert(Numeric(18,4), Invoices.Invoice.query('DiscountPercentage').value('.','VARCHAR(40)')),    
+ convert(Numeric(18,4), Invoices.Invoice.query('VATAmount').value('.','VARCHAR(40)')),    
+ convert(Numeric(18,4), Invoices.Invoice.query('VATPercentage').value('.','VARCHAR(40)')),    
+ convert(Numeric(18,4), Invoices.Invoice.query('TurnoverDiscount').value('.','VARCHAR(40)')),    
+ convert(Numeric(18,4), Invoices.Invoice.query('AdditionalDiscount').value('.','VARCHAR(40)')),    
+ convert(Numeric(18,4), Invoices.Invoice.query('TaxableAmount').value('.','VARCHAR(40)')),    
+ convert(Numeric(18,4), Invoices.Invoice.query('SGSTAmount').value('.','VARCHAR(40)')),    
+ convert(Numeric(18,4), Invoices.Invoice.query('CGSTAmount').value('.','VARCHAR(40)')),    
+ convert(Numeric(18,4), Invoices.Invoice.query('IGSTAmount').value('.','VARCHAR(40)')),    
+ convert(Numeric(18,4), Invoices.Invoice.query('RoundOff').value('.','VARCHAR(40)')),    
+ convert(Numeric(18,4), Invoices.Invoice.query('NetAmount').value('.','VARCHAR(40)')),    
+ convert(BIT, Invoices.Invoice.query('IsProcessed').value('.','VARCHAR(10)')),    
+ convert(BIT, Invoices.Invoice.query('IsDraft').value('.','VARCHAR(10)')),    
+ current_timestamp,    
+ 0,    
+ null,    
+ @CreatedUserID,    
+ current_timestamp,    
+ @FinYear,    
+ @LocationID,    
+ @ApplicationID,    
+ convert(BIT, Invoices.Invoice.query('CheckStock').value('.','VARCHAR(10)')),    
+ convert(int, Invoices.Invoice.query('SalesTypeID').value('.','VARCHAR(16)')),    
+ convert(int, Invoices.Invoice.query('BillingAddressID').value('.','VARCHAR(16)')),    
+ convert(int, Invoices.Invoice.query('ShippingAddressID').value('.','VARCHAR(16)')),    
+ convert(int, Invoices.Invoice.query('NoOfBags').value('.','VARCHAR(16)')),    
+ convert(int, Invoices.Invoice.query('NoOfBoxes').value('.','VARCHAR(16)')),    
+ convert(int, Invoices.Invoice.query('NoOfCans').value('.','VARCHAR(16)')),  
+ convert(VARCHAR(50), Invoices.Invoice.query('CheckedBy').value('.','VARCHAR(50)')),    
+ convert(VARCHAR(50), Invoices.Invoice.query('PackedBy').value('.','VARCHAR(50)')),  
+ convert(Numeric(18,4), Invoices.Invoice.query('CessAmount').value('.','VARCHAR(16)')),  
+ convert(Numeric(18,4), Invoices.Invoice.query('FreightAmount').value('.','VARCHAR(16)')),  
+ 'to-be-invoiced',
+ convert(INT, Invoices.Invoice.query('PrintWithItemCode').value('.','VARCHAR(10)')),
+ convert(VARCHAR(250), Invoices.Invoice.query('Remarks').value('.','VARCHAR(250)'))         
+ FROM @Invoice.nodes('/Invoices/Invoice') AS Invoices(Invoice)    
+   
+ SET @ProformaInvoiceID = SCOPE_IDENTITY();    
+   
+ SELECT @ErrorCode = @@ERROR    
+ IF (@ErrorCode <> 0) GOTO PROBLEM    
+    
+ EXEC Sales.SpCheckCreditStatus @ProformaInvoiceID, @FinYear, @LocationID, @ApplicationID  
+        
+ EXEC Sales.SpCreateProformaInvoiceTrans @ProformaInvoiceID, @Items, @CreatedUserID, @FinYear, @LocationID, @ApplicationID , @RetValue = @RetValue OUTPUT  
+  
+ UPDATE Sales.ProformaInvoice SET SalesTypeID = (SELECT TOP 1 CategoryID FROM Sales.ProformaInvoiceTrans PIT  
+  INNER JOIN Item I ON I.ID = PIT.ItemID   
+  WHERE PIT.ProformaInvoiceID = @ProformaInvoiceID ORDER BY PIT.ID ASC)   
+ WHERE ID = @ProformaInvoiceID  
+   
+ SELECT @ErrorCode = @@ERROR    
+ IF (@ErrorCode <> 0) GOTO PROBLEM    
+  
+ IF(@RetValue= 1)  
+ begin      
+  INSERT INTO Sales.ProformaInvoiceAmountDetails    
+  SELECT     
+  @ProformaInvoiceID,    
+  CONVERT(Numeric(18,4), AmountDetails.item.query('Amount').value('.','VARCHAR(30)')),    
+  AmountDetails.item.query('Particulars').value('.','VARCHAR(40)'),    
+  CONVERT(Numeric(18,4), AmountDetails.item.query('Percentage').value('.','VARCHAR(30)')),    
+  @FinYear,    
+  @LocationID,    
+  @ApplicationID    
+  FROM @AmountDetails.nodes('/AmountDetails/Item') as AmountDetails(item)    
+  
+  INSERT INTO PackingDetails  
+  SELECT  
+  @ProformaInvoiceID,  
+  'ProformaInvoice',  
+  CONVERT(varchar(50), PackingDetails.item.query('PackSize').value('.','VARCHAR(50)')),   
+  CONVERT(int, PackingDetails.item.query('UnitID').value('.','VARCHAR(50)')),   
+  CONVERT(numeric(18,4), PackingDetails.item.query('Quantity').value('.','VARCHAR(50)')),   
+  @FinYear,    
+  @ApplicationID ,  
+  @LocationID  
+  FROM @PackingDetails.nodes('/PackingDetails/Item') as PackingDetails(item)    
+    
+  SELECT @ErrorCode = @@ERROR    
+  IF (@ErrorCode <> 0) GOTO PROBLEM    
+    
+ -- Update quantity met for selected sales order    
+  IF @IsDraft = 0    
+  BEGIN    
+   EXEC Sales.SpUpdateQuantityMetInSalesOrder @ProformaInvoiceID, 'ProformaInvoice' ,@RetValue = @RetValue OUTPUT  
+   IF @RetValue = 1  
+   BEGIN  
+    SET @RetValue = -4   
+   END  
+  END  
+  
+  SELECT @ErrorCode = @@ERROR    
+  IF (@ErrorCode <> 0) GOTO PROBLEM    
+     
+  If @RetValue>=0  
+  Begin         
+   -- if need to hold stock @Invoice.nodes('/Invoice')    
+   -- implemented hold stock on draft  
+   IF convert(BIT, @Invoice.value('(/Invoices/Invoice/CheckStock)[1]','VARCHAR(10)')) = 1    
+   BEGIN    
+    SELECT @ToWarehouseID = ConfigValue FROM configuration WHERE ConfigName LIKE 'DefaultHoldonStore'   
+     AND LocationID = @LocationID AND ApplicationID = @ApplicationID    
+    EXEC Sales.SpInvoiceIssueItems @ProformaInvoiceID, @ToWarehouseID, 'ProformaInvoice', @FinYear,     
+     @LocationID, @ApplicationID, @RetValue = @RetValue OUTPUT    
+   END    
+   ELSE     
+   BEGIN    
+    -- if no need to hold stock  
+    SET @RetValue = 1    
+   END    
+    
+   SELECT @ErrorCode = @@ERROR       
+  END     
+ END    
+  
+ PROBLEM:    
+ IF (@ErrorCode <> 0)     
+ BEGIN    
+  SET @RetValue = -1    
+ END    
+END    
+  
+  

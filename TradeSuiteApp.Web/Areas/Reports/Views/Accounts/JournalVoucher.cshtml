@@ -1,0 +1,289 @@
+﻿@model TradeSuiteApp.Web.Areas.Reports.Models.AccountReportModel
+@using ReportViewerForMvc;
+
+@{
+    ViewBag.ReportTitle = "Journal Voucher Report";
+}
+
+@Scripts.Render("~/Js/Page/AccountsReport")
+
+<div id="page_content_inner">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-2-10">
+                            <form action="/Reports/Accounts/JournalVoucher" id="report-filter-form" method="POST">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.DocDateFrom</label>
+                                                @Html.TextBoxFor(model => model.FromDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.DocDateTo</label>
+                                                @Html.TextBoxFor(model => model.ToDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="filters uk-form-row  general-ledger uk-hidden">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-autocomplete " id="documentnofrom-autocomplete">
+                                                <label for="uk_dp_start">@Reports.DocumentNoFrom</label>
+                                                @*@Html.TextBox("AccountCodeFrom", "", new { @class = "md-input label-fixed" })*@
+                                                @Html.TextBoxFor(model => model.DocumentNoFrom, new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-id="{{$item.ID}}"
+                                                            data-value="{{ $item.Code }}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.DocumentNoFromID)
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-autocomplete " id="documentnoto-autocomplete">
+                                                <label for="uk_dp_start">@Reports.DocumentNoTo</label>
+                                                @Html.TextBoxFor(model => model.DocumentNoTo, new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-id="{{$item.ID}}"
+                                                            data-value="{{ $item.Code }}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.DocumentNoToID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="filters uk-form-row  general-ledger uk-hidden">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-autocomplete " id="ledgeraccountcodefrom-autocomplete">
+                                                <label for="uk_dp_start">@Reports.AccountCodeFrom</label>
+                                                @*@Html.TextBox("AccountCodeFrom", "", new { @class = "md-input label-fixed" })*@
+                                                @Html.TextBoxFor(model => model.AccountCodeFrom, new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-id="{{$item.ID}}"
+                                                            data-value="{{ $item.Code }}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.AccountCodeFromID)
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-autocomplete " id="ledgeraccountcodeto-autocomplete">
+                                                <label for="uk_dp_start">@Reports.AccountCodeTo</label>
+                                                @Html.TextBoxFor(model => model.AccountCodeTo, new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-id="{{$item.ID}}"
+                                                            data-value="{{ $item.Code }}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.AccountCodeToID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row detail supplier-wise item-wise uk-hidden">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <label>@Reports.AccountNameFrom</label>
+                                            @Html.DropDownListFor(Model => Model.AccountNameFromRange, Model.FromAccountNameRangeList, "Select", new { @class = "md-input label-fixed", @id = "AccountCodeFromRange" })
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <label>@Reports.AccountNameTo</label>
+                                            @Html.DropDownListFor(Model => Model.AccountNameToRange, Model.ToAccountNameRangeList, "Select", new { @class = "md-input label-fixed", @id = "AccountCodeToRange" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-autocomplete " id="ledger-accountname-autocomplete">
+                                                <label for="uk_dp_start">@Reports.AccountName</label>
+                                                @*@Html.TextBox("AccountName", "", new { @class = "md-input label-fixed" })*@
+                                                @Html.TextBoxFor(model => model.AccountName, new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-id="{{ $item.ID}}"
+                                                            data-value="{{$item.Code}}">
+                                                            <a>
+                                                                {{ $item.Code }}
+
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                                @Html.HiddenFor(m => m.AccountNameID)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <label for="uk_dp_start">@Reports.Location</label>
+                                            @Html.DropDownListFor(Model => Model.LocationID, new SelectList(Model.LocationList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row uk-hidden">
+                                    <div class="uk-grid summary detail" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <label>@Reports.Department</label>
+                                            @Html.DropDownListFor(Model => Model.DepartmentID, new SelectList(Model.DDLDepartment, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @id = "DepartmentID" })
+                                        </div>
+                                    </div>
+                                </div>
+                                @*<div class="uk-form-row detail supplier-wise item-wise ">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <label>@Reports.EmployeeNoFrom</label>
+                                            @Html.DropDownListFor(Model => Model.EmployeeNoFromRange, Model.FromEmployeeNoRangeList, "Select", new { @class = "md-input label-fixed", @id = "EmployeeFromRange" })
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <label>@Reports.EmployeeNoTo</label>
+                                            @Html.DropDownListFor(Model => Model.EmployeeNoToRange, Model.ToEmployeeNoRangeList, "Select", new { @class = "md-input label-fixed", @id = "EmployeeToRange" })
+                                        </div>
+                                    </div>
+                                </div>*@
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-autocomplete " id="employee-autocomplete">
+                                                <label for="uk_dp_start">@Reports.Employee</label>
+                                                @Html.TextBoxFor(model => model.EmployeeName, new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Name}}"
+                                                            data-id="{{$item.ID}}"
+                                                            data-EmployeeCode="{{$item.Code}}"
+                                                            data-placement="{{$item.Location}}">
+                                                            <a>
+                                                                {{ $item.Name }}
+                                                                @*<div>{{ $item.Code }}</div>*@
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.Hidden("EmployeeID")
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row uk-hidden">
+                                    <div class="uk-grid summary detail" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <label>@Reports.InterCompany</label>
+                                            @Html.DropDownListFor(Model => Model.InterCompanyID, Model.InterCompanyList, "Select", new { @id = "CompanyID", @class = " md-input label-fixed", })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row uk-hidden">
+                                    <div class="uk-grid summary detail" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <label>@Reports.Project</label>
+                                            @Html.DropDownListFor(Model => Model.ProjectID, Model.ProjectList, "Select", new { @id = "ProjectID", @class = " md-input label-fixed", })
+                                        </div>
+                                    </div>
+                                </div>
+                                @*<div class="uk-form-row">
+                                        <div class="uk-grid ">
+                                            <div class="uk-width-medium-2-3 item-wise">
+                                                <div class="uk-autocomplete " id="item-autocomplete">
+                                                    <label for="uk_dp_start">@Reports.AccountHead</label>
+                                                    @Html.TextBoxFor(m => m.AccountName, new { @class = "md-input label-fixed" })
+                                                    <script type="text/autocomplete">
+                                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                            {{~items}}
+                                                            <li data-value="{{ $item.AccountName }} ({{$item.AccountID}})"
+                                                                data-account-id="{{$item.AccountID}}"
+                                                                data-GroupClassification="{{$item.GroupClassification}}"
+                                                                data-OpeningAmt="{{$item.OpeningAmt}}">
+                                                                <a>
+                                                                    {{ $item.AccountName }}
+                                                                    <div>{{{ $item.AccountID }}}</div>
+                                                                </a>
+                                                            </li>
+                                                            {{/items}}
+                                                        </ul>
+                                                    </script>
+                                                </div>
+                                                @Html.Hidden("AccountID")
+                                                @Html.Hidden("GroupClassification")
+                                                @Html.Hidden("OpeningAmt")
+                                            </div>
+                                        </div>
+                                    </div>*@
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="report-filter-submit">Show</button>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <a class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light " id="Refresh">Reset</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="uk-width-medium-8-10 ">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="" id="report-viewer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

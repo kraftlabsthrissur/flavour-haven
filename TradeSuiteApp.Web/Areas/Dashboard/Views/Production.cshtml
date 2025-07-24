@@ -1,0 +1,29 @@
+﻿
+@inherits System.Web.Mvc.WebViewPage
+<div class="md-card" data-uk-grid-margin="">
+    <div class="md-card-content uk-row-first">
+        <div class="heading_a uk-margin-bottom">
+            Production In Kg
+            <span class="budget"></span><span class="text">Budget</span>
+            <span class="actual-to-date"></span><span class="text">Actuals To Date</span>
+        </div>
+        <div class="uk-width-1-1">
+            <ul class="uk-tab" data-uk-tab="{connect:'#production-in-kg'}">
+                <li class="uk-active"><a class="production-month-tab">@DateTime.Now.ToString("MMMM")</a></li>
+                <li><a class="production-year-tab">@DateTime.Now.ToString("yyyy")</a></li>
+            </ul>
+            <ul id="production-in-kg" class="uk-switcher uk-margin">
+                <li aria-hidden="false" class="uk-active">
+                    <div id="ct-chart-production-month" class="chartist">
+                    </div>
+                </li>
+                <li aria-hidden="false">
+                    <div id="ct-chart-production-year" class="chartist">
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</div>
+

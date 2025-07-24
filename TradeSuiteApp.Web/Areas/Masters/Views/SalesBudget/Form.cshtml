@@ -1,0 +1,51 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.SalesBudgetModel
+@{
+    ViewBag.Title = "Form";
+}
+<div id="page_content_inner" class="form-view">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-10">
+                            <label>@Masters.Date</label>
+                            @Html.TextBoxFor(m => m.Date, new { @class = "md-input", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-2-10">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label></label>
+                                <div class="uk-form-file v1">
+                                    <label id="selected-file">
+                                        Upload XLS File
+                                    </label>
+                                    <label class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                                        <i class="uk-icon-upload"></i>
+                                    </label>
+                                    <input id="select-file" type="file" tabindex="-1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-10">
+                            <label>@Masters.Location</label>
+                            @Html.DropDownListFor(Model => Model.LocationID, new SelectList(Model.BranchList, "Value", "Text"), "All", new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-10 uk-hidden">
+                            <label>@Masters.Month</label>
+                            @Html.DropDownListFor(Model => Model.MonthID, new SelectList(Model.MonthList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-10 uk-hidden">
+                            <label>@Masters.BatchType</label>
+                            @Html.DropDownListFor(Model => Model.BatchTypeID, new SelectList(Model.BatchTypeList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-10">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label>&nbsp;</label>
+                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btn-download-template">@Common.Template</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+

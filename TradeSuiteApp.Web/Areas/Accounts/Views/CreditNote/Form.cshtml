@@ -1,0 +1,100 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.CreditNoteModel
+@{
+    ViewBag.Title = "Form";
+
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.TransNo</label>
+                            @Html.TextBoxFor(model => model.TransNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Accounts.TransDate</label>
+                            @Html.TextBoxFor(m => m.TransDate, new { @class = "md-input", @disabled = "disabled" })
+                        </div>
+                        @Html.HiddenFor(model => model.ID)
+                    </div>
+                </div>
+
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-2-8">
+                            <div class="uk-autocomplete " id="debit-account-autocomplete">
+                                <div class="uk-input-group">
+                                    <label>@Accounts.DebitAccount<span>*</span></label>
+                                    @Html.TextBoxFor(model => model.DebitAccount, new { @class = "md-input label-fixed" })
+                                    <span class="uk-input-group-addon">
+                                        <a data-uk-modal="{target:'#select-debit-account',center:false }">
+                                            <i class="uk-input-group-icon uk-icon-search"></i>
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+                            @Html.HiddenFor(model => model.DebitAccountID)
+                        </div>
+
+                        <div class="uk-width-medium-2-8">
+                            <div class="uk-autocomplete " id="debit-account-autocomplete">
+                                <div class="uk-input-group">
+                                    <label>@Accounts.CreditAccount<span>*</span></label>
+                                    @Html.TextBoxFor(model => model.CreditAccount, new { @class = "md-input label-fixed" })
+                                    <span class="uk-input-group-addon">
+                                        <a data-uk-modal="{target:'#select-credit-account',center:false }">
+                                            <i class="uk-input-group-icon uk-icon-search"></i>
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+                            @Html.HiddenFor(model => model.CreditAccountID)
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.GST<span>*</span></label>
+                            @Html.HiddenFor(model => model.IsInclusive)
+                            @Html.DropDownListFor(Model => Model.GSTID, Model.GSTList, "Select", new {@class = " md-input label-fixed", })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.GSTPercentage<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.GSTCategoryID, Model.GSTCategoryList, "Select", new {@class = " md-input label-fixed", })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.Amount<span>*</span></label>                           
+                            @Html.TextBoxFor(model => model.Amount, new { @class = "md-input label-fixed mask-positive-currency" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.TaxableAmount</label>
+                            @Html.TextBoxFor(model => model.TaxableAmount, new { @class = "md-input label-fixed mask-positive-currency", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.GSTAmount</label>
+                            @Html.TextBoxFor(model => model.GSTAmount, new { @class = "md-input label-fixed mask-positive-currency",@disabled="disabled" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Accounts.Remarks</label>
+                            @Html.TextBoxFor(model => model.Remarks, new { @class = "md-input label-fixed" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-1">
+                            <label>@Accounts.TotalAmount</label>
+                            @Html.TextBoxFor(m => m.TotalAmount, new { @class = "md-input label-fixed x-large mask-currency", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

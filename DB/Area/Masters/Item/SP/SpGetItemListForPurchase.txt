@@ -1,0 +1,343 @@
+             
+                  
+ALTER PROCEDURE [Master].[SpGetItemListForPurchase](                  
+ @Type varchar(20),                  
+ @ItemCategoryID int,                  
+ @PurchaseCategoryID int,                  
+ @BusinessCategoryID int,                  
+ @SupplierID int,                  
+ @CodeHint varchar(100),                  
+ @NameHint varchar(100),         
+ @PartsNumberHit varchar(100),         
+ @ModelHint varchar(100),         
+ @RemarksHint varchar(100),         
+ @UnitHint varchar(20),                  
+ @ItemCategoryHint varchar(100),                  
+ @PurchaseCategoryHint varchar(100),                  
+ @SortField varchar(100),                  
+ @SortOrder varchar(10),                  
+ @Offset int = 0,                  
+ @Limit int = 20,                  
+ @FinYear int,                  
+ @LocationID int,                  
+ @ApplicationID int)                  
+AS                  
+BEGIN                  
+                   
+ IF @ItemCategoryID = 0                  
+ BEGIN                   
+  SET @ItemCategoryID = NULL                  
+ END                  
+                  
+ IF @PurchaseCategoryID = 0                  
+ BEGIN                   
+  SET @PurchaseCategoryID = NULL                  
+ END                  
+ IF @BusinessCategoryID=0                  
+ BEGIN                  
+  SET @BusinessCategoryID = NULL                  
+ END             
+ IF @CodeHint=''                  
+ BEGIN                  
+  SET @CodeHint = NULL                  
+ END           
+  IF @NameHint=''                  
+ BEGIN                  
+  SET @NameHint = NULL                  
+ END           
+  IF @UnitHint=''                  
+ BEGIN                  
+  SET @UnitHint = NULL                  
+ END           
+  IF @ItemCategoryHint=''                  
+ BEGIN                  
+  SET @ItemCategoryHint = NULL                  
+ END           
+   IF @PurchaseCategoryHint=''                  
+ BEGIN                  
+  SET @PurchaseCategoryHint = NULL                  
+ END           
+ Set @Offset = @Offset + 1                  
+ Declare @totalRecords int = 0;                  
+ if @Type='Stock'                  
+ begin                  
+                   
+ if @SupplierID=0                   
+ begin                  
+                   
+ SELECT @totalRecords =  COUNT(*) FROM viGoodsItem  V                  
+ where CategoryID =ISNULL( @ItemCategoryID,CategoryID) and PurchaseCategoryID =ISNULL( @PurchaseCategoryID,PurchaseCategoryID)                  
+ and CategoryID IN (Select ItemCategoryID from StockOrServiceType where Type = 'Stock')                  
+ AND V.BusinessCategoryID=ISNULL(@BusinessCategoryID,V.BusinessCategoryID)                  
+ ;WITH Item_CTE AS                  
+ (                  
+   SELECT top 10000  Count(*) OVER (Partition by 1) AS recordsFiltered,                  
+   V.ID,Code,Name,PartsNumber,Remark,Model,Unit as PrimaryUnit,isnull(PrimaryUnitID,'') as PrimaryUnitID,        
+   V.PurchaseUnit,PurchaseUnitID, Category,PurchaseCategory,PurchaseCategoryID,CategoryID,                  
+   dbo.FnGetStockByItemID(V.ID,@FinYear,@LocationID,@ApplicationID) AS Stock,                  
+   dbo.FnGetStockQuantityUnderQC(V.ID,@FinYear,@LocationID,@ApplicationID) AS QtyUnderQC,                  
+   V.GSTCategoryID,V.GSTCategory,V.IGSTPercent  as GSTPercentage ,V.VATPercentage,V.TaxType,V.TaxTypeID,    
+   (select TOP 1 B.BatchNo from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)BatchNo,    
+   (select TOP 1 B.ExpiryDate from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)ExpiryDate,    
+   (select TOP 1 B.RetailMRP from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)RetailMRP,            
+   (select TOP 1 B.RetailLooseRate from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)RetailLooseRate,      
+   (select TOP 1 B.PurchaseMRP from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)PurchaseMRP,            
+   (select TOP 1 B.PurchaseLooseRate from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)PurchaseLooseRate,      
+   dbo.FnGetLastPurchaseRateByItemID(V.ID,@FinYear,@LocationID,@ApplicationID) AS LastPR,                  
+   dbo.FnGetLowestPurchaseRateByItemID(V.ID,@FinYear,@LocationID,@ApplicationID)  AS LowestPR,  
+   dbo.FnGetStockQuantityOrdered(V.ID,@FinYear,@LocationID,@ApplicationID) AS PendingOrderQty,                  
+   dbo.FnGetStockByItemID(V.ID,@FinYear,@LocationID,@ApplicationID) AS QtyAvailable,                  
+   dbo.FnGetPurchaseRequestedQtyByItemID(V.ID,@FinYear,@LocationID,@ApplicationID) AS RequestedQty,                  
+   ISNULL((select ID from Category where CategoryGroupID = 1 and ID IN                   
+   (Select ItemCategoryID from StockOrServiceType where Type = 'Stock') and (Name like'Finished Goods%') and V.CategoryID=ID),0) as FGCategoryID,                  
+   0 as TravelCategoryID  ,                  
+   ROW_NUMBER() OVER ( ORDER BY                   
+   case when @SortField+@SortOrder = 'NameASC' then Name End ASC,                  
+   case when @SortField+@SortOrder = 'NameDESC' then Name End DESC,                  
+   case when @SortField+@SortOrder = 'UnitASC' then Unit End ASC,                  
+   case when @SortField+@SortOrder = 'UnitDESC' then Unit End DESC,                    
+   case when @SortField+@SortOrder = 'ItemCategoryASC' then Category End ASC,                  
+   case when @SortField+@SortOrder = 'ItemCategoryDESC' then Category End DESC,                  
+   case when @SortField+@SortOrder = 'PurchaseCategoryASC' then PurchaseCategory End ASC,                  
+   case when @SortField+@SortOrder = 'PurchaseCategoryDESC' then PurchaseCategory End DESC,                  
+   case when @SortField+@SortOrder = 'CodeASC' then Code End ASC,                  
+   case when @SortField+@SortOrder = 'CodeDESC' then Code End DESC,        
+   case when @SortField+@SortOrder = 'PartsNumberASC' then V.PartsNumber End ASC,                
+   case when @SortField+@SortOrder = 'PartsNumberDESC' then V.PartsNumber End DESC,          
+   case when @SortField+@SortOrder = 'RemarkASC' then V.Remark End ASC,                
+   case when @SortField+@SortOrder = 'RemarkESC' then V.Remark End DESC,          
+   case when @SortField+@SortOrder = 'ModelASC' then V.Model End ASC,                
+   case when @SortField+@SortOrder = 'ModelDESC' then V.Model End DESC ) AS RowNum                  
+  FROM viGoodsItem V               
+  WHERE  (@CodeHint IS NULL  OR Code Like '%' + @CodeHint+ '%' )                
+  AND (@NameHint IS NULL OR Name Like '%' + @NameHint+'%' )        
+  AND (@PartsNumberHit IS NULL OR V.ID in (select p.ItemID from ItemPartsNumber p WHERE p.PartsNumber like '%'+ @PartsNumberHit+ '%' ))          
+  AND (@RemarksHint IS NULL OR V.Remark Like '%' + @RemarksHint+ '%')           
+  AND (@ModelHint IS NULL OR V.Model Like '%' + @ModelHint+ '%')           
+  AND (@UnitHint IS NULL OR Unit LIKE '%' + @UnitHint + '%' )                       
+  AND (@PurchaseCategoryHint IS NULL OR PurchaseCategory Like '%' + @PurchaseCategoryHint+'%'   )                        
+  AND (@ItemCategoryHint IS NULL OR Category LIKE '%' + @ItemCategoryHint + '%')            
+  AND (@ItemCategoryID IS NULL OR CategoryID =@ItemCategoryID)            
+  AND (@PurchaseCategoryID IS NULL OR PurchaseCategoryID =@PurchaseCategoryID)            
+  AND (@BusinessCategoryID IS NULL OR BusinessCategoryID =@BusinessCategoryID)                     
+ -- and CategoryID IN (Select ItemCategoryID from StockOrServiceType where Type = 'Stock')                        
+ )                  
+                   
+ SELECT ID, Code, Name,PartsNumber,Remark,Model, PrimaryUnit, PrimaryUnitID,
+ ISNULL((SELECT STRING_AGG(Name+'|'+CAST(PackSize AS varchar(10)), ',') FROM SecondaryUnit su join ItemSecondaryUnit iu on iu.SecondaryUnitID=su.ID WHERE iu.ItemID=Item_CTE.ID  AND su.UnitID=PurchaseUnitID),'')SecondaryUnits,    
+ PurchaseUnit,PurchaseUnitID,PurchaseCategoryID,Category,CategoryID,PurchaseCategory,BatchNo,ExpiryDate,      
+ Stock, QtyUnderQC, PendingOrderQty QtyOrdered,recordsFiltered, @totalRecords as totalRecords,GSTCategoryID,GSTCategory, GSTPercentage,VATPercentage,TaxType,TaxTypeID,      
+ RetailMRP,RetailLooseRate,PurchaseMRP,PurchaseLooseRate, LastPR,LowestPR, PendingOrderQty,QtyAvailable, RequestedQty, PendingOrderQty OrderedQty , FGCategoryID ,TravelCategoryID                  
+ FROM Item_CTE                  
+ WHERE RowNum >= @Offset                  
+ AND RowNum < @Offset + @Limit                  
+ end                  
+ if  @SupplierID>0                   
+ begin                  
+                   
+ SELECT @totalRecords =  COUNT(*) FROM viGoodsItem  V                  
+ Inner join SupplierItemCategory SC on SC.SupplierID = @SupplierID and SC.ItemCategoryID = V.CategoryID                   
+ where CategoryID =ISNULL( @ItemCategoryID,CategoryID) and PurchaseCategoryID =ISNULL( @PurchaseCategoryID,PurchaseCategoryID)                    
+ and CategoryID IN (Select ItemCategoryID from StockOrServiceType where Type = 'Stock')                   
+ AND V.BusinessCategoryID=ISNULL(@BusinessCategoryID,V.BusinessCategoryID)                  
+                  
+ ;WITH Item_CTE AS                  
+ (                  
+   SELECT top 10000  Count(*) OVER (Partition by 1) AS recordsFiltered,                  
+   V.ID,Code,Name,PartsNumber,Remark,Model,Unit as PrimaryUnit,PrimaryUnitID,V.PurchaseUnit,        
+   PurchaseUnitID,Category,PurchaseCategory,PurchaseCategoryID,CategoryID,                  
+   dbo.FnGetStockByItemID(V.ID,@FinYear,@LocationID,@ApplicationID) AS Stock,                  
+   dbo.FnGetStockQuantityUnderQC(V.ID,@FinYear,@LocationID,@ApplicationID) AS QtyUnderQC,                  
+   V.GSTCategoryID,V.GSTCategory,V.IGSTPercent as GSTPercentage,V.VATPercentage,V.TaxType,V.TaxTypeID,  
+   (select TOP 1 B.BatchNo from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)BatchNo,    
+   (select TOP 1 B.ExpiryDate from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)ExpiryDate,    
+   (select TOP 1 B.RetailMRP from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)RetailMRP,            
+   (select TOP 1 B.RetailLooseRate from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)RetailLooseRate,      
+   (select TOP 1 B.PurchaseMRP from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)PurchaseMRP,            
+   (select TOP 1 B.PurchaseLooseRate from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)PurchaseLooseRate,      
+   dbo.FnGetLastPurchaseRateByItemID(V.ID,@FinYear,@LocationID,@ApplicationID) AS LastPR,                  
+   dbo.FnGetLowestPurchaseRateByItemID(V.ID,@FinYear,@LocationID,@ApplicationID)  AS LowestPR,                  
+   dbo.FnGetStockQuantityOrdered(V.ID,@FinYear,@LocationID,@ApplicationID) AS PendingOrderQty,                  
+   dbo.FnGetStockByItemID(V.ID,@FinYear,@LocationID,@ApplicationID) AS QtyAvailable,                  
+   dbo.FnGetPurchaseRequestedQtyByItemID(V.ID,@FinYear,@LocationID,@ApplicationID) AS RequestedQty,                  
+   ISNULL((select ID from Category where CategoryGroupID = 1 and ID IN                   
+   (Select ItemCategoryID from StockOrServiceType where Type = 'Stock') and (Name like'Finished Goods%') and V.CategoryID=ID),0) as FGCategoryID,                  
+   0 as TravelCategoryID,                     
+   ROW_NUMBER() OVER ( ORDER BY                   
+   case when @SortField+@SortOrder = 'NameASC' then Name End ASC,                  
+   case when @SortField+@SortOrder = 'NameDESC' then Name End DESC,                  
+   case when @SortField+@SortOrder = 'UnitASC' then Unit End ASC,                  
+   case when @SortField+@SortOrder = 'UnitDESC' then Unit End DESC,                    
+   case when @SortField+@SortOrder = 'ItemCategoryASC' then Category End ASC,                  
+   case when @SortField+@SortOrder = 'ItemCategoryDESC' then Category End DESC,                  
+   case when @SortField+@SortOrder = 'PurchaseCategoryASC' then PurchaseCategory End ASC,                  
+   case when @SortField+@SortOrder = 'PurchaseCategoryDESC' then PurchaseCategory End DESC,                  
+   case when @SortField+@SortOrder = 'CodeASC' then Code End ASC,                  
+   case when @SortField+@SortOrder = 'CodeDESC' then Code End DESC,        
+   case when @SortField+@SortOrder = 'PartsNumberASC' then V.PartsNumber End ASC,                
+   case when @SortField+@SortOrder = 'PartsNumberDESC' then V.PartsNumber End DESC,          
+   case when @SortField+@SortOrder = 'RemarkASC' then V.Remark End ASC,                
+   case when @SortField+@SortOrder = 'RemarkESC' then V.Remark End DESC,          
+   case when @SortField+@SortOrder = 'ModelASC' then V.Model End ASC,                
+   case when @SortField+@SortOrder = 'ModelDESC' then V.Model End DESC ) AS RowNum                  
+  FROM viGoodsItem V                 
+  Inner join SupplierItemCategory SC on SC.SupplierID =@SupplierID and SC.ItemCategoryID = V.CategoryID                   
+  WHERE  (@CodeHint IS NULL  OR Code Like '%' + @CodeHint+ '%' )                
+  AND (@NameHint IS NULL OR Name Like '%' + @NameHint+'%' )          
+  AND (@PartsNumberHit IS NULL OR V.ID in (select p.ItemID from ItemPartsNumber p WHERE p.PartsNumber like '%'+ @PartsNumberHit+ '%' ))          
+  AND (@RemarksHint IS NULL OR V.Remark Like '%' + @RemarksHint+ '%')           
+  AND (@ModelHint IS NULL OR V.Model Like '%' + @ModelHint+ '%')           
+  AND (@UnitHint IS NULL OR Unit LIKE '%' + @UnitHint + '%' )                       
+  AND (@PurchaseCategoryHint IS NULL OR PurchaseCategory Like '%' + @PurchaseCategoryHint+'%'   )                        
+  AND (@ItemCategoryHint IS NULL OR Category LIKE '%' + @ItemCategoryHint + '%')            
+  AND (@ItemCategoryID IS NULL OR CategoryID =@ItemCategoryID)            
+  AND (@PurchaseCategoryID IS NULL OR PurchaseCategoryID =@PurchaseCategoryID)            
+  AND (@BusinessCategoryID IS NULL OR BusinessCategoryID =@BusinessCategoryID)                     
+ )                  
+                   
+ SELECT ID, Code, Name,PartsNumber,Remark,Model, PrimaryUnit, PrimaryUnitID,
+ ISNULL((SELECT STRING_AGG(Name+'|'+CAST(PackSize AS varchar(10)), ',') FROM SecondaryUnit su join ItemSecondaryUnit iu on iu.SecondaryUnitID=su.ID WHERE iu.ItemID=Item_CTE.ID  AND su.UnitID=PurchaseUnitID),'')SecondaryUnits,    
+ PurchaseUnit,PurchaseUnitID,Category,CategoryID,PurchaseCategory,Stock, QtyUnderQC,BatchNo,ExpiryDate,    
+ PendingOrderQty QtyOrdered,recordsFiltered, @totalRecords as totalRecords,GSTCategoryID,GSTCategory, GSTPercentage,VATPercentage,TaxType,TaxTypeID,RetailMRP,      
+ RetailLooseRate,PurchaseMRP,PurchaseLooseRate, LastPR,LowestPR, PendingOrderQty,QtyAvailable, RequestedQty,PendingOrderQty OrderedQty , FGCategoryID,TravelCategoryID,PurchaseCategoryID                  
+ FROM Item_CTE                  
+ WHERE RowNum >= @Offset                  
+ AND RowNum < @Offset + @Limit                  
+ end                  
+ end                  
+ if @type='service'                  
+ begin                  
+ if @SupplierID=0                   
+ begin                  
+                   
+ SELECT @totalRecords =  COUNT(*) FROM viServiceItem  V                  
+  where CategoryID = ISNULL(@ItemCategoryID ,CategoryID) AND PurchaseCategoryID = ISNULL(@PurchaseCategoryID ,PurchaseCategoryID)                   
+  ;WITH Item_CTE AS                  
+ (                  
+   SELECT top 10000  Count(*) OVER (Partition by 1) AS recordsFiltered,                  
+   V.ID,Code,Name,PartsNumber,Remark,Model,Unit as PrimaryUnit,PrimaryUnitID,V.PurchaseUnit,PurchaseUnitID,Category,PurchaseCategory,CategoryID,                  
+   dbo.FnGetStockByItemID(V.ID,@FinYear,@LocationID,@ApplicationID) AS Stock,                  
+   dbo.FnGetStockQuantityUnderQC(V.ID,@FinYear,@LocationID,@ApplicationID) AS QtyUnderQC,                  
+   V.GSTCategoryID,V.GSTCategory,V.IGSTPercent  as GSTPercentage ,V.VATPercentage,V.TaxType,V.TaxTypeID,  
+   (select TOP 1 B.BatchNo from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)BatchNo,    
+   (select TOP 1 B.ExpiryDate from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)ExpiryDate,    
+   (select TOP 1 B.RetailMRP from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)RetailMRP,            
+   (select TOP 1 B.RetailLooseRate from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)RetailLooseRate,      
+   (select TOP 1 B.PurchaseMRP from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)PurchaseMRP,            
+   (select TOP 1 B.PurchaseLooseRate from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)PurchaseLooseRate,      
+   dbo.FnGetLastPurchaseRateByItemID(V.ID,@FinYear,@LocationID,@ApplicationID) AS LastPR,                  
+   dbo.FnGetLowestPurchaseRateByItemID(V.ID,@FinYear,@LocationID,@ApplicationID)  AS LowestPR,                  
+   dbo.FnGetStockQuantityOrdered(V.ID,@FinYear,@LocationID,@ApplicationID) AS PendingOrderQty,                  
+   dbo.FnGetStockByItemID(V.ID,@FinYear,@LocationID,@ApplicationID) AS QtyAvailable,                  
+   dbo.FnGetPurchaseRequestedQtyByItemID(V.ID,@FinYear,@LocationID,@ApplicationID) AS RequestedQty,                  
+   0 as FGCategoryID,PurchaseCategoryID,                  
+   ISNULL((select ID from Category where CategoryGroupID = 1 and ID IN (Select ItemCategoryID from StockOrServiceType where Type = 'Service') and (Name like'Travel Services%') and v.CategoryID=ID),0) as TravelCategoryID  ,                    
+      ROW_NUMBER() OVER ( ORDER BY                   
+   case when @SortField+@SortOrder = 'NameASC' then Name End ASC,                  
+   case when @SortField+@SortOrder = 'NameDESC' then Name End DESC,                  
+   case when @SortField+@SortOrder = 'UnitASC' then Unit End ASC,                  
+   case when @SortField+@SortOrder = 'UnitDESC' then Unit End DESC,                    
+case when @SortField+@SortOrder = 'ItemCategoryASC' then Category End ASC,                  
+   case when @SortField+@SortOrder = 'ItemCategoryDESC' then Category End DESC,                  
+   case when @SortField+@SortOrder = 'PurchaseCategoryASC' then PurchaseCategory End ASC,                  
+   case when @SortField+@SortOrder = 'PurchaseCategoryDESC' then PurchaseCategory End DESC,                  
+   case when @SortField+@SortOrder = 'CodeASC' then Code End ASC,                  
+   case when @SortField+@SortOrder = 'CodeDESC' then Code End DESC,        
+   case when @SortField+@SortOrder = 'PartsNumberASC' then V.PartsNumber End ASC,                
+   case when @SortField+@SortOrder = 'PartsNumberDESC' then V.PartsNumber End DESC,          
+   case when @SortField+@SortOrder = 'RemarkASC' then V.Remark End ASC,                
+   case when @SortField+@SortOrder = 'RemarkESC' then V.Remark End DESC,          
+   case when @SortField+@SortOrder = 'ModelASC' then V.Model End ASC,                
+   case when @SortField+@SortOrder = 'ModelDESC' then V.Model End DESC ) AS RowNum                  
+  from viServiceItem V             
+  WHERE  (@CodeHint IS NULL  OR Code Like '%' + @CodeHint+ '%' )                
+  AND (@NameHint IS NULL OR Name Like '%' + @NameHint+'%' )           
+  AND (@PartsNumberHit IS NULL OR V.ID in (select p.ItemID from ItemPartsNumber p WHERE p.PartsNumber like '%'+ @PartsNumberHit+ '%' ))          
+  AND (@RemarksHint IS NULL OR V.Remark Like '%' + @RemarksHint+ '%')           
+  AND (@ModelHint IS NULL OR V.Model Like '%' + @ModelHint+ '%')           
+  AND (@UnitHint IS NULL OR Unit LIKE '%' + @UnitHint + '%' )                       
+  AND (@PurchaseCategoryHint IS NULL OR PurchaseCategory Like '%' + @PurchaseCategoryHint+'%'   )                        
+  AND (@ItemCategoryHint IS NULL OR Category LIKE '%' + @ItemCategoryHint + '%')            
+  AND (@ItemCategoryID IS NULL OR CategoryID =@ItemCategoryID)            
+  AND (@PurchaseCategoryID IS NULL OR PurchaseCategoryID =@PurchaseCategoryID)            
+                               
+ )                  
+                   
+ SELECT ID, Code, Name,PartsNumber,Remark,Model, PrimaryUnit, PrimaryUnitID,
+ ISNULL((SELECT STRING_AGG(Name+'|'+CAST(PackSize AS varchar(10)), ',') FROM SecondaryUnit su join ItemSecondaryUnit iu on iu.SecondaryUnitID=su.ID WHERE iu.ItemID=Item_CTE.ID  AND su.UnitID=PurchaseUnitID),'')SecondaryUnits,    
+ PurchaseUnit,PurchaseUnitID,Category,CategoryID,PurchaseCategory,Stock, QtyUnderQC, PendingOrderQty QtyOrdered,BatchNo,ExpiryDate,      
+ recordsFiltered, @totalRecords as totalRecords,GSTCategoryID,GSTCategory, GSTPercentage,VATPercentage,TaxType,TaxTypeID,RetailMRP,RetailLooseRate,PurchaseMRP,PurchaseLooseRate,       
+ LastPR,LowestPR, PendingOrderQty,QtyAvailable, RequestedQty,PendingOrderQty OrderedQty , FGCategoryID,TravelCategoryID,PurchaseCategoryID                   
+ FROM Item_CTE                  
+ WHERE RowNum >= @Offset                  
+ AND RowNum < @Offset + @Limit                  
+ end                  
+ if  @SupplierID>0                   
+ begin                  
+                   
+ SELECT @totalRecords =  COUNT(*) FROM viServiceItem  I                  
+ Inner join SupplierItemCategory SC on SC.SupplierID = @SupplierID and SC.ItemCategoryID = I.CategoryID                   
+  where CategoryID = ISNULL(@ItemCategoryID ,CategoryID) AND PurchaseCategoryID = ISNULL(@PurchaseCategoryID ,PurchaseCategoryID)         
+  ;WITH Item_CTE AS                  
+ (                  
+   SELECT top 10000  Count(*) OVER (Partition by 1) AS recordsFiltered,                  
+   V.ID,Code,Name,PartsNumber,Remark,Model,Unit as PrimaryUnit,PrimaryUnitID,V.PurchaseUnit,PurchaseUnitID,Category,PurchaseCategory,PurchaseCategoryID,CategoryID,                  
+   dbo.FnGetStockByItemID(V.ID,@FinYear,@LocationID,@ApplicationID) AS Stock,                  
+   dbo.FnGetStockQuantityUnderQC(V.ID,@FinYear,@LocationID,@ApplicationID) AS QtyUnderQC,                  
+   V.GSTCategoryID,V.GSTCategory,V.IGSTPercent  as GSTPercentage , V.VATPercentage,V.TaxType,V.TaxTypeID,  
+   (select TOP 1 B.BatchNo from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)BatchNo,    
+   (select TOP 1 B.ExpiryDate from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)ExpiryDate,    
+   (select TOP 1 B.RetailMRP from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)RetailMRP,            
+   (select TOP 1 B.RetailLooseRate from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)RetailLooseRate,      
+   (select TOP 1 B.PurchaseMRP from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)PurchaseMRP,            
+   (select TOP 1 B.PurchaseLooseRate from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID)PurchaseLooseRate,      
+   dbo.FnGetLastPurchaseRateByItemID(V.ID,@FinYear,@LocationID,@ApplicationID) AS LastPR,                  
+   dbo.FnGetLowestPurchaseRateByItemID(V.ID,@FinYear,@LocationID,@ApplicationID)  AS LowestPR,                  
+   dbo.FnGetStockQuantityOrdered(V.ID,@FinYear,@LocationID,@ApplicationID) AS PendingOrderQty,                  
+   dbo.FnGetStockByItemID(V.ID,@FinYear,@LocationID,@ApplicationID) AS QtyAvailable,                  
+   dbo.FnGetPurchaseRequestedQtyByItemID(V.ID,@FinYear,@LocationID,@ApplicationID) AS RequestedQty,                     
+   0 as FGCategoryID,                  
+   ISNULL((select ID from Category where CategoryGroupID = 1 and ID IN (Select ItemCategoryID from StockOrServiceType where Type = 'Service') and (Name like'Travel Services%') and V.CategoryID=ID),0) as TravelCategoryID  ,                    
+      ROW_NUMBER() OVER ( ORDER BY                   
+   case when @SortField+@SortOrder = 'NameASC' then Name End ASC,                  
+   case when @SortField+@SortOrder = 'NameDESC' then Name End DESC,                  
+   case when @SortField+@SortOrder = 'UnitASC' then Unit End ASC,                  
+   case when @SortField+@SortOrder = 'UnitDESC' then Unit End DESC,                    
+   case when @SortField+@SortOrder = 'ItemCategoryASC' then Category End ASC,                  
+   case when @SortField+@SortOrder = 'ItemCategoryDESC' then Category End DESC,                  
+   case when @SortField+@SortOrder = 'PurchaseCategoryASC' then PurchaseCategory End ASC,                  
+   case when @SortField+@SortOrder = 'PurchaseCategoryDESC' then PurchaseCategory End DESC,                  
+   case when @SortField+@SortOrder = 'CodeASC' then Code End ASC,                  
+   case when @SortField+@SortOrder = 'CodeDESC' then Code End DESC,        
+   case when @SortField+@SortOrder = 'PartsNumberASC' then V.PartsNumber End ASC,                
+   case when @SortField+@SortOrder = 'PartsNumberDESC' then V.PartsNumber End DESC,          
+   case when @SortField+@SortOrder = 'RemarkASC' then V.Remark End ASC,                
+   case when @SortField+@SortOrder = 'RemarkESC' then V.Remark End DESC,          
+   case when @SortField+@SortOrder = 'ModelASC' then V.Model End ASC,                
+   case when @SortField+@SortOrder = 'ModelDESC' then V.Model End DESC ) AS RowNum                  
+  from viServiceItem V                
+  Inner join SupplierItemCategory SC on SC.SupplierID = @SupplierID and SC.ItemCategoryID = V.CategoryID                   
+  WHERE  (@CodeHint IS NULL  OR Code Like '%' + @CodeHint+ '%' )                
+  AND (@NameHint IS NULL OR Name Like '%' + @NameHint+'%' )            
+  AND (@PartsNumberHit IS NULL OR V.ID in (select p.ItemID from ItemPartsNumber p WHERE p.PartsNumber like '%'+ @PartsNumberHit+ '%' ))          
+  AND (@RemarksHint IS NULL OR V.Remark Like '%' + @RemarksHint+ '%')           
+  AND (@ModelHint IS NULL OR V.Model Like '%' + @ModelHint+ '%')           
+  AND (@UnitHint IS NULL OR Unit LIKE '%' + @UnitHint + '%' )                       
+  AND (@PurchaseCategoryHint IS NULL OR PurchaseCategory Like '%' + @PurchaseCategoryHint+'%'   )                        
+  AND (@ItemCategoryHint IS NULL OR Category LIKE '%' + @ItemCategoryHint + '%')            
+  AND (@ItemCategoryID IS NULL OR CategoryID =@ItemCategoryID)            
+  AND (@PurchaseCategoryID IS NULL OR PurchaseCategoryID =@PurchaseCategoryID)            
+                            
+ )                  
+                   
+ SELECT ID, Code,PartsNumber,Remark,Model, Name, PrimaryUnit, PrimaryUnitID,
+ ISNULL((SELECT STRING_AGG(Name+'|'+CAST(PackSize AS varchar(10)), ',') FROM SecondaryUnit su  join ItemSecondaryUnit iu on iu.SecondaryUnitID=su.ID WHERE iu.ItemID=Item_CTE.ID  AND  su.UnitID=PurchaseUnitID),'')SecondaryUnits,    
+ PurchaseUnit,PurchaseUnitID,Category,CategoryID,PurchaseCategory,Stock, QtyUnderQC, PendingOrderQty QtyOrdered,BatchNo,ExpiryDate,      
+ recordsFiltered, @totalRecords as totalRecords,GSTCategoryID,GSTCategory, GSTPercentage,VATPercentage,TaxType,TaxTypeID,RetailMRP,RetailLooseRate,PurchaseMRP,PurchaseLooseRate,      
+ LastPR,LowestPR, PendingOrderQty,QtyAvailable, RequestedQty,PendingOrderQty OrderedQty , FGCategoryID,TravelCategoryID,PurchaseCategoryID                   
+ FROM Item_CTE                  
+ WHERE RowNum >= @Offset                  
+ AND RowNum < @Offset + @Limit                  
+ end                  
+ end                  
+End 

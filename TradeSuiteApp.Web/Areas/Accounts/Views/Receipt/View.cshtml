@@ -1,0 +1,110 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.ReceiptVoucherModel
+
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.VoucherNumber</label>
+                            @Html.TextBoxFor(model => model.ReceiptNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Accounts.VoucherDate</label>
+                            @Html.TextBoxFor(model => model.ReceiptDate, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Accounts.Customer</label>
+                            @Html.TextBoxFor(model => model.CustomerName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.ReceiptAmount</label>
+                            @Html.TextBoxFor(model => model.ReceiptAmount, new { @class = "md-input mask-currency label-fixed", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.ModeOfReceipt</label>
+                            @Html.TextBoxFor(model => model.PaymentTypeName, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Accounts.BankCashAC</label>
+                            @Html.TextBoxFor(model => model.BankName, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.Date</label>
+                            @Html.TextBoxFor(model => model.Date, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Accounts.ReferenceNumber</label>
+                            @Html.TextBoxFor(model => model.BankReferanceNumber, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Accounts.Remarks</label>
+                            @Html.TextBoxFor(model => model.Remarks, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="section-group">
+        <table id="invoice-list" class="uk-table" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="width-20">@Common.SerialNo</th>
+                    <th class="width-100">@Common.DocumentType</th>
+                    <th class="width-100">@Common.DocumentNo</th>
+                    <th class="width-100">@Accounts.InvoiceDate</th>
+                    <th class="width-100">@Accounts.PendingDays</th>
+                    <th class="width-100">@Accounts.BillAmount</th>
+                    <th class="width-100">@Accounts.BalanceToBePaid</th>                    
+                    <th class="width-100">@Accounts.AmountMatched</th>
+                    <th class="width-100">@Accounts.RemainingAmount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Item.Select((value, i) => new { i = (i + 1), value }))
+                {
+                    decimal AmountToBeMatched=0;
+                    if((item.value.DocumentType == "INVOICE") || (item.value.DocumentType == "DEBIT NOTE"))
+                    {
+                        AmountToBeMatched = item.value.Balance - item.value.AmountToBeMatched;
+                    }
+                    else
+                    {
+                        AmountToBeMatched = item.value.Balance + item.value.AmountToBeMatched;
+                    }
+                    <tr>
+                        <td class="uk-text-center">@(1 + @Model.Item.IndexOf(item.value))</td>
+                        <td>@item.value.DocumentType</td>
+                        <td>@item.value.DocumentNo</td>
+                        <td>@item.value.ReceivableDate</td>
+                        <td>@item.value.PendingDays</td>
+                        <td class="uk-text-right mask-qty">@item.value.Amount</td>
+                        <td class="uk-text-right mask-qty">@item.value.Balance</td>
+                       
+                        <td class="uk-text-right mask-qty">@item.value.AmountToBeMatched</td>
+                        <td class="uk-text-right mask-qty">@AmountToBeMatched</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="section-group">
+
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-1-1">
+                
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,59 @@
+﻿@model TradeSuiteApp.Web.Areas.Sales.Models.SalesOrderModel
+
+@{
+    ViewBag.Title = "Sales Order Details";
+}
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Sales.SalesOrder</h1>
+            <span class="uk-text-upper uk-text-small">@Sales.SalesOrderDetails</span>
+        </div>
+        <div class="heading_actions">
+            @if (!Model.IsApproved && !Model.IsCancelled && Model.Status != "draft")
+            {
+                @ActionAuthorization.IsAuthorized("Approve", "<a class='md-btn btnApprove'>Approve</a>")
+            }
+            @if (Model.Status == "draft")
+            {
+                @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "Edit", "SalesOrder", new { Area = "Sales", id = (Model != null) ? Model.ID : 0 }, new { @class = "md-btn " }))
+
+            }
+            @if (!Model.IsCancelled && Model.IsCancelable)
+            {
+                @ActionAuthorization.IsAuthorized("Cancel", " <a class='md-btn cancel'>Cancel</a>")
+
+            }
+            @Html.HiddenFor(m => m.ID)
+
+            <a class='md-btn print-sales-order'>Print </a>
+            <a class='md-btn print-preview-sales-order'>Print Preview</a>
+            @* @ActionAuthorization.IsAuthorized("Print", "<a class='md-btn print-sales-order' >Print</a>")*@
+
+            @Html.ActionLink(Common.Back, "Index", "SalesOrder", new { Area = "Sales" }, new { @class = "md-btn " })
+
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="sales details-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                @{Html.RenderPartial("/Areas/Sales/Views/SalesOrder/View.cshtml", Model); }
+            </div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/Js/Page/SalesOrder")
+@Html.Partial("~/Areas/Sales/Views/SalesOrder/_approvalDetails.cshtml", Model.CustomerDetails)
+<script type="text/javascript">
+    SalesOrder.details();
+</script>

@@ -1,0 +1,25 @@
+﻿<div class="md-card" data-uk-grid-margin="">
+    <div class="md-card-content uk-row-first">
+        <div class="heading_a uk-margin-bottom">
+            Sales In Rupees
+            <span class="budget"></span><span class="text">Budget</span>
+            <span class="actual-to-date"></span><span class="text">Actuals To Date</span>
+        </div>
+        <div class="uk-width-1-1">
+            <ul class="uk-tab" data-uk-tab="{connect:'#sales-in-rupees'}">
+                <li class="uk-active"><a class="sales-rupees-month-tab">@DateTime.Now.ToString("MMMM")</a></li>
+                <li><a class="sales-rupees-year-tab">@DateTime.Now.ToString("yyyy")</a></li>
+            </ul>
+            <ul id="sales-in-rupees" class="uk-switcher uk-margin">
+                <li aria-hidden="false" class="uk-active">
+                    <div id="ct-chart-amt" class="chartist">
+                    </div>
+                </li>
+                <li aria-hidden="false">
+                    <div id="ct-chart-amt-year" class="chartist">
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,62 @@
+﻿@model  TradeSuiteApp.Web.Areas.Manufacturing.Models.PreProcessIssueViewModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Manufacturing.IssueNo</label>
+                            @Html.TextBoxFor(model => model.IssueNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Manufacturing.IssueDate</label>
+                            @Html.TextBoxFor(model => model.IssueDateStr, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <table id="preprocess-issue-items-list" class="uk-table" cellspacing="0">
+        <thead>
+            <tr>
+                <th class="width-10">@Common.SerialNo</th>
+                <th class="width-50">@Manufacturing.ItemName</th>
+                <th class="width-50">@Manufacturing.Unit</th>
+                <th class="width-50">@Manufacturing.BatchNo</th>
+                <th class="width-50">@Manufacturing.IssuedQty</th>
+                <th class="width-50">@Manufacturing.Preprocess</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Items != null)
+            {
+                foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                {
+                    <tr>
+                        <td class="uk-text-center">
+                            @item.i
+                        </td>
+                        <td class="">@item.value.ItemName</td>
+                        <td class="">@item.value.Unit</td>
+                        <td>@item.value.BatchNo</td>
+                        <td class="uk-text-right mask-production-qty">@item.value.Quantity</td>
+                        <td class="">@item.value.ProcessName</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,21 @@
+ALTER VIEW [dbo].[viCustomer] AS              
+              
+Select C.ID,C.Code,C.Name,ISNULL(CC.ID ,0)AS CustomerCategoryID,ISNULL(CC.Name,'') AS CustomerCategory ,ISNULL(CA.Name,'') AS CustomerAccountsCategory,C.TradeLegalName AS CustomerLegalName,    
+Currency,C.PropratorName,ISNULL(C.OldCode,'') AS OldCode,BA.AddressLine1 AS BillingAddress1,BA.AddressLine2 AS BillingAddress2,BA.AddressLine3 AS BillingAddress3,    
+ISNULL(BA.Place,'') AS BillingPlace,BA.DistrictID AS BillingDistrictID,SA.AddressLine1 AS ShippingAddress1,SA.AddressLine2 AS ShippingAddress2,SA.AddressLine3 AS ShippingAddress3,    
+SA.Place AS ShippingPlace,SA.DistrictID AS ShippingDistrictID,IsGSTRegistered,GSTNo,C.AadhaarNo,C.PANNo,BA.LandLine1,BA.LandLine2,BA.MobileNo,CreditDays,CA.ID CustomerAccountsCategoryID,    
+CustomerTaxCategoryID,RelatedCustomerID,IsBlockedForSalesOrders,IsBlockedForSalesInvoices,SS.ID AS StateID ,C.PriceListID,C.PaymentTypeID ,BA.DistrictID,SS.CountryID ,            
+C.SchemeID,C.LocationID,C.MinimumCreditLimit,C.MaxCreditLimit,C.CashDiscountID,ISNULL(D.DiscountPercentage,0.00) AS CashDiscountPercentage,          
+ISNULL(C.FSOID,0)  FSOID,ISNULL(F.FSOName,'')  FSOName,BS.ID AS BillingStateID,BS.Name AS BillingState,SS.Name AS ShippingState ,        
+IsBlockedForChequeReceipt ,C.CategoryID,C.CurrencyID,Cu.Name CurrencyName,Cu.Code CurrencyCode,Cu.CurrencyPrefix,ISNULL(Cu.DecimalPlaces,2)DecimalPlaces           
+From Customer C              
+LEFT join CustomerCategory CC on C.CategoryID = CC.ID              
+LEFT Join CustomerAccountsCategory CA on CA.ID = C.CustomerAccountsCategoryID              
+LEFT join Addresses BA on BA.PartyID = C.ID and BA.PartyType = 'Customer' and BA.IsDefault = 1 and BA.IsBilling = 1              
+LEFT join Addresses SA on SA.PartyID = C.ID and SA.PartyType = 'Customer' and SA.IsDefaultShipping = 1 and SA.IsShipping = 1              
+LEFT join State BS on BS.ID = BA.StateID              
+LEFT join State SS on SS.ID = SA.StateID           
+left join DiscountCategory D on D.ID = C.CashDiscountID AND D.DiscountType = 'CashDiscount'           
+left join FSO F on F.ID = C.FSOID          
+left join Currency Cu on Cu.ID = C.CurrencyID          
+where Current_timestamp between StartDate AND ExpiryDate And IsDraftCustomer = 0 --and C.ID=11709 

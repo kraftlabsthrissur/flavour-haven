@@ -1,0 +1,171 @@
+﻿@model TradeSuiteApp.Web.Areas.Payroll.Models.LeaveApplicationModel
+@{
+    ViewBag.Title = "Leave Applications Details";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Payroll.LeaveApplications</h1>
+            <span class="uk-text-upper uk-text-small">@Payroll.LeaveApplicationDetail</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Approve", "<a class='md-btn approvedstatus'>" + Common.Approve + "</a>")
+            @ActionAuthorization.IsAuthorized("Cancel", "<a class='md-btn cancel'>" + Common.Cancel + "</a>")
+            @Html.HiddenFor(m => m.ID)
+            @Html.ActionLink(Common.Back, "Index", "LeaveApplication", new { Area = "Payroll" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium">
+                            <div class="md-card">
+                                <div class="md-card-content master-card-padding">
+                                    <div class="section-group">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-1-1">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-1-8">
+                                                            <label>@Payroll.EmployeeCategory</label>
+                                                            @Html.TextBoxFor(Model => Model.EmpCategory, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                        </div>
+                                                        @*<div class="uk-form-row ">
+                                                            <div class="uk-grid" data-uk-grid-margin>*@
+                                                        <div class="uk-width-medium-1-8 ">
+                                                            <div class="uk-autocomplete " id="employee-autocomplete">
+                                                                <label for="uk_dp_start">@Payroll.EmployeeName *</label>
+                                                                @Html.TextBoxFor(Model => Model.EmployeeName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                <script type="text/autocomplete">
+                                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                                        {{~items}}
+                                                                        <li data-value="{{ $item.Name}}"
+                                                                        data-id="{{$item.EmployeeID}}"
+                                                                        data-EmployeeCode="{{$item.Code}}"
+                                                                        data-placement="{{$item.Place}}">
+                                                                        <a>
+                                                                        {{ $item.Name }}
+                                                                        <div>{{{ $item.Code }}}</div>
+                                                                        </a>
+                                                                        </li>
+                                                                        {{/items}}
+                                                                    </ul>
+                                                                </script>
+                                                            </div>
+                                                            @*@Html.Hidden("EmployeeID")*@
+                                                            @Html.HiddenFor(Model => Model.EmployeeID)
+                                                        </div>
+                                                        @*</div>
+                                                            </div>*@
+                                                        <div class="uk-width-medium-1-8">
+                                                            <label>@Payroll.Department</label>
+                                                            @Html.TextBoxFor(model => model.Department, new { @class = "md-input", @disabled = "disabled" })
+                                                        </div>
+                                                        <div class="uk-width-medium-1-8">
+                                                            <label>@Payroll.ReportingTo *</label>
+                                                            @Html.TextBoxFor(model => model.ReportingToName, new { @class = "md-input", @disabled = "disabled" })
+                                                        </div>
+                                                        <div class="uk-width-medium-1-8">
+                                                            <label>@Payroll.SubmittedBy *</label>
+                                                            @Html.TextBoxFor(model => model.LoginName, new { @class = "md-input", @disabled = "disabled" })
+                                                            @*@Html.DropDownListFor(Model => Model.LoginID, new SelectList(Model.LoginNameList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })*@
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-1-1">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-1-8">
+                                                            <label>@Payroll.LeaveType *</label>
+                                                            @Html.TextBoxFor(model => model.LeaveType, new { @class = "md-input label-fixed " })
+                                                        </div>
+                                                        <div class="uk-width-medium-1-8">
+                                                            <label>@Payroll.NoOfDays *</label>
+                                                            @Html.TextBoxFor(model => model.NoOfDays, new { @class = "md-input label-fixed " })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Payroll.Reason *</label>
+                                                            @Html.TextBoxFor(model => model.Reason, new { @class = "md-input label-fixed " })
+                                                        </div>
+                                                        <div class="uk-width-medium-1-8">
+                                                            <div class="uk-input-group">
+                                                                <label>@Masters.StartDate *</label>
+                                                                <input type="text" class="md-input label-fixed past-date date" id="StartDate" value="@Model.StartDateStr" />
+                                                                @*<span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>*@
+                                                            </div>
+                                                        </div>
+                                                        <div class="uk-width-medium-1-8">
+                                                            <div class="uk-input-group">
+                                                                <label>@Masters.EndDate *</label>
+                                                                <input type="text" class="md-input label-fixed past-date date" id="EndDate" value="@Model.EndDateStr" />
+                                                                @*<span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>*@
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="section-group">
+                                        <div class="tablescroll">
+                                            <table id="leave-application-list" class="uk-table" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="width-10">@Common.SerialNo</th>
+                                                        <th class="width-80">Leave Type</th>
+                                                        <th class="width-40">@Payroll.LeaveAvailable</th>
+                                                        <th class="width-60">@Payroll.StartDate</th>
+                                                        <th class="width-50">@Payroll.AMPM</th>
+                                                        <th class="width-50">@Payroll.EndDate</th>
+                                                        <th class="width-40">@Payroll.AMPM</th>
+                                                        <th class="width-40">@Payroll.NoOfDays</th>
+                                                        <th class="width-40">@Payroll.Balance Available</th>
+                                                        <th class="width-80">@Payroll.Reason</th>
+                                                        <th class="width-40">@Payroll.Status</th>
+                                                        <th class="width-60">@Payroll.Remarks</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td>@Model.LeaveType</td>
+                                                        <td>@Model.LeaveAvailable</td>
+                                                        <td>@Model.StartDateStr</td>
+                                                        <td>@Model.StartAfternoonCheck</td>
+                                                        <td>@Model.EndDateStr</td>
+                                                        <td>@Model.EndForenoonCheck</td>
+                                                        <td>@Model.NoOfDays</td>
+                                                        <td>@Model.BalanceAvailable</td>
+                                                        <td>@Model.Reason</td>
+                                                        <td>status</td>
+                                                        <td>Remarks</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/LeaveApplication")

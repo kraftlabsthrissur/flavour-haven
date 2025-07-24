@@ -1,0 +1,30 @@
+﻿
+@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+
+
+@if (Model.VitalChartItems != null)
+{
+    foreach (var item in Model.VitalChartItems.Select((value, i) => new { i = (i + 1), value }))
+    {
+
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+            </td>
+            <td class="Date">@item.value.Date</td>
+            <td class="Time">@item.value.Time</td>
+            <td class="BP">@item.value.BP</td>
+            <td class="Pulse">@item.value.Pulse</td>
+            <td class="Temperature">@item.value.Temperature</td>
+            <td class="HR">@item.value.HR</td>
+            <td class="RR">@item.value.RR</td>
+            <td class="Weight">@item.value.Weight</td>
+            <td class="Height">@item.value.Height</td>
+            <td class="Others">@item.value.Others</td>
+            <td></td>
+        </tr>
+    }
+}
+
+
+

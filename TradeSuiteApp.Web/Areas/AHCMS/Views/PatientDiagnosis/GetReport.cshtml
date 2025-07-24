@@ -1,0 +1,46 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+
+
+@if (Model.ReportItems != null)
+{
+    foreach (var item in Model.ReportItems.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+                <input type="hidden" class="ReportID" value="@item.value.DocumentID " />
+                @foreach (var items in @item.value.SelectedQuotation)
+                {
+                    <input type="hidden" class="SelectedQuotationID" value="@items.ID" />
+                    <input type="hidden" class="url" value="@items.URL" />
+                    <input type="hidden" class="Path" value="@items.Path" />
+                    <input type="hidden" class="DocumentName" value="@items.Name" />
+                }
+            </td>
+            <td class="ReportName">@item.value.Name</td>
+            <td class="Description">@item.value.Description</td>
+            <td class="Date">@item.value.Date</td>
+            <td class="uk-text-center"><button class="view_report"><i class="material-icons">remove_red_eye</i></button></td>
+            <td class="uk-text-center">
+                @if (!@item.value.IsCompleted)
+                {
+                    <button class="edit_report uk-hidden"><i class="material-icons">create</i></button>
+                }
+                else
+                {
+                    <button class="edit_report uk-hidden"><i class="material-icons">create</i></button>
+                }
+            </td>
+            <td>
+               @if (!@item.value.IsCompleted)
+               {
+                <a class="remove-item"><i class="uk-icon-remove"></i></a>
+               }
+            </td>          
+        </tr>
+    }
+}
+
+
+
+

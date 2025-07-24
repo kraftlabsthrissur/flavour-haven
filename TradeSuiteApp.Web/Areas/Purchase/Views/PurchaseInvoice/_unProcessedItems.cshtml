@@ -1,0 +1,77 @@
+﻿@model List<BusinessObject.GRNTransItemBO>
+@if (Model != null)
+{
+
+    foreach (var item in Model.Select((value, i) =>
+                new
+                {
+                    i = (i + 1),
+                    dynChkID = "chk_unprocItem_" + value.ItemID,
+                    GSTPercent = String.Format("{0:F2}", (value.SGSTPercent + value.CGSTPercent + value.IGSTPercent)),
+                    value
+                }))
+    {
+        var IGSTPercentage = @item.value.IGSTPercent;
+        <tr>
+          
+            <td class="uk-text-center">@item.i</td>
+            <td class="uk-text-center checked" data-md-icheck>
+                <input type="hidden" class="hdnGRNID" value="@item.value.GRNID" />
+                <input type="hidden" class="hdnGRNTransID" value="@item.value.GRNTransID" />
+                <input type="hidden" class="hdnPOID" value="@item.value.PurchaseOrderID" />
+                <input type="hidden" class="FreightAmt" value="@item.value.FreightAmt" />
+                <input type="hidden" class="OtherCharges" value="@item.value.OtherCharges" />
+                <input type="hidden" class="PackingShippingCharge" value="@item.value.PackingShippingCharge" />
+                <input type="hidden" class="PurchaseOrderNo" value="@item.value.PurchaseOrderNo" />
+                <input type="hidden" class="hdnId" value="@item.value.Id" />
+                <input type="hidden" class="SGSTPercent" value="@item.value.SGSTPercent" />
+                <input type="hidden" class="CGSTPercent" value="@item.value.CGSTPercent" />
+                <input type="hidden" class="IGSTPercent" value="@item.value.IGSTPercent" />
+                <input type="hidden" class="MilkPurchaseID" value="@item.value.MilkPurchaseID" />
+                <input type="hidden" class="UnitID" value="@item.value.UnitID" />
+                @if (item.value.InclusiveGST)
+                {
+                    <input type="hidden" class="IsInclusiveGST" value="1" />
+                }
+                else
+                {
+                    <input type="hidden" class="IsInclusiveGST" value="0" />
+                }
+
+                @if (item.value.PurchaseInvoiceID <= 0)
+                {               //Create
+                    <input type="checkbox" class="chkItem" id="@item.dynChkID" value="@item.value.ItemID" />
+                }
+                else
+                {               //Edit
+                    <input type="checkbox" class="chkItem" id="@item.dynChkID" value="@item.value.ItemID" checked disabled />
+                }
+
+            </td>
+            <td>@item.value.ItemName</td>
+            <td>@item.value.Unit</td>
+            <td class="uk-text-right itemAcceptedQty mask-qty">@item.value.AcceptedQty</td>
+            <td class="uk-text-right itemAprovedQty mask-qty">@item.value.ApprovedQty</td>
+            <td class="uk-text-right mask-qty unmatchedQty">@item.value.UnMatchedQty</td>
+            <td class="uk-text-right itemPORate mask-currency">@item.value.PORate</td>
+            <td class="uk-text-right itemApprovedValue mask-currency">@item.value.ApprovedValue</td>
+            @if (@item.value.GRNID == 0)
+            {
+                <td>
+                    @Html.DropDownList("gstPercentage", new SelectList(ViewBag.TaxPercentages, "IGSTPercentage", "GSTPercentage", @IGSTPercentage), new { @class = "md-input uk-text uk-text-right gstPercentage ", @disabled = "disabled" })
+                </td>
+            }
+            else
+            {
+                <td>
+                    @Html.DropDownList("gstPercentage", new SelectList(ViewBag.TaxPercentages, "IGSTPercentage", "GSTPercentage", @IGSTPercentage), new { @class = "md-input uk-text uk-text-right gstPercentage" })
+                </td>
+            }
+            <td><input type="text" readonly="readonly" class="md-input txtItemInvoiceQty mask-qty" value="@item.value.InvoiceQty" /></td>
+            <td><input type="text" readonly="readonly" class="md-input txtItemInvoiceRate mask-currency" value="@item.value.InvoiceRate" /></td>
+            <td><input type="text" readonly="readonly" disabled="disabled" class="md-input txtItemInvoiceValue mask-currency" value="@item.value.InvoiceValue" /></td>
+            <td><input type="text" readonly="readonly" disabled="disabled" class="md-input itemDiffValue mask-currency" value="0" /></td>
+            <td><input type="text" readonly="readonly" class="md-input  txtItemRemarks" value="@item.value.Remarks" /></td>
+        </tr>
+    }
+}

@@ -1,0 +1,55 @@
+  
+  
+ALTER PROCEDURE [Sales].[SpGetCounterSalesTransForCounterSalesReturn]  
+(@CounterSalesID INT,  
+@PriceListID int,  
+@FinYear INT,  
+@LocationID INT,  
+@ApplicationID INT)  
+AS  
+BEGIN  
+SET NOCOUNT ON  
+Begin   
+ DECLARE @LocationHeadID int   
+ Declare @BasePriceListID int,@StateID int  
+  
+ SELECT @LocationHeadID = LocationHeadID FROM Location WHERE ID = @LocationID     
+ SELECT @StateID =StateID from location where id=@LocationID   
+ if @StateID=32  
+  begin  
+  select @PriceListID=id from pricelist where name='ISK'  
+  end  
+ else  
+  begin  
+  select @PriceListID=id from pricelist where name='OSK'  
+  end  
+ set @BasePriceListID=dbo.FnGetBasePriceListID(@LocationID,@ApplicationID)  
+  
+select CST.ID as TransID,CS.ID as CounterSalesID,I.ID as ItemID,I.Code as ItemCode,I.Name as ItemName,U.UOM as TransUnit,CST.UnitID as TransUnitID,  
+CST.FullOrLoose,CST.BatchID,B.BatchNo,(CST.Quantity-Isnull(ReturnQtyMet,0)) as Quantity,CST.Rate,CST.MRP,CST.GrossAmount,CST.DiscountPercentage,CST.DiscountAmount,  
+CST.TaxableAmount,CST.SGSTPercentage,CST.IGSTPercentage,CST.CGSTPercentage,CST.SGSTAmount,CST.CGSTAmount,CST.IGSTAmount,CST.NetAmount,  
+CST.BatchTypeID,BT.Name as BatchType,CST.WareHouseID,   
+dbo.FnGetAvailableStock(I.ID,null,null,CST.WareHouseID,@FinYear,@LocationID,@ApplicationID) AS Stock ,B.ExpiryDate,I.Code,  
+I.UnitID,I.SalesUnitID,I.Unit,I.SalesUnit ,ISNULL(B.RetailLooseRate,0) AS FullRate,  
+ISNULL(B.RetailLooseRate,0) LooseRate ,   
+case when CST.UnitID<>I.SalesUnitID then dbo.FnConvertUnit(I.ID,(CST.Quantity-Isnull(ReturnQtyMet,0)),I.UnitID,I.SalesUnitID)  
+  else dbo.FnConvertUnit(I.ID,(CST.Quantity-Isnull(ReturnQtyMet,0)),I.SalesUnitID,I.UnitID) end  as ConvertedQuantity,  
+ISNULL(CST.CessPercentage,0) CessPercentage,ISNULL(CST.CessAmount,0) CessAmount,CST.SecondaryQty,CST.SecondaryRate,
+CST.SecondaryUnit,CST.SecondaryUnitSize,CST.SecondaryOfferQty
+    
+From [Sales].CounterSalesTrans CST  
+inner join  [Sales].CounterSales CS on CS.ID=CST.CounterSalesID  
+inner join viSalesItem I on I.ID=CST.ItemID  
+inner join Batch B on CST.BatchID=B.ID  
+inner join BatchType BT on BT.id=CST.BatchTypeID  
+inner join Unit U on U.ID=CST.UnitID  
+LEFT JOIN PriceListDetails PD on PD.ItemID = I.ID AND PD.PriceListID = @PriceListID and PD.BasePriceListID = (select ID from basepricelist where isactive=1)  
+LEFT JOIN ItemwiseCostHistory IC ON IC.ItemID = I.ID AND IC.IsActive = 1 AND IC.LocationHeadID = @LocationHeadID  
+  
+where CST.CounterSalesID=@CounterSalesID  and CST.LocationID=@LocationID and CST.ApplicationID=@ApplicationID --and CST.FinYear=@FinYear  
+AND (CST.Quantity-Isnull(ReturnQtyMet,0))>0  
+  
+End  
+End  
+  
+  

@@ -1,0 +1,75 @@
+﻿@model TradeSuiteApp.Web.Areas.Stock.Models.DamageEntryModel
+@{
+    ViewBag.Title = "view";
+}
+<div class="uk-form-row">
+    <div class="uk-grid" data-uk-grid-margin>
+        <div class="uk-width-medium-1-1">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-10">
+                        <label>@Stock.TransNo</label>
+                        @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input", @disabled = "disabled", @id = "TransNo" })
+                    </div>
+                    <div class="uk-width-medium-1-10">
+                        <label for="uk_dp_start">@Stock.Date</label>
+                        @Html.TextBoxFor(m => m.Date, new { @class = "md-input", @id = "txtDate", @disabled = "disabled" })
+                    </div>
+                    <div class="uk-width-medium-1-10">
+                        <label>@Stock.Store<span>*</span></label>
+                        @Html.TextBoxFor(m => m.Warehouse, new { @class = "md-input", @id = "Warehouse", @disabled = "disabled" })
+     </div>
+
+                </div>
+            </div>
+        </div>
+
+      
+
+    </div>
+    <br />
+    <div class="uk-form-row">
+        <div>
+
+            <table id="damage-entry-items-list" class="uk-table " cellspacing="0" width=100">
+                <thead>
+                    <tr>
+
+                        <th class="width-50">@Common.SerialNo</th>
+                      
+                        <th class="width-200">@Stock.ItemName</th>
+                        <th class="width-100">@Stock.Unit</th>
+                        <th class="width-100">@Stock.Batch</th>
+                        <th class="width-100">@Stock.BatchType</th>
+                        <th class="width-100">@Stock.ExpiryDate</th>
+                        <th class="width-100">@Stock.CurrentQty</th>
+                        <th class="width-100">@Stock.DamageQty</th>
+                        <th class="width-100">@Stock.DamageType</th>
+                        <th class="width-100">@Stock.Remarks</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                        <tr>
+                            <td class="uk-text-center">@(1 + @Model.Items.IndexOf(item.value))</td>
+                            <td>@item.value.ItemName</td>
+                            <td> @item.value.UnitName</td>
+                            <td>@item.value.Batch</td>
+                            <td> @item.value.BatchType</td>
+                            <td> @item.value.ExpiryDate</td>
+                            <td class="mask-production-qty"> @item.value.CurrentQty</td>
+                            <td class="mask-production-qty"> @item.value.DamageQty</td>
+                            <td> @item.value.DamageType</td>
+                            <td> @item.value.Remarks</td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+</div>
+

@@ -1,0 +1,109 @@
+ALTER PROCEDURE [Purchase].[SpCreateGoodsReceiptNoteTransForDirectPurchaseInvoice]         
+(        
+@GRNID INT,        
+@PurchaseOrderID INT,       
+@CurrencyID INT,    
+@CreatedUserID INT,        
+@FinYear INT,        
+@LocationID INT,        
+@ApplicationID INT        
+)          
+AS        
+BEGIN        
+ DECLARE @IsDraft INT,@GoodsReceiptNoteTransID INT,@ItemID INT,@Batch VARCHAR(100),@BatchNo VARCHAR(100),@ExpDate DATETIME,@Date DATETIME,@GRNEntryDate DATETIME,        
+ @IsQCRequired BIT,@QCNo VARCHAR(100),@UnitID INT,@ReceivedQty DECIMAL,@BatchID INT,@Code VARCHAR(100),@WarehouseID INT,@DefaultQuarantineStore INT,@BatchTypeID int,        
+ @Rate NUMERIC(18,4),@PriceListID INT,@BasePriceListID INT,@MRP NUMERIC(18,4),@RetailMRP NUMERIC(18,4),@RetailLoosePrice NUMERIC(18,4)       
+         
+        
+ --SET @ExpDate=Current_Timestamp + 365;        
+ Declare @PackSize int --For DSC buid        
+         
+ SELECT @BatchTypeID=ID FROM BatchType WHERE Name Like '%ISK%'        
+    INSERT INTO GoodsReceiptNoteTrans (GoodsReceiptNoteID,PurchaseOrderID,POTransID,ItemID,Batch,ExpiryDate,PurchaseOrderQty,ReceivedQty,        
+  QualityCheckQty,AcceptedQty,RejectedQty,PurchasedQty,Remarks,FinYear,LocationID,ApplicationID,UnitID,        
+  GrossAmount,CGSTPercent,SGSTPercent,IGSTPercent,CGSTAmt,SGSTAmt,IGSTAmt,DiscountAmount,OfferQty)        
+ SELECT @GRNID,@PurchaseOrderID,ID,ItemID,0,ExpDate,Quantity,Quantity,Quantity,Quantity,0,Quantity,Remarks,        
+  FinYear,LocationID,ApplicationID,UnitID,Amount-Discount,CGSTPercent,SGSTPercent,IGSTPercent,CGSTAmt,SGSTAmt,IGSTAmt,        
+  Discount,PurchaseOfferQty FROM PurchaseOrderTrans Where PurchaseOrderID=@PurchaseOrderID        
+        
+ SELECT @IsDraft=IsDraft FROM PurchaseOrder Where ID=@PurchaseOrderID        
+          
+  IF @IsDraft = 0        
+   BEGIN        
+    SELECT GRNT.ID,ISNULL(PT.BatchNo,'') BatchNo,PT.ExpDate,PT.MRP,PT.RetailMRP,PT.Rate,PT.RetailLoosePrice INTO #Temp FROM GoodsReceiptNoteTrans GRNT        
+    INNER JOIN PurchaseOrderTrans PT ON PT.ID=GRNT.POTransID        
+       
+    WHERE (GRNT.PurchaseOrderID = @PurchaseOrderID)        
+     ORDER BY ID ASC        
+    WHILE EXISTS (SELECT * FROM #Temp)        
+     BEGIN        
+     SELECT TOP 1 @GoodsReceiptNoteTransID = ID ,@BatchNo=BatchNo,@ExpDate=ExpDate,@MRP=MRP,@RetailMRP=RetailMRP,@Rate=Rate,@RetailLoosePrice=RetailLoosePrice        
+     FROM #Temp        
+     ORDER BY ID ASC        
+     SELECT @ItemID=ItemID,@ReceivedQty=(ReceivedQty + ISNULL(OfferQty,0.00)),@UnitID=UnitID FROM GoodsReceiptNoteTrans WHERE ID=@GoodsReceiptNoteTransID        
+     SELECT @IsQCRequired = IsQCRequired FROM Item WHERE ID = @ItemID        
+     --EXEC [Common]. [SpUpdateSerialNo] 'GRNLocalPurchaseInvoice', 'Code', @FinYear, @LocationID, @ApplicationID, @BatchNo OUT        
+     SET @Batch=@BatchNo;        
+     SET @Date=Current_Timestamp;        
+        
+             
+     ---------------------------------------------------------------------------------        
+     SELECT @MRP = MRP         
+     FROM PurchaseOrderTrans WHERE PurchaseOrderID = @PurchaseOrderID and ItemID=@ItemID        
+     SELECT @PriceListID=P.ID FROM PriceList P        
+     INNER JOIN BatchType B On B.Name=P.Name WHERE B.ID=@BatchTypeID         
+        
+             
+    --Check Item have already same Rate        
+    IF (SELECT COUNT(*) FROM PriceListDetails where ItemID=@ItemID  and PriceListID =@PriceListID AND LocationID=@LocationID)>0      --and MRP=@RetailMRP  
+    BEGIN        
+     SELECT @BasePriceListID =BasePriceListID FROM  PriceListDetails         
+     WHERE ItemID=@ItemID and MRP=@MRP and PriceListID =@PriceListID        
+    END        
+        
+    ELSE        
+    BEGIN        
+     DECLARE @BasicPrice numeric(18,4),@IGSTPercent numeric(18,2),@LoosePrice numeric(18,4),@PrimaryUnitID int,@SalesUnitID Int        
+        
+     SELECT @IGSTPercent=IGSTPercent,@SalesUnitID=SalesUnitID,@PrimaryUnitID=UnitID FROM viItem where ID=@ItemID         
+     SELECT @BasicPrice=@MRP*100/(100+@IGSTPercent)         
+     SELECT @LoosePrice=(dbo.FnConvertUnit(@ItemID,1,@PrimaryUnitID,@SalesUnitID)*@MRP)        
+     --check item have mrp in Pricelist detail..        
+     IF (SELECT COUNT(*) FROM PriceListDetails where ItemID=@ItemID  and PriceListID =@PriceListID)=0        
+      BEGIN        
+       SELECT @BasePriceListID = ID FROM BasePriceList WHERE IsActive = 1        
+      END        
+     ELSE        
+      BEGIN        
+       INSERT INTO BasePriceList         
+       VALUES('',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP+5,0,CURRENT_TIMESTAMP,@CreatedUserID,@LocationID,@ApplicationID)        
+       SET @BasePriceListID=Scope_identity()        
+      END        
+     INSERT INTO PriceListDetails (BasePriceListID,PriceListID,ItemID,MRP,OldMRP,BasicPrice,LoosePrice,LocationID,ApplicationID,CurrencyID)       
+     VALUES(@BasePriceListID,@PriceListID,@ItemID,@MRP,0,@BasicPrice,@LoosePrice,@LocationID,@ApplicationID,@CurrencyID)        
+  END        
+        
+     EXEC  [Common].[SpCreateBatchForDirectInvoice]  'FG',@ItemID,@BatchNo,@Batch,@Date,@ExpDate        
+     ,@BatchTypeID,@UnitID,@MRP,@Rate,@RetailMRP,@RetailLoosePrice,@CreatedUserID,@LocationID ,@ApplicationID,@BatchID OUT --For DSC buid         
+        UPDATE Batch SET BasePriceListID = @BasePriceListID WHERE ID = @BatchID        
+        
+     UPDATE GoodsReceiptNoteTrans set Batch=@BatchID where ID=@GoodsReceiptNoteTransID         
+     SELECT @Code=Code,@WarehouseID=WarehouseID,@GRNEntryDate=Date FROM GoodsReceiptNote Where ID=@GRNID        
+     Select @PackSize = PackSize from Unit where ID = @UnitID -- For DSC buid        
+     DECLARE @Category VARCHAR(25)        
+     SELECT @Category=C.Name FROM Item I INNER JOIN Category C ON I.SalesCategoryID=C.ID WHERE I.ID=@ItemID        
+     IF (@Category='Arishtams' OR @Category='Asavams' OR @Category='Kashayams' OR @Category='Kuzhambu' OR @Category='Thailam (Enna)' OR @Category='Thailam (Keram)' OR  @Category='Dravakam')        
+      BEGIN        
+      set @ReceivedQty=dbo.FnConvertStockToInventoryUnit(@ItemID,@ReceivedQty,@UnitID)        
+      END        
+     ELSE        
+      BEGIN        
+      Set @ReceivedQty = @ReceivedQty * @PackSize --For DSC buid        
+      END        
+        
+     EXEC SpStockUpdate @GRNEntryDate,'F',@ItemID,@BatchID,@WarehouseID,@ReceivedQty,0,'GRN',@LocationID,@FinYear,2,@ApplicationID,'Receipts',1,@BatchTypeID,@Code           
+     DELETE FROM #Temp WHERE ID =@GoodsReceiptNoteTransID        
+    END        
+             
+   END        
+END 

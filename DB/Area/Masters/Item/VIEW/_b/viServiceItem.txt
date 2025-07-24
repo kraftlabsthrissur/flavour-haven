@@ -1,0 +1,25 @@
+      
+ALTER VIEW [dbo].[viServiceItem] AS              
+               
+select I.ID,I.Code, I.Name,ISNULL(I.Description,'')PartsNumber,ISNULL(I.SanskritName,'')Remark,ISNULL(I.Model,'')Model, I.BarCode, I.HSNCode, I.MalayalamName,I.ItemTypeID       
+  ,I.CategoryID, I.PurchaseCategoryID,I.SalesCategoryID,I.AccountsCategoryID,C.Name AS Category      
+  ,PC.Name AS PurchaseCategory,SC.Name AS SalesCategory       
+  ,SA.Name As AccountsCategory,I.UnitID AS PrimaryUnitID,U.UOM AS Unit,I.PurchaseUnitID,I.SalesUnitID,I.InventoryUnitID      
+   ,PU.UOM AS  PurchaseUnit,SU.UOM AS SalesUnit,IU.UOM AS InventoryUnit          
+  ,I.IsSeasonalPurchase, I.IsStockitem, I.IsPurchaseItem, I.IsPORequired,I.GSTCategoryID              
+ ,G.SGSTPercent,G.CGSTPercent,G.IGSTPercent,G.VATPercentage,G.Name AS GSTCategory,TT.Name TaxType,G.TaxTypeID,IT.LocationID             
+  ,I.OldItemCode,I.IsSaleable,I.PackSize           
+ from item I                  
+ LEFT join Category C on C.ID = I.CategoryID              
+ LEFT join Category PC on PC.ID = I.PurchaseCategoryID        
+ LEFT join Category SC on SC.ID = I.SalesCategoryID              
+ LEFT join Category SA on SA.ID = I.AccountsCategoryID            
+ LEFT join Unit U on U.ID = I.UnitID       
+ LEFT join Unit PU on PU.ID = I.PurchaseUnitID       
+ LEFT join Unit SU on SU.ID = I.SalesUnitID       
+ LEFT join Unit IU on IU.ID = I.InventoryUnitID          
+ left JOIN ItemTax It on   It.ItemID=I.ID        
+ left JOIN TaxType TT on   It.TaxTypeID=TT.ID        
+ left JOIN GSTCategory G WITH (NOLOCK) on G.ID = IT.GSTCategoryID              
+Where I.IsStockValue = 0 AND I.IsPhantomItem =  0 AND I.Isactive = 1 AND I.BirthDate < Current_timestamp and I.DiscontinuedDate  >  Current_timestamp      
+  and I.IsDiscontinued = 0 

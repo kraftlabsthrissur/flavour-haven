@@ -1,0 +1,47 @@
+﻿@model List<TradeSuiteApp.Web.Areas.Manufacturing.Models.AdditionalIssueItemModel>
+
+<table id="tbl-additionalissue-item" class="uk-table" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th class="width-30">@Common.SerialNo</th>
+            <th class="width-10"></th>
+            <th class="width-60">@Manufacturing.Item</th>
+            <th class="width-20">@Manufacturing.Unit</th>
+            @*<th class="width-120">@Manufacturing.QcForStockItems</th>*@
+        </tr>
+    </thead>
+    <thead class="search">
+        <tr>
+            <th>@Common.SerialNo</th>
+            <th></th>
+            <th>@Manufacturing.Item</th>
+            <th>@Manufacturing.Unit</th>
+            @*<th>@Manufacturing.Stock</th>*@
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count() > 0)
+        {
+            foreach (var item in Model.Select((value, i) => new { i = i + 1, value }))
+            {
+                <tr>
+                    <td>@item.i</td>
+                    <td>
+                        <input type="hidden" class="hdnItemID" value="@item.value.ID" />
+                        <input type="hidden" class="hdnItemName" value="@item.value.Name" />
+                        <input type="hidden" class="hdnUnitID" value="@item.value.UnitID" />
+                        <input type="hidden" class="hdnUnit" value="@item.value.Unit" />
+                        <input type="radio" name="radProductionAdditionalIssue" />
+                    </td>
+                    <td>@item.value.Name</td>
+                    <td>@item.value.Unit</td>
+                    @*<td>@item.value.Stock</td>*@
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+
+

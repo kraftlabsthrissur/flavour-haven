@@ -1,0 +1,71 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Purchase.Models.ReOrderModel
+
+@if (Model.Items != null)
+{
+    foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+            </td>
+            @*@if ((item.value.Status == "Scheduled") || (item.value.Status == "Prescribed"))
+            {*@
+                <td class="uk-text-center checked width-20" data-md-icheck><input type="checkbox" class="chkCheck" /></td>
+            @*}*@
+            @*else
+            {
+                <td class="uk-text-center checked width-20" data-md-icheck><input type="checkbox" class="chkCheck" disabled="disabled" /></td>
+            }*@
+            <td>
+                <input type="hidden" class="ItemID" value="@item.value.ItemID" />
+                <input type="hidden" class="UnitID" value="@item.value.UnitID" />
+                <input type="hidden" class="Rate" value="@item.value.Rate" />
+                <input type="hidden" class="IsOrdered" value="@item.value.IsOrdered" />
+                @item.value.ItemName
+            </td>
+            <td class="Unit">
+                @item.value.Unit
+            </td>
+            <td>
+                @Html.DropDownListFor(m => item.value.SupplierID, new SelectList(item.value.SupplierList, "value", "text", item.value.SupplierID), new { @class = "md-input label-fixed SupplierID", @disabled = "disabled" })
+            </td>
+            @*<td>
+                <input type="text" value="@item.value.ReOrderQty" class="md-input mask-production-qty Qty" />
+            </td>*@
+            <td>
+                <input type="text" value="@item.value.ReOrderQty" class="md-input mask-sales-qty ReOrderQty" disabled />
+            </td>
+            <td class="mask-sales-qty">
+                @item.value.OrderedQty
+            </td>
+            <td class="mask-sales-qty">
+                @item.value.Stock
+            </td>
+            @*<td>
+                <input type="text" value="@item.value.LastPurchaseQty" class="md-input mask-sales-qty LastPurchaseQty" disabled />
+            </td>*@
+            <td class="mask-sales-qty LastPurchaseQty">
+                @item.value.LastPurchaseQty
+            </td>
+            @*<td>
+                <input type="text" value="@item.value.LastPurchaseOfferQty" class="md-input mask-sales-qty LastPurchaseOfferQty" disabled />
+            </td>*@
+            <td class="mask-sales-qty LastPurchaseOfferQty">
+                @item.value.LastPurchaseOfferQty
+            </td>
+            <td>
+                <input type="text" value="@item.value.ReOrderQtyFull" class="md-input mask-sales-qty Qty" />
+            </td>
+            <td class="Unit">
+                @item.value.PurchaseUnit
+            </td>
+            @*<td>
+                @item.value.LastPurchasedDate
+            </td>*@
+            <td>
+                @item.value.LastPurchasedSupplier
+            </td>
+    </tr>
+    }
+}

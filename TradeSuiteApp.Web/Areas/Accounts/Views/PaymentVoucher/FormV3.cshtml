@@ -1,0 +1,233 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.PaymentVoucherModel
+@{
+    ViewBag.Title = "FormV3";
+
+}
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-8-10">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="">
+                                    <div class="uk-width-medium-1-8">
+                                        <label>@Accounts.VoucherNumber</label>
+                                        <input type="text" class="md-input label-fixed" id="txtVoucherNo" value="@Model.VoucherNumber" disabled="disabled" />
+                                    </div>
+                                    @*<div class="uk-width-medium-1-8">
+            <label for="uk_dp_start">@Accounts.VoucherDate</label>
+            <input class="md-input label-fixed" type="text" id="txtVoucherDate" value="@Model.VoucherDate">
+        </div>*@
+
+                                    <div class="uk-width-medium-1-8">
+                                        <div class="uk-input-group">
+                                            <label for="uk_dp_start">@Accounts.VoucherDate<span>*</span></label>
+                                            <input class="md-input label-fixed" type="text" id="txtVoucherDate" value="@Model.VoucherDate">
+                                            @*@Html.TextBox("Date", "", new { @class = "md-input label-fixed  date past-date" })*@
+                                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="uk-width-medium-2-8">
+                                        <div class="uk-autocomplete " id="account-head-autocomplete">
+                                            <div class="uk-input-group">
+                                                <label>@Masters.AccountHead<span>*</span></label>
+                                                @Html.TextBoxFor(model => model.AccountHead, new { @class = "md-input label-fixed" })
+                                                <span class="uk-input-group-addon">
+                                                    <a data-uk-modal="{target:'#select-account-head',center:false }">
+                                                        <i class="uk-input-group-icon uk-icon-search"></i>
+                                                    </a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        @Html.HiddenFor(model => model.AccountHeadID)
+                                        @*@Html.Hidden("StateId")
+            @Html.Hidden("IsGSTRegistred")*@
+                                    </div>
+
+                                    <div class="uk-width-medium-1-10">
+                                        <div class="md-input-wrapper md-input-filled">
+                                            <br>
+                                            <button id="btnAddAccountHead">+</button>
+                                            <div class="uk-hidden" id="div-account-head">
+                                            </div>
+                                            <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light uk-hidden" id="btnAddAccountHead">Add Account Head</button>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="uk-width-medium-1-8">
+                                        <label>@Accounts.VoucherAmount<span>*</span></label>
+                                        @Html.TextBoxFor(model => model.VoucherAmt, new { @class = "md-input label-fixed mask-positive-currency" })
+                                    </div>
+                                    <div class="uk-width-medium-1-8">
+                                        <div class="md-input-wrapper md-input-filled">
+                                            <label>&nbsp;</label>
+                                            <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnProcess">@Common.Process</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="uk-width-medium-1-8 uk-hidden">
+                                        <div class="uk-input-group">
+                                            <label for="uk_dp_start">RecouncilDate<span>*</span></label>
+                                            <input class="md-input label-fixed" type="text" id="RecouncilDate" value="@Model.ReconciledDate">
+                                            @*@Html.TextBox("Date", "", new { @class = "md-input label-fixed  date past-date" })*@
+                                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-8">
+                                        <label>@Accounts.ModeOfPayment<span>*</span></label>
+                                        @Html.DropDownListFor(Model => Model.PaymentTypeID, Model.PaymentTypeList, "Select", new { @class = "md-input label-fixed", @id = "dropPayment" })
+                                    </div>
+                                    <div class="uk-width-medium-1-8">
+                                        <label for="uk_dp_start">@Accounts.BankName<span>*</span></label>
+                                        <select id="Bank" class="md-input label-fixed">
+                                            <option value="0">Select</option>
+                                            @foreach (var bank in Model.BankList)
+                                            {
+                                                <option @(Model.BankID == bank.ID ? "selected='selected'" : "") value="@bank.ID" data-creditBalance="@bank.CreditBalance">@bank.BankName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    @*<div class="uk-width-medium-1-8">
+                                        <label>@Accounts.CurrencyName<span>*</span></label>
+                                        @Html.DropDownListFor(Model => Model.CurrencyID, Model.CurrencyLists, "Select", new { @class = "md-input label-fixed" })
+                                    </div>*@
+
+                                    <div class="uk-width-medium-1-8 uk-hidden">
+                                        <label>@Accounts.AccountNumber</label>
+                                        <input type="text" class="md-input label-fixed " id="txtAccountNumber" readonly />
+                                    </div>
+                                    <div class="uk-width-medium-2-8">
+                                        <label>@Accounts.ReferenceNumber</label>
+                                        @Html.TextBoxFor(m => m.ReferenceNumber, new { @class = "md-input", id = "txtRefernceNumber" })
+
+                                    </div>
+
+                                    <div class="uk-width-medium-2-8">
+                                        <label>@Accounts.Remarks</label>
+                                        @Html.TextBoxFor(m => m.Remark, new { @class = "md-input", id = "txtRemarks" })
+
+                                    </div>
+                                    <div class="uk-width-medium-2-10">
+                                        <label for="uk_dp_start">Receiver Bank Name<span>*</span></label>
+                                        @Html.DropDownListFor(Model => Model.ReceiverBankID, Model.ReceiverBankList, "Select", new { @class = "md-input label-fixed"})
+
+                                        @*@Html.DropDownListFor(model => model.ReceiverBankID, (IEnumerable<SelectListItem>)ViewData["ReceiverBankID"], "-- Select Bank --", new { @class = "form-control" })*@
+
+                                    </div>
+                                    <div class="uk-width-medium-2-10">
+                                        <label>Bank Instrument Number</label>
+                                        @Html.TextBoxFor(model => model.BankInstrumentNumber, new { @class = "md-input label-fixed" })
+                                    </div>
+                                    <div class="uk-width-medium-1-10">
+                                        <div class="uk-input-group">
+                                            <label for="uk_dp_start">Cheque Date<span>*</span></label>
+                                            <input class="md-input label-fixed date future-date" type="text" id="ChecqueDate" data-relaxation="-90" value="@Model.ChecqueDate">
+                                            <span class="uk-input-group-addon"><i data-relaxation="-90" class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="uk-width-medium-2-10">
+                                        <label>Bank Charges</label>
+                                        @Html.TextBoxFor(model => model.Bankcharges, new { @class = "md-input label-fixed mask-positive-currency" })
+                                    </div>
+                                    <div class="uk-width-medium-2-8">
+                                        <label></label><br />
+                                        <input type="checkbox" class="icheckbox" data-md-icheck id="OtherPayment" /> @Html.Label("Other Payments")
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="uk-form-row uk-hidden hide-show-other-payments">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-8">
+                                        <label>@Accounts.DocumentNumber<span>*</span></label>
+                                        @Html.TextBox("DocumentNo", "", new { @class = "md-input label-fixed" })
+                                    </div>
+                                    <div class="uk-width-medium-1-8">
+                                        <div class="uk-input-group">
+                                            <label for="uk_dp_start">@Accounts.Date<span>*</span></label>
+                                            @Html.TextBox("Date", "", new { @class = "md-input label-fixed  date future-date" })
+                                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="uk-width-medium-1-8">
+                                        <label>@Accounts.Amount<span>*</span></label>
+                                        @Html.TextBox("Amount", "", new { @class = "md-input label-fixed mask-sales3-currency" })
+                                    </div>
+                                    <div class="uk-width-medium-1-4">
+                                        <label>@Accounts.Narration<span>*</span></label>
+                                        @Html.TextBox("Narration", "", new { @class = "md-input label-fixed Narrations" })
+                                    </div>
+                                    <div class="uk-width-medium-1-8">
+                                        <div class="md-input-wrapper md-input-filled">
+                                            <label>&nbsp;</label>
+                                            <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAdd">@Common.Add</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="uk-width-medium-1-4" id="div-account-head">
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+
+
+                        <div class="uk-width-medium-2-10">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="">
+                                    <div class="uk-width-medium-1-1">
+                                        <label>@Sales.NetAmount</label>
+                                        @Html.TextBoxFor(model => model.VoucherAmt, new { @class = "md-input mask-sales3-currency label-fixed x-large", @id = "NetAmt", @readonly = "readonly" })
+                                    </div>
+                                    <div class="uk-width-medium-1-1">
+                                        <label>@Accounts.LocalNetAmount</label>
+                                        @Html.TextBoxFor(model => model.LocalVoucherAmt, new { @class = "md-input mask-sales3-currency label-fixed x-large", @id = "LocalNetAmt", @readonly = "readonly" })
+                                    </div>
+                                    <div class="uk-width-medium-1-1">
+                                        <label>@Masters.LocalCurrencyCode</label>
+                                        @Html.TextBoxFor(model => model.LocalCurrencyCode, new { @class = "md-input label-fixed", @tabindex = "-1", @Disabled = "disabled" })
+                                        @Html.HiddenFor(model => model.LocalCurrencyID)
+                                        @Html.HiddenFor(model => model.CurrencyExchangeRate)
+                                    </div>
+                                    <div class="uk-width-medium-3-1">
+                                        <label>@Accounts.PaymentCurrencyCode<span>*</span></label>
+                                        @Html.DropDownListFor(Model => Model.CurrencyID, Model.CurrencyLists, "Select", new { @class = "md-input label-fixed" })
+                                    </div>
+                                    @*<div class="uk-width-medium-1-8">
+            <label>@Masters.ExchangeRate</label>
+            @Html.TextBoxFor(model => model.CurrencyExchangeRate, new { @class = "md-input label-fixed " , @tabindex = "-1", @disabled = "disabled" })
+        </div>*@
+                                    <input type="hidden" id="item-count" value="0" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section-group" id="unSettledPurchaseInvoiceTblContainer">
+                <table id="tblUnSettledPurchaseInvoice" class="uk-table" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="width-10">@Common.SerialNo</th>
+                            <th class="width-10"></th>
+                            <th class="width-10">@Common.DocumentType</th>
+                            <th class="width-10">@Accounts.Narration</th>
+                            <th class="width-40">@Common.DocumentNo</th>
+                            <th class="width-40">@Accounts.InvoiceDate</th>
+                            <th class="width-40">@Accounts.OriginalAmount</th>
+                            <th class="width-40">@Accounts.BalancePayable</th>
+                            <th class="width-40">@Accounts.PayNow</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>

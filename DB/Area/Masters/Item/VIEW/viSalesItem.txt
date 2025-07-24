@@ -1,0 +1,26 @@
+
+
+ALTER VIEW [dbo].[viSalesItem] AS              
+select I.ID, I.Code, I.Name,ISNULL(I.Description,'') PartsNumber,I.SanskritName,I.Model,I.CategoryID, C.Name AS Category,I.SalesCategoryID,SC.Name AS SalesCategory,  BC.ID BusinessCategoryID,BC.Name BusinessCategory,            
+I.UnitID,  U.UOM AS Unit,I.SalesUnitID, SaU.UOM AS SalesUnit,ISNULL(G.CGSTPercent,0)CGSTPercent,ISNULL(G.IGSTPercent,0)IGSTPercent,ISNULL(G.SGSTPercent,0)SGSTPercent,ISNULL(G.VATPercentage,0)VATPercentage,
+ISNULL(IT.LocationID,0)LocationID ,ISNULL(TT.Name,'') TaxType,G.TaxTypeID,I.ConversionFactorPtoI, I.GSTSubCategoryID,GS.Percentage CessPercentage, GS.Name GSTSubCategory,MinSalesQtyFull,MinSalesQtyLoose,            
+MaxSalesQty MaxSalesQtyFull,MaxSalesQty  MaxSalesQtyLoose              
+from item I WITH (NOLOCK)             
+INNER JOIN Category C WITH (NOLOCK) on C.ID = I.CategoryID              
+INNER JOIN Category BC WITH (NOLOCK) on BC.ID = I.BusinessCategoryID              
+INNER JOIN Unit SaU WITH (NOLOCK) on SaU.ID = I.SalesUnitID            
+LEFT JOIN ItemTax It on   It.ItemID=I.ID        
+LEFT JOIN TaxType TT on   It.TaxTypeID=TT.ID        
+LEFT JOIN GSTCategory G WITH (NOLOCK) on G.ID = IT.GSTCategoryID            
+LEFT JOIN Unit U WITH (NOLOCK) on U.ID = I.UnitID            
+LEFT JOIN Category SC WITH (NOLOCK) on SC.ID = I.SalesCategoryID            
+LEFT JOIN GSTSubCategory GS WITH (NOLOCK) on GS.ID = I.GSTSubCategoryID               
+WHERE I.IsStockValue = 1             
+and I.IsSaleable = 1              
+AND I.IsPhantomItem =  0             
+AND I.IsActive = 1             
+AND I.BirthDate < Current_timestamp             
+and  (I.DiscontinuedDate is null or I.DiscontinuedDate  >  Current_timestamp  ) 
+GO
+
+

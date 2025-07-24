@@ -1,0 +1,76 @@
+﻿@model TradeSuiteApp.Web.Areas.SNOP.Models.SalesForecastModel
+@{
+    ViewBag.Title = "View";
+}
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@SNOP.TransNo</label>
+                            @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            @Html.HiddenFor(m => m.ID)
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@SNOP.TransDate</label>
+                            @Html.TextBoxFor(model => model.TransDate, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label>@SNOP.Month<span>*</span></label>
+                                @Html.TextBoxFor(m => m.Month, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label>&nbsp;</label>
+                                <button class="md-btn md-btn-primary md-btn-block" style="display:none;" id="btnExport">Export</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section-group">
+    <table id="forecast-items-list" class="uk-table">
+        <thead>
+            <tr>
+                <th class="width-10">@Common.SerialNo</th>
+                <th class="width-40">@SNOP.Location</th>
+                <th class="width-40">@SNOP.ItemName</th>
+                <th class="width-40">@SNOP.ItemCode</th>
+                <th class="width-20">@SNOP.Unit</th>
+                <th class="width-20">@SNOP.ComputedForecast</th>
+                <th class="width-20">@SNOP.ComputedForecastInKg</th>
+                <th class="width-20">@SNOP.ComputedForecastValue</th>
+                <th class="width-20">@SNOP.FinalForecast</th>
+                <th class="width-20">@SNOP.FinalForecastInkgs</th>
+                <th class="width-20">@SNOP.FinalForecastValue</th>
+            </tr>
+        </thead>
+        <thead class="search">
+            <tr>
+                <th>@Common.SerialNo</th>
+                <th>@SNOP.Location</th>
+                <th>@SNOP.ItemName</th>
+                <th>@SNOP.ItemCode</th>
+                <th>@SNOP.Unit</th>
+                <th>@SNOP.ComputedForecast</th>
+                <th>@SNOP.ComputedForecastInKg</th>
+                <th>@SNOP.ComputedForecastValue</th>
+                <th>@SNOP.FinalForecast</th>
+                <th>@SNOP.FinalForecastInkgs</th>
+                <th>@SNOP.FinalForecastValue</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+

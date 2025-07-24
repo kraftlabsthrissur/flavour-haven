@@ -1,0 +1,35 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.AppointmentScheduleModel
+@if (Model.ConsulationItem != null)
+{
+    foreach (var item in Model.ConsulationItem.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr>
+            <td class="uk-text-center">
+                @item.i      
+                <input type="hidden" class="md-input label-fixed DiscountPercentage" value="@item.value.DiscountPercentage" />         
+            </td>
+            <td class="Treatment">@item.value.ItemName</td>
+            <td>
+                <input type="text" class="md-input label-fixed rate mask-currency" @(item.value.ItemName == "CONSULTATION FEE" ? "disabled":"") data-id="@item.value.Rate" value="@item.value.Rate" />
+            </td>           
+            <td>
+                <input type="text" class="md-input label-fixed doctorfee mask-currency" @(item.value.ItemName == "Privilege Card Charge" ? "disabled":"") data-id="@item.value.DoctorFee" value="@item.value.DoctorFee" />
+            </td>
+            <td>
+                <input type="text" class="md-input label-fixed clinicfee mask-currency" @(item.value.ItemName == "Privilege Card Charge" ? "disabled":"") data-id="@item.value.ClinicFee" value="@item.value.ClinicFee" />
+            </td>
+            <td>
+                <input type="text" class="md-input label-fixed netamount mask-currency" data-id="@item.value.Rate" value="@item.value.Rate" disabled />
+            </td>
+            <td>
+                <input type="text" class="md-input label-fixed remarks" />
+            </td>
+        </tr>
+    }
+}
+<script type="text/javascript">
+    $("#ConsultationMode").trigger("click");
+</script>
+
+
+

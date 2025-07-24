@@ -1,0 +1,35 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+<input type="button" id="show-cancel-treatment" data-uk-modal="{target:'#cancel-treatment', center:false}" />
+<div class="uk-modal" id="cancel-treatment" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Cancel Treatment<i class="material-icons"></i></h3>
+        </div>
+        <div class="uk-modal-content">
+            <div class="uk-form-row">
+                <div class="uk-grid text-center uk-margin">
+                    <div class="uk-width-medium-2-5">
+                        <label>@AHCMS.Treatment</label>
+                        <div class="uk-input-group">
+                            @Html.TextBoxFor(model => model.TreatmentName, new { @class = "md-input label-fixed", @id = "TreatmentNameForCancel",@disabled="disabled" })
+                        </div>
+                        @Html.HiddenFor(model => model.TreatmentID, new {@id = "TreatmentIDForCancel" })
+                        @Html.HiddenFor(model => model.PatientTreatmentID)
+
+                    </div>
+                    <div class="uk-width-medium-1-5">
+                        <div class="uk-input-group">
+                            <label for="uk_dp_start">Tentative End Date</label>
+                            @Html.TextBoxFor(m => m.TentativeEndDate, "", new { @class = "md-input label-fixed current-date date", @id = "TentativeEndDateForCancel" })
+                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn  uk-modal-close">@Common.Close</button>
+            <button type="button" class="md-btn md-btn-primary" id="btn-cancel-confirm">Ok</button>
+        </div>
+    </div>
+</div>

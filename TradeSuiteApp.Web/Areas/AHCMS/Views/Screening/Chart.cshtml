@@ -1,0 +1,24 @@
+﻿
+@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+
+
+
+<tr>
+    @if (!Model.IsCompleted)
+    {
+        <td class="width-50">@Html.TextBoxFor(model => model.RR, "", new { @class = "md-input label-fixed" })</td>
+        <td class="width-50">@Html.TextBoxFor(model => model.Height, "", new { @class = "md-input label-fixed" }) </td>
+        <td class="width-50">@Html.TextBoxFor(model => model.Weight, "", new { @class = "md-input label-fixed" }) </td>
+        <td class="width-50">@Html.TextBoxFor(model => model.BMI, "", new { @class = "md-input label-fixed" }) </td>
+    }
+    else
+    {
+        <td class="width-50">@Html.TextBoxFor(model => model.RR, "", new { @class = "md-input label-fixed", @disabled = "disabled" })</td>
+        <td class="width-50">@Html.TextBoxFor(model => model.Height, "", new { @class = "md-input label-fixed", @disabled = "disabled" }) </td>
+        <td class="width-50">@Html.TextBoxFor(model => model.Weight, "", new { @class = "md-input label-fixed", @disabled = "disabled" }) </td>
+        <td class="width-50">@Html.TextBoxFor(model => model.BMI, "", new { @class = "md-input label-fixed", @disabled = "disabled" }) </td>
+    }
+
+</tr>
+
+

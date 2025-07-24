@@ -1,0 +1,35 @@
+﻿@model TradeSuiteApp.Web.Areas.Manufacturing.Models.JobWorkIssueViewModel
+@{
+    ViewBag.Title = Manufacturing.JobWorkIssueDetail;
+}
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Manufacturing.JobWorkIssue</h1>
+            <span class="uk-text-upper uk-text-small">@Manufacturing.JobWorkIssueDetail</span>
+        </div>
+
+
+        <div class="heading_actions hidden-print-preview">
+            @if (Model.Status == "draft")
+            {
+                @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "Edit", "JobWorkIssue", new { Area = "Manufacturing", id = Model.ID }, new { @class = "md-btn" }))
+                
+            }
+            @ActionAuthorization.IsAuthorized("Print", "<a class='md-btn print'>" + Common.Print + "</a>")
+            @Html.ActionLink(Common.Close, "Index", "JobWorkIssue", new { Area = "Manufacturing" }, new { @class = "md-btn " })
+           
+        </div>
+    </div>
+
+    <div id="page_content_inner" class="sales detail-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                @{Html.RenderPartial("/Areas/Manufacturing/Views/JobWorkIssue/View.cshtml", Model); }
+            </div>
+        </div>
+    </div>
+</div>
+
+            

@@ -1,0 +1,213 @@
+﻿@model TradeSuiteApp.Web.Areas.Payroll.Models.AttendanceModel
+@{
+    ViewBag.Title = Payroll.Attendance;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Payroll.Attendance</h1>
+            <span class="uk-text-upper uk-text-small">@Payroll.Attendance</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSave'>" + Common.Save + "</a>")
+           
+            @Html.ActionLink(Common.Back, "Index", "Attendance", new { Area = "Payroll" }, new { @class = "md-btn " })
+           
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Payroll.LocationName </label>
+                                            @Html.DropDownListFor(Model => Model.LocationID, new SelectList(Model.LocationList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Payroll.DepartmentName </label>
+                                            @Html.DropDownListFor(Model => Model.DepartmentID, new SelectList(Model.Departmentlist, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Payroll.EmployeeCategory </label>
+                                            @Html.DropDownListFor(Model => Model.EmployeeCategoryID, new SelectList(Model.EmployeeCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Payroll.Month </label>
+                                            @Html.DropDownListFor(Model => Model.MonthID, new SelectList(Model.MonthList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                        </div>                                        
+                                        <div class="uk-width-medium-1-8">
+                                            <div class="uk-width-medium-1-8">
+                                                <label>&nbsp;</label>
+                                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light btnshowItem">@Common.Show</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-group">
+                    <div class="uk-grid">
+                        <div class="uk-width-4-10" id="employee-list-edit-wrapper">
+                            <table id="daily-attendance-employee-list" class="uk-table" cellspacing="0">
+                                <thead>
+                                    <tr>                                                                            
+                                        <th class="width-20">
+                                            @Common.SerialNo
+                                        </th>
+                                        <th class="width-40">
+                                            @Payroll.EmployeeCode
+                                        </th>
+
+                                        <th>
+                                            @Payroll.EmployeeName
+                                        </th>
+                                        <th class="width-20">
+                                            @Payroll.TotalLeave
+                                        </th>
+                                        <th class="width-20">
+                                            @Payroll.BalanceLeave
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="uk-width-6-10" id="day-list-wrapper">
+                            <table id="attendance-day-list" class="uk-table" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2">1</th>
+                                        <th colspan="2">2</th>
+                                        <th colspan="2">3</th>
+                                        <th colspan="2">4</th>
+                                        <th colspan="2">5</th>
+                                        <th colspan="2">6</th>
+                                        <th colspan="2">7</th>
+                                        <th colspan="2">8</th>
+                                        <th colspan="2">9</th>
+                                        <th colspan="2">10</th>
+                                        <th colspan="2">11</th>
+                                        <th colspan="2">12</th>
+                                        <th colspan="2">13</th>
+                                        <th colspan="2">14</th>
+                                        <th colspan="2">15</th>
+                                        <th colspan="2">16</th>
+                                        <th colspan="2">17</th>
+                                        <th colspan="2">18</th>
+                                        <th colspan="2">19</th>
+                                        <th colspan="2">20</th>
+                                        <th colspan="2">21</th>
+                                        <th colspan="2">22</th>
+                                        <th colspan="2">23</th>
+                                        <th colspan="2">24</th>
+                                        <th colspan="2">25</th>
+                                        <th colspan="2">26</th>
+                                        <th colspan="2">27</th>
+                                        <th colspan="2">28</th>
+                                        <th colspan="2">29</th>
+                                        <th colspan="2">30</th>
+                                        <th colspan="2">31</th>
+                                    </tr>
+                                    <tr class="tablehead">
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                        <th>FN</th>
+                                        <th>AN</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <input type="hidden" id="count" value="0" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<select id="StatusTemplate">    
+    <option value="val1">Present</option>
+    <option value="val2">Casual Leave</option>
+    <option value="val3">Off day</option>
+    <option value="val3">Half Day Leave</option>
+    <option value="val3">Holiday</option>
+</select>
+@Scripts.Render("~/Js/Page/Attendance")
+<script type="text/javascript">    
+   Attendance.init();    
+    </script>
+

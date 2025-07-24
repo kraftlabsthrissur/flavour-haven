@@ -1,0 +1,156 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.AdvanceReceiptModel
+@{
+    ViewBag.Title = "Details Advance Receipt";
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Accounts.AdvanceReceiptDetails</h1>
+            <span class="uk-text-upper uk-text-small">@Accounts.AdvanceReceiptDetails</span>
+        </div>
+        <div class="heading_actions">
+            @*@Html.ActionLink(Common.Edit, "Edit", "AdvanceReceipt", new { Area = "Accounts", id = (Model != null) ? Model.ID : 0 }, new { @class = "md-btn " })*@
+
+            @Html.ActionLink(Common.Back, "Index", "AdvanceReceipt", new { Area = "Accounts" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="Details-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Accounts.TransactionNumber</label>
+                                            @Html.TextBoxFor(m => m.AdvanceReceiptNo, new { @class = "md-input label-fixed", @id = "txtAdvancePaymentNo", disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Accounts.TransactionDate</label>
+                                            @Html.TextBoxFor(m => m.AdvanceReceiptDate, new { @class = "md-input label-fixed", disabled = "disabled" })
+                                        </div>
+
+                                        <div class="uk-width-medium-2-8">
+
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Sales.CustomerName<span>*</span></label>
+                                                @Html.TextBox("CustomerName", Model.CustomerName, new { @class = "md-input label-fixed", disabled = "disabled" })
+                                                @Html.HiddenFor(m => m.CustomerID)
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Accounts.ModeOfPayment<span>*</span></label>
+                                            @Html.TextBoxFor(m => m.PaymentTypeName, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label for="uk_dp_start">@Accounts.BankName<span>*</span></label>
+                                            @Html.TextBoxFor(m => m.BankName, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Accounts.ReferenceNumber<span>*</span></label>
+                                            @Html.TextBoxFor(m => m.ReferenceNo, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <label>@Accounts.NetAmount</label>
+                                            @Html.TextBoxFor(m => m.NetAmount, new { @class = "md-input label-fixed x-large mask-currency", @id = "NetAmount", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-group">
+                    <div class="tablescroll" id="unProcessedItemsTblContainer">
+                        <table id="Advance-Receipt" class="uk-table" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th class="width-40">@Common.SerialNo</th>
+                                    <th class="width-120">@Accounts.InvoiceDebitNoteAdvanceNo</th>
+                                    <th class="width-80">@Accounts.ARSODate</th>
+                                    <th class="width-200">@Accounts.ARItemName</th>
+                                    <th class="width-80">@Accounts.ARAmount</th>
+                                    <th class="width-100">@Purchase.TDSCode</th>
+                                    <th class="width-80">@Purchase.TDSAmount</th>
+                                    <th class="width-80">@Purchase.NetAmount</th>
+                                    <th class="width-200">@Accounts.APRemarks</th>
+                                </tr>
+                            </thead>
+                            <tbody class="prTbody">
+                                @if (Model != null)
+                                {
+                                    if (Model.Items != null)
+                                    {
+                                        foreach (var itm in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                                        {
+                                            <tr class="rowPr">
+                                                <td>@itm.i</td>
+                                                <td>@itm.value.TransNo</td>
+                                                <td>@itm.value.SalesOrderDate</td>
+                                                <td>@itm.value.ItemName</td>
+                                                <td class="mask-currency"> @itm.value.Amount </td>
+                                                <td>@itm.value.TDSCode</td>
+                                                <td class="mask-currency">@itm.value.TDSAmount</td>
+                                                <td class="mask-currency">@itm.value.NetAmount</td>
+                                                <td>@itm.value.Remarks</td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                            </tbody>
+                            @*<tfoot>
+                                    <tr>
+                                        <td colspan="4"><b>Total</b></td>
+                                        <td><input type="text" class="md-input label-fixed mask-currency totalAmount decimalnum " readonly /></td>
+                                        <td></td>
+                                        <td><input type="text" class="md-input  mask-currency" id="totalTDSAmount" readonly /></td>
+                                        <td><input type="text" class="md-input  mask-currency totalNetAmount" readonly /></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>*@
+
+                        </table>
+                    </div>
+                    <div class="tablescroll" id="advanceRequestDetailsTblContainer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/AdvanceReceipt")
+<script type="text/javascript">
+    advance_receipt.details();
+</script>

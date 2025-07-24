@@ -1,0 +1,96 @@
+﻿@model TradeSuiteApp.Web.Areas.Sales.Models.TransportPermitModel
+
+@{
+    ViewBag.Title = Sales.TransportPermitDetails;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 48, media: 960 }">
+        <div class="heading_title">
+            <h1>@Sales.TransportPermit</h1>
+            @Html.HiddenFor(m => m.ID)
+         
+            <span class="uk-text-upper uk-text-small">@Sales.TransportPermitDetails</span>
+        </div>
+        <div class="heading_actions">
+           
+            @ActionAuthorization.IsAuthorized("Print", " <a class='md-btn print'>Print</a>")
+            @Html.ActionLink(Common.Back, "Index", "TransportPermit", new { Area = "Sales" }, new { @class = "md-btn " })
+      
+        </div>
+    </div>
+    <div id="page_content_inner" class="details-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-8-10">
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Sales.TransNo</label>
+                                    @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input", @disabled = "disabled" })
+                                </div>
+
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Sales.DriverName</label>
+                                    @Html.TextBoxFor(m => m.DriverName, new { @class = "md-input", @disabled = "disabled" })
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label for="uk_dp_start">@Sales.VehicleNo</label>
+                                    @Html.TextBoxFor(m => m.VehicleNumber, new { @class = "md-input", @disabled = "disabled" })
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Sales.ValidFromdate</label>
+                                    @Html.TextBoxFor(m => m.ValidFromDate, new { @class = "md-input", @disabled = "disabled" })
+                                </div>
+
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Sales.ValidTodate</label>
+                                    @Html.TextBoxFor(model => model.ValidToDate, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                </div>
+                                
+                            </div>
+                        </div>
+                 
+                    </div>
+                
+                </div>
+                <br />
+                <div>
+                    <table id="TransportPermitList" class="uk-table " cellspacing="0" width=100">
+                        <thead>
+                            <tr>
+                                <th class="width-10">@Common.SerialNo</th>
+            
+                                <th class="width-200">@Sales.TransNo</th>
+                                <th class="width-200">@Sales.TransDate</th>
+                                <th class="width-250">@Sales.DocumentType</th>
+                                <th class="width-250">@Sales.CustomerName</th>
+
+                                <th class="width-100">@Sales.District </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                            {
+                                <tr>
+                                    <td class="uk-text-center">@(1 + @Model.Items.IndexOf(item.value))</td>
+                                    <td>@item.value.TransNo</td>
+                                    <td>@item.value.TransDate</td>
+                                    <td>@item.value.Type</td>
+                                    <td> @item.value.CustomerName</td>
+                                    <td> @item.value.District</td>
+                                   
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/Js/Page/TransportPermitReport")
+<script type="text/javascript">
+    TransportPermitReport.bind_events();
+</script>

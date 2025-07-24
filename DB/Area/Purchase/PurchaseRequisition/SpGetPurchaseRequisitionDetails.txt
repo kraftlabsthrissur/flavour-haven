@@ -1,0 +1,46 @@
+  
+ALTER PROCEDURE [Purchase].[SpGetPurchaseRequisitionDetails]      
+(@ID INT,    
+@UserID INT,      
+@FinYear INT,      
+@LocationID INT,      
+@ApplicationID INT)      
+AS    --exec Purchase.SpGetPurchaseRequisitionDetails 0,616,2019,1,1  
+BEGIN      
+SET NOCOUNT ON      
+ Declare @IsViewer int,@DepartmentID int ,@FromDepartmentID int,@ToDepartmentID int  
+ SELECT @DepartmentID = DepartmentID FROM Employee WHERE UserID = @UserID  
+ select @ToDepartmentID =ToDeptID  from PurchaseRequisition Where ID = @ID   
+ select @FromDepartmentID =FromDeptID  from PurchaseRequisition Where ID = @ID   
+  
+  
+ SELECT @IsViewer = CASE WHEN COUNT(*) = 0 THEN 0 ELSE 1 END    
+ FROM AspNetUsers U   
+ LEFT JOIN UserRoles UR ON U.ID = UR.UserID  
+ LEFT JOIN Roles R ON R.ID = UR.RoleID    
+ WHERE  ((R.Name LIKE 'TRANSACTION VIEWER'AND UR.LocationID = @LocationID) OR UserName LIKE 'admin')  
+ AND U.ID = @UserID  
+  
+  SELECT PR.ID, PR.Code, PR.Date, PR.RequisitionNo, PR.QuotationProcessed, PR.FullyOrdered, PR.FromDeptID,  DP.Name AS FromDepartment,   
+  PR.ToDeptID,DT.Name AS ToDepartment ,PR.IsDraft, PR.PurchaseRequisitedCustomer,PR.RequisitedCustomerAddress,PR.RequisitedPhoneNumber1,
+  PR.RequisitedPhoneNumber2,PR.Remarks,
+  (select DISTINCT First_value(I.Name) OVER (PARTITION BY PRT.PurchaseRequisitionID ORDER BY PRT.ID)   from PurchaseRequisitionTrans PRT   
+  Inner join viItem I on I.ID = PRT.ItemID where PRT.PurchaseRequisitionID = PR.ID AND PRT.FinYear = @FinYear AND PRT.LocationID = @LocationID AND   
+  PRT.ApplicationID = @ApplicationID) AS ItemName,  
+  (select DISTINCT First_value(I.Category)  OVER (PARTITION BY PRT.PurchaseRequisitionID ORDER BY PRT.ID)   
+  from PurchaseRequisitionTrans PRT   Inner join viItem I on I.ID = PRT.ItemID where PRT.PurchaseRequisitionID = PR.ID 
+  AND PRT.FinYear = @FinYear AND PRT.LocationID = @LocationID AND  PRT.ApplicationID = @ApplicationID) AS ItemType,  
+  ISNULL(PR.Cancelled,0) AS Cancelled, PR.CancelledDate,PR.CreatedUserID, PR.CreatedDate, PR.FinYear, PR.LocationID, PR.ApplicationID  
+  FROM PurchaseRequisition PR  
+  INNER JOIN Department DP ON PR.FromDeptID = DP.ID      
+  INNER JOIN Department DT ON PR.ToDeptID = DT.ID   
+   WHERE PR.ID = @ID 
+  --AND (@IsViewer = 1   
+  -- OR @UserID in (select UserID FROM dbo.FnGetPrivilegedUsers(PR.CreatedUserID,PR.LocationID,@ToDepartmentID,@FromDepartmentID,PR.LocationID)))   
+  --AND PR.LocationID = @LocationID   
+  --AND PR.ApplicationID = @ApplicationID      
+
+
+END  
+  
+  

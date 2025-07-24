@@ -1,0 +1,32 @@
+    
+ALTER procedure [Master].[SpGetCustomerByID]            
+(@CustomerID INT ,@ApplicationID INT)            
+AS            
+BEGIN            
+ SELECT C.ID,ISNULL(C.EmailID,'') EmailID,C.Code,C.Name,C.Name2,C.LocationID,C.OldCode,C.OldName,C.CategoryID,C.Currency,C.ContactPersonName,C.PriceListID,C.DiscountID,    
+ C.CustomerTaxCategoryID,    
+ C.CustomerAccountsCategoryID,C.IsGSTRegistered,C.AadhaarNo,C.PANNo,C.GSTNo,C.FaxNo,C.Creditdays,C.MinimumCreditLimit,C.MaxCreditLimit,C.PaymentTypeID,C.RelatedCustomerID,    
+ C.StartDate,C.ExpiryDate,C.IsInterCompany,C.IsMappedtoExpsEntries,C.IsBlockedForSalesOrders,C.IsBlockedForSalesInvoices,IsAlsoASupplier,ISNULL(C.SupplierID,0) SupplierID,C.CustomerRouteID,C.CashDiscountCategoryID,    
+ C.ApplicationID,C.CashDiscountPercentage,c.CustomerLocationMapping,C.SchemeID,C.PropratorName,C.CashDiscountID,    
+ ISNULL(CC.Name,'') AS CustomerCategoryName,P.Name AS PriceListName,ISNULL(DC.DiscountPercentage,0.00) AS DiscountPercentage,        
+ ISNULL(CT.Name,'') AS CustomerTaxCategory,ISNULL(CA.Name,'') AS CustomerAccountCategory,ISNULL(PT.Name,'') AS PaymentTypeName ,'GREEN' AS Color,        
+ 500.00 AS OutstandingAmount,ISNULL(D.DiscountPercentage,0.00) AS CashDiscountPercent,ISNULL(S.Name,'') Supplier,    
+ ISNULL(F.FSOName,'') AS FSO,    
+ ISNULL(F.ID,0) AS FSOID   ,Isnull(C.CustomerMonthlyTarget ,0.00) as CustomerMonthlyTarget ,C.TradeLegalName,C.IsMappedtoServiceSales,    
+ IsBlockedForChequeReceipt,IsDraftCustomer,cu.Name as CurrencyName,cu.ID  as CurrencyID,cu.Code CurrencyCode    
+ from Customer C              
+ inner join Location L on L.ID=C.LocationID            
+ LEFT join CustomerCategory CC on CC.ID=C.CategoryID            
+ inner join PriceList P on P.ID=C.PriceListID     
+ inner join currency cu on cu.ID=c.currencyid            
+ --inner join Discount D on D.ID=C.DiscountID          
+ left join DiscountCategory DC ON C.DiscountID = DC.ID        
+ left join DiscountCategory D ON C.CashDiscountID = D.ID           
+ left join CustomerTaxCategory CT on CT.ID=C.CustomerTaxCategoryID            
+ left join CustomerAccountsCategory CA on CA.ID=C.CustomerAccountsCategoryID            
+ left join PaymentType PT on PT.ID=C.PaymentTypeID            
+ left join FSO F ON F.ID  = C.FSOID      
+ left join Supplier S ON S.ID=C.SupplierID        
+ where C.ID=@CustomerID AND C.ApplicationID=@ApplicationID            
+END       
+      

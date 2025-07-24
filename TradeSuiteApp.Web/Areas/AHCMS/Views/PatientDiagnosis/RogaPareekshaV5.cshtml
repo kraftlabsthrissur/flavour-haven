@@ -1,0 +1,99 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+@if (Model.RogaPareekshaItems != null)
+{
+    List<string> Temp = new List<string>();
+    var TempGroupName = "";
+    var count = 0;
+    int slNo = 1;
+    foreach (var item in Model.RogaPareekshaItems.Select((value, i) => new { i = (i + 1), value }))
+    {
+        if (item.value.Type == "Title" && item.value.IsParent==false)
+        {
+            <tr>
+                <td></td>
+                <td><label class="label-fixed tille_label">@item.value.GroupName</label> </td>
+                <td></td>
+            </tr>
+        }
+
+        else if (item.value.Type == "Radio")
+        {
+            count += 1;
+            if (TempGroupName == item.value.GroupName)
+            {
+
+                if (item.value.Type == "Radio")
+                {
+
+                    <input type="radio" name="@item.value.GroupName" class="rogapareekshaResults" data-md-icheck value="@item.value.Name" @(item.value.IsChecked == true ? "checked=\"checked\"" : "") /><label class="radio_label">@item.value.Name</label>
+                }
+                else
+                {
+                    <input type="text" name="@item.value.GroupName" class="md-input label-fixed rogapareekshaResult" value="@item.value.Description" /><label>@item.value.Name</label>
+                }
+
+
+
+            }
+            else
+            {
+                TempGroupName = item.value.GroupName;
+
+                @Html.Raw("<tr>")
+                if (item.value.IsParent == true)
+                {
+                    @Html.Raw("<td class='uk-text-center'>")@slNo
+                    slNo++;
+                }
+                else
+                {
+                    @Html.Raw("<td class='uk-text-center'>")
+
+                }
+                @Html.Raw("</td>")
+                if (item.value.IsParent == true)
+                {
+                    @Html.Raw("<td class='width-70 Area groupname'>")
+                    @item.value.GroupName
+                }
+                else
+                {
+                    @Html.Raw("<td class='width-70 Area groupname'>")
+                    <label>&nbsp;&nbsp;</label>
+                    @item.value.GroupName
+                }
+                @Html.Raw("</td>")
+                @Html.Raw("<td class='" + @item.value.GroupName + "'>")
+                if (Model.RogaPareekshaItems.Where(a => a.GroupName == TempGroupName).Count() != count)
+                {
+                    if (item.value.Type == "Radio")
+                    {
+                        <input type="radio" name="@item.value.GroupName" class="rogapareekshaResults" data-md-icheck checked value="@item.value.Name" @(item.value.IsChecked == true ? "checked=\"checked\"" : "") /><label class="radio_label">@item.value.Name</label>
+
+                    }
+                    else
+                    {
+                        @*@Html.TextBox("", new { @class = "md-input label-fixed baselineResults baseLine_txt" + @item.value.Name })*@
+                        <label>@item.value.Name</label> <input type="text" name="@item.value.GroupName" class="md-input label-fixed rogapareekshaResults baseLine_txt" value="@item.value.Description" />
+                    }
+
+
+                }
+                if (!Model.IsCompleted)
+                {
+
+                }
+
+
+            }
+            if (Model.RogaPareekshaItems.Where(a => a.GroupName == TempGroupName).Count() == count)
+            {
+                count = 0;
+
+                @Html.Raw("</td>")
+                @Html.Raw("</tr>")
+            }
+        }
+
+    }
+}

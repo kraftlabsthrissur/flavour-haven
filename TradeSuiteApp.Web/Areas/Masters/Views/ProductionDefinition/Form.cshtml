@@ -1,0 +1,150 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.ProductionDefinitionModel
+<div class="uk-form-row">
+    <div class="uk-grid" data-uk-grid-margin>
+        @Html.HiddenFor(m => m.ID)
+        <div class="uk-width-medium-2-10">
+            <label>@Masters.ProductionGroup<span>*</span></label>
+            @if (Model.ProductionGroupID > 0)
+            {
+                @Html.TextBoxFor(m => m.ProductionGroupName, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+            }
+            else
+            {
+                @Html.TextBoxFor(m => m.ProductionGroupName, "", new { @class = "md-input label-fixed", @autocomplete = "off" })
+            }
+        </div>
+
+
+        @if (Model.ProductionGroupID > 0)
+            {
+            <div class="uk-width-medium-2-10">
+                <label>@Masters.ItemName<span>*</span></label>
+                @Html.TextBoxFor(m => m.ItemName, "", new { @class = "md-input label-fixed", @autocomplete = "off", @disabled = "disabled" })
+            </div>
+        }
+        else
+        {
+            <div class="uk-width-medium-2-10">
+                <div class="uk-autocomplete" id="production-definition-item-autocomplete">
+                    <label>@Masters.ItemName<span>*</span></label>
+                    @Html.TextBoxFor(m => m.ItemName, "", new { @class = "md-input label-fixed", @autocomplete = "off" })
+                    <span class="uk-input-group-addon">
+                        <a data-uk-modal="{target:'#select-production-definition-item'}">
+                            <i class="uk-input-group-icon uk-icon-search"></i>
+                        </a>
+                    </span>
+                    <script type="text/autocomplete">
+                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                            {{~items}}
+                            <li data-value="{{ $item.ItemName }}"
+                                data-id="{{$item.ItemID}}"
+                                data-code="{{$item.ItemCode}}"
+                                data-primary-unit="{{$item.UnitName}}"
+                                data-category="{{$item.ItemCategory}}"
+                                data-inventory-unit="{{$item.InventoryUnit}}"
+                                data-inventory-unit-id="{{$item.InventoryUnitID}}"
+                                data-primary-unit-id="{{$item.UnitID}}">
+                                <a>
+                                    {{ $item.ItemName }}
+                                    <div>{{{ $item.ItemCode }}}</div>
+                                </a>
+                            </li>
+                            {{/items}}
+                        </ul>
+                    </script>
+                </div>
+
+            </div>
+        }
+        @Html.HiddenFor(model => Model.ProductionGroupID)
+        @Html.HiddenFor(model => Model.ProductionGroupItemID)
+        @Html.HiddenFor(model => Model.ItemCategoryID)
+        @Html.HiddenFor(model => Model.FinishedGoodsItemCategoryID)
+        @Html.HiddenFor(model => Model.SemifinishedGoodsItemCategoryID)
+        @Html.HiddenFor(model => Model.ItemCategoryID, new { @id = "CategoryID" })
+
+        <div class="uk-width-medium-1-10">
+            <label>@Masters.BatchSize<span>*</span></label>
+            @if (Model.ProductionGroupID > 0)
+            {
+                @Html.TextBoxFor(m => m.BatchSize, "", new { @class = "md-input label-fixed mask-production-qty BatchSize", @disabled = "disabled" })
+            }
+            else
+            {
+                @Html.TextBoxFor(m => m.BatchSize, "", new { @class = "md-input label-fixed mask-production-qty BatchSize" })
+            }
+        </div>
+        <div class="uk-width-medium-1-10">
+            <label>@Masters.SequenceName</label>
+            @Html.TextBox("SequenceName", "", new { @class = "md-input label-fixed SequenceName" })
+        </div>
+        <div class="uk-width-medium-1-10">
+            <label>@Masters.IsKalkan</label>
+            <div class="uk-grid uk-margin-small-top" data-uk-grid-margin="">
+                @Html.HiddenFor(m => m.IsKalkan)
+                <div class="uk-input-group">
+                    <input type="checkbox" class="icheckbox IsKalkan" data-md-icheck />
+                </div>
+            </div>
+        </div>
+        <div class="uk-width-medium-1-8">
+            <label>&nbsp;</label>
+            <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" name="ProductionSequence" id="btnAddSequence">@Common.AddSequence</button>
+        </div>
+        <div class="uk-width-medium-1-10">
+            <label>&nbsp;</label>
+            <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" name="PackingSequence" id="btnAddPackingSequence">@Common.AddPackingSequence</button>
+        </div>
+    </div>
+</div>
+<div class="uk-form-row">
+    <div class="uk-grid" data-uk-grid-margin>
+        <div class="uk-width-medium-1-10">
+            <label>@Masters.DefaultLocation<span>*</span></label>
+            @Html.DropDownListFor(Model => Model.LocationID, Model.LocationList, "Select", new { @class = "md-input label-fixed LocationID" })
+        </div>
+
+
+        @foreach (var location in Model.LocationList)
+        {
+            <div class="uk-width-medium-1-10 Locationdiv">
+                <br />
+                <input type="checkbox" class="icheckbox ProductionLocation" id="@location.Value" value="@location.Value" data-md-icheck />&nbsp;
+                <label id="locationLabel">@location.Text</label>
+            </div>
+        }
+    </div>
+    <input type="hidden" id="Production-Location-Mapping" value="0">
+</div>
+
+<div class="uk-form-row">
+    <div class="uk-grid">
+        <div class="uk-width-1-1">
+            <ul class="uk-tab" id="tabs-sequence" data-uk-tab="{connect:'#tabs-sequence-content',animation: 'slide-right'}">
+
+                @*@foreach (var productionSequence in Model.Sequences.GroupBy(a => new { a.ProductionSequence, a.SequenceName }).Select(g => g.ToList()))*@
+                @foreach (var sequence in Model.Sequences)
+                {
+                    @*<li aria-expanded="true"><a>SEQUENCE @productionSequence.FirstOrDefault().ProductionSequence</a></li>*@
+                    @*<li aria-expanded="true"><a>SEQUENCE @sequence.ProductionSequence</a></li>*@
+                    <li aria-expanded="true"><a>@(sequence.ProcessStage == "" ? "Packing" : sequence.ProcessStage)</a></li>
+                }
+            </ul>
+            <ul id="tabs-sequence-content" class="uk-switcher uk-margin" style="width:100%">
+
+                @foreach (var sequence in Model.Sequences)
+                {
+
+                    Html.RenderPartial("Sequence", sequence);
+                }
+            </ul>
+        </div>
+        <input type="hidden" class="sequence-count" value="0">
+    </div>
+</div>
+
+@Html.Partial("~/Areas/Masters/Views/Item/StockRequestItemList.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Item/StockableItemsList.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Item/ProductionDefinitionItemList.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Item/ProductionDefinitionMaterialList.cshtml")
+

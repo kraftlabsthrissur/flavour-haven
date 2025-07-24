@@ -1,0 +1,77 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.CreditNoteModel
+@{
+    ViewBag.Title = "Form";
+
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.TransNo</label>
+                            @Html.TextBoxFor(model => model.TransNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Accounts.TransDate</label>
+                            @Html.TextBoxFor(m => m.TransDate, new { @class = "md-input", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+
+                        <div class="uk-width-medium-2-8">
+                            <label>@Accounts.DebitAccount<span>*</span></label>
+                            @Html.TextBoxFor(model => model.DebitAccount, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+
+                        <div class="uk-width-medium-2-8">
+                            <label>@Accounts.CreditAccount<span>*</span></label>
+                            @Html.TextBoxFor(model => model.CreditAccount, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.GSTPercentage</label>
+                            @Html.TextBoxFor(model => model.GSTPercent, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.Amount<span>*</span></label>
+                            @Html.TextBoxFor(model => model.Amount, new { @class = "md-input label-fixed mask-positive-currency", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.TaxableAmount<span>*</span></label>
+                            @Html.TextBoxFor(model => model.TaxableAmount, new { @class = "md-input label-fixed mask-positive-currency", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.GSTAmount<span>*</span></label>
+                            @Html.TextBoxFor(model => model.GSTAmount, new { @class = "md-input label-fixed mask-positive-currency", @disabled = "disabled" })
+                        </div>
+
+                        <div class="uk-width-medium-2-8">
+                            <label>@Accounts.Remarks</label>
+                            @Html.TextBoxFor(model => model.Remarks, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-1">
+                            <label>@Accounts.TotalAmount</label>
+                            @Html.TextBoxFor(m => m.TotalAmount, new { @class = "md-input label-fixed x-large mask-currency", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

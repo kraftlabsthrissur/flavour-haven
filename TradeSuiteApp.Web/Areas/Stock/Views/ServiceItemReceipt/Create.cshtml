@@ -1,0 +1,133 @@
+﻿@model TradeSuiteApp.Web.Areas.Stock.Models.StockReceiptViewModel
+
+@{
+    ViewBag.Title = @Stock.CreateServiceItemReceipt;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 48, media: 960 }">
+        <div class="heading_title">
+            <h1>@Stock.ServiceItemReceipt</h1>
+            <span class="uk-text-upper uk-text-small">@Stock.CreateServiceItemReceipt</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSave'>" + Common.Save + "</a>")
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSaveAndNew'>" + Common.SaveAndNew + "</a>")
+            @Html.ActionLink(Common.Close, "Index", "ServiceItemReceipt", new { Area = "Stock" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>@Common.Action</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-1">
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin>
+                                <div class="uk-width-medium-1-10">
+                                    <label>@Stock.ReceiptNo</label>
+                                    @Html.TextBoxFor(m => m.ReceiptNo, new { @class = "md-input", @disabled = "disabled" })
+                                </div>
+                                <div class="uk-width-medium-1-10">
+                                    <label for="uk_dp_start">@Stock.ReceiptDate</label>
+                                    @Html.TextBoxFor(m => m.Date, new { @class = "md-input", @disabled = "disabled" })
+                                </div>
+
+                                <div class="uk-width-medium-1-10">
+                                    <label>@Stock.IssueLocation<span>*</span></label>
+                                    <select id="IssueLocationID" class="md-input label-fixed" @((Model.ID > 0) ? "disabled =disabled" : "")>
+                                        <option>Select</option>
+                                        @foreach (var location in Model.IssueLocationList)
+                                        {
+                                            <option data-state-id="@location.StateID" value="@location.ID" @((Model.IssueLocationID == location.ID) ? "selected ='selected'" : "")>@location.Name</option>
+                                        }
+                                    </select>
+                                    @Html.HiddenFor(Model => Model.LocationStateID)
+                                </div>
+                                <div class="uk-width-medium-1-10">
+                                    <label>@Stock.IssuePremise<span>*</span></label>
+                                    @if (Model.ID > 0)
+                                    {
+                                        @Html.DropDownListFor(Model => Model.IssuePremiseID, Model.IssuePremiseList, "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownListFor(Model => Model.IssuePremiseID, Model.IssuePremiseList, "Select", new { @class = "md-input label-fixed" })
+                                    }
+                                </div>
+                                <div class="uk-width-medium-1-10">
+                                    <label>@Stock.ReceiptLocation<span>*</span></label>
+                                    @Html.DropDownListFor(Model => Model.ReceiptLocationID, Model.LocationList, "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                </div>
+                                <div class="uk-width-medium-1-10">
+                                    <label>@Stock.ReceiptPremise<span>*</span></label>
+                                    @if (Model.ID > 0)
+                                    {
+                                        @Html.DropDownListFor(Model => Model.ReceiptPremiseID, Model.PremiseList, "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownListFor(Model => Model.ReceiptPremiseID, Model.PremiseList, "Select", new { @class = "md-input label-fixed" })
+                                    }
+                                </div>
+
+                                <div class="uk-width-medium-2-10">
+                                    <div class="uk-autocomplete " id="party-autocomplete">
+                                        <div class="uk-input-group">
+                                            <label>@Stock.SelectIssue<span>*</span></label>
+                                            @Html.TextBox("IssueNo", "", new { @class = "md-input label-fixed" })
+                                            <span class="uk-input-group-addon"><a class="selectissue" data-uk-modal="{target:'#add-request'}"><i class="uk-input-group-icon uk-icon-search"></i></a></span>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-width-medium-2-10">
+                                    <label>@Stock.NetAmount</label>
+                                    @Html.TextBoxFor(m => m.NetAmount, new { @class = "md-input mask-sales-currency label-fixed x-large", @readonly = "readonly" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <br />
+                <div>
+                    <table id="stock-issue-items-list" class="uk-table scroll-table-dynamic" cellspacing="0" width=100">
+                        <thead>
+                            <tr>
+                                <th class="width-20">@Common.SerialNo</th>
+                                <th class="width-250">@Stock.ItemName</th>
+                                <th class="width-40">@Stock.Unit</th>
+                                <th class="width-60">@Stock.IssueQty</th>
+                                <th class="width-60">@Stock.ReceiptQty</th>
+                                <th data-inter-branch="true" class="width-50 inter-branch">@Stock.BasicPrice</th>
+                                <th data-inter-branch="true" class="width-80 inter-branch">@Stock.GrossAmount</th>
+                                <th data-inter-branch="true" class="width-40 inter-branch">@Stock.TradeDiscountPer</th>
+                                <th data-inter-branch="true" class="width-60 inter-branch">@Stock.TradeDiscount</th>
+                                <th data-inter-branch="true" class="width-80 inter-branch">@Stock.TaxableAmount</th>
+                                <th data-inter-branch="true" class="width-40 inter-branch">@Stock.GSTPercentage</th>
+                                <th data-inter-branch="true" class="width-60 inter-branch">@Stock.GSTAmount</th>
+                                <th data-inter-branch="true" class="width-80 inter-branch">@Stock.NetAmount</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <input type="hidden" id="item-count" value="0" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Html.Partial("~/Areas/Stock/Views/ServiceItemReceipt/PartialList.cshtml")
+
+@Scripts.Render("~/Js/Page/ServiceItemReceipt")
+<script type="text/javascript">
+    ServiceItemReceipt.init();
+</script>
+

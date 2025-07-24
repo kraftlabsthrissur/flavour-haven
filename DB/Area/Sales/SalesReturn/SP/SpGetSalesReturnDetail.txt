@@ -1,0 +1,28 @@
+  
+   
+ ALTER PROCEDURE [Sales].[SpGetSalesReturnDetail]      
+(@ID INT,      
+@FinYear INT,      
+@LocationID INT,      
+@ApplicationID INT)      
+AS      
+BEGIN      
+SET NOCOUNT ON         
+ Begin       
+ SELECT SR.ID,SR.Code,SR.TranDate,CustomerTypeID ,'' AS CustomerType,C.Name AS CustomerName,C.CurrencyCode,SR.RoundOff,SR.NetAmount,   
+ SR.CustomerID,SR.SGSTAmount,SR.CGSTAmount,SR.IGSTAmount, SR.GrossAmount,  
+ ISNULL(SR.IsCancelled,0) AS Cancelled,SR.CancelledDate,SR.IsDraft,SR.CreatedUserID,SR.CreatedDate,SR.FinYear,SR.LocationID,    
+ SR.ApplicationID,SR.SalesInvoiceID,ISNULL(SR.SalesInvoiceNo,'') InvoiceNo,SR.IsNewInvoice FROM Sales.SalesReturn SR    
+ inner join viCustomer C on C.ID=SR.CustomerID  
+ left join Sales.SalesInvoice SI on SR.SalesInvoiceID=SI.ID   
+ WHERE SR.ID =@ID AND SR.FinYear = @FinYear AND SR.LocationID = @LocationID AND SR.ApplicationID=@ApplicationID      
+ End      
+ End  
+  
+
+  
+  
+   
+  
+  
+  

@@ -1,0 +1,22 @@
+ALTER FUNCTION dbo.FnGetCurrencyConversionRate(@BaseCurrencyID int, @ConversionCurrencyID int)
+RETURNS decimal(18,6)
+AS
+BEGIN
+
+DECLARE @CurrencyConversionRate decimal(18,6);
+IF(@BaseCurrencyID=@ConversionCurrencyID)
+BEGIN
+SET @CurrencyConversionRate=1
+END
+ELSE
+BEGIN
+  SELECT @CurrencyConversionRate =(Select  top 1 cc.ExchangeRate FROM CurrencyConversion cc
+  WHERE cc.IsActive = 1 AND cc.BaseCurrencyID = @BaseCurrencyID AND cc.ConversionCurrencyID = @ConversionCurrencyID)
+  IF @CurrencyConversionRate IS NULL
+  BEGIN
+     SELECT @CurrencyConversionRate = (select  top 1 cc.InverseExchangeRate FROM CurrencyConversion cc WHERE cc.IsActive = 1 
+     AND cc.ConversionCurrencyID = @BaseCurrencyID AND cc.BaseCurrencyID = @ConversionCurrencyID)
+  END
+END
+RETURN ISNULL(@CurrencyConversionRate,0);
+END;

@@ -1,0 +1,41 @@
+ ALTER PROCEDURE [Purchase].[SpGetPurchaseInvoiceItemForPurchaseReturn]          
+(@PurchaseInvoiceID INT,          
+@FinYear INT,          
+@LocationID INT,          
+@ApplicationID INT)          
+AS          
+BEGIN          
+SET NOCOUNT ON          
+Begin              
+declare @WareHouseID int;          
+select @WareHouseID=ConfigValue from configuration where ConfigName= 'DefaultPurchaseStore' and LocationID=@LocationID          
+select  P.SuppDocAmount,P.SuppShipAmount,P.PackingForwarding,P.SupplierOtherCharges,P.FreightAmount,P.LocalCustomsDuty,P.LocalFreight,P.LocalMiscCharge,P.LocalOtherCharges
+,PIT.ID as PurchaseInvoiceTransID,PurchaseInvoiceID as PurchaseInvoiceID,      
+PIT.ItemID,I.Code as ItemCode,PIT.ItemName,PIT.PartsNumber,ISNULL(PIT.Remarks,'') Remarks,PIT.Model,      
+PIT.GrossAmount,PIT.DiscountPercentage,PIT.DiscountAmount,PIT.OfferQty,U.UOM as  Unit,PIT.UnitID,          
+(Case when GRNT.AcceptedQty >ISNULL(QC.ApprovedQty,0) then case when GRNT.AcceptedQty>PIT.InvoiceQty Then  GRNT.AcceptedQty else PIT.InvoiceQty + PIT.OfferQty end           
+ELSE case when  QC.ApprovedQty>PIT.InvoiceQty Then  QC.ApprovedQty else PIT.InvoiceQty + PIT.OfferQty end    end) as InvoiceQty,          
+PIT.NetPurchasePrice AS InvoiceRate,PIT.InvoiceValue,PIT.AcceptedQty,PIT.ApprovedQty,PIT.PORate,PIT.Difference,          
+IsNull(PIT.SGSTPercent,0) as SGSTPercent ,ISNull(PIT.CGSTPercent,0) as CGSTPercent,ISNull(PIT.IGSTPercent,0) as IGSTPercent,P.PurchaseNo,@WareHouseID as warehouseID,          
+ISNULL(dbo.FnConvertStockFromInventoryUnit(I.ID, dbo.FnGetAvailableStock(I.ID,null,(case when PIT.BatchTypeID=0 then null else PIT.BatchTypeID end),@WareHouseID,@FinYear,@LocationID,@ApplicationID),PIT.UnitID),0) AS Stock,          
+          
+case when PIT.UnitID<>I.PurchaseUnitID then dbo.FnConvertUnit(I.ID,          
+    (Case when GRNT.AcceptedQty >ISNULL(QC.ApprovedQty,0) then          
+ case when GRNT.AcceptedQty>PIT.InvoiceQty Then  GRNT.AcceptedQty else PIT.InvoiceQty + PIT.OfferQty end           
+ ELSE           
+ case when  QC.ApprovedQty>PIT.InvoiceQty Then  QC.ApprovedQty else PIT.InvoiceQty + PIT.OfferQty end           
+  end)          
+ ,I.UnitID,I.PurchaseUnitID)  else 0 end    as ConvertedQuantity ,          
+dbo.FnConvertStockFromInventoryUnit(I.ID, dbo.FnGetAvailableStock(I.ID,null,(case when PIT.BatchTypeID=0 then null else PIT.BatchTypeID end),@WareHouseID,@FinYear,@LocationID,@ApplicationID),I.PurchaseUnitID) AS ConvertedStock,          
+I.UnitID as PrimaryUnitID,I.Unit as PrimaryUnit,I.PurchaseUnit,I.PurchaseUnitID,P.IGSTAmount,P.SGSTAmount,P.CGSTAmount,P.InvoiceNo ,  
+PIT.SecondaryUnit,PIT.SecondaryInvoiceQty,PIT.SecondaryRate,PIT.SecondaryUnitSize,PIT.SecondaryOfferQty  
+From  purchaseinvoicetrans PIT          
+inner join  purchaseinvoice P on P.ID=PIT.PurchaseInvoiceID          
+Inner join GoodsReceiptNoteTrans GRNT on GRNT.ID=PIT.GRNTransID          
+Left Join QualityCheck QC on QC.GRNTransID=GRNT.ID          
+inner join viItem I on I.ID=PIT.ItemID          
+Inner join Unit U on  U.ID=PIT.UnitID          
+where PIT.PurchaseInvoiceID=@PurchaseInvoiceID  and PIT.LocationID=@LocationID and PIT.ApplicationID=@ApplicationID          
+Order by I.Name          
+End          
+End 

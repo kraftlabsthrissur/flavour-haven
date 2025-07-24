@@ -1,0 +1,35 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Masters.Models.AccountGroupModel
+
+@{
+    ViewBag.Title = Masters.CreateAccountGroup;
+}
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.AccountGroup</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.CreateAccountGroup</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSave'>" + Common.Save + "</a>")
+            @Html.HiddenFor(m => m.ID)
+            @Html.ActionLink(Common.Close, "IndexV3", "AccountGroup", new { Area = "Masters" }, new { @class = "md-btn " })
+        </div>
+    </div>
+    <div id="page_content_inner" class="sales form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                @{Html.RenderPartial("Form", Model); }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@Scripts.Render("~/Js/Page/AccountGroup")
+<script type="text/javascript">
+    AccountGroup.init();
+</script>

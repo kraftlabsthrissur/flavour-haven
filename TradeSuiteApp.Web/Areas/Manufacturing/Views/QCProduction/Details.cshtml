@@ -1,0 +1,302 @@
+﻿@model  TradeSuiteApp.Web.Areas.Manufacturing.Models.QCTestViewModel
+@{
+    ViewBag.Title = "Quality Analysis of Finished Goods";
+
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1> Quality Analysis of Finished Goods</h1>
+            <span class="uk-text-upper uk-text-small">@Manufacturing.QCDetails</span>
+        </div>
+        <div class="heading_actions">
+
+            @Html.ActionLink(Common.Back, "Index", "QCProduction", new { Area = "Manufacturing" }, new { @class = "md-btn " })
+
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="page_content_inner">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.QCNo</label>
+                                            <input type="text" class="md-input label-fixed" disabled value="@Model.QCItem.QCNo" />
+                                            @Html.HiddenFor(model => Model.QCItem.ID)
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <div class="uk-input-group">
+                                                <label>@Manufacturing.QCDate</label>
+                                                <input type="text" class="md-input label-fixed date past-date" id="QCDate" value="@Model.QCItem.QCDate" disabled="disabled" />
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.ProductionNo</label>
+                                            <input type="text" class="md-input label-fixed" disabled autofocus value="@Model.QCItem.ReferenceNo" />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.ProductionDate</label>
+                                            <input type="text" class="md-input label-fixed" disabled value="@Model.QCItem.ProductionDate" />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.Store</label>
+                                            @Html.DropDownListFor(Model => Model.QCItem.ToWareHouseID, new SelectList(Model.wareHouse, "ID", "Name"), "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Manufacturing.Item</label>
+                                            <input type="text" class="md-input label-fixed" disabled value="@Model.QCItem.ItemName" />
+                                            @Html.HiddenFor(model => Model.QCItem.ItemID)
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.Unit</label>
+                                            <input type="text" class="md-input label-fixed" disabled value="@Model.QCItem.UnitName" />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.Batch</label>
+                                            <input type="text" class="md-input label-fixed" disabled value="@Model.QCItem.BatchNo" />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.StandardQty</label>
+                                            <input type="text" class="md-input label-fixed uk-text-right mask-production-qty" id="StandardOutput" disabled value="@Model.QCItem.StandardOutput" />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.RecieptQuantity</label>
+                                            <input type="text" class="md-input label-fixed uk-text-right mask-production-qty" id="AcceptedQty" disabled value="@Model.QCItem.AcceptedQty" />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.ApprovedQty</label>
+                                            <input type="text" class="md-input label-fixed uk-text-right mask-production-qty" id="ApprovedQty" disabled value="@Model.QCItem.ApprovedQty" />
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>Remarks</label>
+                                            <input type="text" class="md-input label-fixed" id="qc-remarks" value="@Model.QCItem.Remarks" disabled="disabled" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin>
+                            <div class="uk-width-1-1">
+                                <ul class="uk-tab" data-uk-tab="{connect:'#tabs-qc-test-content',animation:'slide-horizontal'}" id="tabs-qc-test">
+                                    <li class="uk-active"><a>@Manufacturing.PhysicalAnalysis</a></li>
+                                    <li><a>@Manufacturing.ChemicalAnalysis</a></li>
+                                    <li><a>@Manufacturing.OrganolepticAnalysis</a></li>
+                                    <li><a>@Manufacturing.PharmaceuticalAnalysis</a></li>
+                                    <li><a>@Manufacturing.MicrobiologyAnalysis</a></li>
+
+                                </ul>
+                                <ul id="tabs-qc-test-content" class="uk-switcher uk-margin">
+                                    <li style="height:100%;">
+                                        <table id="qc-physical-analisys" class="uk-table" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="width-10">@Common.SerialNo</th>
+                                                    <th class="width-200">@Manufacturing.TestName</th>
+                                                    <th class="width-60">@Manufacturing.NormalValue</th>
+                                                    <th class="width-100">@Manufacturing.ActualValue</th>
+                                                    <th class="width-250">@Manufacturing.Remarks</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.physicalTestDetails)
+                                                {
+                                                    var passed = item.ActualResult == "Passed" ? "checked=" : "";
+                                                    var failed = item.ActualResult == "Failed" ? "checked=" : "";
+
+                                                    <tr>
+                                                        <td class="uk-text-center">
+                                                            @(1 + @Model.physicalTestDetails.IndexOf(item) )
+                                                            @Html.HiddenFor(a => item.ID, new { @class = "ID" })
+                                                        </td>
+                                                        <td class="test-name">@item.TestName</td>
+                                                        <td class="normal-value">@item.DefinedResult</td>
+                                                        <td align="center">
+                                                            <input type='checkbox' name="passed" data-md-icheck class='passed' id="passed" @passed disabled="disabled" />
+                                                            <label>Passed</label>
+                                                            <input type='checkbox' name="failed" data-md-icheck class='failed' id="failed" @failed disabled="disabled" />
+                                                            <label>Failed</label>
+                                                        </td>
+                                                        <td>@Html.TextBoxFor(a => item.Remarks, new { @class = "md-input remarks", @disabled = "disabled" })</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </li>
+                                    <li style="height:100%;">
+                                        <table id="qc-chemical-analisys" class="uk-table" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="width-10">@Common.SerialNo</th>
+                                                    <th class="width-200">@Manufacturing.TestName</th>
+                                                    <th class="width-60">@Manufacturing.RangeFrom</th>
+                                                    <th class="width-60">@Manufacturing.RangeTo</th>
+                                                    <th class="width-80">@Manufacturing.ActualValue</th>
+                                                    <th class="width-250">@Manufacturing.Remarks</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.chemicalTestDetails)
+                                                {
+                                                    <tr>
+                                                        <td class="uk-text-center">
+                                                            @(1 + @Model.chemicalTestDetails.IndexOf(item) )
+                                                            @Html.HiddenFor(a => item.ID, new { @class = "ID" })
+                                                        </td>
+                                                        <td class="test-name">@item.TestName</td>
+                                                        <td class="uk-text-right mask-production-qty range-from">@item.RangeFrom</td>
+                                                        <td class="uk-text-right mask-production-qty range-to">@item.RangeTo</td>
+                                                        <td>
+                                                            @Html.TextBoxFor(a => item.ActualValue, new { @class = "md-input md-input-small qc-test-actual-value uk-text-right", @disabled = "disabled" })
+                                                            <input type="hidden" class="qc-test-actual-result" value="na">
+                                                        </td>
+                                                        <td>@Html.TextBoxFor(a => item.Remarks, new { @class = "md-input remarks", @disabled = "disabled" })</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </li>
+                                    <li style="height:100%;">
+                                        <table id="qc-organoleptic-analisys" class="uk-table" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="width-10">@Common.SerialNo</th>
+                                                    <th class="width-200">@Manufacturing.TestName</th>
+                                                    <th class="width-60">@Manufacturing.NormalValue</th>
+                                                    <th class="width-100">@Manufacturing.ActualValue</th>
+                                                    <th class="width-250">@Manufacturing.Remarks</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.organolepticTestDetails)
+                                                {
+                                                    var passed = item.ActualResult == "Passed" ? "checked=" : "";
+                                                    var failed = item.ActualResult == "Failed" ? "checked=" : "";
+
+                                                    <tr>
+                                                        <td class="uk-text-center">
+                                                            @(1 + @Model.organolepticTestDetails.IndexOf(item) )
+                                                            @Html.HiddenFor(a => item.ID, new { @class = "ID" })
+                                                        </td>
+                                                        <td class="test-name">@item.TestName</td>
+                                                        <td class="normal-value">@item.DefinedResult</td>
+                                                        <td align="center">
+                                                            <input type='checkbox' name="passed" data-md-icheck class='passed' id="passed" @passed disabled="disabled" readonly="readonly" />
+                                                            <label>Passed</label>
+                                                            <input type='checkbox' name="failed" data-md-icheck class='failed' id="failed" @failed disabled="disabled" />
+                                                            <label>Failed</label>
+                                                        </td>
+                                                        <td>@Html.TextBoxFor(a => item.Remarks, new { @class = "md-input remarks", @disabled = "disabled" })</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </li>
+                                    <li style="height:100%;">
+                                        <table id="qc-pharmaceutical-analisys" class="uk-table" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="width-10">@Common.SerialNo</th>
+                                                    <th class="width-200">@Manufacturing.TestName</th>
+                                                    <th class="width-60">@Manufacturing.RangeFrom</th>
+                                                    <th class="width-60">@Manufacturing.RangeTo</th>
+                                                    <th class="width-80">@Manufacturing.ActualValue</th>
+                                                    <th class="width-250">@Manufacturing.Remarks</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.pharmaceuticalTestDetails)
+                                                {
+                                                    <tr>
+                                                        <td class="uk-text-center">
+                                                            @(1 + @Model.pharmaceuticalTestDetails.IndexOf(item) )
+                                                            @Html.HiddenFor(a => item.ID, new { @class = "ID" })
+                                                        </td>
+                                                        <td class="test-name">@item.TestName</td>
+                                                        <td class="uk-text-right mask-production-qty range-from">@item.RangeFrom</td>
+                                                        <td class="uk-text-right mask-production-qty range-to">@item.RangeTo</td>
+                                                        <td class="uk-text-right">
+                                                            @Html.TextBoxFor(a => item.ActualValue, new { @class = "md-input uk-text-right md-input-small qc-test-actual-value mask-production-qty", @disabled = "disabled" })
+                                                        </td>
+                                                        <td>@Html.TextBoxFor(a => item.Remarks, new { @class = "md-input remarks", @disabled = "disabled" })</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </li>
+                                    <li style="height:100%;">
+                                        <table id="qc-Microbiology-analisys" class="uk-table" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="width-10">@Common.SerialNo</th>
+                                                    <th class="width-200">@Manufacturing.TestName</th>
+                                                    <th class="width-60">@Manufacturing.RangeFrom</th>
+                                                    <th class="width-60">@Manufacturing.RangeTo</th>
+                                                    <th class="width-80">@Manufacturing.ActualValue</th>
+                                                    <th class="width-250">@Manufacturing.Remarks</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.MicrobiologyTestDetails)
+                                                {
+                                                    <tr>
+                                                        <td class="uk-text-center">
+                                                            @(1 + @Model.MicrobiologyTestDetails.IndexOf(item) )
+                                                            @Html.HiddenFor(a => item.ID, new { @class = "ID" })
+                                                        </td>
+                                                        <td class="test-name">@item.TestName</td>
+                                                        <td class="uk-text-right mask-production-qty range-from">@item.RangeFrom</td>
+                                                        <td class="uk-text-right mask-production-qty range-to">@item.RangeTo</td>
+                                                        <td class="uk-text-right">
+                                                            @Html.TextBoxFor(a => item.ActualValue, new { @class = "md-input uk-text-right md-input-small qc-test-actual-value mask-production-qty", @disabled = "disabled" })
+                                                        </td>
+                                                        <td>@Html.TextBoxFor(a => item.Remarks, new { @class = "md-input remarks", @disabled = "disabled" })</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/QCProduction")
+<script type="text/javascript">
+    QC.details();
+</script>

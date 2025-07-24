@@ -1,0 +1,58 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Masters.Models.AgeingBucketModel
+@{
+    ViewBag.Title = "_form";
+}
+
+<div class="uk-grid" data-uk-grid-margin>
+    <div class="uk-width-medium-1-1">
+        <div class="uk-form-row">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-2-10">
+                    <label for="uk_dp_start">@Masters.Bucket</label>
+                    @Html.TextBoxFor(m => m.Name, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="section-group">
+    <table id="tbl_ageing_bucket" class="uk-table" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th class="width-20">@Common.SerialNo</th>
+                <th class="width-240">@Masters.BucketName</th>
+                <th class="width-120">@Masters.Start</th>
+                <th class="width-120">@Masters.End</th>
+                <th>@Masters.Description</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                if (Model.Trans != null)
+                {
+                    foreach (var item in Model.Trans)
+                    {
+                        <tr class="">
+                            <td class="uk-text-center">
+                                @(1 + @Model.Trans.IndexOf(item))
+
+                            </td>
+                            <td>@Model.Name</td>
+                            <td> @item.Start</td>
+                            <td>@item.End</td>
+                            <td>@item.Name
+
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+
+</div>
+
+

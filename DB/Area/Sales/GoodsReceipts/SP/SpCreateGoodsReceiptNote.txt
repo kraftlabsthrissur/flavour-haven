@@ -1,0 +1,84 @@
+ALTER PROCEDURE [Sales].[SpCreateGoodsReceiptNote]      
+(      
+ @Invoice XML,      
+ @Items XML,       
+ @CreatedUserID int,      
+ @FinYear int,      
+ @LocationID int,      
+ @ApplicationID int,           
+ @RetValue int out,                  
+ @GoodsReceiptNoteID INT OUTPUT       
+ )      
+AS      
+BEGIN      
+ DECLARE @SerialNo VARCHAR(20)       
+ DECLARE @ErrorCode INT;      
+ DECLARE @FormName VARCHAR(30), @FieldName varchar(100) = 'Code' ,@IsDraft bit     
+ DECLARE @return_value int,@GoodsReceiptStatus VARCHAR(50)      
+ SET NOCOUNT ON;      
+    
+ SELECT  @IsDraft =  convert(BIT, Invoices.Invoice.query('IsDraft').value('.','VARCHAR(10)'))     
+ FROM @Invoice.nodes('/Invoices/Invoice') AS Invoices(Invoice)      
+    
+ IF (@IsDraft = 0)    
+ BEGIN    
+  SET @FormName = 'SalesGoodsReceiptNote';
+  SET @GoodsReceiptStatus ='GoodsReceipt'
+ END    
+ ELSE    
+ BEGIN    
+  SET @FormName = 'DraftSalesGoodsReceiptNote'   
+   SET @GoodsReceiptStatus ='Draft'
+ END    
+      
+ EXEC @return_value = [Common].[SpUpdateSerialNo] @FormName, @FieldName, @FinYear, @LocationID, @ApplicationID,@SerialNo = @SerialNo OUTPUT      
+    
+ SELECT @ErrorCode = @@ERROR      
+ IF (@ErrorCode <> 0) GOTO PROBLEM    
+   
+ INSERT INTO Sales.GoodsReceiptNote(TransNo,ReceiptDate,CustomerID,SalesOrders,       
+  GrossAmount,DiscountAmount,TurnoverDiscount, AdditionalDiscount, TaxableAmount,SGSTAmount,CGSTAmount,IGSTAmount,RoundOff,      
+  NetAmount,IsDraft,ModifiedDate,IsCancelled,CancelledDate,CreatedUserID,CreatedDate,FinYear,LocationID,ApplicationID,       
+  CessAmount,GoodsReceiptStatus,Remarks)      
+ SELECT   @SerialNo,      
+ convert(datetime, Invoices.Invoice.query('TransDate').value('.','VARCHAR(30)')),      
+ convert(int, Invoices.Invoice.query('CustomerID').value('.','VARCHAR(16)')),      
+ convert(VARCHAR(100), Invoices.Invoice.query('SalesOrderNos').value('.','VARCHAR(MAX)')),                
+ convert(Numeric(18,4), Invoices.Invoice.query('GrossAmount').value('.','VARCHAR(40)')),      
+ convert(Numeric(18,4), Invoices.Invoice.query('DiscountAmount').value('.','VARCHAR(40)')),      
+ convert(Numeric(18,4), Invoices.Invoice.query('TurnoverDiscount').value('.','VARCHAR(40)')),      
+ convert(Numeric(18,4), Invoices.Invoice.query('AdditionalDiscount').value('.','VARCHAR(40)')),      
+ convert(Numeric(18,4), Invoices.Invoice.query('TaxableAmount').value('.','VARCHAR(40)')),      
+ convert(Numeric(18,4), Invoices.Invoice.query('SGSTAmount').value('.','VARCHAR(40)')),      
+ convert(Numeric(18,4), Invoices.Invoice.query('CGSTAmount').value('.','VARCHAR(40)')),      
+ convert(Numeric(18,4), Invoices.Invoice.query('IGSTAmount').value('.','VARCHAR(40)')),      
+ convert(Numeric(18,4), Invoices.Invoice.query('RoundOff').value('.','VARCHAR(40)')),      
+ convert(Numeric(18,4), Invoices.Invoice.query('NetAmount').value('.','VARCHAR(40)')),          
+ convert(BIT, Invoices.Invoice.query('IsDraft').value('.','VARCHAR(10)')),      
+ current_timestamp,      
+ 0,      
+ null,      
+ @CreatedUserID,      
+ current_timestamp,      
+ @FinYear,      
+ @LocationID,      
+ @ApplicationID,        
+ convert(Numeric(18,4), Invoices.Invoice.query('CessAmount').value('.','VARCHAR(16)')),       
+ @GoodsReceiptStatus,    
+ convert(VARCHAR(250), Invoices.Invoice.query('Remarks').value('.','VARCHAR(250)'))           
+ FROM @Invoice.nodes('/Invoices/Invoice') AS Invoices(Invoice);      
+ SET @GoodsReceiptNoteID = SCOPE_IDENTITY();      
+     
+ SELECT @ErrorCode = @@ERROR      
+ IF (@ErrorCode <> 0) GOTO PROBLEM      
+              
+ EXEC Sales.SpCreateGoodsReceiptNoteTrans @GoodsReceiptNoteID, @Items, @CreatedUserID, @FinYear, @LocationID, @ApplicationID , @RetValue = @RetValue OUTPUT    
+         
+ SELECT @ErrorCode = @@ERROR      
+ PROBLEM:      
+ IF (@ErrorCode <> 0)       
+ BEGIN      
+  SET @RetValue = -1      
+ END      
+END      
+    

@@ -1,0 +1,217 @@
+﻿@model TradeSuiteApp.Web.Areas.Reports.Models.AccountReportModel
+@{
+    ViewBag.ReportTitle = "Payment Voucher Report";
+}
+
+@Scripts.Render("~/Js/Page/AccountsReport")
+
+<div id="page_content_inner" class="purchase-report">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-2-10 ">
+                            <form action="/Reports/Accounts/PaymentVoucher" id="report-filter-form" method="POST">
+                                @Html.HiddenFor(m => m.LocationID)
+                                @*<div class="uk-form-row">
+                                    <div class="panel">
+                                        <label>Report Type</label>
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-1-2">
+                                                <input type="radio" name="Summary" class="voucher-summary" data-md-icheck checked="" value="Summary" /> @Html.Label("Summary")
+                                            </div>
+                                            <div class="uk-width-medium-1-2">
+                                                <input type="radio" name="Summary" class="voucher-summary" data-md-icheck value="Detail" /> @Html.Label("Detail")
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>*@
+                                <div class="uk-form-row ">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2 summary detail">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start" class="fromdate">@Reports.PaymentDateFrom</label>
+                                                @Html.TextBoxFor(model => model.FromDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2 summary detail">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.PaymentDateTo</label>
+                                                @Html.TextBoxFor(model => model.ToDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <label for="uk_dp_start">@Reports.Location</label>
+                                            @Html.DropDownListFor(Model => Model.LocationID, new SelectList(Model.LocationList, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @id = "Location" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row uk-hidden detail">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-1-2">
+                                            <div class="uk-autocomplete " id="paymentvoucher-voucher-autocomplete">
+                                                <label for="uk_dp_start">@Reports.VoucherNoFrom</label>
+                                                @Html.TextBox("VoucherNoFrom", "", new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-voucher-no="{{ $item.Code}}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Code}}
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.VoucherFromID)
+                                        </div>
+                                        <div class="uk-width-1-2">
+                                            <div class="uk-autocomplete " id="paymentvoucher-voucherTo-autocomplete">
+                                                <label for="uk_dp_start">@Reports.VoucherNoTo</label>
+                                                @Html.TextBox("VoucherNoTo", "", new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-voucher-no="{{ $item.Code}}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Code}}
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.VoucherToID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row uk-hidden detail">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-1-1">
+                                            <div class="uk-autocomplete " id="paymentvoucher-document-autocomplete">
+                                                <label for="uk_dp_start">@Reports.DocumentNo</label>
+                                                @Html.TextBox("DocumentNo", "", new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-voucher-no="{{ $item.Code}}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Code}}
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.DocumentID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row summary">
+                                    <div class="uk-width-1-1">
+                                        <div class="uk-autocomplete " id="paymentvoucher-bank-autocomplete">
+                                            <label for="uk_dp_start">@Reports.BankDetails</label>
+                                            @Html.TextBox("BankDetails", "", new { @class = "md-input label-fixed" })
+                                            <script type="text/autocomplete">
+                                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                    {{~items}}
+                                                    <li data-voucher-no="{{ $item.Code}}"
+                                                        data-id="{{$item.ID}}">
+                                                        <a>
+                                                            {{ $item.Code}}
+                                                        </a>
+                                                    </li>
+                                                    {{/items}}
+                                                </ul>
+                                            </script>
+                                        </div>
+                                        @Html.HiddenFor(m => m.BankID)
+                                    </div>
+                                </div>
+                                <div class="uk-form-row summary uk-hidden">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <label>@Reports.SupplierFrom</label>
+                                            @Html.DropDownListFor(Model => Model.FromSupplierRange, Model.FromSupplierRangeList, "Select", new { @class = "md-input label-fixed", @id = "FromSupplierRange" })
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <label>@Reports.SupplierTo</label>
+                                            @Html.DropDownListFor(Model => Model.ToSupplierRange, Model.ToSupplierRangeList, "Select", new { @class = "md-input label-fixed", @id = "ToSupplierRange" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row summary detail">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1 supplier-wise">
+                                            <div class="uk-autocomplete " id="supplier-autocomplete">
+                                                <label for="uk_dp_start">@Reports.Supplier</label>
+                                                @Html.TextBox("SupplierName", "", new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Name }}"
+                                                            data-id="{{$item.ID}}"
+                                                            data-location="{{$item.Location}}"
+                                                            data-state-id="{{$item.StateID}}"
+                                                            data-is-gst-registered="{{$item.IsGSTRegistered}}">
+                                                            <a>
+                                                                {{ $item.Name }} ({{{ $item.Code }}})
+                                                                <div>{{{ $item.Location }}}</div>
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.Hidden("SupplierID")
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="report-filter-submit">Show</button>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <a class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light " id="Refresh">Reset</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="uk-width-medium-8-10 ">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="" id="report-viewer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+

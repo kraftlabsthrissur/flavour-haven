@@ -1,0 +1,33 @@
+ALTER PROCEDURE [Purchase].[SpGetPurchaseOrderTransDetails]              
+(              
+@ID INT,              
+@UserID INT,              
+@FinYear INT,              
+@LocationID INT,              
+@ApplicationID INT              
+)              
+AS              
+BEGIN              
+SET NOCOUNT ON              
+            
+ SELECT POT.PurchaseOrderID,ISNULL(PRTransID,0) AS PRTransID, POT.ItemID,POT.ItemName,POT.ItemCode,POT.PartsNumber,POT.Model,POT.Remark,Cu.Code CurrencyCode,Cu.Name CurrencyName,          
+ POT.UnitID,U.UOM as Unit,POT.Quantity,POT.Rate, POT.IsGST, POT.IsVAT,POT.CurrencyID,POT.Amount,POT.SGSTPercent,POT.CGSTPercent, POT.SGSTAmt,POT.CGSTAmt,POT.IGSTAmt,          
+ POT.DiscountPercent, POT.Discount,POT.VATAmount,POT.VATPercent,POT.NetAmount,isnull(dbo.FnGetLastPurchaseRateByItemID(POT.ItemID,POT.FinYear,POT.LocationID,POT.ApplicationID),0) AS LastPurchaseRate,              
+ isnull(dbo.FnGetLowestPurchaseRateByItemID(POT.ItemID,POT.FinYear,POT.LocationID,POT.ApplicationID),0)   AS LowestPurchaseRate,              
+ Isnull(dbo.FnGetStockQuantityUnderQC(POT.ItemID,POT.FinYear,POT.LocationID,POT.ApplicationID),0) as QtyInQC,              
+ isnull(dbo.FnGetStockQuantityOrdered(POT.ItemID,POT.FinYear,POT.LocationID,POT.ApplicationID),0) as QtyOrdered,              
+ Isnull(dbo.FnGetAvailableStockForPurchaseOrder(POT.ItemID,null,ISNULL(POT.BatchTypeID,0),null,POT.FinYear,POT.LocationID,POT.ApplicationID),0)  as QtyAvailable,              
+ POT.IsPurchased,POT.QtyMet,POT.Remarks,POT.FinYear,POT.LocationID,POT.ApplicationID,PR.Code, IM.CategoryID AS ItemCategoryID,              
+ BT.Name as BatchType,POT.BatchTypeID ,POT.ID,POT.IsSuspended,POT.SecondaryQty,POT.SecondaryRate,POT.SecondaryUnitSize,POT.SecondaryUnit,  
+ ISNULL((SELECT STRING_AGG(Name+'|'+CAST(PackSize AS varchar(10)), ',') FROM SecondaryUnit su where su.UnitID=POT.UnitID),'')SecondaryUnits,  
+ ISNULL((select ID from Category where CategoryGroupID = 1 and ID IN (Select ItemCategoryID from StockOrServiceType where Type = 'Stock') and (Name like'Finished Goods%' ) and IM.CategoryID=ID),0) as FGCategoryID              
+FROM PurchaseOrderTrans POT Inner join PurchaseOrder PO on PO.ID=POT.PurchaseOrderID              
+ LEFT JOIN PurchaseRequisitionTrans PRT ON PRT.ID = POT.PRTransID AND PRT.FinYear = @FinYear AND PRT.LocationID = @LocationID AND PRT.ApplicationID = @ApplicationID               
+ LEFT JOIN PurchaseRequisition PR ON PR.ID = PRT.PurchaseRequisitionID AND PR.FinYear = @FinYear AND PR.LocationID = @LocationID AND PR.ApplicationID = @ApplicationID               
+ INNER JOIN viItem IM ON POT.ItemID = IM.ID              
+ left join BatchType BT on BT.ID=POT.BatchTypeID        
+ left join Currency Cu on Cu.ID=POT.CurrencyID        
+ inner join Unit U on U.ID=POT.UnitID              
+ WHERE POT.PurchaseOrderID = @ID  AND POT.FinYear = @FinYear             
+ AND POT.ApplicationID = @ApplicationID              
+END   

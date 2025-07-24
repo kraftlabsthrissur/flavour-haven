@@ -1,0 +1,640 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.AppointmentScheduleModel
+@{
+    ViewBag.Title = @AHCMS.AppointmentScheduleList;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@AHCMS.AppointmentScheduling </h1>
+            <span class="uk-text-upper uk-text-small">@AHCMS.AppointmentScheduleList</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Create", Html.ActionLink(Common.Create, "CreateV3", "AppointmentSchedule", new { Area = "AHCMS" }, new { @class = "md-btn" }))
+
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="list-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <ul class="uk-tab hai" data-uk-tab="{connect:'#tabs-schedule-content',animation:'slide-horizontal'}" id="tabs-schedule">
+                    <li data-tab="Past"><a>@Common.Previous</a></li>
+                    <li class="uk-active" data-tab="day1"><a>@Model.day1</a></li>
+                    <li data-tab="day2"><a>@Model.day2</a></li>
+                    <li data-tab="day3"><a>@Model.day3</a></li>
+                    <li data-tab="day4"><a>@Model.day4</a></li>
+                    <li data-tab="day5"><a>@Model.day5</a></li>
+                    <li data-tab="day6"><a>@Model.day6</a></li>
+                    <li data-tab="day7"><a>@Model.day7</a></li>
+                    <li data-tab="Future"><a>@Common.Next</a></li>
+                </ul>
+
+                <ul id="tabs-schedule-content" class="uk-switcher uk-margin">
+                    <li>
+                        <table id="past-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Date
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Date
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table id="day1-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+
+                    <li>
+                        <table id="day2-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table id="day3-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table id="day4-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table id="day5-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+
+                    <li>
+                        <table id="day6-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+
+                    <li>
+                        <table id="day7-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+
+                    <li>
+                        <table id="future-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Date
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @AHCMS.Doctor
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.PatientCode
+                                    </th>
+                                    <th>
+                                        @AHCMS.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Department
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Time
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.TokenNo
+                                    </th>
+                                    <th class="width-60">
+                                        @AHCMS.Date
+                                    </th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                    <th class="width-60"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/Employee")
+@Scripts.Render("~/Js/Page/OutPatient")
+@Scripts.Render("~/Js/Page/AppointmentSchedule")
+@Scripts.Render("~/Js/Page/InternationalPatient")
+@Scripts.Render("~/Js/Page/AppointmentScheduleV3")
+@Html.Partial("~/Areas/AHCMS/Views/AppointmentSchedule/Token.cshtml")
+@Html.Partial("~/Areas/AHCMS/Views/AppointmentSchedule/_getPatientDetails.cshtml")
+@Html.Partial("~/Areas/AHCMS/Views/AppointmentSchedule/BarCodeGenerate.cshtml")
+@Html.Partial("~/Areas/AHCMS/Views/AppointmentSchedule/AppointmentEdit.cshtml")
+
+<script type="text/javascript">
+    AppointmentSchedule.init();
+</script>

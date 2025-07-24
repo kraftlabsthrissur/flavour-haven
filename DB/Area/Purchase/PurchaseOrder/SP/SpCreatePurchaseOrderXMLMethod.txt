@@ -1,0 +1,140 @@
+ALTER PROCEDURE [Purchase].[SpCreatePurchaseOrderXMLMethod](                  
+@PurchaseOrderID INT,  
+@IsDraft BIT,                  
+@XMLItems XML,                  
+@CreatedUserID int,                  
+@FinYear INT,                  
+@LocationID INT,                  
+@ApplicationID INT,                  
+@ReturnValue int OUT)                   
+AS                  
+BEGIN                  
+                    
+ SET NOCOUNT ON;                  
+ DECLARE @FullyOrdered INT = 0,@Item varchar(100),@AccountCategory varchar(100),@ItemCategory varchar(100),@AccountCategoryID INT,@ItemCategoryID INT, 
+ @IsApproved int = 0,@FromDepartmentID INT,@ToDepartmentID INT,@PurchaseRequisitionID INT,@PurchaseRequisitionTrasID INT                
+             
+ INSERT INTO PurchaseOrderTrans(PurchaseOrderID,PurchaseRequisitionID,PurchaseRequisitionTrasID, PRTransID,ItemID,Quantity,Rate,Amount,                  
+   SGSTPercent,CGSTPercent,IGSTPercent,VATPercent,SGSTAmt,CGSTAmt,IGSTAmt,VATAmount,NetAmount,LastPurchaseRate,LowestPurchaseRate,                  
+   QtyInQC,QtyAvailable,QtyOrdered,IsPurchased,QtyMet,Remarks,BatchTypeID,BatchNo,ExpDate,FinYear,LocationID,ApplicationID,UnitID,                  
+   MRP,PurchaseLoosePrice,RetailMRP,RetailLoosePrice,Discount,DiscountPercent,IsGST,IsVAT,ItemCode,ItemName,PartsNumber,Remark,Model,      
+   CurrencyID,ExchangeRate,SecondaryUnit,SecondaryUnitSize,SecondaryRate,SecondaryQty)                  
+  SELECT @PurchaseOrderID,  
+  CONVERT(INT, PurchaseOrderTrans.item.query('PurchaseRequisitionID').value('.','VARCHAR(20)')),  
+  CONVERT(INT, PurchaseOrderTrans.item.query('PurchaseRequisitionTrasID').value('.','VARCHAR(20)')),  
+  NULLIF(CONVERT(INT, PurchaseOrderTrans.item.query('PRTransID').value('.','VARCHAR(20)')),0),                  
+  CONVERT(INT, PurchaseOrderTrans.item.query('ItemID').value('.','VARCHAR(20)')),                  
+  CONVERT(Numeric(18,4), PurchaseOrderTrans.item.query('Quantity').value('.','VARCHAR(30)')),                  
+  ISNULL(CONVERT(Numeric(18,4), PurchaseOrderTrans.item.query('Rate').value('.','VARCHAR(30)')),0),                  
+  ISNULL(CONVERT(Numeric(18,4), PurchaseOrderTrans.item.query('Amount').value('.','VARCHAR(30)')),0),               
+              
+  ISNULL(CONVERT(Numeric(18,4), PurchaseOrderTrans.item.query('SGSTPercent').value('.','VARCHAR(30)')),0),                  
+  ISNULL(CONVERT(Numeric(18,4), PurchaseOrderTrans.item.query('CGSTPercent').value('.','VARCHAR(30)')),0),                  
+  ISNULL(CONVERT(Numeric(18,4), PurchaseOrderTrans.item.query('IGSTPercent').value('.','VARCHAR(30)')),0),               
+  ISNULL(CONVERT(Numeric(18,4), PurchaseOrderTrans.item.query('VATPercentage').value('.','VARCHAR(30)')),0),                 
+  ISNULL(CONVERT(Numeric(18,4), PurchaseOrderTrans.item.query('SGSTAmt').value('.','VARCHAR(30)')),0),                  
+  ISNULL(CONVERT(Numeric(18,4), PurchaseOrderTrans.item.query('CGSTAmt').value('.','VARCHAR(30)')),0),                  
+  ISNULL(CONVERT(Numeric(18,4), PurchaseOrderTrans.item.query('IGSTAmt').value('.','VARCHAR(30)')),0),                
+  ISNULL(CONVERT(Numeric(18,4), PurchaseOrderTrans.item.query('VATAmount').value('.','VARCHAR(30)')),0),                 
+  ISNULL(CONVERT(Numeric(18,4), PurchaseOrderTrans.item.query('NetAmount').value('.','VARCHAR(30)')),0),                  
+  ISNULL(CONVERT(Numeric(18,4), NULLIF(PurchaseOrderTrans.item.query('LastPurchaseRate').value('.','VARCHAR(30)'),'')),0),            
+  ISNULL(CONVERT(Numeric(18,4), NULLIF(PurchaseOrderTrans.item.query('LowestPR').value('.','VARCHAR(30)'),'')),0),              
+            
+  ISNULL(CONVERT(Numeric(18,4), NULLIF(PurchaseOrderTrans.item.query('QtyInQC').value('.','VARCHAR(30)'),'')),0),                 
+  ISNULL(CONVERT(Numeric(18,4), NULLIF(PurchaseOrderTrans.item.query('QtyAvailable').value('.','VARCHAR(30)'),'')),0),                   
+  ISNULL(CONVERT(Numeric(18,4), NULLIF(PurchaseOrderTrans.item.query('QtyOrdered').value('.','VARCHAR(30)'),'')),0),                   
+  ISNULL(CONVERT(BIT, PurchaseOrderTrans.item.query('Purchased').value('.','VARCHAR(30)')),0),                
+  ISNULL(CONVERT(Numeric(18,4), NULLIF(PurchaseOrderTrans.item.query('QtyMet').value('.','VARCHAR(30)'),'')),0),                  
+  CONVERT(VARCHAR(100),  PurchaseOrderTrans.item.query('Remarks').value('.','VARCHAR(30)')),                  
+  CONVERT(INT, PurchaseOrderTrans.item.query('BatchTypeID').value('.','VARCHAR(20)')),                  
+  CONVERT(VARCHAR(100),  PurchaseOrderTrans.item.query('BatchNo').value('.','VARCHAR(30)')),                  
+  CONVERT(DateTime,  PurchaseOrderTrans.item.query('ExpDate').value('.','VARCHAR(50)'),105),                  
+  @FinYear,                  
+  @LocationID,                  
+  @ApplicationID,                   
+  CONVERT(INT, PurchaseOrderTrans.item.query('UnitID').value('.','VARCHAR(20)')),                 
+              
+  ISNULL(CONVERT(Numeric(18,4), NULLIF(PurchaseOrderTrans.item.query('MRP').value('.','VARCHAR(30)'),'')),0),                  
+  ISNULL(CONVERT(Numeric(18,4), NULLIF(PurchaseOrderTrans.item.query('Rate').value('.','VARCHAR(50)'),'')),0),                  
+  ISNULL(CONVERT(Numeric(18,4), NULLIF(PurchaseOrderTrans.item.query('RetailMRP').value('.','VARCHAR(50)'),'')),0),                  
+  ISNULL(CONVERT(Numeric(18,4), NULLIF(PurchaseOrderTrans.item.query('RetailRate').value('.','VARCHAR(50)'),'')),0),                  
+  ISNULL(CONVERT(Numeric(18,4), NULLIF(PurchaseOrderTrans.item.query('Discount').value('.','VARCHAR(50)'),'')),0),                  
+  ISNULL(CONVERT(Numeric(18,4), NULLIF(PurchaseOrderTrans.item.query('DiscountPercent').value('.','VARCHAR(50)'),'')),0) ,               
+  CONVERT(INT, PurchaseOrderTrans.item.query('IsGST').value('.','VARCHAR(20)')),               
+  CONVERT(INT, PurchaseOrderTrans.item.query('IsVat').value('.','VARCHAR(20)')),        
+  CONVERT(VARCHAR(100), PurchaseOrderTrans.item.query('ItemCode').value('.','VARCHAR(100)')),        
+  CONVERT(VARCHAR(100), PurchaseOrderTrans.item.query('ItemName').value('.','VARCHAR(100)')),        
+  CONVERT(VARCHAR(450), PurchaseOrderTrans.item.query('PartsNumber').value('.','VARCHAR(450)')),        
+  CONVERT(VARCHAR(100), PurchaseOrderTrans.item.query('Remark').value('.','VARCHAR(100)')),        
+  CONVERT(VARCHAR(100), PurchaseOrderTrans.item.query('Model').value('.','VARCHAR(100)')),        
+  CONVERT(INT, PurchaseOrderTrans.item.query('CurrencyID').value('.','VARCHAR(20)')),      
+  ISNULL(CONVERT(Numeric(18,4), NULLIF(PurchaseOrderTrans.item.query('ExchangeRate').value('.','VARCHAR(30)'),'')),0),    
+  CONVERT(VARCHAR(200), PurchaseOrderTrans.item.query('SecondaryUnit').value('.','VARCHAR(200)')),    
+  ISNULL(CONVERT(Numeric(18,4), NULLIF(PurchaseOrderTrans.item.query('SecondaryUnitSize').value('.','VARCHAR(50)'),'')),0) ,    
+  ISNULL(CONVERT(Numeric(18,4), NULLIF(PurchaseOrderTrans.item.query('SecondaryRate').value('.','VARCHAR(50)'),'')),0) ,    
+  ISNULL(CONVERT(Numeric(18,4), NULLIF(PurchaseOrderTrans.item.query('SecondaryQty').value('.','VARCHAR(50)'),'')),0)     
+  FROM @XMLItems.nodes('/ArrayOfPurchaseOrderTransBO/PurchaseOrderTransBO') as PurchaseOrderTrans(item)                  
+
+  SELECT  CONVERT(INT, PurchaseOrderTrans.item.query('PurchaseRequisitionID').value('.','VARCHAR(20)'))PurchaseRequisitionID,
+          CONVERT(INT, PurchaseOrderTrans.item.query('PurchaseRequisitionTrasID').value('.','VARCHAR(20)'))PurchaseRequisitionTrasID  INTO #PurchaseRequisitionIDS
+  FROM @XMLItems.nodes('/ArrayOfPurchaseOrderTransBO/PurchaseOrderTransBO') as PurchaseOrderTrans(item)   
+ 
+WHILE EXISTS(SELECT 1 FROM #PurchaseRequisitionIDS)  
+BEGIN
+    SET @PurchaseRequisitionID = (SELECT TOP 1 PurchaseRequisitionID FROM #PurchaseRequisitionIDS)
+    SET @PurchaseRequisitionTrasID = (SELECT TOP 1 PurchaseRequisitionTrasID FROM #PurchaseRequisitionIDS)
+	IF (@PurchaseRequisitionID > 0)
+	BEGIN
+      UPDATE PurchaseRequisition SET QuotationProcessed = 1 WHERE ID = @PurchaseRequisitionID  
+	  UPDATE r SET r.QtyMet = (SELECT  TOP 1 o.Quantity FROM PurchaseOrderTrans o WHERE o.PurchaseRequisitionTrasID = @PurchaseRequisitionTrasID)
+      FROM PurchaseRequisitionTrans r  WHERE r.ID = @PurchaseRequisitionTrasID;
+	END
+	DELETE FROM #PurchaseRequisitionIDS WHERE PurchaseRequisitionTrasID = @PurchaseRequisitionTrasID
+END  
+		 
+ Set @ReturnValue = 1                  
+ Select  @FullyOrdered = SUM(ISNULL(CONVERT(INT,FullyOrdered),0))                  
+  FROM PurchaseOrderTrans POT                   
+  INNER JOIN PurchaseRequisitionTrans PRT ON POT.PRTransID = PRT.ID                   
+  INNER JOIN PurchaseRequisition PR ON PR.ID = PRT.PurchaseRequisitionID                  
+  WHERE POT.PurchaseOrderID = @PurchaseOrderID                  
+ IF @FullyOrdered > 0                   
+ BEGIN                  
+  SET @ReturnValue = -1                  
+ END                    
+                  
+ IF @IsDraft = 0 AND @ReturnValue = 1                  
+ BEGIN                  
+  UPDATE PRT SET PRT.QtyMet = ISNULL(PRT.QtyMet,0) + POT.Quantity                   
+  FROM PurchaseRequisitionTrans PRT                   
+  INNER JOIN PurchaseOrderTrans POT ON POT.PRTransID = PRT.ID                  
+  WHERE POT.PurchaseOrderID = @PurchaseOrderID                    
+                 
+  update purchaseRequisition set FullyOrdered = 1 where ID IN (SELECT PR.ID                   
+   FROM PurchaseRequisition PR                   
+   INNER JOIN PurchaseRequisitionTrans P ON P.PurchaseRequisitionID = PR.ID                  
+   INNER JOIN PurchaseOrderTrans POT ON POT.PRTransID = P.ID                   
+   WHERE (SELECT COUNT(*)                   
+     FROM PurchaseRequisitionTrans PRT                   
+     WHERE PR.ID = PRT.PurchaseRequisitionID                     
+     AND PRT.Quantity > PRT.QtyMet ) = 0 AND POT.PurchaseOrderID = @PurchaseOrderID)                  
+ END                  
+                                   
+ SELECT TOP 1 @Item=I.Name,@AccountCategoryID=I.AccountsCategoryID,@ItemCategoryID=I.CategoryID,                  
+ @ItemCategory=C.Name,@AccountCategory=CA.Name,@FromDepartmentID=PR.FromDeptID,                  
+ @ToDepartmentID=PR.ToDeptID                  
+ FROM PurchaseOrderTrans PT                  
+ INNER JOIN Item I ON   PT.ItemID=I.ID                  
+ INNER JOIN Category C ON C.ID=I.CategoryID                   
+ INNER JOIN Category CA ON CA.ID=I.AccountsCategoryID                    
+ LEFT JOIN PurchaseRequisitionTrans PRT on PRT.ID=PT.PRTransID                  
+ LEFT JOIN PurchaseRequisition PR on PR.ID=PRT.PurchaseRequisitionID                  
+                  
+ WHERE PurchaseOrderID=@PurchaseOrderID                  
+                  
+ UPDATE PurchaseOrder SET @IsApproved = IsApproved, Item=@Item,AccountsCategoryID=@AccountCategoryID,                  
+ ItemCategoryID=@ItemCategoryID,ItemCategory=@ItemCategory,PRFromDepartmentID=@FromDepartmentID,PRToDepartmentID=@ToDepartmentID,                  
+ AccountsCategory=@AccountCategory WHERE ID=@PurchaseOrderID    
+   
+               
+END 

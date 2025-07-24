@@ -1,0 +1,100 @@
+﻿@model  TradeSuiteApp.Web.Areas.Manufacturing.Models.ProductionIssueViewModel
+<input type="button" id="show-additional-output" style="display:none;" data-uk-modal="{target:'#additional-output', center:false}" />
+<div class="uk-modal" id="additional-output" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Additional Output<i class="material-icons"></i></h3>
+        </div>
+        <div class="uk-modal-content">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-6-10">
+                        <div class="uk-autocomplete " id="item-autocomplete">
+                            <label>@Stock.Item<span>*</span></label>
+                            @Html.TextBox("AdditionalOutputItemName", "", new { @class = "md-input label-fixed" })
+                            <script type="text/autocomplete">
+                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                    {{~items}}
+                                    <li data-value="{{ $item.ItemName }}"
+                                        data-id="{{$item.ItemID}}"
+                                        data-code="{{$item.Code}}"
+                                        data-stock="{{$item.stock}}"
+                                        data-unit="{{$item.UnitName}}"
+                                        data-category="{{$item.ItemCategory}}"
+                                        data-unit-id="{{$item.UnitID}}">
+                                        <a>
+                                            {{ $item.ItemName }}
+                                            <div>{{{ $item.Code }}}</div>
+                                        </a>
+                                    </li>
+                                    {{/items}}
+                                </ul>
+                            </script>
+                        </div>
+                        @Html.Hidden("AdditionalOutputItemID")
+
+                        <input type="hidden" value="stock" id="type" />
+                    </div>
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+
+                    <div class="uk-width-medium-3-10">
+                        <label>@Manufacturing.ActualOutput<span>*</span></label>
+                        <input type="text" class="md-input label-fixed mask-production-qty" id="AdditionalActualOutput" />
+
+
+                    </div>
+
+                    <div class="uk-width-medium-3-10">
+                        <label>@Manufacturing.Store<span>*</span></label>
+                        @Html.DropDownList("ReceiptStore", new SelectList(ViewBag.WareHouses, "Value", "Text"), "Select", new { @class = "md-input ReceiptStore", @ID = "AdditionalOutputStore" })
+
+
+                        <input type="hidden" id="Additional_Production_Sequence" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+
+                    <div class="uk-width-medium-3-10">
+                        <label>@Manufacturing.StartDate</label>
+                        <input type="text" class="md-input label-fixed" id="AdditionalStartDate" readonly />
+                    </div>
+                    <div class="uk-width-medium-3-10">
+                        <label>@Manufacturing.StartTime<span>*</span></label>
+                        <input type="text" class="md-input uk-text time" id="AdditionalStartTime" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+
+                    <div class="uk-width-medium-3-10">
+                        <label>@Manufacturing.EndDate<span>*</span></label>
+                        <div class="uk-input-group">
+                            <input type="text" class="md-input label-fixed current-date date" id="additionalEndDate" />
+                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar current-date endDate"></i></span>
+                        </div>
+                    </div>
+                    <div class="uk-width-medium-3-10">
+                        <label>@Manufacturing.EndTime<span>*</span></label>
+                        <input type="text" class="md-input uk-text time" id="AdditioanlEndTime" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn uk-modal-close">Close</button>
+            <button type="button" class="md-btn md-btn-primary" id="btnOkAdditionalOutput">Ok</button>
+        </div>
+    </div>
+
+</div>
+
+

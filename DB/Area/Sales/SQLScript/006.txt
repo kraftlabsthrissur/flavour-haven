@@ -1,0 +1,211 @@
+
+ALTER TABLE Sales.SalesOrderTrans
+ADD SecondaryUnit VARCHAR(200);
+
+ALTER TABLE Sales.SalesOrderTrans
+ADD SecondaryOfferQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.SalesOrderTrans
+ADD SecondaryUnitSize  Numeric(18,4) NOT NULL DEFAULT 1;
+
+ALTER TABLE Sales.SalesOrderTrans
+ADD SecondaryMRP Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.SalesOrderTrans
+ADD SecondaryQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+
+ALTER TABLE Sales.ProformaInvoice
+ADD VATAmount Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.ProformaInvoice
+ADD VATPercentage Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.ProformaInvoiceTrans
+ADD VATAmount Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.ProformaInvoiceTrans
+ADD VATPercentage Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.ProformaInvoiceTrans
+ADD SecondaryUnit VARCHAR(200);
+
+ALTER TABLE Sales.ProformaInvoiceTrans
+ADD SecondaryOfferQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.ProformaInvoiceTrans
+ADD SecondaryUnitSize  Numeric(18,4) NOT NULL DEFAULT 1;
+
+ALTER TABLE Sales.ProformaInvoiceTrans
+ADD SecondaryMRP Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.ProformaInvoiceTrans
+ADD SecondaryQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.ProformaInvoiceTrans
+ADD Remark VARCHAR(200);
+
+
+ALTER TABLE Sales.SalesInvoiceTrans
+ADD SecondaryUnit VARCHAR(200);
+
+ALTER TABLE Sales.SalesInvoiceTrans
+ADD SecondaryOfferQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.SalesInvoiceTrans
+ADD SecondaryUnitSize  Numeric(18,4) NOT NULL DEFAULT 1;
+
+ALTER TABLE Sales.SalesInvoiceTrans
+ADD SecondaryMRP Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.SalesInvoiceTrans
+ADD SecondaryQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+
+ALTER TABLE Sales.CounterSalesTrans
+ADD SecondaryUnit VARCHAR(200);
+
+ALTER TABLE Sales.CounterSalesTrans
+ADD SecondaryOfferQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.CounterSalesTrans
+ADD SecondaryUnitSize  Numeric(18,4) NOT NULL DEFAULT 1;
+
+ALTER TABLE Sales.CounterSalesTrans
+ADD SecondaryRate Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.CounterSalesTrans
+ADD SecondaryQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.SalesOrder
+ADD QuotationExpiry DATETIME;
+
+ALTER TABLE Sales.SalesOrder
+ADD PaymentTerms VARCHAR(1000);
+
+ALTER TABLE Sales.SalesOrder
+ADD CustomerEnquiryNumber VARCHAR(50);
+
+ALTER TABLE Sales.SalesInvoice
+ADD CustomerPONo VARCHAR(200);
+
+ALTER TABLE Sales.GoodsReceiptNoteItemTrans
+ADD SecondaryUnit VARCHAR(200);
+
+ALTER TABLE Sales.GoodsReceiptNoteItemTrans
+ADD SecondaryMRP Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.GoodsReceiptNoteItemTrans
+ADD SecondaryQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+
+ALTER TABLE Sales.SalesReturnTrans
+ADD SecondaryUnit VARCHAR(200);
+
+ALTER TABLE Sales.SalesReturnTrans
+ADD SecondaryOfferQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.SalesReturnTrans
+ADD SecondaryUnitSize  Numeric(18,4) NOT NULL DEFAULT 1;
+
+ALTER TABLE Sales.SalesReturnTrans
+ADD SecondaryMRP Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.SalesReturnTrans
+ADD SecondaryQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.SalesOrderTrans
+ADD DeliveryTerm VARCHAR(200);
+
+
+CREATE TABLE [dbo].[PurchaseLegacy](
+    [ID] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    [ReferenceNo] [varchar](100) NULL,
+    [ItemCode] [varchar](100) NULL,
+    [ItemName] [varchar](200) NULL,
+    [SupplierName] [varchar](200) NULL,
+    [PartsNumber] [varchar](100) NULL,
+    [OrderDate] [datetime] NULL,
+    [Quantity] [numeric](18, 4) NOT NULL Default 0,
+    [Rate] [numeric](18, 4)  NULL Default 0,    
+    [GrossAmount] [numeric](18, 4)  NULL Default 0,
+    [Discount] [numeric](18, 4)  NULL Default 0,
+    [TaxAmount] [numeric](18, 4)  NULL Default 0,
+    [NetAmount] [numeric](18, 4)  NULL Default 0
+);
+
+
+ALTER TABLE sales.CounterSalesTrans
+ADD DeliveryTerm VARCHAR(200);
+
+ALTER TABLE sales.ProformaInvoiceTrans
+ADD DeliveryTerm VARCHAR(200);
+
+ALTER TABLE sales.SalesInvoiceTrans
+ADD DeliveryTerm VARCHAR(200);
+
+ALTER TABLE sales.SalesInvoiceTrans
+ADD PrintWithItemCode BIT DEFAULT((0));
+
+CREATE TABLE sales.SalesInquiry (
+ID INT PRIMARY KEY IDENTITY(1,1) NOT NULL, 
+SalesInquiryNo VARCHAR(100),
+SalesInquiryDate DATETIME,
+RequestedDelivaryDate DATETIME,
+RequestExpiryDate DATETIME,
+RequestedCustomerName VARCHAR(200),
+RequestedCustomerAddress VARCHAR(MAX),
+Remarks VARCHAR(MAX),
+PhoneNo1 VARCHAR(200),
+PhoneNo2 VARCHAR(200),
+GrossAmount NUMERIC(18,4),    
+NetAmount  NUMERIC(18,4),
+IsDraft BIT DEFAULT 0,
+LocationID INT NULL);
+
+
+CREATE TABLE sales.SalesInquiryItems (
+ID INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
+SalesInquiryID INT NULL, 
+ItemID INT NULL, 
+ItemCode VARCHAR(100),
+ItemName VARCHAR(200),
+UnitName VARCHAR(100),
+Model VARCHAR(400),
+PartsNumber VARCHAR(200),
+DeliveryTerm VARCHAR(200),
+Remarks VARCHAR(MAX),
+Rate NUMERIC(18,4),  
+Quantity NUMERIC(18,2),  
+GrossAmount NUMERIC(18,4), 
+VATPercentage NUMERIC(18,2), 
+VATAmount NUMERIC(18,4), 
+NetAmount  NUMERIC(18,4));
+
+ALTER TABLE sales.SalesInquiry
+ADD Converted BIT DEFAULT((0));
+
+ALTER TABLE sales.SalesInquiry
+ADD Canceled BIT DEFAULT((0));
+
+ALTER TABLE Sales.SalesOrder
+ADD EnquiryDate DateTime;
+
+ALTER TABLE Sales.ProformaInvoice
+Add  PrintWithItemCode BIT NOT NULL DEFAULT 0;
+
+ALTER TABLE Sales.SalesInvoice
+Add  PrintWithItemCode BIT NOT NULL DEFAULT 0;
+
+
+ALTER TABLE sales.CounterSalesReturnTrans
+ADD SecondaryUnit VARCHAR(200);
+
+ALTER TABLE sales.CounterSalesReturnTrans
+ADD SecondaryUnitSize  Numeric(18,4) NOT NULL DEFAULT 1;
+
+ALTER TABLE sales.CounterSalesReturnTrans
+ADD SecondaryRate Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE sales.CounterSalesReturnTrans
+ADD SecondaryReturnQty Numeric(18,4) NOT NULL DEFAULT 0;

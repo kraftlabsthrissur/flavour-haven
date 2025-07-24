@@ -1,0 +1,254 @@
+﻿@model TradeSuiteApp.Web.Areas.Stock.Models.StockIssueViewModel
+@{
+    ViewBag.Title = "Print";
+}
+
+
+@{  int BodyLines = 25;
+    int TotalPages = 0;
+    int TotalLines = 0;
+    int CurrentPage = 1;
+    TotalLines = Model.Items.Count();
+    TotalPages = TotalLines / BodyLines;
+    if (TotalLines % BodyLines == 0)
+    {
+        TotalPages = TotalLines / BodyLines;
+    }
+    else
+    {
+        ++TotalPages;
+    }
+}
+
+<style>
+    th {
+        border-top: 1px dashed;
+        border-bottom: 1px dashed;
+        font-size: 12px;
+        text-align: left;
+        font-family: Verdana;
+    }
+
+    td {
+        font-size: 10px;
+        font-family: Verdana;
+        font-weight: bold;
+    }
+
+    .name {
+        width: 350px;
+    }
+
+    .align {
+        text-align: right;
+    }
+
+    .border {
+        border-left: 1px dashed;
+        text-align: center;
+    }
+
+    p {
+        font-size: 10px;
+        font-family: Verdana;
+        height: 10px;
+    }
+
+    #head {
+        font-weight: bold;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .subHead {
+        font-weight: normal;
+        text-align: center;
+    }
+
+    .fontSize16 {
+        font-size: 12px;
+    }
+
+    .fontweightnormal {
+        font-weight: normal;
+    }
+
+    .colwidth {
+        width: 20px;
+    }
+
+    .packtd {
+        border-right: 1px solid;
+        width: 100px;
+    }
+
+    .pack {
+        border-bottom: 1px solid;
+        width: 50px;
+    }
+
+    .widthtd {
+        width: 450;
+    }
+
+    .width100px {
+        width: 100px;
+    }
+</style>
+
+@{
+    var category = "";
+    var i = 0;
+    var printedLine = 0;
+    var j = 0;
+    var packs = Model.Items.OrderBy(a => a.Category).GroupBy(g => Convert.ToInt16(g.PackSize).ToString() + " " + g.SecondaryUnit)
+   .Select(a => new { Count = a.Count(), Pack = a.Key, TotalQuantity = a.Sum(b => b.IssueQty) });
+}
+
+@while (true)
+{
+
+    <table style="width:100%">
+        @for (int index = 1; index <= 5; ++index)
+        {
+            <tr style='height:16px'></tr>
+        }
+        @*<tr>
+            <td colspan="5" id="gst">GST : @Model.GSTNo</td>
+        </tr>*@
+        @*<tr>
+            <td id="head" colspan="13">@Model.CompanyName.ToUpper()</td>
+        </tr>
+        <tr>
+            <td class="subHead" colspan="13"><center>@Model.Address1 &nbsp;  @Model.Address2</center></td>
+        </tr>
+        <tr>
+            <td class="subHead" colspan="13"><center>@Model.Address4 &nbsp;  @Model.Address5</center></td>
+        </tr>*@
+        <tr>
+            <td><center>PICK LIST</center></td>
+        </tr>
+        <tr>
+            <td> <center></center></td>
+        </tr>
+    </table>
+    <table style="width:100%">
+        <tr style="height:16px"></tr>
+        <tr>
+            <td class="widthtd">Invoice No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp; @Model.IssueNo</td>
+            <td>Invoice Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp; @Model.Date</td>
+        </tr>
+        <tr>
+            <td class="widthtd">Issue Location : &nbsp; @Model.IssueLocationName</td>
+            <td>Receipt Location  : &nbsp; @Model.ReceiptLocationName</td>
+        </tr>
+        <tr>
+            <td class="widthtd">Issue Premise&nbsp;&nbsp;: &nbsp; @Model.IssuePremiseName</td>
+            <td>Receipt Premise&nbsp;&nbsp;: &nbsp; @Model.ReceiptPremiseName</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="align">@string.Concat(new object[4] { "Page : ", CurrentPage, " of ", TotalPages })</td>
+        </tr>
+        <tr style="height:16px"></tr>
+    </table>
+    <table style="width:100%" cellspacing="0" cellpadding="3">
+        <thead>
+            <tr style="height:40px">
+                <th class="colwidth">Sl. No.</th>
+                <th class="border">Item</th>
+                <th class="border">Packing Qty</th>
+                <th class="border">Batch No.</th>
+                <th class="border">Batch Type</th>
+                <th class="border">UOM</th>
+                <th class="border">Qty</th>
+                <th class="border">MRP</th>
+            </tr>
+        </thead>
+        @if (category != Model.Items[i].Category)
+        {
+            category = Model.Items[i].Category;
+            <tr style="height:16px">
+                <th colspan="14">@category</th>
+            </tr>
+            printedLine++;
+        }
+        @while (true)
+        {
+            printedLine++;
+            if (category != Model.Items[i].Category)
+            {
+                category = Model.Items[i].Category;
+                <tr style="height:16px">
+                    <th colspan="14">@category</th>
+                </tr>
+                printedLine++;
+            }
+            <tr style="height:16px">
+                <td> @(i + 1)</td>
+                <td class="name">@Model.Items[i].Name</td>
+                <td>@string.Format("{0:0}", @Model.Items[i].PackSize)@Model.Items[i].SecondaryUnit</td>
+                <td>@Model.Items[i].BatchName</td>
+                <td>@Model.Items[i].BatchType</td>
+                <td>@Model.Items[i].Unit</td>
+                <td class="align">@string.Format("{0:0}", @Model.Items[i].IssueQty)</td>
+                <td class="align">@string.Format("{0:0.00}", @Model.Items[i].Rate)</td>
+            </tr>
+            i++;
+            if (printedLine >= BodyLines)
+            {
+                <tfoot>
+                    <tr style="height:16px"></tr>
+                    <tr>
+                        <td colspan="13" class="align">Continue.....</td>
+                    </tr>
+                    @for (int index = 1; index <= 23; ++index)
+                        {
+                        <tr style="height:16px"></tr>
+                    }
+                </tfoot>
+                printedLine = 0;
+                ++CurrentPage;
+                break;
+            }
+            if (i == TotalLines)
+            {
+                break;
+            }
+        }
+    </table>
+    if (i == TotalLines)
+    {
+        <table>
+            @for (int index = 1; index <= BodyLines - printedLine; ++index)
+            {
+                <tr style="height:16px"></tr>
+            }
+        </table>
+        <table frame="box">
+            <tr>
+                <td class="packtd pack">Pack Size</td>
+                <td class="pack">Nos</td>
+            </tr>
+            @foreach (var pack in packs)
+            {
+                <tr>
+                    <td class="packtd">@pack.Pack</td>
+                    <td class="align">@string.Format("{0:0}", @pack.TotalQuantity)</td>
+                </tr>
+            }
+        </table>
+        <table style="width:100%" cellspacing="0" cellpadding="3">
+            <tfoot>
+                <tr style="height:16px"></tr>
+                <tr>
+                    <td colspan="12" class="align fontweightnormal">Authorised Signatory</td>
+                </tr>
+                <tr>
+                    <td colspan="12" class="align fontweightnormal">[With Status & Seal]</td>
+                </tr>
+            </tfoot>
+        </table>
+        break;
+    }
+}
+

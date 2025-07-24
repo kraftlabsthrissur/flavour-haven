@@ -1,0 +1,52 @@
+ALTER PROCEDURE [Sales].[SpUpdateSalesInquiry]                  
+(   
+ @ID INT,    
+ @SalesInquiryDate DATETIME,      
+ @RequestedDelivaryDate DATETIME,      
+ @RequestExpiryDate DateTime,      
+ @RequestedCustomerName  VARCHAR(250),      
+ @RequestedCustomerAddress  VARCHAR(MAX),      
+ @Remarks  VARCHAR(MAX),      
+ @PhoneNo1  VARCHAR(100),      
+ @PhoneNo2  VARCHAR(100),
+ @Make  VARCHAR(200), 
+ @Model  VARCHAR(200), 
+ @Year  VARCHAR(200), 
+ @SIOrVINNumber  VARCHAR(200), 
+ @GrossAmount Numeric(18,4),      
+ @NetAmount Numeric(18,4),      
+ @IsDraft BIT,    
+ @LocationID INT,  
+ @ModifiedUserID INT,  
+ @SalesInqueryTrans XML )                  
+AS                  
+BEGIN                  
+            
+ SET NOCOUNT ON;  
+  DECLARE @Status VarCHAR(20)  
+IF @RequestedCustomerName IS NOT NULL AND @RequestedCustomerName <> ''  
+BEGIN  
+    IF NOT EXISTS (SELECT Name FROM InquiryCustomer WHERE Name = @RequestedCustomerName)  
+    BEGIN  
+        INSERT INTO InquiryCustomer (Name) VALUES (@RequestedCustomerName);  
+    END  
+END   
+  IF @IsDraft=1   
+  BEGIN SET @Status='Draft' END  
+  ELSE  
+   BEGIN SET @Status='SalesInquiry' END  
+UPDATE Sales.SalesInquiry  
+SET SalesInquiryDate = @SalesInquiryDate,RequestedDelivaryDate = @RequestedDelivaryDate,RequestExpiryDate = @RequestExpiryDate,  
+    RequestedCustomerName = @RequestedCustomerName,RequestedCustomerAddress = @RequestedCustomerAddress,Remarks = @Remarks,Status=@Status,  
+    PhoneNo1 = @PhoneNo1,PhoneNo2 = @PhoneNo2,Make = @Make,Model = @Model,Year = @Year,SIOrVINNumber = @SIOrVINNumber,
+	GrossAmount = @GrossAmount,NetAmount = @NetAmount,IsDraft = @IsDraft,ModifiedUserID=@ModifiedUserID  
+WHERE ID = @ID;   
+  
+ EXEC SpLogChange 'Sales.SalesInquiryItems','SalesInquiryID',@ID,@ModifiedUserID,@LocationID,1     
+   
+ delete from [Sales].SalesInquiryItems WHERE SalesInquiryID=@ID             
+          
+ EXEC [Sales].[SPCreateSalesInquiryItems] @ID , @SalesInqueryTrans                  
+                                
+END   
+  

@@ -1,0 +1,75 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.MaterialPurificationModel
+@{
+    ViewBag.Title = @Masters.MaterialPurificationDetails;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.MaterialPurification</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.MaterialPurificationDetails</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "Edit", "MaterialPurification", new { Area = "Masters", id = (Model != null) ? Model.ID : 0 }, new { @class = "md-btn " }))
+
+            @Html.HiddenFor(m => m.ID)
+            @Html.ActionLink(Common.Close, "Index", "MaterialPurification", new { Area = "Masters" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="details-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.ItemCategory</label>
+                                            @Html.TextBoxFor(m => m.CategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Masters.ItemName</label>
+                                            @Html.TextBoxFor(m => m.ItemName, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.Unit</label>
+                                            @Html.TextBoxFor(m => m.Unit, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.PurificationProcess</label>
+                                            @Html.TextBoxFor(m => m.ProcessName, new { @class = "md-input", @disabled = "disabled"  })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Masters.PurificationItemName</label>
+                                            @Html.TextBoxFor(m => m.PurificationItemName, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.PurificationUnit</label>
+                                            @Html.TextBoxFor(m => m.PurificationUnit, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/MaterialPurification")
+<script type="text/javascript">
+    MaterialPurification.details();
+</script>

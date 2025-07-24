@@ -1,0 +1,44 @@
+﻿@model  List<TradeSuiteApp.Web.Areas.Manufacturing.Models.PreProcessReceiptPurificationItemModel>
+@{
+    int nxtSno = ViewBag.NextSno != null ? ViewBag.NextSno : 0;
+}
+@if (Model != null && Model.Count > 0)
+{
+    foreach (var item in Model.Select((value, i) => new { i = (i + 1), value }))
+    {
+        int sno = item.i + nxtSno;
+        var issueDateName = "IssueDate-" + sno;
+        var receiptDateName = "ReceiptDate-" + sno;
+        <tr>
+            <td>@sno </td>
+            <td>
+                @Html.HiddenFor(m => item.value.ID, new { @class = "hdnID" })
+                @Html.HiddenFor(m => item.value.IssuedItemID, new { @class = "hdnIssuedItemID" })
+                @Html.HiddenFor(m => item.value.ReceiptItemID, new { @class = "hdnReceiptItemID" })
+                @Html.HiddenFor(m => item.value.MaterialPurificationIssueTransID, new { @class = "hdnMaterialPurificationIssueTransID" })
+                @Html.HiddenFor(m => item.value.QtyMet, new { @class = "hdnQtyMet" })
+                @Html.HiddenFor(m => item.value.BalanceQty, new { @class = "hdnBalanceQty" })
+                @Html.HiddenFor(m => item.value.ReceiptItemUnitID, new { @class = "UnitID" })
+                @item.value.IssuedItemName
+            </td>
+            <td>@item.value.IssuedItemUnit</td>
+            <td class='mask-production-qty txtIssuedQuantity' >@item.value.IssuedQuantity</td>
+            <td class='mask-production-qty '>@item.value.BalanceQty</td>
+            <td class='txtIssuedDate'>@item.value.IssuedDateStr</td>
+            <td>@item.value.ProcessName</td>
+            <td>@item.value.ReceiptItem</td>
+            <td>@item.value.ReceiptItemUnit</td>
+            <td>@Html.TextBoxFor(m => item.value.ReceiptQuantity, new { @class = "md-input mask-production-qty txtReceiptQuantity" })</td>
+            <td>
+                <div class="uk-input-group">
+                    @Html.TextBox(receiptDateName, item.value.ReceiptDateStr, new { @class = "md-input label-fixed past-date date txtReceiptDate", @readonly = "readonly" })
+                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                </div>
+            </td>
+            <td data-md-icheck>
+                @Html.CheckBoxFor(m => item.value.IsCompleted, new { @class = "IsCompleted" })
+            </td>
+            <td><i class="uk-close uk-float-right removeItem"></i></td>
+        </tr>
+    }
+}

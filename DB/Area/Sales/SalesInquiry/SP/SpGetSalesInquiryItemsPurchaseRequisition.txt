@@ -1,0 +1,18 @@
+ALTER PROCEDURE [Sales].[SpGetSalesInquiryItemsPurchaseRequisition](                                
+ @SalesInquiryID int,                                                     
+ @LocationID int,                                
+ @ApplicationID int                                
+)AS                                  
+BEGIN              
+
+ SELECT ST.SalesInquiryID,ST.ID SalesInquiryItemID,ISNULL(I.ID,0)ItemID ,ISNULL(I.Code,ST.ItemCode) ItemCode,  
+ ISNULL(I.Name,ST.ItemName) ItemName,U.ID UnitID,ISNULL(U.Name,ST.UnitName) UnitName,ISNULL(I.Model,ST.Model)Model,  
+ ISNULL(I.Description,ST.PartsNumber) PartsNumber,ST.DeliveryTerm,ST.Remarks,ISNULL((CASE WHEN ST.Rate IS NULL OR ST.Rate =0 THEN B.PurchaseMRP ELSE ST.Rate END),0)PurchaseMRP,
+ ST.Quantity,ISNULL((CASE WHEN B.PurchaseMRP IS NULL OR B.PurchaseMRP=0 THEN B.RetailMRP ELSE B.PurchaseMRP END) * ST.Quantity,0)GrossAmount,ST.VATPercentage,ST.VATAmount,ST.NetAmount        FROM Sales.SalesInquiryItems ST INNER JOIN Sales.SalesInquiry S on S.ID=ST.SalesInquiryID        
+ LEFT JOIN Item I on I.ID=ST.ItemID  LEFT JOIN Batch B on B.ItemID=I.ID AND B.LocationID=@LocationID      
+ LEFT JOIN Unit U on I.PurchaseUnitID=U.ID    
+ WHERE ST.SalesInquiryID = @SalesInquiryID                                                          
+ AND S.LocationID = @LocationID                                                         
+ ORDER BY ST.ID ASC     
+ 
+END

@@ -1,0 +1,120 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.AppointmentScheduleModel
+<div class="uk-modal-header">
+    <h3 class="uk-modal-title">Bill<i class="material-icons"></i></h3>
+</div>
+<div class="uk-modal-content">
+    <div class="uk-form-row">
+        <div class="uk-grid text-center uk-margin">
+            <div class="uk-width-medium-1-8">
+                <label>@Sales.InvoiceNo</label>
+                @Html.TextBoxFor(model => model.TransNo, new { @class = "md-input label-fixed", @readonly = "readonly", @disabled = "disabled" })
+            </div>
+            <div class="uk-width-medium-1-8">
+                <label for="uk_dp_start">@Sales.InvoiceDate</label>
+                @Html.TextBoxFor(model => model.SheduledDate, new { @class = "md-input label-fixed", @readonly = "readonly", @disabled = "disabled" })
+            </div>
+            <div class="uk-width-medium-2-10">
+                <label>@AHCMS.Patient</label>
+                @Html.TextBoxFor(m => m.PatientName, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+            </div>
+            <div class="uk-width-medium-1-8">
+                <label>@AHCMS.TokenNo</label>
+                @Html.TextBoxFor(m => m.TokenNo, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+            </div>
+
+            <div class="uk-width-medium-1-8">
+                <label>@AHCMS.Time</label>
+                @Html.TextBoxFor(m => m.Time, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-1">
+                            <label>@Sales.NetAmount</label>
+                            @Html.TextBoxFor(model => model.NetAmount, new { @class = "md-input mask-sales-currency label-fixed x-large", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="uk-form-row">
+        <div class="uk-grid text-center uk-margin">
+            @*<div class="uk-width-medium-2-8">
+                    <label>@AHCMS.ItemName</label>
+                    @Html.TextBoxFor(m => m.ItemName, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                </div>*@
+            <div class="uk-width-medium-1-8">
+                <label>@AHCMS.ConsultationMode <span>*</span></label>
+                @Html.DropDownList("ConsultationMode", new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text="General", Value = "General" },
+                            new SelectListItem{ Text="Free", Value = "Free"},
+                            new SelectListItem{ Text="Privilege Card", Value = "PrivilegeCard"}
+           }, new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-1-8">
+                <label>@Sales.PaymentMode</label>
+                @Html.DropDownListFor(model => model.PaymentModeID, Model.PaymentModeList, new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-2-10">
+                <label for="uk_dp_start">@Accounts.BankName<span>*</span></label>
+                @Html.DropDownListFor(Model => Model.BankID, Model.BankList, "Select", new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <label>&nbsp;</label>
+                </div>
+                <input type="radio" id="New" name="Type" class="consultation-type" data-md-icheck checked="" value="New" /> @Html.Label("New")
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <label>&nbsp;</label>
+                </div>
+                <input type="radio" id="FollowUp" name="Type" class="consultation-type" data-md-icheck value="FollowUp" /> @Html.Label("Follow Up")
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <label>&nbsp;</label>
+                </div>
+                <input type="radio" id="Re-view" name="Type" class="consultation-type" data-md-icheck value="Re-view" /> @Html.Label("Re-view")
+            </div>
+            <div class="uk-width-medium-2-8">
+                <label>@AHCMS.ReferenceBy</label>
+                @Html.TextBoxFor(m => m.ReferenceBy, new { @class = "md-input" })
+            </div>
+        </div>
+    </div>
+</div>
+<div class="uk-form-row">
+    <div>
+        <table id="consultation-list" class="uk-table" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-120">@AHCMS.ItemName</th>
+                    <th class="width-10">@AHCMS.Rate</th>
+                    <th class="width-10">@AHCMS.DoctorFee</th>
+                    <th class="width-10">@AHCMS.ClinicFee</th>
+                    <th class="width-10">@Sales.NetAmount</th>
+                    <th class="width-40">@Sales.Remarks</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<div class="uk-modal-footer uk-text-right">
+    <button type="button" class="md-btn  uk-modal-close">@Common.Close</button>
+    <button type="button" class="md-btn md-btn-primary" id="btnSaveAppointment">Save</button>
+    @Html.HiddenFor(m => m.PatientID)
+    @Html.HiddenFor(m => m.ItemID)
+    @Html.HiddenFor(m => m.BillableID)
+    @Html.HiddenFor(m => m.Rate)
+    @Html.HiddenFor(m => m.DiscountPercentage)
+    @Html.HiddenFor(m => m.ConsultationMode)
+    @Html.HiddenFor(m => m.DoctorFee)
+    @Html.HiddenFor(m => m.ClinicFee)    
+    @Html.HiddenFor(m => m.AppointmentScheduleItemID)
+</div>

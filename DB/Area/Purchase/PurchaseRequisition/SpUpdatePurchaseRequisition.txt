@@ -1,0 +1,37 @@
+  
+ALTER procedure [Purchase].[SpUpdatePurchaseRequisition]  
+(  
+@ID INT,  
+@FromDeptID INT,  
+@ToDeptID INT,  
+@IsDraft bit,  
+@CreatedUserID int,  
+@FinYear INT,  
+@LocationID INT,  
+@ApplicationID INT)  
+AS   
+BEGIN  
+SET NOCOUNT ON  
+declare @SerialNo Varchar(20), @Date Date   
+SELECT @SerialNo = Code, @Date = Date FROM PurchaseRequisition WHERE ID = @ID  
+IF(@FromDeptID=0)
+BEGIN SET @FromDeptID=null END
+IF(@ToDeptID=0)
+BEGIN SET @ToDeptID=null END
+IF (@IsDraft = 0)  
+ BEGIN  
+  exec Common.SpUpdateSerialNo 'PurchaseRequisition','Code',@FinYear,@LocationID ,@ApplicationID,@SerialNo = @SerialNo OUT  
+  
+  SET @Date = CURRENT_TIMESTAMP  
+ END  
+  EXEC SpLogChange 'PurchaseRequisition','ID',@ID,@CreatedUserID,@LocationID,@ApplicationID  
+  
+  EXEC SpLogChange 'PurchaseRequisitionTrans','PurchaseRequisitionID',@ID,@CreatedUserID,@LocationID,@ApplicationID  
+  
+  UPDATE PurchaseRequisition SET  Code =@SerialNo,Date = @Date, FromDeptID = @FromDeptId, ToDeptId = @ToDeptID,IsDraft=@IsDraft  
+     WHERE ID = @ID AND FinYear = @FinYear AND LocationID = @LocationID AND ApplicationID = @ApplicationID  
+   
+   
+ DELETE FROM PurchaseRequisitionTrans WHERE PurchaseRequisitionID = @ID AND FinYear = @FinYear AND LocationID = @LocationID AND ApplicationID = @ApplicationID  
+END  
+  

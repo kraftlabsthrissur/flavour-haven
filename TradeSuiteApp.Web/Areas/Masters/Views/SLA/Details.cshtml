@@ -1,0 +1,269 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.SLAModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    var AllNoList = new List<SelectListItem>() { new SelectListItem { Text = "ALL", Value = "0" }, new SelectListItem { Text = "No", Value = "-1" } };
+    var PositiveNegativeList = new List<SelectListItem>() { new SelectListItem { Text = "No", Value = "0" }, new SelectListItem { Text = "Positive", Value = "1" }, new SelectListItem { Text = "Negative", Value = "-1" }, new SelectListItem { Text = "Positive & Negative", Value = "-2" } };
+    var YesNoList = new List<SelectListItem>() { new SelectListItem { Text = "Yes", Value = "0" }, new SelectListItem { Text = "No", Value = "-1" } };
+}
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.SLA</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.SLADetails</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "Edit", "SLA", new { Area = "Masters", @id = Model.ID }, new { @class = "md-btn " }))
+            
+            @Html.ActionLink(Common.Close, "Index", "SLA", new { Area = "Masters" }, new { @class = "md-btn " })
+            @Html.HiddenFor(m => m.ID)
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="" class="detail-view">
+        <div class="md-card uk-margin-medium-bottom remove-box-shadow">
+            <div class="md-card-content">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-8-10">
+                        <div class="md-card">
+                            <div class="md-card-content master-card-padding">
+                                <div class="uk-width-medium-1-1">
+                                    <div class="panel uk-margin-top-25">
+                                        <label class="uk-text-uppercase uk-text-bold">General Details</label>
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Masters.ProcessCycle</label>
+                                                @Html.TextBoxFor(m => m.Cycle, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Masters.TransactionType</label>
+                                                @Html.TextBoxFor(m => m.TransactionType, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.SLAKeyValue</label>
+                                                @Html.TextBoxFor(m => m.KeyValue, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.Guidance</label>
+                                                @Html.TextBoxFor(m => m.Guidance, new { maxlength = 500, @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.Location</label>
+                                                @Html.DropDownListFor(Model => Model.Location, AllNoList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel uk-margin-top-25">
+                                        <label class="uk-text-uppercase uk-text-bold">Item Details</label>
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Stock.Item</label>
+                                                @Html.TextBoxFor(m => m.ItemName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            @Html.HiddenFor(m => m.Item)
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.ItemAccountCategory</label>
+                                                @Html.TextBoxFor(m => m.ItemAccountsCategoryName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                @Html.HiddenFor(m => m.ItemAccountsCategory)
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.ItemTaxCategory</label>
+                                                @Html.TextBoxFor(m => m.ItemTaxCategoryName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            @Html.HiddenFor(m => m.ItemTaxCategory)
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.BatchPrefix</label>
+                                                @Html.DropDownListFor(Model => Model.BatchPrefix, YesNoList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel uk-margin-top-25">
+                                        <label class="uk-text-uppercase uk-text-bold">Supplier Details</label>
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Purchase.Supplier</label>
+                                                @Html.TextBoxFor(m => m.SupplierName, new { @class = "md-input  label-fixed", @disabled = "disabled" })
+                                                @Html.HiddenFor(m => m.Supplier)
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.SupplierAccountCategory</label>
+                                                @Html.TextBoxFor(m => m.SupplierAccountsCategoryName, new { @class = "md-input  label-fixed", @disabled = "disabled" })
+                                                @Html.HiddenFor(m => m.SupplierAccountsCategory)
+                                              </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.SuppliersTaxCategory</label>
+                                                @Html.DropDownListFor(Model => Model.SupplierTaxCategory, AllNoList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.SuppliersTaxSubCategory</label>
+                                                @Html.TextBoxFor(m => m.SupplierTaxSubCategoryName, new { @class = "md-input  label-fixed", @disabled = "disabled" })
+                                                @Html.HiddenFor(m => m.SupplierTaxSubCategory)
+                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel uk-margin-top-25">
+                                        <label class="uk-text-uppercase uk-text-bold">Customer Details</label>
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.CustomerCategory</label>
+                                                @Html.TextBoxFor(m => m.CustomerCategoryName, new { @class = "md-input  label-fixed", @disabled = "disabled" })
+                                            @Html.HiddenFor(m => m.CustomerCategory)
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Sales.Customer</label>
+                                                @Html.TextBoxFor(model => model.CustomerName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                @Html.HiddenFor(m => m.Customer)
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.CustomerAccountCategory</label>
+                                                @Html.TextBoxFor(model => model.CustomerAccountsCategoryName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                @Html.HiddenFor(m => m.CustomerAccountsCategory)
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.CustomerTaxCategory</label>
+                                                @Html.DropDownListFor(Model => Model.CustomerTaxCategory, AllNoList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel uk-margin-top-25">
+                                        <label class="uk-text-uppercase uk-text-bold">Account Details</label>
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Accounts.DebitAccountNumber</label>
+                                                @Html.TextBoxFor(model => model.DebitAccount, new { @class = "md-input label-fixed", @disabled = "disabled" })
+
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.DebitAccountDescription</label>
+                                                @Html.TextBoxFor(m => m.DebitAccountDescription, "", new { maxlength = 500, @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Accounts.CreditAccountNumber</label>
+                                                @Html.TextBoxFor(model => model.CreditAccount, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.CreditAccountDescription</label>
+                                                @Html.TextBoxFor(m => m.CreditAccountDescription, "", new { maxlength = 500, @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel uk-margin-top-25">
+                                        <label class="uk-text-uppercase uk-text-bold">Entry Details</label>
+                                        <div class="uk-grid" data-uk-grid-margin>                                            
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.EntryInLocation</label>
+                                                @Html.DropDownListFor(Model => Model.EntryInLocation,PositiveNegativeList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.EntryInDepartment</label>
+                                                @Html.DropDownListFor(Model => Model.EntryInDepartment,PositiveNegativeList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.EntryInEmployee</label>
+                                                @Html.DropDownListFor(Model => Model.EntryInEmployee, PositiveNegativeList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.ItemSubLedger</label>
+                                                @Html.DropDownListFor(Model => Model.ItemSubLedger, PositiveNegativeList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.EntryInInterCompanyField</label>
+                                                @Html.DropDownListFor(Model => Model.EntryInInterCompanyField, PositiveNegativeList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.EntryInProjectField</label>
+                                                @Html.DropDownListFor(Model => Model.EntryInProjectField,PositiveNegativeList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.SupplierSubLedger</label>
+                                                @Html.DropDownListFor(Model => Model.SupplierSubLedger, PositiveNegativeList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.CustomerSubLedger</label>
+                                                @Html.DropDownListFor(Model => Model.CustomerSubLedger, PositiveNegativeList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.EmployeeSubLedger</label>
+                                                @Html.DropDownListFor(Model => Model.EmployeeSubLedger, PositiveNegativeList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.AssetsSubLedger</label>
+                                                @Html.DropDownListFor(Model => Model.AssetsSubLedger, PositiveNegativeList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.PatientsSubLedger</label>
+                                                @Html.DropDownListFor(Model => Model.PatientsSubLedger, PositiveNegativeList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.BankCashSubLedger</label>
+                                                @Html.DropDownListFor(Model => Model.BankCashSubLedger, PositiveNegativeList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="panel uk-margin-top-25">
+                                        <label class="uk-text-uppercase uk-text-bold">Other Conditions</label>
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.DepreciationCategory</label>
+                                                @Html.DropDownListFor(Model => Model.DepartmentCategory,YesNoList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.Capitilization</label>
+                                                @Html.DropDownListFor(Model => Model.Capitilization, YesNoList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.CostComponent</label>
+                                                @Html.DropDownListFor(Model => Model.CostComponent, YesNoList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>                                            
+                                            <div class="uk-width-medium-1-8">
+                                                <div class="uk-input-group">
+                                                    <label>@Masters.StartDate</label>
+                                                    @Html.TextBoxFor(m => m.Startdate, "{0:dd-MMM-yyyy}", new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <div class="uk-input-group">
+                                                    <label>@Masters.EndDate</label>
+                                                    @Html.TextBoxFor(m => m.enddate, "{0:dd-MMM-yyyy}", new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.Condition 1</label>
+                                                @Html.TextBoxFor(m => m.Condition1, "", new { maxlength = 500, @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.Condition 2</label>
+                                                @Html.TextBoxFor(m => m.Condition2, "", new { maxlength = 500, @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Masters.Remarks</label>
+                                                @Html.TextBoxFor(m => m.Remarks, "", new { maxlength = 500, @class = "md-input label-fixed", @disabled = "disabled" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/SLAMaster")
+<script type="text/javascript">
+    SLA.init();
+</script>
+
+
+

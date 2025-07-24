@@ -1,0 +1,33 @@
+  
+ALTER  PROCEDURE [Sales].[SPCreateSalesInquiryItems](            
+ @SalesInquirID int,            
+ @SalesInqueryTrans XML          
+)            
+AS            
+BEGIN            
+ SET NOCOUNT ON;            
+            
+  INSERT INTO Sales.SalesInquiryItems             
+  (SalesInquiryID,ItemID,ItemCode,ItemName,UnitName,Model,[Year],SIOrVINNumber,PartsNumber,  
+  DeliveryTerm,Remarks,Rate,Quantity,GrossAmount,VATPercentage,VATAmount,NetAmount)            
+  SELECT             
+  @SalesInquirID,                   
+  CONVERT(INT, SalesInqueryTrans.item.query('ItemID').value('.','VARCHAR(20)')),  
+  CONVERT(VARCHAR(100), SalesInqueryTrans.item.query('ItemCode').value('.','VARCHAR(100)')),  
+  CONVERT(VARCHAR(200), SalesInqueryTrans.item.query('ItemName').value('.','VARCHAR(200)')),  
+  CONVERT(VARCHAR(200), SalesInqueryTrans.item.query('UnitName').value('.','VARCHAR(200)')),  
+  CONVERT(VARCHAR(200), SalesInqueryTrans.item.query('Model').value('.','VARCHAR(200)')),  
+    CONVERT(VARCHAR(200), SalesInqueryTrans.item.query('Year').value('.','VARCHAR(200)')),  
+	  CONVERT(VARCHAR(200), SalesInqueryTrans.item.query('SIOrVINNumber').value('.','VARCHAR(200)')),  
+  CONVERT(VARCHAR(100), SalesInqueryTrans.item.query('PartsNumber').value('.','VARCHAR(100)')),       
+  CONVERT(VARCHAR(200), SalesInqueryTrans.item.query('DeliveryTerm').value('.','VARCHAR(200)')),      
+  CONVERT(VARCHAR(MAX), SalesInqueryTrans.item.query('Remarks').value('.','VARCHAR(MAX)')),   
+  CONVERT(Numeric(18,4), SalesInqueryTrans.item.query('Rate').value('.','VARCHAR(20)')),            
+  CONVERT(Numeric(18,4), SalesInqueryTrans.item.query('Qty').value('.','VARCHAR(20)')),            
+  CONVERT(Numeric(18,4), SalesInqueryTrans.item.query('GrossAmount').value('.','VARCHAR(20)')),   
+  CONVERT(Numeric(18,2), SalesInqueryTrans.item.query('VATPercentage').value('.','VARCHAR(20)')),  
+  CONVERT(Numeric(18,4), SalesInqueryTrans.item.query('VATAmount').value('.','VARCHAR(20)')),  
+  CONVERT(Numeric(18,4), SalesInqueryTrans.item.query('NetAmount').value('.','VARCHAR(20)'))            
+ FROM @SalesInqueryTrans.nodes('/SalesInquiryTrans/Item') as SalesInqueryTrans(item)            
+                    
+END 

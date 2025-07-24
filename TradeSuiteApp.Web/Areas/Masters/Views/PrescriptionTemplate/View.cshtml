@@ -1,0 +1,45 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.PrescriptionFormatModel
+@{
+    ViewBag.Title = "view";
+}
+<div class="uk-form-row">
+    <div class="uk-grid" data-uk-grid-margin>
+        <div class="uk-width-medium-1-1">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-8">
+                        <label>@Masters.MedicineCategory</label>
+                        @Html.TextBoxFor(m => m.MedicineCategory, new { @class = "md-input", @disabled = "disabled", @id = "TransNo" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="uk-form-row">
+        <div>
+
+            <table id="PrescriptionFormat-items-list" class="uk-table " cellspacing="0" width=100">
+                <thead>
+                    <tr>
+                        <th class="width-40">@Common.SerialNo</th>
+                        <th class="uk-width-1-1">@Masters.Prescription</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                        <tr>
+                            <td class="uk-text-center">@(1 + @Model.Items.IndexOf(item.value))</td>
+                            <td> @item.value.Prescription</td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+</div>
+
+

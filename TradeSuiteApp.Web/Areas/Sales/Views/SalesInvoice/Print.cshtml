@@ -1,0 +1,654 @@
+﻿@model TradeSuiteApp.Web.Areas.Sales.Models.SalesInvoiceModel
+@{
+    ViewBag.Title = "Print";
+}
+
+
+@{
+    int BodyLines = 0;
+    var Heading = "";
+    if (@Model.CustomerCategory == "Employees" || @Model.CustomerCategory == "Employees VOA")
+    {
+        BodyLines = 5;
+        Heading = "INVOICE";
+    }
+    else
+    {
+        BodyLines = 25;
+        Heading = "TAX Invoice";
+    }
+    int TotalPages = 0;
+    int TotalLines = 0;
+    int PrintedLines = 0;
+    decimal TotalGrossAmt = 0;
+    decimal SubTotalGrossAmt = 0;
+    decimal SubTotalNetAmt = 0;
+    decimal SubTotalDiscAmt = 0;
+    decimal SubTotalAddDiscAmt = 0;
+    decimal SubTotalTODAmt = 0;
+    decimal SubTotalGSTAmt = 0;
+    decimal SubTotalQty = 0;
+    decimal TotalQty = 0;
+    decimal SGST5Amt = 0;
+    decimal CGST5Amt = 0;
+    decimal SGST6Amt = 0;
+    decimal CGST6Amt = 0;
+    decimal SGST9Amt = 0;
+    decimal CGST9Amt = 0;
+    decimal CessPer = 0;
+    decimal CessAmt = 0;
+    decimal TotalSGSTAmt = 0;
+    decimal TotalCGSTAmt = 0;
+    decimal TotalGSTAmt = 0;
+    TotalLines = Model.Items.Count();
+    TotalPages = TotalLines / BodyLines;
+    if (TotalLines % BodyLines == 0)
+    {
+        TotalPages = TotalLines / BodyLines;
+    }
+    else
+    {
+        ++TotalPages;
+    }
+}
+
+<style>
+    th {
+        border-top: 1px dashed;
+        border-bottom: 1px dashed;
+        font-size: 12px;
+        text-align: left;
+        font-family: Verdana;
+    }
+
+    td {
+        font-size: 10px;
+        font-family: Verdana;
+        font-weight: bold;
+    }
+
+    .name {
+        width: 200px;
+    }
+
+    .align {
+        text-align: right;
+    }
+
+    .border {
+        border-left: 1px dashed;
+        text-align: center;
+    }
+
+    p {
+        font-size: 10px;
+        font-family: Verdana;
+        height: 10px;
+    }
+
+    #head {
+        font-weight: bold;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .subHead {
+        font-weight: normal;
+        text-align: center;
+    }
+
+    .fontSize16 {
+        font-size: 14px;
+    }
+
+    .fontweightnormal {
+        font-weight: normal;
+    }
+
+    .invoice {
+        border-top: 1px dashed;
+        border-bottom: 1px dashed;
+    }
+
+    .colwidth {
+        width: 20px;
+    }
+
+    .widthpx {
+        width: 30px;
+    }
+
+    .width100px {
+        width: 100px;
+    }
+
+    .width50px {
+        width: 50px;
+    }
+
+    .fontSize10px {
+        font-size: 10px;
+    }
+</style>
+
+@for (var i = 0; i < TotalPages; i++)
+{
+    <table style="width:100%">
+        @for (int index = 1; index <= 1; ++index)
+        {
+            <tr style='height:16px'></tr>
+        }
+        <tr>
+            <td colspan="5" id="gst">GST : @Model.GSTNo</td>
+        </tr>
+        <tr>
+            <td colspan="13" class="subHead"><b>@Heading</b></td>
+        </tr>
+        <tr>
+            <td id="head" colspan="13">@Model.CompanyName.ToUpper()</td>
+        </tr>
+        <tr>
+            <td class="subHead" colspan="13"><center>@Model.Address1 &nbsp;  @Model.Address2</center></td>
+        </tr>
+        <tr>
+            <td class="subHead" colspan="13"><center>@Model.Address4 &nbsp;  @Model.Address5</center></td>
+        </tr>
+    </table>
+    if (@Model.CustomerCategory == "Employees" || @Model.CustomerCategory == "Employees VOA")
+    {
+        <table style="width:100%">
+            <tr style="height:16px"></tr>
+            <tr>
+                <td colspan="8" class="fontweightnormal">Invoice No. &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; : &nbsp; <b>@Model.InvoiceNo</b></td>
+                <td colspan="5" class="fontweightnormal">Invoice Date &nbsp; : &nbsp; <b>@Model.InvoiceDate</b></td>
+            </tr>
+            <tr>
+                <td colspan="8" class="fontweightnormal">Name & Address &nbsp; : &nbsp; <b>@Model.CustomerName</b></td>
+                <td colspan='5' class="fontweightnormal">HSN 18% Items 34011110. HSN (All others) 30039011</td>
+            </tr>
+            <tr>
+                <td colspan="13" class="align">@string.Concat(new object[4] { "Page : ", i + 1, " of ", TotalPages })</td>
+            </tr>
+            <tr style="height:16px"></tr>
+        </table>
+        var Lines = (i + 1) * BodyLines >= TotalLines ? TotalLines : (i + 1) * BodyLines;
+        PrintedLines = 0;
+        SubTotalGrossAmt = 0;
+        SubTotalNetAmt = 0;
+        <table style="width:100%" cellspacing="0" cellpadding="3">
+            <thead>
+                <tr style="height:40px">
+                    <th class="colwidth">Sl. No.</th>
+                    <th class="border">Item Name</th>
+                    <th class="border">UOM</th>
+                    <th class="border">Batch</th>
+                    <th class="border">Exp. Date</th>
+                    <th class="border">Unit Price</th>
+                    <th class="border">Qty</th>
+                    <th class="border">Gross Amt</th>
+                    <th class="border">Disc Amt</th>
+                    <th class="border">GST Amt</th>
+                    <th class="border">Total Amt</th>
+                    <th class="border">GST %</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var j = (i) * BodyLines; j < Lines; j++)
+                {
+                    var item = Model.Items[j];
+                    //var name = @item.ItemName.Replace(" ", string.Empty);
+                    var name = @item.ItemName.Substring(0, Math.Min(@item.ItemName.Length, 20));
+                    TotalGrossAmt += @item.GrossAmount;
+                    SubTotalGrossAmt += @item.GrossAmount;
+                    SubTotalDiscAmt += @item.DiscountAmount;
+                    SubTotalGSTAmt += @item.GSTAmount;
+                    SubTotalNetAmt += @item.TaxableAmount;
+                    SubTotalQty += @item.InvoiceQty + @item.InvoiceOfferQty;
+                    TotalQty += @item.InvoiceQty + @item.InvoiceOfferQty;
+                    TotalGSTAmt += @item.GSTAmount;
+                    <tr style="height:16px">
+                        <td> @(j + 1)</td>
+                        <td class="name">@item.ItemName</td>
+                        <td>@string.Format("{0:0}", @item.PackSize)@item.UnitName</td>
+                        <td>@item.BatchName</td>
+                        <td style="width :40px">@Convert.ToDateTime(@item.ExpiryDate).ToString("MMM y").ToUpper()</td>
+                        <td class="align">@string.Format("{0:0.00}", item.BasicPrice)</td>
+                        <td class="align">@string.Format("{0:0}", item.InvoiceQty + item.InvoiceOfferQty)</td>
+                        <td class="align">@string.Format("{0:0.00}", item.GrossAmount)</td>
+                        <td class="align">@string.Format("{0:0.00}", item.DiscountAmount)</td>
+                        <td class="align">@string.Format("{0:0.00}", item.GSTAmount)</td>
+                        <td class="align">@string.Format("{0:0.00}", item.NetAmount)</td>
+                        <td class="align">@string.Format("{0:0}", item.IGSTPercentage)</td>
+                    </tr>
+                    ++PrintedLines;
+                }
+            </tbody>
+        </table>
+        if (i == TotalPages - 1)
+        {
+            foreach (var items in @Model.AmountDetails.Select((value, k) => new { k = (k + 1), value }))
+            {
+                if (items.value.Particulars == "SGST" && items.value.Percentage == Convert.ToDecimal(2.50) && items.value.Amount > 0)
+                {
+                    SGST5Amt = items.value.Amount;
+                }
+                if (items.value.Particulars == "SGST" && items.value.Percentage == Convert.ToDecimal(6) && items.value.Amount > 0)
+                {
+                    SGST6Amt = items.value.Amount;
+                }
+                if (items.value.Particulars == "SGST" && items.value.Percentage == Convert.ToDecimal(9) && items.value.Amount > 0)
+                {
+                    SGST9Amt = items.value.Amount;
+                }
+                if (items.value.Particulars == "CGST" && items.value.Percentage == Convert.ToDecimal(2.50) && items.value.Amount > 0)
+                {
+                    CGST5Amt = items.value.Amount;
+                }
+                if (items.value.Particulars == "CGST" && items.value.Percentage == Convert.ToDecimal(6) && items.value.Amount > 0)
+                {
+                    CGST6Amt = items.value.Amount;
+                }
+                if (items.value.Particulars == "CGST" && items.value.Percentage == Convert.ToDecimal(9) && items.value.Amount > 0)
+                {
+                    CGST9Amt = items.value.Amount;
+                }
+                if (items.value.Particulars == "Cess")
+                {
+                    CessPer = items.value.Percentage;
+                    CessAmt = items.value.Amount;
+                }
+            }
+            TotalSGSTAmt = SGST5Amt + SGST6Amt + SGST9Amt;
+            TotalCGSTAmt = CGST5Amt + CGST6Amt + CGST9Amt;
+            <table style="width:100%" cellspacing="0" cellpadding="3">
+                @for (int index = 1; index <= BodyLines - PrintedLines; ++index)
+                {
+                    <tr style="height:16px"></tr>
+                }
+                <tfoot>
+                    <tr style='height:30px'>
+                        <th colspan="2">Total:</th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="align fontSize10px">@string.Format("{0:0}", TotalQty)</th>
+                        <th class="align fontSize10px width50px">@string.Format("{0:0.00}", TotalGrossAmt)</th>
+                        <th class="align fontSize10px width50px">@string.Format("{0:0.00}", @Model.DiscountAmount)</th>
+                        <th class="align fontSize10px width50px">@string.Format("{0:0.00}", TotalGSTAmt)</th>
+                        <th class="align fontSize10px width50px">@string.Format("{0:0.00}", @Model.NetAmount)</th>
+                        <th class="width50px"></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+            <table style="width:100%">
+                <tr>
+                    <td colspan="6"></td>
+                    <td>Less Cash Discount/TODD&nbsp;&nbsp;&nbsp;&nbsp;:</td>
+                    <td colspan="2" class="align">@string.Format("{0:0.00}", (@Model.TurnoverDiscount + @Model.CashDiscount))</td>
+                </tr>
+                <tr>
+                    <td colspan="6"></td>
+                    <td>Grand Total(Rounded off)&nbsp;&nbsp;&nbsp;&nbsp;:</td>
+                    <td colspan="2" class="align fontSize16">@string.Format("{0:0.00}", @Model.NetAmount)</td>
+                </tr>
+                <tr>
+                    <td colspan="8" class="fontSize16">Total : Rupees @Model.NetAmountInWords Only</td>
+                </tr>
+                <tr>
+                    <td>Taxable Amt&nbsp;&nbsp;&nbsp;&nbsp;:</td>
+                    <td class="align">@string.Format("{0:0.00}", @Model.NetAmount)</td>
+                    <td colspan="7"></td>
+                </tr>
+                <tr>
+                    <td>Total GST  5%&nbsp;&nbsp;: </td>
+                    <td class="align">@string.Format("{0:0.00}", SGST5Amt + CGST5Amt)</td>
+                    <td class="widthpx"></td>
+                    <td>Total GST  12%&nbsp;&nbsp;: </td>
+                    <td class="align">@string.Format("{0:0.00}", SGST6Amt + CGST6Amt)</td>
+                    <td class="widthpx"></td>
+                    <td>Total GST  18%&nbsp;&nbsp;: </td>
+                    <td class="align"> @string.Format("{0:0.00}", SGST9Amt + CGST9Amt)</td>
+                </tr>
+                <tr>
+                    <td>Cess @string.Format("{0:0.0}", CessPer) %&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</td>
+                    <td class="align">@string.Format("{0:0.00}", CessAmt)</td>
+                    <td colspan="6"></td>
+                </tr>
+                <tr>
+                    <td colspan="8">Medical Aid Balance&nbsp;&nbsp;:&nbsp;&nbsp;@Model.OutstandingAmount</td>
+                </tr>
+                <tr>
+                    <td colspan="8" class="align fontweightnormal">Authorised Signatory</td>
+                </tr>
+                <tr>
+                    <td colspan="8" class="align fontweightnormal">[With Status & Seal]</td>
+                </tr>
+            </table>
+        }
+        else
+        {
+            <table style="width:100%" cellspacing="0" cellpadding="3">
+                <tfoot>
+                <tfoot>
+                    <tr style='height:30px'>
+                        <th>Sub Total:</th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="align fontSize10px">@string.Format("{0:0}", SubTotalQty)</th>
+                        <th class="align fontSize10px width50px">@string.Format("{0:0.00}", SubTotalGrossAmt)</th>
+                        <th class="align fontSize10px width50px">@string.Format("{0:0.00}", SubTotalDiscAmt)</th>
+                        <th class="align fontSize10px width50px">@string.Format("{0:0.00}", SubTotalGSTAmt)</th>
+                        <th class="align fontSize10px width50px">@string.Format("{0:0.00}", SubTotalNetAmt)</th>
+                        <th class="width50px"></th>
+                    </tr>
+                    <tr style="height:16px"></tr>
+                    <tr>
+                        <td colspan="13" class="align">Continue.....</td>
+                    </tr>
+                    @for (int index = 1; index <= 16; ++index)
+                    {
+                        <tr style="height:16px"></tr>
+                    }
+                </tfoot>
+            </table>
+        }
+    }
+    else
+    {
+        <table style="width:100%" class="invoice">
+            <tr>
+                <td style="width:80px">Invoice No.</td>
+                <td>:</td>
+                <td>@Model.InvoiceNo</td>
+            </tr>
+            <tr>
+                <td style="width:80px">Invoice Date</td>
+                <td>:</td>
+                <td>@Model.InvoiceDate</td>
+            </tr>
+        </table>
+        <table style="width:100%">
+            <tr>
+                <td>Bill To :</td>
+                <td colspan="2">Ship To :</td>
+            </tr>
+            <tr>
+                <td>@Model.CustomerName</td>
+                <td colspan="2">@Model.CustomerName</td>
+            </tr>
+            <tr>
+                <td>@Model.BillingTo.AddressLine1</td>
+                <td colspan="2">@Model.ShippingTo.AddressLine1</td>
+            </tr>
+            <tr>
+                <td>@Model.BillingTo.AddressLine2</td>
+                <td colspan="2">@Model.ShippingTo.AddressLine2</td>
+            </tr>
+            <tr>
+                <td>@Model.BillingTo.AddressLine3</td>
+                <td colspan="2">@Model.ShippingTo.AddressLine3</td>
+            </tr>
+            <tr>
+                <td>Dist:@Model.BillingTo.District State: @Model.BillingTo.State (Code:@Model.BillingTo.StateID)</td>
+                <td colspan="2">Dist:@Model.ShippingTo.District  State: @Model.ShippingTo.State (Code:@Model.ShippingTo.StateID)</td>
+            </tr>
+            <tr>
+                <td>PIN :@Model.BillingTo.PIN  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Ph:@Model.BillingTo.MobileNo</td>
+                <td>PIN :@Model.ShippingTo.PIN &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Ph:@Model.ShippingTo.MobileNo</td>
+                <td colspan="13" class="align">@string.Concat(new object[4] { "Page : ", i + 1, " of ", TotalPages })</td>
+            </tr>
+        </table>
+        var Lines = (i + 1) * BodyLines >= TotalLines ? TotalLines : (i + 1) * BodyLines;
+        PrintedLines = 0;
+        SubTotalGrossAmt = 0;
+        SubTotalNetAmt = 0;
+        <table style="width:100%" cellspacing="0" cellpadding="3">
+            <thead>
+                <tr style="height:40px">
+                    <th class="colwidth">Sl. No.</th>
+                    <th class="border">Item Name</th>
+                    <th class="border">UOM</th>
+                    <th class="border">Batch</th>
+                    <th class="border">Exp. Date</th>
+                    <th class="border">MRP</th>
+                    <th class="border">Basic Price</th>
+                    <th class="border">Qty</th>
+                    <th class="border">Gross Amt</th>
+                    <th class="border">Disc Amt</th>
+                    <th class="border">Addl Disc</th>
+                    <th class="border">TOD</th>
+                    <th class="border">Taxable Amt</th>
+                    <th class="border">GST %</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var j = (i) * BodyLines; j < Lines; j++)
+                {
+                    var item = Model.Items[j];
+                    var name = @item.ItemName.Replace(" ", string.Empty);
+                    name = @name.Substring(0, Math.Min(@name.Length, 20));
+                    TotalGrossAmt += @item.GrossAmount;
+                    SubTotalGrossAmt += @item.GrossAmount;
+                    SubTotalDiscAmt += @item.DiscountAmount;
+                    SubTotalAddDiscAmt += @item.AdditionalDiscount;
+                    SubTotalTODAmt += @item.TurnoverDiscount;
+                    SubTotalNetAmt += @item.TaxableAmount;
+                    SubTotalQty += @item.InvoiceQty + @item.InvoiceOfferQty;
+                    TotalQty += @item.InvoiceQty + @item.InvoiceOfferQty;
+                    <tr style="height:16px">
+                        <td> @(j + 1)</td>
+                        <td>@name</td>
+                        <td>@string.Format("{0:0}", @item.PackSize)@item.UnitName</td>
+                        <td>@item.BatchName</td>
+                        <td>@Convert.ToDateTime(@item.ExpiryDate).ToString("MMM y").ToUpper()</td>
+                        <td class="align">@string.Format("{0:0.00}", item.MRP)</td>
+                        <td class="align">@string.Format("{0:0.00}", item.BasicPrice)</td>
+                        <td class="align">@string.Format("{0:0}", item.InvoiceQty + item.InvoiceOfferQty)</td>
+                        <td class="align">@string.Format("{0:0.00}", item.GrossAmount)</td>
+                        <td class="align">@string.Format("{0:0.00}", item.DiscountAmount)</td>
+                        <td class="align">@string.Format("{0:0.00}", item.AdditionalDiscount)</td>
+                        <td class="align">@string.Format("{0:0.00}", item.TurnoverDiscount)</td>
+                        <td class="align">@string.Format("{0:0.00}", item.TaxableAmount)</td>
+                        <td class="align">@string.Format("{0:0}", item.IGSTPercentage)</td>
+                    </tr>
+                    ++PrintedLines;
+                }
+            </tbody>
+        </table>
+        if (i == TotalPages - 1)
+        {
+            foreach (var items in @Model.AmountDetails.Select((value, k) => new { k = (k + 1), value }))
+            {
+                if (items.value.Particulars == "SGST" && items.value.Percentage == Convert.ToDecimal(2.50) && items.value.Amount > 0)
+                {
+                    SGST5Amt = items.value.Amount;
+                }
+                if (items.value.Particulars == "SGST" && items.value.Percentage == Convert.ToDecimal(6) && items.value.Amount > 0)
+                {
+                    SGST6Amt = items.value.Amount;
+                }
+                if (items.value.Particulars == "SGST" && items.value.Percentage == Convert.ToDecimal(9) && items.value.Amount > 0)
+                {
+                    SGST9Amt = items.value.Amount;
+                }
+                if (items.value.Particulars == "CGST" && items.value.Percentage == Convert.ToDecimal(2.50) && items.value.Amount > 0)
+                {
+                    CGST5Amt = items.value.Amount;
+                }
+                if (items.value.Particulars == "CGST" && items.value.Percentage == Convert.ToDecimal(6) && items.value.Amount > 0)
+                {
+                    CGST6Amt = items.value.Amount;
+                }
+                if (items.value.Particulars == "CGST" && items.value.Percentage == Convert.ToDecimal(9) && items.value.Amount > 0)
+                {
+                    CGST9Amt = items.value.Amount;
+                }
+                if (items.value.Particulars == "Cess")
+                {
+                    CessPer = items.value.Percentage;
+                    CessAmt = items.value.Amount;
+                }
+            }
+            TotalSGSTAmt = SGST5Amt + SGST6Amt + SGST9Amt;
+            TotalCGSTAmt = CGST5Amt + CGST6Amt + CGST9Amt;
+            <table style="width:100%" cellspacing="0" cellpadding="3">
+                @for (int index = 1; index <= BodyLines - PrintedLines; ++index)
+                {
+                    <tr style="height:16px"></tr>
+                }
+                <tfoot>
+                    <tr style="height:30px">
+                        <th>Total:</th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="align fontSize10px">@string.Format("{0:0}", TotalQty)</th>
+                        <th class="align fontSize10px width50px">@string.Format("{0:0.00}", TotalGrossAmt)</th>
+                        <th class="align fontSize10px width50px">@string.Format("{0:0.00}", @Model.DiscountAmount)</th>
+                        <th class="align fontSize10px widthpx">@string.Format("{0:0.00}", @Model.AdditionalDiscount)</th>
+                        <th class="align fontSize10px widthpx">@string.Format("{0:0.00}", @Model.TurnoverDiscount)</th>
+                        <th class="align fontSize10px width50px">@string.Format("{0:0.00}", @Model.NetAmount)</th>
+                        <th class="widthpx"></th>
+                    </tr>
+                </tfoot>
+            </table>
+            <table style="width:100%">
+                <tr>
+                    <td colspan="9"></td>
+                    <td>Less Cash Discount/TOD&nbsp;&nbsp;&nbsp;&nbsp;:</td>
+                    <td colspan="2" class="align">@string.Format("{0:0.00}", (@Model.TurnoverDiscount + @Model.CashDiscount))</td>
+                </tr>
+                <tr>
+                    <td colspan="9"></td>
+                    <td>Grand Total(Rounded off)&nbsp;&nbsp;:</td>
+                    <td colspan="2" class="align fontSize16">@string.Format("{0:0.00}", @Model.NetAmount)</td>
+                </tr>
+                <tr>
+                    <td colspan="11" class="fontSize16">Total : Rupees @Model.NetAmountInWords Only</td>
+                </tr>
+                <tr>
+                    <td>Taxable Amt&nbsp;:</td>
+                    <td class="align">@string.Format("{0:0.00}", @Model.NetAmount)</td>
+                    <td colspan="6"></td>
+                </tr>
+                <tr>
+                    <td>SGST 2.5 %&nbsp;&nbsp;:</td>
+                    <td class="align">@string.Format("{0:0.00}", SGST5Amt)</td>
+                    <td class="widthpx"></td>
+                    <td>SGST 6 %&nbsp;&nbsp;:</td>
+                    <td class="align">@string.Format("{0:0.00}", SGST6Amt)</td>
+                    <td class="widthpx"></td>
+                    <td>SGST 9 %&nbsp;&nbsp;:</td>
+                    <td class="align">@string.Format("{0:0.00}", SGST9Amt)</td>
+                    <td class="widthpx"></td>
+                    <td>SGST Total&nbsp;&nbsp;:</td>
+                    <td class="align">@string.Format("{0:0.00}", TotalSGSTAmt)</td>
+                </tr>
+                <tr>
+                    <td>CGST 2.5 %&nbsp;&nbsp;:</td>
+                    <td class="align">@string.Format("{0:0.00}", CGST5Amt)</td>
+                    <td class="widthpx"></td>
+                    <td>CGST 6 %&nbsp;&nbsp;:</td>
+                    <td class="align">@string.Format("{0:0.00}", CGST6Amt)</td>
+                    <td class="widthpx"></td>
+                    <td>CGST 9 %&nbsp;&nbsp;:</td>
+                    <td class="align">@string.Format("{0:0.00}", CGST9Amt)</td>
+                    <td class="widthpx"></td>
+                    <td>CGST Total&nbsp;&nbsp;:</td>
+                    <td class="align">@string.Format("{0:0.00}", TotalCGSTAmt)</td>
+                </tr>
+                <tr>
+                    <td>Total GST&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</td>
+                    <td class="align">@string.Format("{0:0.00}", SGST5Amt + CGST5Amt)</td>
+                    <td class="widthpx"></td>
+                    <td></td>
+                    <td class="align">@string.Format("{0:0.00}", SGST6Amt + CGST6Amt)</td>
+                    <td class="widthpx"></td>
+                    <td></td>
+                    <td class="align"> @string.Format("{0:0.00}", SGST9Amt + CGST9Amt)</td>
+                    <td class="widthpx"></td>
+                    <td>GST Total&nbsp;&nbsp;&nbsp;&nbsp;:</td>
+                    <td class="align">@string.Format("{0:0.00}", TotalSGSTAmt+ TotalCGSTAmt)</td>
+                </tr>
+                <tr>
+                    <td>Cess @string.Format("{0:0.0}", CessPer) %&nbsp;&nbsp;&nbsp;:</td>
+                    <td class="align">@string.Format("{0:0.00}", CessAmt)</td>
+                    <td class="widthpx"></td>
+                    <td></td>
+                    <td></td>
+                    <td class="widthpx"></td>
+                    <td></td>
+                    <td></td>
+                    <td class="widthpx"></td>
+                    <td>Cess Total&nbsp;&nbsp;&nbsp;:</td>
+                    <td class="align">@string.Format("{0:0.00}", CessAmt)</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td class="widthpx"></td>
+                    <td></td>
+                    <td></td>
+                    <td class="widthpx"></td>
+                    <td></td>
+                    <td></td>
+                    <td class="widthpx"></td>
+                    <td>Total&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</td>
+                    <td class="align">@string.Format("{0:0.00}", TotalSGSTAmt + TotalCGSTAmt + CessAmt)</td>
+                </tr>
+                <tr>
+                    <td colspan="11">HSN 5% Items 30039011  HSN 12% Items 30039011 HSN 18% Items 34011110</td>
+                </tr>
+                <tr>
+                    <td colspan="11">Total Outstanding Balance : @Model.OutstandingAmount</td>
+                </tr>
+                <tr>
+                    <td colspan="11" class="align fontweightnormal">Authorised Signatory</td>
+                </tr>
+                <tr>
+                    <td colspan="11" class="align fontweightnormal">[With Status & Seal]</td>
+                </tr>
+            </table>
+        }
+        else
+        {
+            <table style="width:100%" cellspacing="0" cellpadding="3">
+                <tfoot>
+                    <tr style="height:30px">
+                        <th>Sub Total :</th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="width100px"></th>
+                        <th class="align fontSize10px">@string.Format("{0:0}", SubTotalQty)</th>
+                        <th class="align fontSize10px width50px">@string.Format("{0:0.00}", SubTotalGrossAmt)</th>
+                        <th class="align fontSize10px width50px">@string.Format("{0:0.00}", SubTotalDiscAmt)</th>
+                        <th class="align fontSize10px widthpx">@string.Format("{0:0.00}", SubTotalAddDiscAmt)</th>
+                        <th class="align fontSize10px widthpx">@string.Format("{0:0.00}", SubTotalTODAmt)</th>
+                        <th class="align fontSize10px width50px">@string.Format("{0:0.00}", SubTotalNetAmt)</th>
+                        <th class="widthpx"></th>
+                    </tr>
+                    <tr style="height:16px"></tr>
+                    <tr>
+                        <td colspan="13" class="align">Continue.....</td>
+                    </tr>
+                    @for (int index = 1; index <= 16; ++index)
+                    {
+                        <tr style="height:16px"></tr>
+                    }
+                </tfoot>
+            </table>
+        }
+    }
+}

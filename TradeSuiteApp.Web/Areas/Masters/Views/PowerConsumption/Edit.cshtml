@@ -1,0 +1,88 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.PowerConsumptionModel
+@{
+    ViewBag.Title = "Electricity Charges";
+}
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.ElectricityCharges</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.EditElectricityCharges</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSave'>" + Common.Save + "</a>")
+            @Html.ActionLink(Common.Close, "Index", "PowerConsumption", new { Area = "Masters" }, new { @class = "md-btn " })
+            @Html.HiddenFor(m => m.ID)
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-5">
+                                            <label>@Masters.Location</label>
+                                            @Html.DropDownListFor(Model => Model.Location, new SelectList(Model.LocationList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                            @Html.HiddenFor(m => m.Location)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-5-10">
+                                <table id="Electricitylist" class="uk-table " cellspacing="0" width=100">
+                                    <thead>
+                                        <tr>
+                                            <th class="width-10">@Common.SerialNo</th>
+                                            <th class="width-10">@Masters.TimePeriod</th>
+                                            <th class="width-10">@Masters.Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                            @if (Model.Items != null)
+                                            {
+                                                foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                                                {
+                                                    <tr>
+                                                        <td class="uk-text-center">@item.i</td>
+                                                        <td class="Time">@item.value.Time</td>
+                                                        <td><input type="text" class="md-input RangeFrom mask-qty Amount" value="@item.value.Amount"/></td>
+                                                    </tr>
+                                                }
+                                            }
+                                    </tbody>
+                                </table>
+                                <input type="hidden" id="item-count" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@Scripts.Render("~/Js/Page/PowerConsumption")
+<script type="text/javascript">
+    PowerConsumption.init();
+</script>
+
+

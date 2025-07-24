@@ -1,0 +1,12 @@
+ALTER PROCEDURE [Sales].[SpGetInquiry]    
+(  
+@ID int =NULL,  
+@LocationID int  
+)AS                    
+BEGIN                    
+ SELECT S.ID, s.SalesInquiryNo, s.SalesInquiryDate, S.RequestedDelivaryDate, s.RequestExpiryDate , S.RequestedCustomerName,S.RequestedCustomerAddress,      
+ s.PhoneNo1,S.PhoneNo2,s.Make,s.Model,s.Year,s.SIOrVINNumber,S.GrossAmount,S.NetAmount, S.Remarks,S.IsDraft               
+ FROM Sales.SalesInquiry S                          
+ WHERE S.ID = ISNULL(@ID,S.ID)                                   
+                             
+END 

@@ -1,0 +1,52 @@
+﻿@model List<TradeSuiteApp.Web.Areas.Manufacturing.Models.MaterialReturnItemModel>
+
+<table id="tbl-additionalissue-item" class="uk-table" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th class="width-30">@Common.SerialNo</th>
+            <th class="width-10"></th>
+            <th class="width-60">@Manufacturing.Item</th>
+            <th class="width-20">@Manufacturing.Unit</th>
+            <th class="width-20">@Manufacturing.AvailableStock</th>
+        </tr>
+    </thead>
+    <thead class="search">
+        <tr>
+            <th>@Common.SerialNo</th>
+            <th></th>
+            <th>@Manufacturing.Item</th>
+            <th>@Manufacturing.Unit</th>
+            <th>@Manufacturing.AvailableStock</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count() > 0)
+        {
+            foreach (var item in Model.Select((value, i) => new { i = i + 1, value }))
+            {
+                <tr>
+                    <td>@item.i</td>
+                    <td>
+                        <input type="hidden" class="hdnRawMaterialID" value="@item.value.RawMaterialId" />
+                        <input type="hidden" class="hdnRawMaterialName" value="@item.value.RawMaterialName" />
+                        <input type="hidden" class="hdnRameterialQty" value="@item.value.RawMaterialQty" />
+                        <input type="hidden" class="hdnRawmaterialUnitID" value="@item.value.RawMaterialUnitID" />
+                        <input type="hidden" class="hdnUOM" value="@item.value.UOM" />
+                        <input type="hidden" class="hdnQOM" value="@item.value.QOM" />
+                        <input type="hidden" class="hdnUnitName" value="@item.value.UnitName" />
+                        <input type="hidden" class="hdnStock" value="@item.value.Stock" />
+                        <input type="radio" name="radProductionMaterialReturn" />
+
+                    </td>
+                    <td>@item.value.RawMaterialName</td>
+                    <td>@item.value.UnitName</td>
+                    <td>@item.value.Stock</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+
+

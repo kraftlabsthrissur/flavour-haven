@@ -1,0 +1,20 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+<div class="uk-form-row">
+    <div class="uk-width-medium-1-1">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-1-1">
+                <label for="uk_dp_start">@AHCMS.Remark</label>
+                @Html.TextAreaFor(m => m.Remark, new { @class = "md-input label-fixed" })
+            </div>
+        </div>
+    </div>
+</div>
+<div class="uk-form-row">
+    <div class="uk-width-medium-1-8">
+        <div class="uk-input-group">
+            <label for="uk_dp_start">@AHCMS.NextVisitDate</label>
+            @Html.TextBoxFor(m => m.NextVisitDate, "", new { @class = "md-input label-fixed current-date date" })
+            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+        </div>
+    </div>
+</div>

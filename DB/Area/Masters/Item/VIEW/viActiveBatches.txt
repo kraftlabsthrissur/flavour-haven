@@ -1,0 +1,13 @@
+ALTER view [dbo].[viActiveBatches] AS   
+
+Select TOP 1000000 B.ID AS BatchID,b.ItemID,BatchNo,ISNULL(CustomBatchNo,'') AS CustomBatchNo,ManufacturingDate,ExpiryDate,      
+BatchType,p.ApplicationID, B.BasePriceListID, I.CategoryID ,p.MRP RetailMRP,p.LoosePrice RetailLooseRate,B.PurchaseMRP,B.PurchaseLooseRate,B.CurrencyID,p.LocationID    
+from PriceListDetails p      
+inner join Batch b on b.ItemID=p.ItemID AND b.LocationID=p.LocationID  
+inner join Item I on I.ID = B.ItemID   
+where IsSuspended = 0       
+AND ExpiryDate >= Current_timestamp      
+and I.IsDiscontinued = 0       
+ORDER BY ExpiryDate ASC, BatchID ASC
+
+

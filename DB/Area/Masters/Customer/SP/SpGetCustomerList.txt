@@ -1,0 +1,191 @@
+                        
+ALTER procedure [Master].[SpGetCustomerList](                        
+ @Type varchar(20),                        
+ @CustomerCategoryID int = 0,                        
+ @StateID int=0,                        
+ @CustomerCodeHint varchar(100),                        
+ @CustomerNameHint varchar(100),                        
+ @CustomerLocationHint varchar(100),                        
+ @CustomerCategoryHint varchar(100),                    
+ @CurrencyNameHint varchar(100),  
+ @LandLineHint varchar(100),  
+ @MobileNoHint varchar(100),  
+ @SortField varchar(100),                        
+ @SortOrder varchar(10),                        
+ @Offset int = 0,                        
+ @Limit int = 20,                         
+ @LocationID int,                        
+ @ApplicationID int)                        
+AS                        
+BEGIN                        
+                        
+--exec  Master.SpGetCustomerList 'Sales-Order',0,0,null,null,null,null,null,'name','desc',0,20,1,1                        
+ IF @CustomerCategoryID = 0                        
+ BEGIN                         
+  SET @CustomerCategoryID = NULL                        
+ END                        
+ IF @StateID = 0                        
+ BEGIN                         
+  SET @StateID = NULL                        
+ END                        
+ Declare @totalRecords int = 0;                        
+ Declare @BaseCurrencyID int =0;                      
+ set @BaseCurrencyID = (select top 1 CurrencyID from Location WHERE ID=@LocationID)                      
+ If @Type='Sales-Order'                        
+  Begin                        
+   Set @Offset = @Offset + 1                        
+                          
+   Select @totalRecords =  Count(*) from viCustomer V WITH (NOLOCK)                         
+   inner join CustomerLocationMapping C WITH (NOLOCK) on C.CustomerID=V.ID and C.locationID=@LocationID and IsBlockedForSalesOrders=0     
+   Left Join Addresses a on a.PartyID=v.ID  
+    Where (@CustomerCodeHint IS NULL OR @CustomerCodeHint ='' OR Code Like '%' + @CustomerCodeHint+ '%')                         
+    AND (@CustomerNameHint IS NULL OR @CustomerNameHint ='' OR V.Name Like '%' + @CustomerNameHint+'%')                        
+    AND (@CurrencyNameHint IS NULL OR @CurrencyNameHint ='' OR V.CurrencyName Like '%' + @CurrencyNameHint+'%' )                    
+    AND (@CustomerLocationHint IS NULL OR @CustomerLocationHint='' OR BillingPlace Like '%' + @CustomerLocationHint+'%')                        
+    AND (@CustomerCategoryHint IS NULL OR @CustomerCategoryHint ='' OR CustomerCategory Like '%' + @CustomerCategoryHint+'%')                         
+    AND (@CustomerCategoryID IS NULL OR ISNULL(V.CustomerCategoryID,0) = ISNULL(@CustomerCategoryID,V.CustomerCategoryID))     
+    AND (@MobileNoHint IS NULL OR @MobileNoHint ='' OR a.MobileNo Like '%' + @MobileNoHint+'%')  
+    AND (@LandLineHint IS NULL OR @LandLineHint ='' OR a.LandLine1 Like '%' + @LandLineHint+'%' OR a.LandLine2 Like '%' + @LandLineHint+'%')  
+    AND (@StateID IS NULL OR V.StateID = ISNULL(@StateID,V.StateID))                       
+                            
+   ;WITH Customer_CTE AS                        
+   (                        
+    SELECT top 10000  Count(*) OVER (Partition by 1) AS recordsFiltered,                        
+     V.ID,Code,V.Name,BillingPlace AS Location,v.StateID,IsGSTRegistered,V.LandLine1,V.LandLine2,V.MobileNo, V.PriceListID,CustomerCategory,V.CustomerCategoryID,                        
+      CONCAT( V.BillingAddress1,',', V.BillingAddress2,'  ', V.BillingAddress3) AS Address,V.DistrictID,V.CountryID,V.SchemeID,                        
+     V.IsBlockedForChequeReceipt,V.MinimumCreditLimit,V.MaxCreditLimit,V.CashDiscountPercentage,V.CurrencyName,V.CurrencyID,V.CurrencyCode,V.CurrencyPrefix,V.DecimalPlaces,                    
+     dbo.FnGetCurrencyConversionRate(@BaseCurrencyID,V.CurrencyID)CurrencyConversionRate,                        
+     ROW_NUMBER() OVER ( ORDER BY           
+    CASE WHEN V.Name  = ISNULL(@CustomerNameHint,'') THEN 1 WHEN V.NAME LIKE ISNULL(@CustomerNameHint,'')+'%' THEN 2 ELSE 3 END ASC,                         
+    case when @SortField+@SortOrder = 'NameASC' then V.Name End ASC,                        
+    case when @SortField+@SortOrder = 'NameDESC' then V.Name End DESC,                        
+    case when @SortField+@SortOrder = 'LocationASC' then BillingPlace End ASC,                        
+    case when @SortField+@SortOrder = 'LocationDESC' then BillingPlace End DESC,                        
+    case when @SortField+@SortOrder = 'CustomerCategoryASC' then CustomerCategory End ASC,                        
+    case when @SortField+@SortOrder = 'CustomerCategoryDESC' then CustomerCategory End DESC,                        
+    case when @SortField+@SortOrder = 'CodeASC' then Code End ASC,                        
+    case when @SortField+@SortOrder = 'CodeDESC' then Code End DESC,                 
+    case when @SortField+@SortOrder = 'CurrencyNameASC' then CurrencyName End ASC,                        
+    case when @SortField+@SortOrder = 'CurrencyNameDESC' then CurrencyName End DESC) AS RowNum                        
+    FROM viCustomer V  WITH (NOLOCK)                        
+    inner join CustomerLocationMapping C  WITH (NOLOCK) on C.CustomerID=V.ID and C.locationID=@LocationID       
+    Where (@CustomerCodeHint IS NULL OR @CustomerCodeHint ='' OR Code Like '%' + @CustomerCodeHint+ '%')                         
+    AND (@CustomerNameHint IS NULL OR @CustomerNameHint ='' OR V.Name Like '%' + @CustomerNameHint+'%')                        
+    AND (@CurrencyNameHint IS NULL OR @CurrencyNameHint ='' OR V.CurrencyName Like '%' + @CurrencyNameHint+'%' )                    
+    AND (@CustomerLocationHint IS NULL OR @CustomerLocationHint='' OR BillingPlace Like '%' + @CustomerLocationHint+'%')                        
+    AND (@CustomerCategoryHint IS NULL OR @CustomerCategoryHint ='' OR CustomerCategory Like '%' + @CustomerCategoryHint+'%')                         
+    AND (@CustomerCategoryID IS NULL OR ISNULL(V.CustomerCategoryID,0) = ISNULL(@CustomerCategoryID,V.CustomerCategoryID))   
+    AND (@MobileNoHint IS NULL OR @MobileNoHint ='' OR V.MobileNo Like '%' + @MobileNoHint+'%')  
+    AND (@LandLineHint IS NULL OR @LandLineHint ='' OR V.LandLine1 Like '%' + @LandLineHint+'%' OR V.LandLine2 Like '%' + @LandLineHint+'%')  
+    AND (@StateID IS NULL OR V.StateID = ISNULL(@StateID,V.StateID))                          
+    and C.LocationID=@LocationID                         
+    and IsBlockedForSalesOrders=0                        
+    and V.ID Not in (9055,8969,8971)                        
+                               
+   )                        
+   SELECT ID,Code,Name,Location,ISNULL(StateID,0) as StateID,IsGSTRegistered,LandLine1,LandLine2,MobileNo,PriceListID,CustomerCategory,SchemeID,CurrencyID,CurrencyName,  
+   CurrencyCode,CurrencyPrefix,DecimalPlaces,(CASE WHEN CurrencyID= @BaseCurrencyID THEN 1 ELSE CurrencyConversionRate END)CurrencyConversionRate, recordsFiltered,@totalRecords AS totalRecords,                        
+   Address,ISNULL(DistrictID,0) as DistrictID,ISNULL(CountryID,0) as CountryID,CustomerCategoryID,MinimumCreditLimit,MaxCreditLimit,CashDiscountPercentage,                        
+   IsBlockedForChequeReceipt,dbo.FnGetCustomerOutstandingAmount(ID,@LocationID,@ApplicationID) as OutstandingAmount                        
+   FROM Customer_CTE                        
+   WHERE RowNum >= @Offset                        
+   AND RowNum < @Offset + @Limit                        
+  End                        
+ Else IF @Type='Sales-Invoice'                        
+  Begin                        
+   Set @Offset = @Offset + 1                          
+   Select @totalRecords =  Count(*) from viCustomer V  WITH (NOLOCK)                         
+   inner join CustomerLocationMapping C  WITH (NOLOCK) on C.CustomerID=V.ID and C.locationID=@LocationID and  IsBlockedForSalesInvoices=0                        
+   And cast (V.StateID as int)<>0                        
+                            
+   ;WITH Customer_CTE AS                        
+   (                        
+    SELECT top 10000  Count(*) OVER (Partition by 1) AS recordsFiltered,                        
+     V.ID,Code,V.Name,BillingPlace AS Location,V.StateID,IsGSTRegistered,V.LandLine1,V.LandLine2,V.MobileNo, V.PriceListID,CustomerCategory,V.CustomerCategoryID,                        
+      CONCAT( V.BillingAddress1,',', V.BillingAddress2,'  ', V.BillingAddress3) AS Address,V.DistrictID,V.CountryID,V.SchemeID,                        
+     V.IsBlockedForChequeReceipt,V.MinimumCreditLimit,V.MaxCreditLimit,V.CashDiscountPercentage,V.CurrencyName,V.CurrencyID,V.CurrencyCode,V.CurrencyPrefix,V.DecimalPlaces,                    
+    dbo.FnGetCurrencyConversionRate(@BaseCurrencyID,V.CurrencyID)CurrencyConversionRate,                         
+     ROW_NUMBER() OVER ( ORDER BY                         
+    CASE WHEN V.Name  = ISNULL(@CustomerNameHint,'') THEN 1 WHEN V.NAME LIKE ISNULL(@CustomerNameHint,'')+'%' THEN 2 ELSE 3 END ASC,                         
+    case when @SortField+@SortOrder = 'NameASC' then V.Name End ASC,                        
+    case when @SortField+@SortOrder = 'NameDESC' then V.Name End DESC,                        
+    case when @SortField+@SortOrder = 'LocationASC' then BillingPlace End ASC,                        
+    case when @SortField+@SortOrder = 'LocationDESC' then BillingPlace End DESC,                        
+    case when @SortField+@SortOrder = 'CustomerCategoryASC' then CustomerCategory End ASC,                        
+    case when @SortField+@SortOrder = 'CustomerCategoryDESC' then CustomerCategory End DESC,                        
+    case when @SortField+@SortOrder = 'CodeASC' then Code End ASC,                        
+    case when @SortField+@SortOrder = 'CodeDESC' then Code End DESC,                    
+    case when @SortField+@SortOrder = 'CurrencyNameASC' then CurrencyName End ASC,                        
+    case when @SortField+@SortOrder = 'CurrencyNameDESC' then CurrencyName End DESC) AS RowNum                        
+    FROM viCustomer V  WITH (NOLOCK)                        
+    inner join CustomerLocationMapping C  WITH (NOLOCK) on C.CustomerID=V.ID and C.locationID=@LocationID   
+    Where (@CustomerCodeHint IS NULL OR @CustomerCodeHint ='' OR Code Like '%' + @CustomerCodeHint+ '%')                         
+    AND (@CustomerNameHint IS NULL OR @CustomerNameHint ='' OR V.Name Like '%' + @CustomerNameHint+'%')                        
+    AND (@CurrencyNameHint IS NULL OR @CurrencyNameHint ='' OR V.CurrencyName Like '%' + @CurrencyNameHint+'%' )                    
+    AND (@CustomerLocationHint IS NULL OR @CustomerLocationHint='' OR BillingPlace Like '%' + @CustomerLocationHint+'%')                        
+    AND (@CustomerCategoryHint IS NULL OR @CustomerCategoryHint ='' OR CustomerCategory Like '%' + @CustomerCategoryHint+'%')     
+    AND (@CustomerCategoryID IS NULL OR ISNULL(V.CustomerCategoryID,0) = ISNULL(@CustomerCategoryID,V.CustomerCategoryID))     
+    AND (@MobileNoHint IS NULL OR @MobileNoHint ='' OR V.MobileNo Like '%' + @MobileNoHint+'%')   
+    AND (@LandLineHint IS NULL OR @LandLineHint ='' OR V.LandLine1 Like '%' + @LandLineHint+'%' OR V.LandLine2 Like '%' + @LandLineHint+'%')  
+    AND (@StateID IS NULL OR V.StateID = ISNULL(@StateID,V.StateID))                          
+    and C.LocationID=@LocationID                        
+    And IsBlockedForSalesInvoices=0                          
+   )                        
+   SELECT ID,Code,Name,Location,ISNULL(StateID,0) as StateID,IsGSTRegistered,LandLine1,LandLine2,MobileNo,PriceListID,CustomerCategory,SchemeID,CurrencyID,CurrencyName,  
+   CurrencyCode,CurrencyPrefix,DecimalPlaces,(CASE WHEN CurrencyID= @BaseCurrencyID THEN 1 ELSE CurrencyConversionRate END)CurrencyConversionRate, recordsFiltered,@totalRecords AS totalRecords,                        
+   Address,ISNULL(DistrictID,0) as DistrictID,ISNULL(CountryID,0) as CountryID,CustomerCategoryID,MinimumCreditLimit,MaxCreditLimit,CashDiscountPercentage,                        
+   IsBlockedForChequeReceipt,dbo.FnGetCustomerOutstandingAmount(ID,@LocationID,@ApplicationID) as OutstandingAmount                        
+   FROM Customer_CTE                        
+   WHERE RowNum >= @Offset                        
+   AND RowNum < @Offset + @Limit                        
+  End                        
+ Else                        
+  Begin                        
+   Set @Offset = @Offset + 1                        
+   Select @totalRecords =  Count(*) from viCustomer V  WITH (NOLOCK)                         
+   inner join CustomerLocationMapping C  WITH (NOLOCK) on C.CustomerID=V.ID and C.locationID=@LocationID                        
+   And cast (V.StateID as int)<>0                        
+                            
+   ;WITH Customer_CTE AS                        
+   (                        
+    SELECT top 10000  Count(*) OVER (Partition by 1) AS recordsFiltered,                        
+     V.ID,Code,V.Name,BillingPlace AS Location,V.StateID,IsGSTRegistered,V.LandLine1,V.LandLine2,V.MobileNo, V.PriceListID,CustomerCategory,V.CustomerCategoryID,                        
+      CONCAT( V.BillingAddress1,',', V.BillingAddress2,'  ', V.BillingAddress3) AS Address,V.DistrictID,V.CountryID,V.SchemeID,                        
+     V.IsBlockedForChequeReceipt,V.MinimumCreditLimit,V.MaxCreditLimit,V.CashDiscountPercentage,V.CurrencyName,V.CurrencyID,V.CurrencyCode,V.CurrencyPrefix,V.DecimalPlaces,                    
+    dbo.FnGetCurrencyConversionRate(@BaseCurrencyID,V.CurrencyID)CurrencyConversionRate,                         
+     ROW_NUMBER() OVER ( ORDER BY                         
+    CASE WHEN V.Name  = ISNULL(@CustomerNameHint,'') THEN 1 WHEN V.NAME LIKE ISNULL(@CustomerNameHint,'')+'%' THEN 2 ELSE 3 END ASC,                         
+    case when @SortField+@SortOrder = 'NameASC' then V.Name End ASC,                        
+    case when @SortField+@SortOrder = 'NameDESC' then V.Name End DESC,                   
+    case when @SortField+@SortOrder = 'LocationASC' then BillingPlace End ASC,                        
+    case when @SortField+@SortOrder = 'LocationDESC' then BillingPlace End DESC,                        
+    case when @SortField+@SortOrder = 'CustomerCategoryASC' then CustomerCategory End ASC,                        
+    case when @SortField+@SortOrder = 'CustomerCategoryDESC' then CustomerCategory End DESC,                        
+    case when @SortField+@SortOrder = 'CodeASC' then Code End ASC,                        
+    case when @SortField+@SortOrder = 'CodeDESC' then Code End DESC,                    
+    case when @SortField+@SortOrder = 'CurrencyNameASC' then CurrencyName End ASC,                        
+    case when @SortField+@SortOrder = 'CurrencyNameDESC' then CurrencyName End DESC) AS RowNum                        
+    FROM viCustomer V  WITH (NOLOCK)     
+    inner join CustomerLocationMapping C WITH (NOLOCK) on C.CustomerID=V.ID and C.locationID=@LocationID        
+ Where (@CustomerCodeHint IS NULL OR @CustomerCodeHint ='' OR Code Like '%' + @CustomerCodeHint+ '%')                         
+    AND (@CustomerNameHint IS NULL OR @CustomerNameHint ='' OR V.Name Like '%' + @CustomerNameHint+'%')                        
+    AND (@CurrencyNameHint IS NULL OR @CurrencyNameHint ='' OR V.CurrencyName Like '%' + @CurrencyNameHint+'%' )                    
+    AND (@CustomerLocationHint IS NULL OR @CustomerLocationHint='' OR BillingPlace Like '%' + @CustomerLocationHint+'%')                        
+    AND (@CustomerCategoryHint IS NULL OR @CustomerCategoryHint ='' OR CustomerCategory Like '%' + @CustomerCategoryHint+'%')                         
+    AND (@CustomerCategoryID IS NULL OR ISNULL(V.CustomerCategoryID,0) = ISNULL(@CustomerCategoryID,V.CustomerCategoryID))   
+    AND (@MobileNoHint IS NULL OR @MobileNoHint ='' OR V.MobileNo Like '%' + @MobileNoHint+'%')   
+    AND (@LandLineHint IS NULL OR @LandLineHint ='' OR V.LandLine1 Like '%' + @LandLineHint+'%' OR V.LandLine2 Like '%' + @LandLineHint+'%')  
+    AND (@StateID IS NULL OR V.StateID = ISNULL(@StateID,V.StateID))                         
+    and C.LocationID=@LocationID                          
+   )                        
+   SELECT ID,Code,Name,Location,ISNULL(StateID,0) as StateID,IsGSTRegistered,LandLine1,LandLine2,MobileNo,PriceListID,CustomerCategory,SchemeID,CurrencyID,CurrencyName,  
+   CurrencyCode,CurrencyPrefix,DecimalPlaces,(CASE WHEN CurrencyID= @BaseCurrencyID THEN 1 ELSE CurrencyConversionRate END)CurrencyConversionRate, recordsFiltered,@totalRecords AS totalRecords,                        
+   Address,ISNULL(DistrictID,0) as DistrictID,ISNULL(CountryID,0) as CountryID,CustomerCategoryID,MinimumCreditLimit,MaxCreditLimit,CashDiscountPercentage                        
+   ,IsBlockedForChequeReceipt,dbo.FnGetCustomerOutstandingAmount(ID,@LocationID,@ApplicationID) as OutstandingAmount                        
+   FROM Customer_CTE                        
+   WHERE RowNum >= @Offset                        
+   AND RowNum < @Offset + @Limit                        
+                        
+  End                        
+                         
+End 

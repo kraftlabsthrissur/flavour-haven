@@ -1,0 +1,9 @@
+CREATE PROCEDURE [Sales].[SpGetInqueryCustomer](                            
+ @Name VARCHAR(200)                        
+)AS                              
+BEGIN                              
+
+select TOP 20 ID,Name 
+    from InquiryCustomer
+	WHERE @Name IS NULL OR Name LIKE '%'+@Name+'%'
+END 

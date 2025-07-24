@@ -1,0 +1,77 @@
+        
+       
+ALTER Procedure [Master].[SpGetItemList]        
+ (@Code varchar(100),        
+ @Description varchar(100),        
+ @Category varchar(100),        
+ @PartsNo varchar(100),      
+ @PartsClass varchar(100),      
+ @PartsGroup varchar(100),    
+ @Remark varchar(100),    
+ @Model varchar(100),    
+ @SortField varchar(100),        
+ @SortOrder varchar(10),        
+ @Offset int = 0,        
+ @Limit int = 20,        
+ @FinYear int,        
+ @LocationID int,        
+ @ApplicationID int)        
+AS        
+BEGIN        
+         
+ SET NOCOUNT ON;        
+        
+ Set @Offset = @Offset + 1        
+ Declare @totalRecords int = 0;        
+ SELECT @totalRecords =  COUNT(I.ID) FROM Item I        
+ join Category c on I.CategoryID=C.ID  join Category PC on I.PurchaseCategoryID  = PC.ID      
+ join Category BC on I.businessCategoryID  = BC.ID      
+        
+        
+ ;WITH Item_CTE AS        
+ (        
+  SELECT top 10000  Count(*) OVER (Partition by 1) AS recordsFiltered,        
+   I.ID,I.Code,I.Name Description,C.Name CategoryName,I.Description PartsNo,PC.Name PartsClass,BC.Name PartsGroup,I.SanskritName Remark,I.Model,I.IsActive,dbo.FnGetStockByItemID(I.ID,@FinYear,@LocationID,@ApplicationID) AS Stock,        
+        
+   ROW_NUMBER() OVER ( ORDER BY       
+   case when @SortField+@SortOrder = 'CodeASC' then I.Code End ASC,        
+   case when @SortField+@SortOrder = 'CodeDESC' then I.Code End DESC,        
+      
+   case when @SortField+@SortOrder = 'DescriptionASC' then I.Name End ASC,        
+   case when @SortField+@SortOrder = 'DescriptionDESC' then I.Name End DESC,        
+        
+   case when @SortField+@SortOrder = 'CategoryNameASC' then C.Name End ASC,        
+   case when @SortField+@SortOrder = 'CategoryNameDESC' then C.Name End DESC,        
+        
+   case when @SortField+@SortOrder = 'PartsNoASC' then I.Description End ASC,        
+   case when @SortField+@SortOrder = 'PartsNoDESC' then I.Description End DESC,        
+        
+   case when @SortField+@SortOrder = 'PartsClassASC' then PC.Name End ASC,        
+   case when @SortField+@SortOrder = 'PartsClassDESC' then PC.Name End DESC,        
+        
+   case when @SortField+@SortOrder = 'PartsGroupASC' then BC.Name End ASC,        
+   case when @SortField+@SortOrder = 'PartsGroupDESC' then BC.Name End DESC,  
+  
+   case when @SortField+@SortOrder = 'RemarkASC' then I.SanskritName End ASC,        
+   case when @SortField+@SortOrder = 'RemarkESC' then I.SanskritName End DESC,  
+  
+   case when @SortField+@SortOrder = 'ModelASC' then I.Model End ASC,        
+   case when @SortField+@SortOrder = 'ModelDESC' then I.Model End DESC  
+     
+   )         
+   AS RowNum        
+ FROM Item I        
+ join Category c on I.CategoryID=C.ID  join Category PC on I.PurchaseCategoryID  = PC.ID      
+ join Category BC on I.businessCategoryID  = BC.ID      
+  Where (@Code IS NULL OR I.Code Like '%' + @Code+ '%')    
+   AND (@Description IS NULL OR I.Name Like '%' + @Description+ '%')   
+   AND (@Category IS NULL OR C.Name Like '%' + @Category+ '%')   
+   AND (@PartsNo IS NULL OR I.ID in (select p.ItemID from ItemPartsNumber p WHERE p.PartsNumber like '%'+ @PartsNo+ '%' ))   
+   AND (@PartsClass IS NULL OR PC.Name Like '%' + @PartsClass+ '%')   
+   AND (@PartsGroup IS NULL OR BC.Name Like '%' + @PartsGroup+ '%')   
+   AND (@Remark IS NULL OR I.SanskritName Like '%' + @Remark+ '%')   
+   AND (@Model IS NULL OR I.Model Like '%' + @Model+ '%')      
+ )        
+ SELECT ID,Code,Description,CategoryName,PartsNo,PartsClass,PartsGroup,Remark,Model,Stock,recordsFiltered, @totalRecords AS totalRecords,Isactive        
+ FROM Item_CTE  WHERE RowNum >= @Offset   AND RowNum < @Offset + @Limit        
+END

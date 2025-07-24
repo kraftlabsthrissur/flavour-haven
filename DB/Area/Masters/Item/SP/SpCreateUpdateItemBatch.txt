@@ -1,0 +1,52 @@
+           
+ALTER PROCEDURE [Master].[SpCreateUpdateItemBatch]                      
+(        
+@ItemID INT,  
+@BatchNo NVARCHAR(100),  
+@CostPrice Numeric(18,4),        
+@PurchasePrice Numeric(18,4),        
+@PurchaseLoosePrice Numeric(18,4),        
+@SalesPrice Numeric(18,4),        
+@LoosePrice Numeric(18,4),        
+@LandedCost Numeric(18,4),      
+@LocationID int,      
+@ApplicationID int,      
+@UserCreatedID int      
+)                      
+AS                      
+BEGIN                      
+ SET NOCOUNT ON;                      
+DECLARE @ItemBatchID INT,@ItemType CHAR(2),@UnitID INT,@CurrencyID INT;        
+SET @ItemBatchID =(select TOP 1 b.ID from Batch b WHERE b.ItemID=@ItemID AND b.LocationID=@LocationID ORDER BY CreatedDate DESC)        
+IF(@ItemBatchID IS NULL)      
+BEGIN      
+      SET @ItemType = ISNULL((select top 1 t.Name from item i join ItemType t on i.ItemTypeID=t.ID WHERE i.ID=@ItemID),'');
+	  SET @BatchNo =(ISNULL(@BatchNo,CAST(@ItemID AS NVARCHAR))+'_'+CAST(@LocationID AS NVARCHAR));
+	  SET @UnitID= ISNULL((select i.SalesUnitID from Item i WHERE  i.ID=@ItemID),0);
+	  SET @CurrencyID =(select l.CurrencyID from Location l WHERE l.ID=@LocationID);
+
+     INSERT INTO Batch (
+      ItemType,ItemID,BatchNo,CustomBatchNo,ManufacturingDate,ExpiryDate,BatchType,IsSuspended,CreatedUserID,CreatedDate,LocationID,ApplicationID,
+	  BasePriceListID,RetailMRP,RetailLooseRate,PurchaseMRP,PurchaseLooseRate,UnitID,ProfitPrice,NetLoosePurchasePrice,NetProfitRatio,CurrencyID,
+	  LandedCost,CostPrice
+	  )      
+     VALUES( 
+	 @ItemType,@ItemID,@BatchNo,@BatchNo,GETDATE(),GETDATE()+10000,1,0,@UserCreatedID,GetDATE(),@LocationID,@ApplicationID,
+	 1,@SalesPrice,@LoosePrice,@PurchasePrice,@PurchaseLoosePrice,@UnitID,0,0,0,@CurrencyID,
+	 @LandedCost,@CostPrice
+	 )      
+      
+END      
+ELSE      
+BEGIN      
+    Update Batch 
+	SET CostPrice=@CostPrice,
+	    PurchaseMRP=@PurchasePrice,
+		PurchaseLooseRate=@PurchaseLoosePrice,
+	    RetailMRP=@SalesPrice,
+		RetailLooseRate=@LoosePrice,
+		LandedCost=@LandedCost        
+    WHERE ID= @ItemBatchID          
+END      
+         
+END 

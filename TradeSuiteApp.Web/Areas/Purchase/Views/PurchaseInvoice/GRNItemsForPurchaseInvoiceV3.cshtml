@@ -1,0 +1,111 @@
+﻿@model List<BusinessObject.GRNTransItemBO>
+
+
+@if (Model != null)
+{
+
+    foreach (var item in Model.Select((value, i) =>
+                new
+                {
+                    i = (i + 1),
+                    dynChkID = "chk_unprocItem_" + value.ItemID,
+                    GSTPercent = String.Format("{0:F2}", (value.SGSTPercent + value.CGSTPercent + value.IGSTPercent)),
+                    value
+                }))
+    {
+        var IGSTPercentage = @item.value.IGSTPercent;
+        var Classname = "included";
+
+        <tr class="@Classname">
+            <td class="uk-text-center showitemhistory action"><a class="uk-text-center action"><i class="uk-icon-eye-slash"></i></a></td>
+            <td class="uk-text-center">@item.i</td>
+            <td class="uk-text-center checked" data-md-icheck>
+                <input type="hidden" class="hdnGRNID" value="@item.value.GRNID" />
+                <input type="hidden" class="CurrentProfitTolerance" value="@item.value.CurrentProfitTolerance" />
+                <input type="hidden" class="PrevoiusBatchNetProfitRatio" value="@item.value.PrevoiusBatchNetProfitRatio" />
+                <input type="hidden" class="hdnGRNTransID" value="@item.value.GRNTransID" />
+                <input type="hidden" class="hdnPOID" value="@item.value.PurchaseOrderID" />
+                <input type="hidden" class="FreightAmt" value="@item.value.FreightAmt" />
+                <input type="hidden" class="OtherCharges" value="@item.value.OtherCharges" />
+                <input type="hidden" class="PackingShippingCharge" value="@item.value.PackingShippingCharge" />
+                <input type="hidden" class="PurchaseOrderNo" value="@item.value.PurchaseOrderNo" />
+                <input type="hidden" class="hdnId" value="@item.value.Id" />
+                <input type="hidden" class="SGSTPercent" value="@item.value.SGSTPercent" />
+                <input type="hidden" class="CGSTPercent" value="@item.value.CGSTPercent" />
+                <input type="hidden" class="IGSTPercent" value="@item.value.IGSTPercent" />
+                <input type="hidden" class="MilkPurchaseID" value="@item.value.MilkPurchaseID" />
+                <input type="hidden" class="UnitID" value="@item.value.UnitID" />
+                <input type="hidden" class="BatchID" value="@item.value.BatchID" />
+                <input type="hidden" class="PurchaseMRP" value="@item.value.PurchaseMRP" />
+                <input type="hidden" class="RetailMRP" value="@item.value.RetailMRP" />
+                <input type="hidden" class="ProfitPrice" value="@item.value.ProfitPrice" />
+                <input type="hidden" class="ProfitRatio" value="@item.value.ProfitRatio" />
+                <input type="hidden" class="validprofit" value="0" />
+                <input type="hidden" class="IsGST" value="@item.value.IsGST" />
+                <input type="hidden" class="IsVat" value="@item.value.IsVat" />
+                <input type="hidden" class="CurrencyID" value="@item.value.CurrencyID" />
+                <input type="hidden" class="CessPercentage" value="@item.value.CessPercent" />
+                <input type="hidden" class="LooseQty" value="@item.value.LooseQty" />
+                <input type="hidden" class="POLooseQty" value="@item.value.POLooseQty" />
+                <input type="hidden" class="SecondaryUnitSize" value="@item.value.SecondaryUnitSize" />
+                <input type="hidden" class="PreviousProfitPrice" value="0" />
+                <input type="hidden" class="ItemID" value="@item.value.ItemID" />
+
+                @if (item.value.InclusiveGST)
+                {
+                    <input type="hidden" class="IsInclusiveGST" value="1" />
+                }
+                else
+                {
+                    <input type="hidden" class="IsInclusiveGST" value="0" />
+                }
+
+                @if (item.value.PurchaseInvoiceID <= 0)
+                {               //Create
+                    <input type="checkbox" class="chkItem" id="@item.dynChkID" value="@item.value.ItemID" checked disabled />
+                }
+                else
+                {               //Edit
+                    <input type="checkbox" class="chkItem" id="@item.dynChkID" value="@item.value.ItemID" checked disabled />
+                }
+
+            </td>
+            <td class="ItemCode">@item.value.ItemCode</td>
+            <td class="ItemName">@item.value.ItemName</td>
+            <td class="PartsNumber">@item.value.PartsNumber</td>
+            <td class="Remark">@item.value.Remark</td>
+            <td class="Model">@item.value.Model</td>
+            <td class="uk-hidden Unit">@item.value.Unit</td>
+            <td class="SecondaryUnit">@item.value.SecondaryUnit</td>
+            @*<td class="uk-text-right GSTPercent mask-qty">@item.value.IGSTPercent</td>*@
+            <td class="uk-hidden"><input type="text" class="md-input txtItemInvoiceQty mask-qty" value="@item.value.InvoiceQty" disabled="disabled" /></td>
+            <td><input type="text" class="md-input txtSecondaryInvoiceQty mask-qty" value="@item.value.SecondaryInvoiceQty" disabled="disabled" /></td>
+            <td class="uk-hidden"><input type="text" class="md-input OfferQty mask-qty" value="@item.value.OfferQty" disabled="disabled" /></td>
+            <td class="uk-hidden"><input type="text" class="md-input SecondaryOfferQty mask-qty" value="@item.value.SecondaryOfferQty" disabled="disabled" /></td>
+            <td class="uk-hidden"><input type="text" class="md-input txtInvoiceRate  @ViewBag.normalclass" value="@item.value.InvoiceRate" disabled="disabled" /></td>
+            <td><input type="text" class="md-input txtSecondaryRate  @ViewBag.normalclass" value="@item.value.SecondaryRate" disabled="disabled" /></td>
+            <td><input type="text" class="md-input txtItemInvoiceValue @ViewBag.normalclass" value="@item.value.InvoiceValue" disabled="disabled" /></td>
+            <td><input type="text" class="md-input DiscountPercentage mask-qty" value="@item.value.DiscountPercent" /></td>
+            <td><input type="text" class="md-input DiscountAmount @ViewBag.normalclass" value="@item.value.DiscountAmount" /></td>
+            <td><input type="text" class="md-input VATPercentage mask-qty" value="@item.value.VATPercentage" /></td>
+            <td><input type="text" class="md-input VATAmount @ViewBag.normalclass" value="@item.value.VATAmount" /></td>
+            @*<td>
+                    @Html.DropDownList("gstPercentage", new SelectList(ViewBag.TaxPercentages, "IGSTPercentage", "GSTPercentage", @IGSTPercentage), new { @class = "md-input uk-text uk-text-right gstPercentage" })
+                </td>
+                <td><input type="text" readonly="readonly" class="md-input SGSTAmt mask-currency" value="@item.value.SGSTAmt" /></td>
+                <td><input type="text" readonly="readonly" class="md-input CGSTAmt mask-currency" value="@item.value.CGSTAmt" /></td>
+                <td><input type="text" readonly="readonly" class="md-input IGSTAmt mask-currency" value="@item.value.IGSTAmt" /></td>*@
+            <td><input type="text" class="md-input TaxableAmount  @ViewBag.normalclass" value="@item.value.TaxableAmount" readonly="readonly" disabled="disabled" /></td>
+            <td><input type="text" class="md-input NetAmount  @ViewBag.normalclass" value="@item.value.NetAmount" readonly="readonly" disabled="disabled" /></td>
+        </tr>
+    }
+    <input type="hidden" class="hiddenSuppDocAmount" value=" @ViewBag.SuppDocAmount" />
+    <input type="hidden" class="hiddenSuppOtherCharge" value=" @ViewBag.SuppOtherCharge" />
+    <input type="hidden" class="hiddenSuppShipAmount" value=" @ViewBag.SuppShipAmount" />
+    <input type="hidden" class="hiddenSuppFreight" value=" @ViewBag.SuppFreight" />
+    <input type="hidden" class="hiddenPackingForwarding" value=" @ViewBag.PackingForwarding" />
+    <input type="hidden" class="hiddenLocalCustomsDuty" value=" @ViewBag.LocalCustomsDuty" />
+    <input type="hidden" class="hiddenLocalFreight" value=" @ViewBag.LocalFreight" />
+    <input type="hidden" class="hiddenLocalMiscCharge" value=" @ViewBag.LocalMiscCharge" />
+    <input type="hidden" class="hiddenLocalOtherCharges" value=" @ViewBag.LocalOtherCharges" />
+}

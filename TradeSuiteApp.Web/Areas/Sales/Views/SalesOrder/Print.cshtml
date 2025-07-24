@@ -1,0 +1,224 @@
+﻿@model TradeSuiteApp.Web.Areas.Sales.Models.SalesOrderModel
+@{
+    ViewBag.Title = "Print";
+}
+
+
+@{  int BodyLines = 25;
+    int TotalPages = 0;
+    int TotalLines = 0;
+    int CurrentPage = 1;
+    TotalLines = Model.Items.Count();
+    TotalPages = TotalLines / BodyLines;
+    if (TotalLines % BodyLines == 0)
+    {
+        TotalPages = TotalLines / BodyLines;
+    }
+    else
+    {
+        ++TotalPages;
+    }
+}
+
+<style>
+    th {
+        border-top: 1px dashed;
+        border-bottom: 1px dashed;
+        font-size: 12px;
+        text-align: left;
+        font-family: Verdana;
+    }
+
+    td {
+        font-size: 10px;
+        font-family: Verdana;
+        font-weight: bold;
+    }
+
+    .name {
+        width: 350px;
+    }
+
+    .align {
+        text-align: right;
+    }
+
+    .border {
+        border-left: 1px dashed;
+        text-align: center;
+    }
+
+    p {
+        font-size: 10px;
+        font-family: Verdana;
+        height: 10px;
+    }
+
+    #head {
+        font-weight: bold;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .subHead {
+        font-weight: normal;
+        text-align: center;
+    }
+
+    .fontSize16 {
+        font-size: 12px;
+    }
+
+    .fontweightnormal {
+        font-weight: normal;
+    }
+
+    .colwidth {
+        width: 20px;
+    }
+
+    .packtd {
+        border-right: 1px solid;
+        width: 100px;
+    }
+
+    .pack {
+        border-bottom: 1px solid;
+        width: 50px;
+    }
+
+    .widthtd {
+        width: 450;
+    }
+
+    .width100px {
+        width: 100px;
+    }
+</style>
+
+@{
+    var category = "";
+    var i = 0;
+    var printedLine = 0;
+    var j = 0;
+}
+
+@while (true)
+{
+
+    <table style="width:100%">
+        @for (int index = 1; index <= 5; ++index)
+        {
+            <tr style='height:16px'></tr>
+        }
+        <tr>
+            <td><center>SALES ORDER</center></td>
+        </tr>
+        <tr>
+            <td> <center></center></td>
+        </tr>
+    </table>
+    <table style="width:100%">
+        <tr style="height:16px"></tr>
+        <tr>
+            <td class="widthtd">Customer Code&nbsp;&nbsp;: &nbsp; @Model.CustomerDetails.CustomerCode</td>
+            <td>Despatch Date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp; @Model.DespatchDate</td>
+        </tr>
+        <tr>
+            <td class="widthtd">Customer Name&nbsp;: &nbsp; @Model.CustomerName</td>
+            <td>Total Order Value&nbsp;: &nbsp; @Model.NetAmount</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="align">@string.Concat(new object[4] { "Page : ", CurrentPage, " of ", TotalPages })</td>
+        </tr>
+        <tr style="height:16px"></tr>
+    </table>
+    <table style="width:100%" cellspacing="0" cellpadding="3">
+        <thead>
+            <tr style="height:40px">
+                <th class="colwidth">Sl. No.</th>
+                <th class="border">Item</th>
+                <th class="border">UOM</th>
+                <th class="border">Qty</th>
+                <th class="border">MRP</th>
+                <th class="border">Basic Price</th>
+                <th class="border">Offer Qty</th>
+                <th class="border">Addnl Disc</th>
+                <th class="border">GST Rate</th>
+                <th class="border">CGST</th>
+                <th class="border">SGST</th>
+                <th class="border">IGST</th>
+                <th class="border">Cess</th>
+                <th class="border">Net Amount</th>
+            </tr>
+        </thead>
+        @if (category != Model.Items[i].Category)
+        {
+            category = Model.Items[i].Category;
+            <tr style="height:16px">
+                <th colspan="14">@category</th>
+            </tr>
+            printedLine++;
+        }
+        @while (true)
+        {
+            printedLine++;
+            if (category != Model.Items[i].Category)
+            {
+                category = Model.Items[i].Category;
+                <tr style="height:16px">
+                    <th colspan="14">@category</th>
+                </tr>
+                printedLine++;
+            }
+            <tr style="height:16px">
+                <td> @(i + 1)</td>
+                <td class="name">@Model.Items[i].ItemName</td>
+                <td>@Model.Items[i].UnitName</td>
+                <td class="align">@string.Format("{0:0}", @Model.Items[i].Qty)</td>
+                <td class="align">@string.Format("{0:0.00}", @Model.Items[i].MRP)</td>
+                <td class="align">@string.Format("{0:0.00}", @Model.Items[i].BasicPrice)</td>
+                <td class="align">@string.Format("{0:0}", @Model.Items[i].OfferQty)</td>
+                <td class="align">@string.Format("{0:0.00}", @Model.Items[i].AdditionalDiscount)</td>
+                <td class="align">@string.Format("{0:0.00}", @Model.Items[i].GSTPercentage)</td>
+                <td class="align">@string.Format("{0:0.00}", @Model.Items[i].CGST)</td>
+                <td class="align">@string.Format("{0:0.00}", @Model.Items[i].SGST)</td>
+                <td class="align">@string.Format("{0:0.00}", @Model.Items[i].IGST)</td>
+                <td class="align">@string.Format("{0:0.00}", @Model.Items[i].CessAmount)</td>
+                <td class="align">@string.Format("{0:0.00}", @Model.Items[i].NetAmount)</td>
+            </tr>
+            i++;
+            if (printedLine >= BodyLines)
+            {
+                <tfoot>
+                    <tr style="height:16px"></tr>
+                    <tr>
+                        <td colspan="13" class="align">Continue.....</td>
+                    </tr>
+                    @for (int index = 1; index <= 23; ++index)
+                        {
+                        <tr style="height:16px"></tr>
+                    }
+                </tfoot>
+                printedLine = 0;
+                ++CurrentPage;
+                break;
+            }
+            if (i == TotalLines)
+            {
+                break;
+            }
+        }
+    </table>
+    if (i == TotalLines)
+    {
+        <table>
+            @for (int index = 1; index <= BodyLines - printedLine; ++index)
+            {
+                <tr style="height:16px"></tr>
+            }
+        </table>
+        break;
+    }
+}
+

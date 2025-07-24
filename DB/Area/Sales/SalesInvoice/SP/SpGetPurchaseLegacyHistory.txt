@@ -1,0 +1,66 @@
+                     
+ALTER PROCEDURE [sales].[SpGetPurchaseLegacyHistory]                        
+(                            
+@ItemID INT,          
+@ReferenceNo varchar(200),  
+@OrderDate varchar(200),  
+@SupplierName varchar(200),          
+@ItemName varchar(200),          
+@PartsNumber varchar(200),          
+@SortField varchar(100),                  
+@SortOrder varchar(10),                  
+@Offset int = 0,                  
+@Limit int = 20              
+)                        
+AS                        
+BEGIN              
+ DECLARE @ItemCode varchar(100)
+ SET @ItemCode = (Select TOP 1 Code from Item WHERE ID=@ItemID)
+                  
+ Set @Offset = @Offset + 1                  
+ Declare @totalRecords int = 0;                  
+  SELECT @totalRecords =  COUNT(*)                   
+  from PurchaseLegacy p   WHERE ItemCode=@ItemCode       
+   AND (@ReferenceNo IS NULL OR p.ReferenceNo like '%'+ @ReferenceNo +'%')           
+   AND (@OrderDate IS NULL OR CONVERT(VARCHAR,p.OrderDate, 106) like '%'+ @OrderDate +'%')           
+   AND (@SupplierName IS NULL OR p.SupplierName like '%'+ @SupplierName +'%')           
+   AND (@ItemName IS NULL OR p.ItemName like '%'+ @ItemName +'%')          
+   AND (@PartsNumber IS NULL OR p.PartsNumber like '%'+ @PartsNumber +'%')   
+     
+  ;WITH Invoice_CTE AS                  
+  (                  
+  select top 10000  Count(*) OVER (Partition by 1) AS recordsFiltered,[ID],[ReferenceNo],[ItemCode],[ItemName],[SupplierName],[PartsNumber],[OrderDate],[Quantity]  
+,[Rate],[GrossAmount],[Discount],[TaxAmount],[NetAmount],    
+  ROW_NUMBER() OVER               
+   (ORDER BY                   
+   case when @SortField+@SortOrder = 'ReferenceNoASC' then p.ReferenceNo End ASC,                  
+   case when @SortField+@SortOrder = 'ReferenceNoDESC' then p.ReferenceNo End DESC,                  
+   case when @SortField+@SortOrder = 'ItemCodeASC' then p.ItemCode End ASC,                  
+   case when @SortField+@SortOrder = 'ItemCodeDESC' then p.ItemCode End DESC,              
+   case when @SortField+@SortOrder = 'ItemNameSC' then p.ItemName End ASC,                  
+   case when @SortField+@SortOrder = 'ItemNameDESC' then p.ItemName End DESC,              
+   case when @SortField+@SortOrder = 'SupplierNameASC' then p.SupplierName End ASC,                  
+   case when @SortField+@SortOrder = 'SupplierNameDESC' then p.SupplierName End DESC,              
+   case when @SortField+@SortOrder = 'PartsNumberASC' then p.PartsNumber End ASC,                  
+   case when @SortField+@SortOrder = 'PartsNumberDESC' then p.PartsNumber  End DESC,                 
+   case when @SortField+@SortOrder = 'QuantityASC' then p.Quantity  End ASC,                  
+   case when @SortField+@SortOrder = 'QuantityDESC' then p.Quantity  End DESC,              
+   case when @SortField+@SortOrder = 'RateASC' then p.Rate  End ASC,                  
+   case when @SortField+@SortOrder = 'RateDESC' then p.Rate  End DESC,                    
+   case when @SortField+@SortOrder = 'NetAmountASC' then p.NetAmount End ASC,                  
+   case when @SortField+@SortOrder = 'NetAmountDESC' then p.NetAmount End DESC              
+   ) AS RowNum                  
+   from PurchaseLegacy p  WHERE ItemCode=@ItemCode       
+   AND (@ReferenceNo IS NULL OR p.ReferenceNo like '%'+ @ReferenceNo +'%')           
+   AND (@OrderDate IS NULL OR CONVERT(VARCHAR,p.OrderDate, 106) like '%'+ @OrderDate +'%')           
+   AND (@SupplierName IS NULL OR p.SupplierName like '%'+ @SupplierName +'%')           
+   AND (@ItemName IS NULL OR p.ItemName like '%'+ @ItemName +'%')          
+   AND (@PartsNumber IS NULL OR p.PartsNumber like '%'+ @PartsNumber +'%')                 
+  )                   
+ select recordsFiltered, @totalRecords as totalRecords,[ID],[ReferenceNo],[ItemCode],[ItemName],[SupplierName],[PartsNumber],[OrderDate],[Quantity]  
+,[Rate],[GrossAmount],[Discount],[TaxAmount],[NetAmount]                  
+ FROM Invoice_CTE  WHERE RowNum >= @Offset                  
+ AND RowNum < @Offset + @Limit                  
+ order by ID   desc                
+                     
+END 

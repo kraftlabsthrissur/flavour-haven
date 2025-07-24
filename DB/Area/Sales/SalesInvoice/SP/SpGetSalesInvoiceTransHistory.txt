@@ -1,0 +1,69 @@
+         
+ALTER PROCEDURE [sales].[SpGetSalesInvoiceTransHistory]            
+(            
+@ItemID INT,  
+@SalesOrderNos varchar(200),  
+@InvoiceDate  varchar(200),  
+@CustomerName  varchar(200),  
+@ItemName  varchar(200),  
+@PartsNumber varchar(200),  
+@SortField varchar(100),      
+@SortOrder varchar(10),      
+@Offset int = 0,      
+@Limit int = 20  
+)            
+AS            
+BEGIN  
+  
+      
+ Set @Offset = @Offset + 1      
+ Declare @totalRecords int = 0;      
+  SELECT @totalRecords =  COUNT(*)       
+  FROM Sales.SalesInvoiceTrans p join Item i on p.ItemID=i.ID   
+  join Sales.SalesInvoice o on o.ID=p.SalesInvoiceID     
+   WHERE p.ItemID=@ItemID   
+  ;WITH Invoice_CTE AS      
+  (      
+   SELECT top 10000  Count(*) OVER (Partition by 1) AS recordsFiltered,p.ID, o.SalesOrderNos,ISNULL(c.Name,'')CustomerName,o.InvoiceDate,i.Code Itemcode,p.ItemName,p.PartsNumber,  
+   p.SecondaryQty,p.SecondaryMRP,p.SecondaryUnit,p.DiscountPercentage,p.VATPercentage,p.NetAmt, ROW_NUMBER() OVER   
+   (ORDER BY       
+   case when @SortField+@SortOrder = 'SalesOrderNosASC' then o.SalesOrderNos End ASC,      
+   case when @SortField+@SortOrder = 'SalesOrderNosDESC' then o.SalesOrderNos End DESC,      
+   case when @SortField+@SortOrder = 'InvoiceDateASC' then o.InvoiceDate End ASC,      
+   case when @SortField+@SortOrder = 'InvoiceDateDESC' then o.InvoiceDate End DESC,  
+   case when @SortField+@SortOrder = 'ItemNameASC' then p.ItemName End ASC,      
+   case when @SortField+@SortOrder = 'ItemNameDESC' then p.ItemName End DESC,  
+   case when @SortField+@SortOrder = 'ItemcodeASC' then i.Code End ASC,      
+   case when @SortField+@SortOrder = 'ItemcodeDESC' then i.Code End DESC,  
+   case when @SortField+@SortOrder = 'PartsNumberASC' then p.PartsNumber  End ASC,      
+   case when @SortField+@SortOrder = 'PartsNumberDESC' then p.PartsNumber  End DESC,  
+   case when @SortField+@SortOrder = 'SecondaryQtyASC' then p.SecondaryQty  End ASC,      
+   case when @SortField+@SortOrder = 'SecondaryQtyDESC' then p.SecondaryQty  End DESC,  
+   case when @SortField+@SortOrder = 'SecondaryUnitASC' then p.SecondaryUnit  End ASC,      
+   case when @SortField+@SortOrder = 'SecondaryUnitDESC' then p.SecondaryUnit  End DESC,  
+   case when @SortField+@SortOrder = 'SecondaryMRPASC' then p.SecondaryMRP  End ASC,      
+   case when @SortField+@SortOrder = 'SecondaryMRPDESC' then p.SecondaryMRP  End DESC,  
+   case when @SortField+@SortOrder = 'DiscountPercentageASC' then p.DiscountPercentage  End ASC,      
+   case when @SortField+@SortOrder = 'DiscountPercentageDESC' then p.DiscountPercentage  End DESC,  
+   case when @SortField+@SortOrder = 'VATPercentageASC' then p.VATPercentage  End ASC,      
+   case when @SortField+@SortOrder = 'VATPercentageDESC' then p.VATPercentage  End DESC,  
+   case when @SortField+@SortOrder = 'NetAmtASC' then p.NetAmt  End ASC,      
+   case when @SortField+@SortOrder = 'NetAmtDESC' then p.NetAmt  End DESC  
+   ) AS RowNum      
+  from Sales.SalesInvoiceTrans p join Item i on p.ItemID=i.ID   
+  join Sales.SalesInvoice o on o.ID=p.SalesInvoiceID    
+  left join Customer c on c.ID = o.CustomerID      
+   WHERE p.ItemID=@ItemID      
+    AND (@SalesOrderNos IS NULL OR o.SalesOrderNos like '%'+ @SalesOrderNos +'%')     
+   AND (@InvoiceDate IS NULL OR CONVERT(VARCHAR,o.InvoiceDate, 106) like '%'+ @InvoiceDate +'%')     
+   AND (@CustomerName IS NULL OR c.Name like '%'+ @CustomerName +'%')     
+   AND (@ItemName IS NULL OR p.ItemName like '%'+ @ItemName +'%')    
+   AND (@PartsNumber IS NULL OR p.PartsNumber like '%'+ @PartsNumber +'%')       
+  )       
+ SELECT recordsFiltered, @totalRecords as totalRecords, SalesOrderNos,CustomerName,InvoiceDate,ItemName,Itemcode,PartsNumber,SecondaryQty,    
+   SecondaryMRP,SecondaryUnit,DiscountPercentage,VATPercentage,NetAmt      
+ FROM Invoice_CTE  WHERE RowNum >= @Offset      
+ AND RowNum < @Offset + @Limit      
+ order by ID   desc    
+                       
+END 

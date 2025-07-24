@@ -1,0 +1,66 @@
+﻿@model List<TradeSuiteApp.Web.Areas.Manufacturing.Models.PreProcessReceiptItemModel>
+
+<table id="tbl-unprocessed-materialpurification" class="uk-table" >
+    <thead>
+        <tr>
+            <th class="width-40">@Common.SerialNo</th>
+            <th class="width-20"></th>
+            <th class="width-80">@Manufacturing.TransNo</th>
+            <th>@Manufacturing.IssuedItem</th>
+            <th class="width-60">@Manufacturing.UOM</th>
+            <th class="width-80">@Manufacturing.Quantity</th>
+            <th class="width-80">@Manufacturing.TransDate</th>
+            <th class="width-100">@Manufacturing.Activity</th>
+        </tr>
+    </thead>
+    <thead class="search">
+        <tr>
+            <th>@Common.SerialNo</th>
+            <th></th>
+            <th>@Manufacturing.TransNo</th>
+            <th>@Manufacturing.IssuedItem</th>
+            <th>@Manufacturing.UOM</th>
+            <th>@Manufacturing.Quantity</th>
+            <th>@Manufacturing.TransDate</th>
+            <th>@Manufacturing.Activity</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count() > 0)
+        {
+            foreach (var item in Model.Select((value, i) => new { i = i + 1, value }))
+            {
+                <tr>
+                    <td>@item.i</td>
+                    <td>
+                        <input type="hidden" class="PurificationIssueTransID" value="@item.value.ID" />
+                        <input type="hidden" class="hdnTransNo" value="@item.value.TransNo" />
+                        <input type="hidden" class="hdnItemName" value="@item.value.ItemName" />
+                        <input type="hidden" class="hdnItemID" value="@item.value.ItemID" />
+                        <input type="hidden" class="hdnPurificationIssueID" value="@item.value.PurificationIssueID" />             
+                        <input type="hidden" class="PurifiedItemName" value="@item.value.PurifiedItemName" />
+                        <input type="hidden" class="PurifiedItemID" value="@item.value.PurifiedItemID" />                      
+                        <input type="hidden" class="hdnUnitID" value="@item.value.PurifiedItemUnitID" />
+                        <input type="hidden" class="hdnQuantity" value="@item.value.Quantity" />
+                        <input type="hidden" class="hdnQtyMet" value="@item.value.QtyMet" />
+                        <input type="hidden" class="hdnBalanceQty" value="@item.value.BalanceQty" />
+                        <input type="hidden" class="hdnProcessID" value="@item.value.ProcessID" />
+                        <input type="hidden" class="hdnProcessName" value="@item.value.ProcessName" />
+                        <input type="hidden" class="hdnTransDate" value="@item.value.TransDateStr" />
+                        <input type="hidden" class="hdnTransTime" value="@item.value.TransTime" />     
+                        <input type="hidden" class="hdnUnit" value="@item.value.Unit" />     
+                        <input type="hidden" class="PurifiedItemUnit" value="@item.value.PurifiedItemUnit" />
+                                    
+                        <input type="radio" class="uk-radio" name="radUnProcessedMaterialPurification" data-md-icheck />
+                    </td>
+                    <td>@item.value.TransNo</td>
+                    <td>@item.value.ItemName</td>
+                    <td>@item.value.PurifiedItemUnit</td>
+                    <td class="mask-production-qty">@item.value.Quantity</td>
+                    <td>@item.value.TransDateStr</td>
+                    <td>@item.value.ProcessName</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

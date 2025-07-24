@@ -1,0 +1,940 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+@{
+    ViewBag.Title = @AHCMS.CreatePatientDiagnosis;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@AHCMS.PatientDiagnosis</h1>
+            <span class="uk-text-upper uk-text-small">@AHCMS.CreatePatientDiagnosis</span>
+        </div>
+        <div class="heading_actions">
+            @if (!Model.IsDischarged)
+            {
+                @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSave'>" + Common.Save + "</a>")
+            }
+            else
+            {
+                @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSave uk-hidden'>" + Common.Save + "</a>")
+            }
+            @Html.HiddenFor(m => m.EmployeeCategoryID)
+            @Html.HiddenFor(m => m.PatientID)
+            @Html.HiddenFor(m => m.IPID)
+            @Html.HiddenFor(m => m.AppointmentProcessID)
+            @Html.HiddenFor(m => m.DischargeSummaryID)
+            @Html.HiddenFor(m => m.IsDischarged)
+
+            @Html.ActionLink(Common.Close, "Index", "IPCaseSheet", new { Area = "AHCMS" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="uk-grid uk-grid-collapse" data-uk-grid-margin data-uk-grid-match="{target:'.md-card'}">
+            <div class="uk-width-medium-1-5  md-bg-blue-grey-50">
+                <div class="container md-bg-grey-50" style="margin:10px; padding:10px;border-radius:4px; height:350px">
+                    <table>
+                        <thead>
+                            <tr class="md-color-green-800">
+                                <td style="border :0px;width:300px"><b>@AHCMS.Patient     : </b></td>
+                                <td style="border :0px;width:300px"><b><label>@Model.PatientName</label></b></td>
+                            </tr>
+                            <tr class="md-color-green-800">
+                                <td><b>@AHCMS.MRDNo: </b></td>
+                                <td><b>@Html.Label(Model.PatientCode)</b></td>
+                            </tr>
+                            @if (Model.Age != 0)
+                            {
+                                <tr class="md-color-green-800">
+                                    <td><b>@AHCMS.Age:</b></td>
+                                    <td><b>@Html.DisplayFor(Model => Model.Age)</b></td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr class="md-color-green-800">
+                                    <td><b>@AHCMS.Age:</b></td>
+                                    <td><b>@Html.DisplayFor(Model => Model.Month)   <span>Month</span></b></td>
+                                </tr>
+                            }
+                            <tr class="md-color-green-800">
+                                <td><b>@AHCMS.Place: </b></td>
+                                <td><b>@Html.DisplayFor(Model => Model.Place)</b></td>
+                            </tr>
+                            <tr class="md-color-green-800">
+                                <td><b>@AHCMS.Phone: </b></td>
+                                <td><b>@Html.DisplayFor(Model => Model.Mobile)</b></td>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div class="uk-form-row">
+                        <div class="uk-grid uk-margin-small-top" data-uk-grid-margin="">
+                            <div class="uk-width-medium-4-10 uk-hidden">
+                                <div class="uk-input-group">
+                                    <input type="radio" name="IP" class="op" data-md-icheck value="IP" />&nbsp; @Html.Label("IP")
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-5-10 uk-hidden">
+                                <div class="uk-input-group">
+                                    <input type="radio" name="IP" class="op" data-md-icheck checked="" value="OP" />&nbsp; @Html.Label("OP")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="uk-form-row">
+                        <div class="uk-width-medium-5-6">
+                            <div class="uk-input-group">
+                                <label class="md-color-green-800">@AHCMS.AdmissionDate</label>
+                                @Html.DropDownListFor(m => m.Date, new SelectList(Model.DateList, "Value", "Text"), new { @class = "md-input label-fixed", @disabled = "disable" })
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="uk-form-row uk-hidden">
+                        <div class="uk-width-medium-1-10">
+                            <div class="md-card-toolbar">
+                                <div class="md-card-toolbar-actions">
+                                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnfilter">Filter</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="uk-width-medium-1-1">
+                        <div class="uk-form-row uk-hidden">
+                            <input type="checkbox" class="icheckbox IsIP" data-md-icheck />&nbsp;@Html.Label("Refered To IP")
+                        </div>
+                        @if (!Model.IsDischargeAdvice && !Model.IsDischarged)
+                        {
+                            <div class="uk-form-row">
+                                <input type="checkbox" class="icheckbox IsDischargeAdvice" data-md-icheck />&nbsp;@Html.Label("Discharge Advise")
+                            </div>
+                        }
+                        else if (Model.IsDischarged)
+                        {
+                            <div class="uk-form-row">
+                                <input type="checkbox" class="icheckbox IsDischargeAdvice" data-md-icheck checked disabled />&nbsp;@Html.Label("Discharge Advise")
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="uk-form-row">
+                                <input type="checkbox" class="icheckbox IsDischargeAdvice" data-md-icheck checked />&nbsp;@Html.Label("Discharge Advise")
+                            </div>
+                        }
+                        <div class="uk-form-row uk-hidden">
+                            <input type="checkbox" class="icheckbox Iswalkin" data-md-icheck />&nbsp;@Html.Label("Is Walk In")
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="uk-width-medium-4-5">
+                <div class="uk-grid uk-grid-small" data-uk-grid-margin data-uk-grid-match="{target:'.md-card'}">
+                    <div class="uk-width-medium-1-1">
+                        <div class="uk-width-1-1 tabReview">
+                            <ul class="uk-tab hai" data-uk-tab="{connect:'#tabs-modules-content',animation:'slide-horizontal'}" id="tabs-module">
+                                <li class="uk-active" data-tab="BaseLineInformation"><a>@AHCMS.BaseLineInformation</a></li>
+                                <li data-tab="examination"><a>@AHCMS.Examination</a></li>
+                                <li data-tab="vitalchart"><a>@AHCMS.VitalChart</a></li>
+                                <li data-tab="medicine"><a>@AHCMS.Medicine</a></li>
+                                <li data-tab="treatment"><a>@AHCMS.Treatment</a></li>
+                                <li data-tab="reports"><a>@AHCMS.Reports</a></li>
+                                <li data-tab="rounds"><a>@AHCMS.Rounds</a></li>
+                                <li data-tab="labtest"><a>@AHCMS.LabTest / Xray</a></li>
+                                <li data-tab="panelofdoctor"><a>@AHCMS.PanelOfDoctors</a></li>
+                                <li data-tab="physitherapy"><a>@AHCMS.DischargeSummary</a></li>
+                                <li data-tab="history"><a>@AHCMS.History</a></li>
+                            </ul>
+
+                            <ul id="tabs-modules-content" class="uk-switcher uk-margin">
+                                <li>
+                                    <div class="md-card">
+                                        <div class="md-card-content">
+                                            <div class="section-group">
+                                                <div class="uk-form-row">
+                                                    <table id="base-line-information-list" class="uk-table" cellspacing="0">
+                                                        <thead>
+                                                            <tr>
+                                                                <td class="width-20">@Common.SerialNo</td>
+                                                                <td class="width-70">@AHCMS.Area</td>
+                                                                <td>@AHCMS.Details</td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @Html.Partial("~/Areas/AHCMS/Views/IPCaseSheet/BaseLineInformation.cshtml", Model)
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </li>
+                                <li>
+                                    <div class="md-card">
+                                        <div class="md-card-content">
+                                            <div class="section-group">
+                                                <div class="uk-form-row">
+                                                    <table id="examination-list" class="uk-table" cellspacing="0">
+                                                        <thead>
+                                                            <tr>
+                                                                <td class="width-20">@Common.SerialNo</td>
+                                                                <td class="width-70">@AHCMS.Area</td>
+                                                                <td>@AHCMS.Details</td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+
+                                                            @Html.Partial("~/Areas/AHCMS/Views/IPCaseSheet/Examination.cshtml", Model)
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                           
+                                <li>
+                                    <div class="section-group">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin="">
+                                                <div class="uk-width-medium-8-10">
+                                                    <div class="uk-form-row">
+                                                        <div class="uk-grid" data-uk-grid-margin="">
+                                                            <div class="uk-width-medium-1-8">
+                                                                <div class="uk-input-group">
+                                                                    <label for="uk_dp_start">@AHCMS.Date</label>
+                                                                    @if (!Model.IsDischarged)
+                                                                    {
+                                                                    @Html.TextBoxFor(m => m.VitalChartDate, "", new { @class = "md-input label-fixed current-date date" })
+                                                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    @Html.TextBoxFor(m => m.VitalChartDate, "", new { @class = "md-input label-fixed current-date date", @disabled = "disabled" })
+                                                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                                                    }
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="uk-width-medium-1-8">
+                                                                <label for="uk_dp_start">@AHCMS.Time</label>
+                                                                @if(!Model.IsDischarged)
+                                                                {
+                                                                @Html.TextBoxFor(model => model.Time, new { @class = "md-input label-fixed time15" })
+                                                                }
+                                                                else
+                                                                {
+                                                                @Html.TextBoxFor(model => model.Time, new { @class = "md-input label-fixed time15", @disabled = "disabled" })
+                                                                }
+
+                                                            </div>
+                                                            <div class="uk-width-medium-1-6">
+                                                                <label>@AHCMS.BP</label>
+                                                                @if (!Model.IsDischarged)
+                                                                {
+                                                                @Html.TextBoxFor(m => m.BP, "", new { @class = "md-input label-fixed" })
+                                                                }
+                                                                else
+                                                                {
+                                                                @Html.TextBoxFor(m => m.BP, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                }
+
+                                                            </div>
+                                                            <div class="uk-width-medium-1-6">
+                                                                <label>@AHCMS.Pulse</label>
+                                                                @if (!Model.IsDischarged)
+                                                                {
+                                                                @Html.TextBoxFor(m => m.Pulse, "", new { @class = "md-input label-fixed" })
+                                                                }
+                                                                else
+                                                                {
+                                                                @Html.TextBoxFor(m => m.Pulse, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                }
+
+                                                            </div>
+                                                            <div class="uk-width-medium-1-6">
+                                                                <label>@AHCMS.Temperature</label>
+                                                                @if (!Model.IsDischarged)
+                                                                {
+                                                                @Html.TextBoxFor(m => m.Temperature, "", new { @class = "md-input label-fixed" })
+                                                                }
+                                                                else
+                                                                {
+                                                                @Html.TextBoxFor(m => m.Temperature, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                }
+
+                                                            </div>
+                                                            @*<div class="uk-width-medium-1-6">
+                                                                <label>Temperature Unit</label>
+                                                                @if (!Model.IsDischarged)
+                                                                {
+                                                                    @Html.DropDownList("Unit", new List<SelectListItem>
+                                                                                         {
+                                                                                             new SelectListItem{ Text="Celcius ", Value = "Celcius" },
+                                                                                             new SelectListItem{ Text="Fahrenheit", Value = "Fahrenheit"}
+                                                                                         }, new { @class = "md-input label-fixed" })
+                                                                }
+                                                                else
+                                                                {
+
+                                                                    @Html.DropDownList("Unit", new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem{ Text="Celcius ", Value = "Celcius" },
+                                                                            new SelectListItem{ Text="Fahrenheit", Value = "Fahrenheit"}
+                                                                         }, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                }
+
+                                                            </div>*@
+                                                            <div class="uk-width-medium-1-6">
+                                                                <label>@AHCMS.HR</label>
+                                                                @if (!Model.IsDischarged)
+                                                                {
+                                                                @Html.TextBoxFor(m => m.HR, "", new { @class = "md-input label-fixed" })
+                                                                }
+                                                                else
+                                                                {
+                                                                @Html.TextBoxFor(m => m.HR, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                }
+
+                                                            </div>
+                                                            <div class="uk-width-medium-1-6">
+                                                                <label>@AHCMS.RR</label>
+                                                                @if (!Model.IsDischarged)
+                                                                {
+                                                                @Html.TextBoxFor(m => m.RR, "", new { @class = "md-input label-fixed" })
+                                                                }
+                                                                else
+                                                                {
+                                                                @Html.TextBoxFor(m => m.RR, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                }
+                                                            </div>
+                                                            <div class="uk-width-medium-1-6">
+                                                                <label>@AHCMS.Height</label>
+                                                                @if (!Model.IsDischarged)
+                                                                {
+                                                                @Html.TextBoxFor(m => m.Height, "", new { @class = "md-input label-fixed" })
+                                                                }
+                                                                else
+                                                                {
+                                                                @Html.TextBoxFor(m => m.Height, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                }
+
+                                                            </div>
+                                                            <div class="uk-width-medium-1-6">
+                                                                <label>@AHCMS.Weight</label>
+                                                                @if (!Model.IsDischarged)
+                                                                {
+                                                                @Html.TextBoxFor(m => m.Weight, "", new { @class = "md-input label-fixed" })
+                                                                }
+                                                                else
+                                                                {
+                                                                @Html.TextBoxFor(m => m.Weight, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                }
+
+                                                            </div>
+                                                            @*<div class="uk-width-medium-1-6">
+                                                                <label>BMI</label>
+                                                                @if (!Model.IsDischarged)
+                                                                {
+                                                                    @Html.TextBoxFor(m => m.BMI, "", new { @class = "md-input label-fixed" })
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.TextBoxFor(m => m.BMI, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                }
+
+                                                            </div>*@
+                                                            @*<div class="uk-width-medium-1-6">
+                                                                <label>Respiratory Rate</label>
+                                                                @if (!Model.IsDischarged)
+                                                                {
+                                                                    @Html.TextBoxFor(m => m.RespiratoryRate, "", new { @class = "md-input label-fixed" })
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.TextBoxFor(m => m.RespiratoryRate, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                }
+
+                                                            </div>*@
+                                                            <div class="uk-width-medium-1-6">
+                                                                <label>@AHCMS.Others</label>
+                                                                @if (!Model.IsDischarged)
+                                                                {
+                                                                @Html.TextBoxFor(m => m.Others, "", new { @class = "md-input label-fixed" })
+                                                                }
+                                                                else
+                                                                {
+                                                                @Html.TextBoxFor(m => m.Others, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                }
+
+                                                            </div>
+                                                            <div class="uk-form-row">
+                                                                <div class="uk-width-medium-1-10">
+                                                                    <div class="md-card-toolbar">
+                                                                        <div class="md-card-toolbar-actions">
+                                                                            <label>&nbsp;</label>
+                                                                            @if (!Model.IsDischarged)
+                                                                            {
+                                                                            <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btn_add_vital">Add</button>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                            <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light uk-hidden" id="btn_add_vital">Add</button>
+                                                                            }
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <br />
+                                                <div class="uk-form-row">
+                                                    <div>
+                                                        <table id="add_vital_chart_list" class="uk-table" cellspacing="0">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="width-20">@Common.SerialNo</th>
+                                                                    <th class="width-100">@AHCMS.Date</th>
+                                                                    <th class="width-100">@AHCMS.Time</th>
+                                                                    <th class="width-80">@AHCMS.BP</th>
+                                                                    <th class="width-100">@AHCMS.Pulse</th>
+                                                                    <th class="width-80">@AHCMS.Temperature</th>
+                                                                    <th class="width-100">@AHCMS.HR</th>
+                                                                    <th class="width-80">@AHCMS.RR</th>
+                                                                    <th class="width-100">@AHCMS.Weight</th>
+                                                                    <th class="width-80">@AHCMS.Height</th>
+                                                                    <th class="width-100">@AHCMS.Others</th>
+                                                                    <th class="width-20"></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @Html.Partial("~/Areas/AHCMS/Views/IPCaseSheet/VitalChart.cshtml", Model)
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="md-card">
+                                        <div class="md-card-toolbar">
+                                            <div class="md-card-toolbar-actions">
+                                                <div class="uk-width-medium-1-8">
+                                                    <div class="md-input-wrapper md-input-filled">
+                                                        @if (!Model.IsDischarged)
+                                                        {
+                                                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddMedicine">Add</button>
+                                                        }
+                                                        else
+                                                        {
+                                                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light uk-hidden" id="btnAddMedicine">Add</button>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="md-card-content">
+                                            <table id="add_medicine-list" class="uk-table" cellspacing="0">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="width-20">@Common.SerialNo</th>
+                                                        <th class="width-50">@AHCMS.Medicine</th>
+                                                        <th class="width-50">@AHCMS.Quantity</th>
+                                                        <th class="width-50">@AHCMS.Instructions</th>
+                                                        <th class="width-50">@AHCMS.StartDate</th>
+                                                        <th class="width-50">@AHCMS.EndDate</th>
+                                                        <th class="width-50">Status</th>
+                                                        <th class="width-50">@AHCMS.Doctor</th>
+                                                        <th class="width-50">Edit</th>
+                                                        <th class="width-20"></th>
+                                                    </tr>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @Html.Partial("~/Areas/AHCMS/Views/IPCaseSheet/Medicines.cshtml", Model)
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="md-card">
+                                        <div class="md-card-toolbar">
+                                            <div class="md-card-toolbar-actions">
+                                                @if (!Model.IsDischarged)
+                                                {
+                                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnaddtreatment">Add</button>
+                                                }
+                                                else
+                                                {
+                                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light uk-hidden" id="btnaddtreatment">Add</button>
+                                                }
+
+                                            </div>
+                                        </div>
+                                        <div class="md-card-content">
+                                            <table id="treatment-list" class="uk-table" cellspacing="0">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="width-20">@Common.SerialNo</th>
+                                                        <th>@AHCMS.Treatment</th>
+                                                        <th>@AHCMS.Therapist</th>
+                                                        <th>@AHCMS.TreatmentRoom</th>
+                                                        <th>@AHCMS.Instructions</th>
+                                                        <th>@AHCMS.StartDate</th>
+                                                        <th>@AHCMS.EndDate</th>
+                                                        <th>@AHCMS.TreatmentNumber</th>
+                                                        <th>@AHCMS.Status</th>
+                                                        <th>@AHCMS.Doctor</th>
+                                                        <th>Edit</th>
+                                                        <th></th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @Html.Partial("~/Areas/AHCMS/Views/IPCaseSheet/Treatment.cshtml", Model)
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="md-card">
+                                        <div class="md-card-toolbar">
+                                            <div class="md-card-toolbar-actions">
+                                                <div class="uk-width-medium-1-8">
+                                                    <div class="md-input-wrapper md-input-filled">
+                                                        @if (!Model.IsDischarged)
+                                                        {
+                                                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnaddreport">Add</button>
+                                                        }
+                                                        else
+                                                        {
+                                                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light uk-hidden" id="btnaddreport">Add</button>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="md-card-content">
+                                            <table id="report-list" class="uk-table" cellspacing="0">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="width-20">@Common.SerialNo</th>
+                                                        <th class="width-100">@AHCMS.ReportName</th>
+                                                        <th class="width-100">@AHCMS.Description</th>
+                                                        <th class="width-60">@AHCMS.Date</th>
+                                                        <th class="width-20">View</th>
+                                                        <th class="width-20">Edit</th>
+                                                        <th class="width-10"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="section-group">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin="">
+                                                <div class="uk-width-medium-8-10">
+                                                    <div class="uk-form-row">
+                                                        <div class="uk-grid" data-uk-grid-margin="">
+                                                            <div class="uk-width-medium-1-8">
+                                                                <div class="uk-input-group">
+                                                                    <label for="uk_dp_start">@AHCMS.Date</label>
+                                                                    @if (!Model.IsDischarged)
+                                                                    {
+                                                                    @Html.TextBoxFor(m => m.RoundsDate, "", new { @class = "md-input label-fixed current-date date" })
+                                                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    @Html.TextBoxFor(m => m.RoundsDate, "", new { @class = "md-input label-fixed current-date date", @disabled = "disabled" })
+                                                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                                                    }
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="uk-width-medium-1-3">
+                                                                <label>@AHCMS.Remark </label>
+                                                                @if (!Model.IsDischarged)
+                                                                {
+                                                                @Html.TextAreaFor(m => m.Remark, new { @class = "md-input label-fixed" })
+                                                                }
+                                                                else
+                                                                {
+                                                                @Html.TextAreaFor(m => m.Remark, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                }
+                                                            </div>
+                                                            <div class="uk-width-medium-1-10">
+                                                                <div class="md-card-toolbar">
+                                                                    <div class="md-card-toolbar-actions">
+                                                                        <label>&nbsp;</label>
+                                                                        @if (!Model.IsDischarged)
+                                                                        {
+                                                                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btn_add_rounds">Add</button>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light uk-hidden" id="btn_add_rounds">Add</button>
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <table id="rounds-list" class="uk-table" cellspacing="0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="width-20">@Common.SerialNo</th>
+                                                            <th class="width-100">@AHCMS.Date</th>
+                                                            <th>@AHCMS.Remarks</th>
+                                                            <th class="width-30"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="section-group">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin="">
+                                                <div class="uk-width-medium-8-10">
+                                                    <div class="uk-form-row">
+                                                        <div class="uk-grid" data-uk-grid-margin="">
+                                                            <div class="uk-width-medium-1-8">
+                                                                <div class="uk-input-group">
+                                                                    <label for="uk_dp_start">@AHCMS.Date</label>
+                                                                    @if (!Model.IsDischarged)
+                                                                    {
+                                                                    @Html.TextBoxFor(m => m.TestDate, "", new { @class = "md-input label-fixed current-date date" })
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    @Html.TextBoxFor(m => m.TestDate, "", new { @class = "md-input label-fixed current-date date", @disabled = "disabled" })
+                                                                    }
+                                                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="uk-width-medium-1-4">
+                                                                <label>@AHCMS.LabTest / X-ray</label>
+                                                                <div class="uk-autocomplete">
+                                                                    <div class="uk-input-group">
+                                                                        @if (!Model.IsCompleted)
+                                                                        {
+                                                                            @Html.TextBoxFor(model => model.LabTest, new { @class = "md-input label-fixed" })
+                                                                            <span class="uk-input-group-addon">
+                                                                                <a data-uk-modal="{target:'#select-labtest',center:false}">
+                                                                                    <i class="uk-input-group-icon uk-icon-search"></i>
+                                                                                </a>
+                                                                            </span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @Html.TextBoxFor(model => model.LabTest, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                                @Html.HiddenFor(model => model.LabTestID)
+                                                                @Html.Hidden("Category")
+                                                            </div>
+                                                            @*<div class="uk-width-medium-1-4">
+                                                                <label>@AHCMS.LabTest / Xray</label>
+                                                                <div class="uk-autocomplete" id="labtest-autocomplete">
+                                                                    <div class="uk-input-group">
+                                                                        @if (!Model.IsDischarged)
+                                                                        {
+                                                                        @Html.TextBoxFor(model => model.LabTest, new { @class = "md-input label-fixed" })
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        @Html.TextBoxFor(model => model.LabTest, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                                @Html.HiddenFor(model => model.LabTestID)
+                                                                @Html.Hidden("Category")
+                                                            </div>*@
+                                                            <div class="uk-form-row">
+                                                                <div class="uk-width-medium-1-10">
+                                                                    <div class="md-card-toolbar">
+                                                                        <div class="md-card-toolbar-actions uk-hidden">
+                                                                            <label>&nbsp;</label>
+                                                                            @if (!Model.IsDischarged)
+                                                                            {
+                                                                            <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btn_add_lab_items">Add</button>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                            <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light uk-hidden" id="btn_add_lab_items">Add</button>
+                                                                            }
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="uk-form-row">
+                                                <div>
+                                                    <table id="add_lab_items" class="uk-table" cellspacing="0">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="width-20">@Common.SerialNo</th>
+                                                                <th class="width-150">@AHCMS.Date</th>
+                                                                <th>@AHCMS.LabTest</th>
+                                                                <th class="width-150">@AHCMS.ObservedValue</th>
+                                                                <th class="width-150">@AHCMS.Unit</th>
+                                                                <th class="width-150">@AHCMS.BiologicalReferenceInterval</th>
+                                                                <th class="width-100"></th>
+                                                                <th class="width-20"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @Html.Partial("~/Areas/AHCMS/Views/IPCaseSheet/LabTest.cshtml", Model)
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="section-group">
+                                        <div class="uk-width-medium-9-10">
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin="">
+                                                    <div class="uk-width-medium-2-10">
+                                                        <div class="uk-autocomplete " id="employee-autocomplete">
+                                                            <div class="uk-input-group">
+                                                                <label for="uk_dp_start">@AHCMS.PanelOfDoctors</label>
+                                                                @Html.TextBoxFor(m => m.DoctorName, new { @class = "md-input label-fixed" })
+                                                                <span class="uk-input-group-addon">
+                                                                    <a data-uk-modal="{target:'#select-employee',center:false}">
+                                                                        <i class="uk-input-group-icon uk-icon-search"></i>
+                                                                    </a>
+                                                                </span>
+                                                                <script type="text/autocomplete">
+                                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                                        {{~items}}
+                                                                        <li data-value="{{ $item.Name}}"
+                                                                            data-id="{{$item.ID}}"
+                                                                            data-EmployeeCode="{{$item.Code}}"
+                                                                            data-placement="{{$item.Location}}">
+                                                                            <a>
+                                                                                {{ $item.Name }}
+                                                                                <div>{{ $item.Code }}</div>
+                                                                            </a>
+                                                                        </li>
+                                                                        {{/items}}
+                                                                    </ul>
+                                                                </script>
+                                                            </div>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.DoctorNameID)
+                                                    </div>
+                                                    <div class="uk-width-medium-1-10">
+                                                        @if (!Model.IsDischarged)
+                                                        {
+                                                        <label>&nbsp;</label>
+                                                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btn_adddoctor">Add</button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <label>&nbsp;</label>
+                                                            <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light uk-hidden" id="btn_adddoctor">Add</button>
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="uk-form-row">
+                                        <div>
+                                            <table id="add_doctor" class="uk-table" cellspacing="0">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="width-20">@Common.SerialNo</th>
+                                                        <th class="width-120">@AHCMS.Doctor</th>
+                                                        <th class="width-20"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="section-group">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin="">
+                                                <div class="uk-width-medium-8-10">
+                                                    <div class="uk-form-row">
+                                                        <div class="uk-grid" data-uk-grid-margin="">
+                                                            <div class="uk-width-medium-1-1">
+                                                                <div class="uk-grid" data-uk-grid-margin="">
+                                                                    <div class="uk-width-medium-1-1">
+                                                                        <label for="uk_dp_start">@AHCMS.CourseInHospital</label>
+                                                                        @if (!Model.IsDischarged)
+                                                                        {
+                                                                        @Html.TextAreaFor(m => m.CourseInTheHospital, new { @class = "md-input label-fixed", @disabled = "disable" })
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        @Html.TextAreaFor(m => m.CourseInTheHospital, new { @class = "md-input label-fixed", @disabled = "disable" })
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="uk-width-medium-1-1">
+                                                                <div class="uk-grid" data-uk-grid-margin="">
+                                                                    <div class="uk-width-medium-1-1">
+                                                                        <label for="uk_dp_start">@AHCMS.ConditionAtDischarge</label>
+                                                                        @if (!Model.IsDischarged)
+                                                                        {
+                                                                        @Html.TextAreaFor(m => m.ConditionAtDischarge, new { @class = "md-input label-fixed", @disabled = "disable" })
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        @Html.TextAreaFor(m => m.ConditionAtDischarge, new { @class = "md-input label-fixed", @disabled = "disable" })
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="uk-width-medium-1-1">
+                                                                <div class="uk-grid" data-uk-grid-margin="">
+                                                                    <div class="uk-width-medium-1-1">
+                                                                        <label for="uk_dp_start">@AHCMS.DietAdvice</label>
+                                                                        @if (!Model.IsDischarged)
+                                                                        {
+                                                                        @Html.TextAreaFor(m => m.DietAdvice, new { @class = "md-input label-fixed", @disabled = "disable" })
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        @Html.TextAreaFor(m => m.DietAdvice, new { @class = "md-input label-fixed", @disabled = "disable" })
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="md-card-toolbar" align="right">
+                                                <div class="md-card-toolbar-actions">
+                                                    <div class="uk-width-1-10">
+                                                        <div class="md-input-wrapper md-input-filled">
+                                                            @if (!Model.IsDischarged)
+                                                            {
+                                                            <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light uk-hidden" id="btn_add_internal_medicine">Add</button>
+                                                            }
+                                                            else
+                                                            {
+                                                            <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light uk-hidden" id="btn_add_internal_medicine">Add</button>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="md-card-content">
+                                                <table id="add_internal_medicine" class="uk-table" cellspacing="0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="width-20">@Common.SerialNo</th>
+                                                            <th class="width-50">@AHCMS.Medicine</th>
+                                                            <th class="width-50">@AHCMS.Instructions</th>
+                                                            <th class="width-50">@AHCMS.StartDate</th>
+                                                            <th class="width-50">@AHCMS.EndDate</th>
+                                                            @*<th class="width-50">Edit</th>*@
+                                                            <th class="width-20"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @Html.Partial("~/Areas/AHCMS/Views/IPCaseSheet/ExternalMedicines.cshtml", Model)
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+
+                               
+                                <li>
+                                    <div class="section-group">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin="">
+                                                <div class="uk-width-medium-8-10">
+                                                    <div class="uk-form-row">
+                                                        <div class="uk-grid" data-uk-grid-margin="">
+                                                            <div id="history-list" class="uk-form-row">
+                                                                @Html.Partial("~/Areas/AHCMS/Views/PatientDiagnosis/History.cshtml", Model)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="uk-width-1-1 HistoryDetails uk-hidden">
+                            <div class="md-card">
+                                <div class="md-card-content">
+                                    <div class="section-group">
+                                        <div id="history-details" class="uk-form-row">
+                                            @Html.Partial("~/Areas/AHCMS/Views/PatientDiagnosis/HistoryDetails.cshtml", Model)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("~/Areas/AHCMS/Views/IPCaseSheet/AddReport.cshtml", Model)
+@Html.Partial("~/Areas/AHCMS/Views/IPCaseSheet/AddInternalMedicine.cshtml", Model)
+@Html.Partial("~/Areas/AHCMS/Views/IPCaseSheet/AddTreatments.cshtml", Model)
+@Html.Partial("~/Areas/AHCMS/Views/IPCaseSheet/AddMedicine.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Item/TreatmentItemList.cshtml")
+@Scripts.Render("~/Js/Page/Item")
+@Scripts.Render("~/Js/Page/IPCaseSheet")
+@Html.Partial("~/Areas/AHCMS/Views/PatientDiagnosis/AddLabTest.cshtml", Model)
+@Html.Partial("~/Areas/AHCMS/Views/PatientDiagnosis/CancelTreatment.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Employee/DoctorList.cshtml")
+@Scripts.Render("~/Js/Page/Employee")
+<script type="text/javascript">
+    IPCaseSheet.init();
+</script>

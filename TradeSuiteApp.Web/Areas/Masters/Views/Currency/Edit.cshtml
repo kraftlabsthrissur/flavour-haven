@@ -1,0 +1,109 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.CurrencyModel
+@{
+    ViewBag.Title = @Masters.EditCountry;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.Currencies</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.EditCountry</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnUpdate'>" + Common.Save + "</a>")
+
+            @Html.ActionLink(Common.Close, "Index", "Currency", new { Area = "Masters" }, new { @class = "md-btn " })
+            @Html.HiddenFor(m => m.Id)
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-2-8">
+                                            <div class="uk-autocomplete " id="item-autocomplete">
+                                                <label>@Masters.CountryName<span>*</span></label>
+                                                @Html.TextBoxFor(m => m.CountryName, "", new { @class = "md-input label-fixed" })
+                                                <span class="uk-input-group-addon">
+                                                    <a data-uk-modal="{target:'#select-item'}">
+                                                        <i class="uk-input-group-icon uk-icon-search"></i>
+                                                    </a>
+                                                </span>
+                                                <script type="text/autocomplete">
+                                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                    {{~items}}
+                                                    <li data-value="{{ $item.CountryName }}"
+                                                        data-id="{{$item.CountryID}}"
+                                                        data-code="{{$item.CountryCode}}"
+                                                        <a>
+                                                            {{ $item.CountryName }}
+                                                            <div>{{{ $item.CountryCode }}}</div>
+                                                        </a>
+                                                    </li>
+                                                    {{/items}}
+                                                </ul>
+                                                </script>
+                                            </div>
+
+                                            @Html.Hidden("CountryID")
+                                            @Html.Hidden("CountryCode")
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.CurrencyCode<span>*</span></label>
+                                            @Html.TextBoxFor(m => m.Code, "", new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Masters.CurrencyName<span>*</span></label>
+                                            @Html.TextBoxFor(m => m.Name, "", new { @class = "md-input label-fixed" })
+                                            @Html.HiddenFor(m => m.Id, new { @class = "md-input" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.DecimalPlaces<span>*</span></label>
+                                            @Html.TextBoxFor(m => m.DecimalPlaces, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>MinimumCurrency<span>*</span></label>
+                                            @Html.TextBoxFor(m => m.MinimumCurrency, "", new { @class = "md-input label-fixed" })
+                                           
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>MinimumCurrencyCode<span>*</span></label>
+                                            @Html.TextBoxFor(m => m.MinimumCurrencyCode, "", new { @class = "md-input label-fixed" })
+                                           
+                                        </div>
+                                        <div class="uk-width-medium-2-4">
+                                            <label>@Masters.Description<span>*</span></label>
+                                            @Html.TextAreaFor(m => m.Description, new { @class = "md-input label-fixed" })
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Html.Partial("~/Areas/Masters/Views/Country/CountryList.cshtml")
+@Scripts.Render("~/Js/Page/Currency")

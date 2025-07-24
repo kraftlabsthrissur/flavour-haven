@@ -1,0 +1,37 @@
+ALTER PROCEDURE [Purchase].[SpGetPurchaseReturnOrderTrans]          
+(@ID INT,          
+@FinYear INT,          
+@LocationID INT,          
+@ApplicationID INT)          
+AS          
+BEGIN          
+SET NOCOUNT ON          
+declare @WareHouseID int;          
+select @WareHouseID=ConfigValue from configuration where ConfigName= 'DefaultPurchaseStore' and LocationID=@LocationID          
+select PRt.ID,PRT.PurchaseReturnID,PRT.GrnID,I.Code ItemCode,PIT.ItemName,PIT.PartsNumber,ISNULL(PRT.Remarks,PIT.Remarks)Remarks,    
+PIT.Model,PIT.CurrencyID,PIT.IsVat,PIT.IsGST,PIT.VATPercentage,U.UOM as unit,PRT.ItemID,PIT.AcceptedQty as AcceptedQty,PRT.QTY,PRT.Rate,PRT.SGSTPercent,  
+PRT.CGSTPercent,PRT.IGSTPercent,PRT.SGSTAmount,PRT.CGSTAmount,PRT.IGSTAmount,PRT.Amount,PRT.FinYear,PRT.ApplicationID,PRT.LocationID,PI.PurchaseNo,@WareHouseID as warehouseID,        
+Case when GRNT.AcceptedQty >ISNULL(QC.ApprovedQty,0) then case when GRNT.AcceptedQty>PIT.InvoiceQty Then  GRNT.AcceptedQty else PIT.InvoiceQty end         
+ELSE case when  QC.ApprovedQty>PIT.InvoiceQty Then  QC.ApprovedQty else PIT.InvoiceQty end   end as InvoiceQty,           
+isnull(dbo.FnConvertStockFromInventoryUnit(I.ID, dbo.FnGetAvailableStock(I.ID,null,(case when PIT.BatchTypeID=0 then null else PIT.BatchTypeID end),@WareHouseID,@FinYear,@LocationID,@ApplicationID),PIT.UnitID),0) AS Stock,            
+ case when PIT.UnitID<>I.PurchaseUnitID then dbo.FnConvertUnit(I.ID,(Case when GRNT.AcceptedQty >ISNULL(QC.ApprovedQty,0) then case when GRNT.AcceptedQty>PIT.InvoiceQty Then  GRNT.AcceptedQty else PIT.InvoiceQty end         
+ ELSE case when  QC.ApprovedQty>PIT.InvoiceQty Then  QC.ApprovedQty else PIT.InvoiceQty end end),        
+ I.UnitID,I.PurchaseUnitID)  else 0 end as ConvertedQuantity ,            
+ dbo.FnConvertStockFromInventoryUnit(I.ID, dbo.FnGetAvailableStock(I.ID,null,(case when PIT.BatchTypeID=0 then null else PIT.BatchTypeID end),        
+ @WareHouseID,@FinYear,@LocationID,@ApplicationID),I.PurchaseUnitID) AS ConvertedStock,I.UnitID as PrimaryUnitID,I.Unit as PrimaryUnit,        
+ I.PurchaseUnit,I.PurchaseUnitID,PI.ID as PurchaseInvoiceID,PR.SupplierID,S.Name as SupplierName,PRT.UnitID,PRT.InvoiceTransID,PI.InvoiceNo,        
+ ISNULL(PRT.GSTPercent,0) GSTPercent,ISNULL(PRT.GSTAmount,0) GSTAmount,0 GSTID, --ISNULL(G.ID,0)GSTID      
+ ISNULL(PRT.PurchaseReturnDiscount,0.00) Discount,        
+ PIT.OfferQty,PRT.OfferQty AS OfferReturnQty,PRT.SecondaryRate,PRT.SecondaryReturnQty,PRT.SecondaryUnit,PRT.SecondaryUnitSize        
+from PurchaseReturnOrderTrans PRT          
+Inner join PurchaseReturnOrder PR ON PRT.PurchaseReturnID=PR.ID          
+inner join viSUpplier S ON S.ID = PR.SupplierID          
+INNER JOIN viItem I ON I.ID=PRT.ItemID          
+inner join PurchaseInvoice PI on PI.ID=PRT.InvoiceID          
+inner join PurchaseInvoiceTrans PIT on PIT.PurchaseInvoiceID=PI.ID AND PIT.ID = PRT.InvoiceTransID--and PIT.ItemID=PRT.ItemID        
+Inner join GoodsReceiptNoteTrans GRNT on GRNT.ID=PIT.GRNTransID        
+Left Join QualityCheck QC on QC.GRNTransID=GRNT.ID          
+Inner join Unit U on U.ID=PRT.UnitID          
+--LEFT JOIN GSTCategory G ON G.IGSTPercent = PRT.GSTPercent        
+WHERE PRT.PurchaseReturnID=@ID  AND PRT.LocationID = @LocationID and PRT.ApplicationID=@ApplicationID          
+END 

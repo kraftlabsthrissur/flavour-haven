@@ -1,0 +1,46 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.BRSModel
+@{
+    ViewBag.Title = Accounts.BankReconciliationStatement;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Accounts.BankReconciliationStatement</h1>
+            <span class="uk-text-upper uk-text-small">@Accounts.CreateBankReconciliationStatement</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSave'>" + Common.Save + "</a>")
+            @*@ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSaveAsDraft'>" + Common.SaveAsDraft + "</a>")
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSaveAndNew'>" + Common.SaveAndNew + "</a>")*@
+          
+            @Html.ActionLink(Common.Close, "IndexV3", "BRS", new { Area = "Accounts" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                @{Html.RenderPartial("/Areas/Accounts/Views/BRS/FormV3.cshtml", Model); }
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/BRSV3")
+<select class="status-template uk-hidden">
+    @foreach (var item in ViewBag.Status.Items)
+    {
+        <option value="@item.Value">@item.Text</option>
+    }
+</select>
+    
+
+
+
+

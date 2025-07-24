@@ -1,0 +1,22 @@
+CREATE proc [Master].[SpGetWareHouseByWareHouseID]
+(
+@WareHouseID int,
+@LocationID int,
+@ApplicationID int
+)  
+AS  
+Begin  
+ select W.ID,W.Code,W.Name,W.Place,I.NAME as ItemTypeName,W.ItemTypeID,W.Remarks   
+ from WareHouse W  
+ left join ItemType I on I.ID= W.ItemTypeID   
+ where IsVirtualStore = 0  
+ AND w.ID=@WareHouseID
+ AND W.LocationID = @LocationID   
+ and W.ApplicationID = @ApplicationID  
+End  
+  
+  
+  
+  
+  
+  

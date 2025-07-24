@@ -1,0 +1,52 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.XrayTestModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-width-medium-1-1">
+            <div class="uk-grid" data-uk-grid-margin="">
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.Code</label>
+                    @Html.TextBoxFor(m => m.Code, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                    @Html.HiddenFor(m => m.PurchaseCategoryID)
+                    @Html.HiddenFor(m => m.QCCategoryID)
+                    @Html.HiddenFor(m => m.GSTSubCategoryID)
+                    @Html.HiddenFor(m => m.SalesCategoryID)
+                    @Html.HiddenFor(m => m.SalesIncentiveCategoryID)
+                    @Html.HiddenFor(m => m.StorageCategoryID)
+                    @Html.HiddenFor(m => m.ItemTypeID)
+                    @Html.HiddenFor(m => m.AccountsCategoryID)
+                    @Html.HiddenFor(m => m.BusinessCategoryID)
+                    @Html.HiddenFor(m => m.ItemUnitID)
+                    @Html.HiddenFor(m => m.CategoryID)
+                </div>
+                <div class="uk-width-medium-1-6">
+                    <label>@Masters.Name<span>*</span></label>
+                    @Html.TextBoxFor(m => m.Name, new { @class = "md-input label-fixed" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <div class="uk-input-group">
+                        <label>@Masters.AddedDate*</label>
+                        @Html.TextBoxFor(m => m.AddedDate, new { @class = "md-input label-fixed  date future-date" })
+                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                    </div>
+                </div>
+                <div class="uk-width-medium-1-6">
+                    <label>@Masters.Description</label>
+                    @Html.TextBoxFor(m => m.Description, new { @class = "md-input label-fixed" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/XrayTest")
+<script type="text/javascript">
+    XrayTest.init();
+</script>
+
+
+
+
+
+

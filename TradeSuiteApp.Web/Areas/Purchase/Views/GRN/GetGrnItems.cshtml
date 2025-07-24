@@ -1,0 +1,26 @@
+﻿@model TradeSuiteApp.Web.Areas.Purchase.Models.GRNModel
+@if (Model.grnItems != null)
+{
+    foreach (var item in Model.grnItems.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+            </td>
+            <td>@item.value.ItemName</td>
+            <td>@item.value.Unit</td>
+            <td class="batch_type">@item.value.Batch
+            <input type="hidden" class="batchID" value="@item.value.BatchID" />
+            </td>
+            <td class="uk-text-right mask-currency">@item.value.ReceivedQty</td>
+            <td>
+                <input type="text" class="md-input label-fixed mask-numeric print-qty" data-id="@item.value.ReceivedQty" value="@item.value.ReceivedQty" />
+            </td>
+        </tr>
+    }
+}
+
+
+
+
+

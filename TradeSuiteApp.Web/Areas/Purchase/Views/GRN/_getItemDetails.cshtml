@@ -1,0 +1,34 @@
+﻿
+<input type="button" id="show-item-details" data-uk-modal="{target:'#item-details', center:false}" />
+<div class="uk-modal" id="item-details" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">@Purchase.GoodsReceiptNoteDetails<i class="material-icons"></i></h3>
+        </div>
+        <br />
+        <div class="section-group">
+            <table id="GRN-list" class="uk-table" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="width-10">@Common.SerialNo</th>
+
+                        <th class="width-250">@Purchase.ItemName</th>
+                        <th class="width-80">@Purchase.Unit</th>
+
+                        <th class="width-100">@Purchase.Batch</th>
+                        <th class="width-40">@Purchase.ReceivedQty</th>
+                        <th class="width-40">@Purchase.PrintingQty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn  uk-modal-close">@Common.Close</button>
+            <button type="button" class="md-btn md-btn-primary" id="btn_print_code">Print</button>
+          @Html.Hidden("GRNID")
+        </div>
+    </div>
+</div>

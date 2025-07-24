@@ -1,0 +1,30 @@
+ALTER PROCEDURE [Purchase].[SpGetPurchaseInvoiceDetailsByID](          
+ @PurchaseInvoiceID int ,          
+ @FinYear int,          
+ @LocationID int,          
+ @ApplicationID int          
+) AS          
+Begin          
+ Select P.Id,PurchaseNo,PurchaseDate,InvoiceNo,InvoiceDate,P.SupplierID, S.Name AS SupplierName, P.LocalCustomsDuty,P.LocalFreight,I.Code as ItemCode,  
+ P.LocalMiscCharge,P.LocalOtherCharges,P.PackingForwarding,P.SuppDocAmount,P.SupplierOtherCharges,P.SuppShipAmount,P.FreightAmount,P.CurrencyExchangeRate,P.VATAmount,  
+ PT.SecondaryInvoiceQty as SecondaryQty,PT.SecondaryUnit,I.name as ItemName,isnull(S.BillingAddress1,'') as AddressLine1,  
+ isnull(S.BillingAddress2,'') as AddressLine2,isnull(S.BillingAddress3,'') as AddressLine3,  
+P.VATPercentage,P.CurrencyID,ISNULL(cu.Code,'')CurrencyCode, ISNULL(cu.Name,'')CurrencyName,p.IsGST,p.IsVat,        
+ ISNULL(LocalSupplierName,'') AS LocalSupplier ,P.NetAmount,P.IsDraft,P.GrossAmount,P.SGSTAmount,P.CGSTAmount,P.IGSTAmount,p.Discount,          
+ AmountPayable, S.BillingPlace as SupplierLocation,S.GSTNo ,ISNULL(InvoiceTotal,0.00) InvoiceTotal, ISNULL(TotalDifference,0.00) TotalDifference,          
+  ISNULL(OtherDeductions,0.00) OtherDeductions,StateID, IsGSTRegistered,Status,P.IsCancelled , P.OtherCharges,         
+  ISNULL((select PurchaseOrderDate from PurchaseOrder where id=(select  max(PO.ID)           
+  from PurchaseInvoiceTrans PIT          
+  inner join GoodsReceiptNoteTrans GRNT on GRNT.GoodsReceiptNoteID=PIT.GRNID          
+  inner join PurchaseOrder PO on PO.ID=GRNT.PurchaseOrderID          
+  )),(SELECT [Date] FROM MilkPurchase WHERE ID = (SELECT MAX(MilkPurchaseID)           
+  FROM PurchaseInvoiceTrans PIT ))) as PurchaseOrderDate, S.Code as SupplierCode,S.SupplierCategory,          
+  ISNULL(P.SelectedQuotationID,0) as SelectedQuotationID,P.GRNNo, ISNULL(P.Remarks,'') as Remarks          
+ from PurchaseInvoiceTrans PT           
+ inner join PurchaseInvoice P on PT.PurchaseInvoiceID=P.ID          
+ inner join viSupplier S on S.ID = P.SupplierID          
+ left join TDS TDS on P.TDSID=TDS.ID          
+ left join Currency cu on cu.ID=p.CurrencyID      
+ inner join viItem I on I.ID=PT.ItemID  
+ Where P.ID = @PurchaseInvoiceID  and P.LocationID = @LocationID and P.ApplicationID = @ApplicationID           
+End 

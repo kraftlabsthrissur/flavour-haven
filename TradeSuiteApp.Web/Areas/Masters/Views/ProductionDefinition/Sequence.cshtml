@@ -1,0 +1,305 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.SequenceModel
+<li aria-hidden="false" class="uk-active" style="width:100%">
+    <div class="sequence" data-uk-grid-margin>
+        @Html.HiddenFor(m => m.ProductionID, new { @class = "ProductionID" })
+        @Html.HiddenFor(m => m.SequenceType, new { @class = "DefinitionSequence" })
+        @Html.Hidden("SequenceNo", "", new { @class = "SequenceNo" })
+        @Html.Hidden("Type", "", new { @class = "Type" })
+        <div class="uk-form-row">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-2-10">
+                    <div class="uk-autocomplete Item-autocomplete">
+                        <label>@Masters.ProductName<span>*</span></label>
+                        @Html.TextBoxFor(m => m.ProductName, "", new { @class = "md-input label-fixed ProductName", @autocomplete = "off" })
+                        <span class="uk-input-group-addon">
+                            <a data-uk-modal="{target:'#select-item'}">
+                                <i class="uk-input-group-icon uk-icon-search"></i>
+                            </a>
+                        </span>
+                        <script type="text/autocomplete">
+                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                {{~items}}
+                                <li data-value="{{ $item.ItemName }}"
+                                    data-id="{{$item.ItemID}}"
+                                    data-code="{{$item.ItemCode}}"
+                                    data-primary-unit="{{$item.UnitName}}"
+                                    data-category="{{$item.ItemCategory}}"
+                                    data-inventory-unit="{{$item.InventoryUnit}}"
+                                    data-inventory-unit-id="{{$item.InventoryUnitID}}"
+                                    data-primary-unit-id="{{$item.UnitID}}">
+                                    <a>
+                                        {{ $item.ItemName }}
+                                        <div>{{{ $item.ItemCode }}}</div>
+                                    </a>
+                                </li>
+                                {{/items}}
+                            </ul>
+                        </script>
+                    </div>
+                    @Html.HiddenFor(m => m.ProductID, new { @class = "ProductID" })
+                    @Html.HiddenFor(m => m.UnitID, new { @class = "ProductUnitID" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.Unit</label>
+                    @Html.TextBoxFor(m => m.Unit, "", new { @class = "md-input ProductUnit", @readonly = "readonly" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.ProcessStage</label>
+                    @Html.TextBoxFor(m => m.ProcessStage, "", new { @class = "md-input ProcessStage", @autocomplete = "off" })
+                </div>
+                <div class="uk-width-medium-1-10 StdOutputQty">
+                    <label>@Masters.StandardOutputQty<span>*</span></label>
+                    @Html.TextBoxFor(m => m.StandardOutputQty, "", new { @class = "md-input label-fixed mask-production-qty StandardOutputQty" })
+                </div>
+                <div class="uk-width-medium-1-10 BatchTypeList @(Model.SequenceType == "PackingSequence" ? "visible" : "uk-hidden") ">
+                    <label for="uk_dp_start">@Masters.BatchType</label>
+                    @Html.DropDownListFor(Model => Model.BatchTypeID, Model.BatchTypeList, "All", new { @class = "md-input label-fixed BatchTypeID" })
+                </div>
+            </div>
+        </div>
+        <div class="uk-form-row">
+            <div class="panel">
+                <label class="bold">@Masters.Materials</label>
+            </div>
+        </div>
+
+        <div class="uk-form-row">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-2-10">
+                    <div class="uk-autocomplete Material-autocomplete">
+                        <label>@Masters.MaterialName<span>*</span></label>
+                        @Html.TextBox("MaterialName", "", new { @class = "md-input label-fixed MaterialName", @autocomplete = "off" })
+                        <span class="uk-input-group-addon">
+                            <a data-uk-modal="{target:'#select-production-definition-material'}">
+                                <i class="uk-input-group-icon uk-icon-search"></i>
+                            </a>
+                        </span>
+                        <script type="text/autocomplete">
+                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                {{~items}}
+                                <li data-value="{{ $item.ItemName }}"
+                                    data-id="{{$item.ItemID}}"
+                                    data-code="{{$item.ItemCode}}"
+                                    data-primary-unit="{{$item.UnitName}}"
+                                    data-category="{{$item.ItemCategory}}"
+                                    data-inventory-unit="{{$item.InventoryUnit}}"
+                                    data-inventory-unit-id="{{$item.InventoryUnitID}}"
+                                    data-primary-unit-id="{{$item.UnitID}}">
+                                    <a>
+                                        {{ $item.ItemName }}
+                                        <div>{{{ $item.ItemCode }}}</div>
+                                    </a>
+                                </li>
+                                {{/items}}
+                            </ul>
+                        </script>
+                    </div>
+                    @Html.Hidden("MaterialID", "", new { @class = "MaterialID" })
+                    @Html.Hidden("PrimaryUnit", "", new { @class = "MaterialPrimaryUnit" })
+                    @Html.Hidden("PrimaryUnitID", "", new { @class = "MaterialPrimaryUnitID" })
+                    @Html.Hidden("InventoryUnit", "", new { @class = "MaterialInventoryUnit" })
+                    @Html.Hidden("InventoryUnitID", "", new { @class = "MaterialInventoryUnitID" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.Unit </label>
+                    @Html.DropDownListFor(m => m.UnitID, Model.UnitList, "Select", new { @class = "md-input label-fixed MaterialUnit" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.Qty<span>*</span></label>
+                    @Html.TextBox("Qty", "", new { @class = "md-input label-fixed mask-production-qty Qty" })
+                </div>
+                <div class="uk-width-medium-1-10 Usage">
+                    <label>@Masters.UsageMode</label>
+                    @Html.TextBox("UsageMode", "", new { @class = "md-input UsageMode" })
+                </div>
+                <div class="uk-width-medium-1-10 ConvertionFactor">
+                    <label>@Masters.UnitConvertionFactor</label>
+                    @Html.TextBox("UnitConvertionFactor", "", new { @class = "md-input label-fixed mask-production-qty UnitConvertionFactor" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <div class="uk-input-group">
+                        <label for="uk_dp_start">@Masters.StartDate <span>*</span></label>
+                        <input class="md-input label-fixed all-date date startdate" id="StartDate">
+                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar all-date"></i></span>
+                    </div>
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <div class="uk-input-group">
+                        <label for="uk_dp_start">@Masters.EndDate <span>*</span></label>
+                        <input class="md-input label-fixed all-date date enddate" id="EndDate">
+                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar all-date"></i></span>
+                    </div>
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>&nbsp;</label>
+                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light btnAddMaterial">@Common.Add</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="uk-form-row">
+            <table class="uk-table material-list" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="width-20">@Common.SerialNo</th>
+                        <th class="width-20">@Masters.BatchType</th>
+                        <th class="width-60">@Masters.MaterialName</th>
+                        <th class="width-20">@Masters.Unit</th>
+                        <th class="width-30">@Masters.Qty</th>
+                        <th class="width-50 Mode">@Masters.UsageMode</th>
+                        <th class="width-50">@Masters.PrimaryToPackingUnitConversionFactor</th>
+                        <th class="width-30">@Masters.StartDate</th>
+                        <th class="width-30">@Masters.EndDate</th>
+                        <th class="width-10"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                        <tr class="included" data-batch-type-id="@item.value.BatchTypeID">
+                            <td class="uk-text-center serial-no">@(1 + @Model.Items.IndexOf(item.value))</td>
+                            <td class="BatchType">@item.value.BatchType</td>
+                            <td class="Name">
+                                @item.value.MaterialName
+                                <input type="hidden" class="ID" value="@item.value.ID" />
+                                <input type="hidden" class="ProductionDefinitionID" value="@item.value.ProductionDefinitionID" />
+                                <input type="hidden" class="ItemID" value="@item.value.MaterialID" />
+                                <input type="hidden" class="UnitID" value="@item.value.UnitID" />
+                                <input type="hidden" class="BatchTypeID" value="@item.value.BatchTypeID" />
+                                <input type="hidden" class="ProductionSequence" value="@item.value.ProductionSequence" />
+                            </td>
+                            <td class="Unit">@item.value.Unit</td>
+                            <td><input type="text" class="md-input uk-text-right mask-production-qty MaterialQty" value="@item.value.Qty" /></td>
+                            <td><input type="text" class="md-input Usage" value="@item.value.UsageMode" /></td>
+                            <td><input type="text" class="md-input uk-text-right mask-production-qty PrimaryToPackUnitConFact" value="@item.value.PrimaryToPackUnitConFact" /></td>
+                            <td>
+                                <div class="uk-input-group">
+                                    <input class="md-input label-fixed all_date date startdate" type="text" value="@item.value.StartDate">
+                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar all-date"></i></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="uk-input-group">
+                                    <input class="md-input label-fixed all_date date enddate" type="text" value="@item.value.EndDate">
+                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar all-date"></i></span>
+                                </div>
+                            </td>
+                            <td class="uk-text-center remove-material">
+                                <a data-uk-tooltip="{pos:" bottom"}">
+                                    <i class="md-btn-icon-small uk-icon-remove"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <input type="hidden" class="material-count" value="0">
+        </div>
+
+
+        <div class="uk-form-row">
+            <div class="panel">
+                <label class="bold">@Masters.Process</label>
+            </div>
+        </div>
+
+        <div class="uk-form-row">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.ProcessName<span>*</span></label>
+                    @Html.TextBox("ProcessName", "", new { @class = "md-input label-fixed ProcessName" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.Steps</label>
+                    @Html.TextBox("Steps", "", new { @class = "md-input Steps" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.SkilledLabourMinutes</label>
+                    @Html.TextBox("SkilledLabourMinutes", "", new { @class = "md-input label-fixed mask-production-qty SkilledLabourMinutes" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.SkilledLabourCost</label>
+                    @Html.TextBox("SkilledLabourCost", "", new { @class = "md-input label-fixed mask-production-qty SkilledLabourCost" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.UnSkilledLabourMinutes</label>
+                    @Html.TextBox("UnSkilledLabourMinutes", "", new { @class = "md-input label-fixed mask-production-qty UnSkilledLabourMinutes" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.UnSkilledLabourCost</label>
+                    @Html.TextBox("UnSkilledLabourCost", "", new { @class = "md-input label-fixed mask-production-qty UnSkilledLabourCost" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.MachineMinutes</label>
+                    @Html.TextBox("MachineMinutes", "", new { @class = "md-input label-fixed mask-production-qty MachineMinutes" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.MachineCost</label>
+                    @Html.TextBox("MachineCost", "", new { @class = "md-input label-fixed mask-production-qty MachineCost" })
+                </div>
+                <div class="uk-width-medium-1-10 PackProcess">
+                    <label>@Masters.Process</label>
+                    @Html.TextBox("Process", "", new { @class = "md-input Process" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>&nbsp;</label>
+                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light btnAddProcess">@Common.Add</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="uk-form-row">
+            <table class="uk-table process-list" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="width-20" rowspan="2">@Common.SerialNo</th>
+                        <th class="width-80" rowspan="2">@Masters.ProcessName</th>
+                        <th class="width-80" rowspan="2">@Masters.Steps</th>
+                        <th class="width-120" colspan="2">@Masters.SkilledLabour</th>
+                        <th class="width-120" colspan="2">@Masters.UnSkilledLabour</th>
+                        <th class="width-120" colspan="2">@Masters.Machine</th>
+                        <th class="width-80" rowspan="2">@Masters.Process</th>
+                        <th class="width-10" rowspan="2"></th>
+                    </tr>
+                    <tr>
+                        <th class="width-60">@Masters.Minutes</th>
+                        <th class="width-60">@Masters.Cost</th>
+                        <th class="width-60">@Masters.Minutes</th>
+                        <th class="width-60">@Masters.Cost</th>
+                        <th class="width-60">@Masters.Minutes</th>
+                        <th class="width-60">@Masters.Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Processes.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                        <tr>
+                            <td class="uk-text-center index">@(1 + @Model.Processes.IndexOf(item.value))</td>
+                            <td>
+                                <input type="text" class="md-input ProcessesName" value="@item.value.ProcessName" />
+                                <input type="hidden" class="ID" value="@item.value.ProcessID" />
+                                <input type="hidden" class="ProductionDefinitionID" value="@item.value.ProductionDefinitionID" />
+                                <input type="hidden" class="BatchTypeID" value="@item.value.BatchTypeID" />
+                                <input type="hidden" class="ProductionSequence" value="@item.value.ProductionSequence" />
+                            </td>
+                            <td><input type="text" class="md-input Step" value="@item.value.Steps" /></td>
+                            <td><input type="text" class="md-input uk-text-right mask-production-qty SkilledMinutes" value="@item.value.SkilledLabourMinutes" /></td>
+                            <td><input type="text" class="md-input uk-text-right mask-production-qty SkilledCost" value="@item.value.SkilledLabourCost" /></td>
+                            <td><input type="text" class="md-input uk-text-right mask-production-qty UnSkilledMinutes" value="@item.value.UnSkilledLabourMinutes" /></td>
+                            <td><input type="text" class="md-input uk-text-right mask-production-qty UnSkilledCost" value="@item.value.UnSkilledLabourCost" /></td>
+                            <td><input type="text" class="md-input uk-text-right mask-production-qty MacMinutes" value="@item.value.MachineMinutes" /></td>
+                            <td><input type="text" class="md-input uk-text-right mask-production-qty MacCost" value="@item.value.MachineCost" /></td>
+                            <td><input type="text" class="md-input Processes" value="@item.value.Process" /></td>
+                            <td class="uk-text-center remove-process">
+                                <a data-uk-tooltip="{pos:" bottom"}">
+                                    <i class="md-btn-icon-small uk-icon-remove"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <input type="hidden" class="process-count" value="0">
+        </div>
+    </div>
+</li>

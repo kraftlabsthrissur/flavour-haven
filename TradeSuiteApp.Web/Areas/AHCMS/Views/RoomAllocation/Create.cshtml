@@ -1,0 +1,46 @@
+﻿
+@model TradeSuiteApp.Web.Areas.AHCMS.Models.RoomReservationModel
+@{
+    ViewBag.Title = AHCMS.AllocatingRooms;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@AHCMS.IP</h1>
+            <span class="uk-text-upper uk-text-small">@AHCMS.AllocatingRooms</span>
+            @Html.HiddenFor(Model=> Model.IsRoomChange)
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSave'>" + Common.Save + "</a>")
+            @if(Model.IsRoomChange==false)
+            {
+            @Html.ActionLink(Common.Close, "ReferedToIPList", "RoomAllocation", new { Area = "AHCMS" }, new { @class = "md-btn " })
+            }
+            else
+            {
+            @Html.ActionLink(Common.Close, "InPatientList", "RoomAllocation", new { Area = "AHCMS" }, new { @class = "md-btn " })
+            }
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                @{Html.RenderPartial("/Areas/AHCMS/Views/RoomAllocation/Form.cshtml", Model); }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+

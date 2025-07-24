@@ -1,0 +1,83 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+@if (Model.History != null)
+{
+    List<string> Temp = new List<string>();
+
+    foreach (var item in Model.History.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <div class="container md-bg-grey-50" style="margin:10px; padding:10px;border-radius:4px; height:375px">
+            <table class="uk-table historytable" cellpadding="0" cellspacing="0">
+                <thead>
+                    <tr class="historytr">
+                        <td style="border :0px;width:500px;">
+                            <i class="uk-icon-user md-color-white"></i>&nbsp;&nbsp;Case Date : @item.value.ReportedDate.ToString("dd-MMM-yyyy")
+                        </td>
+                        <td style="border :0px;width:500px;">&nbsp;&nbsp;Appointment Type : @item.value.AppointmentType</td>
+                        <td style="text-align: right;border :0px;width:500px;white-space: nowrap">
+                            <button class="md-btn md-btn-primary btn-block md-btn-wave-light waves-effect waves-button waves-light btnViewHistory" style="width: 90px;"><i class="uk-icon-history md-color-white"></i> Detail</button>
+                            <button class="md-btn md-btn-primary btn-block md-btn-wave-light waves-effect waves-button waves-light btnViewReview" style="width:90px;"><i class="uk-icon-pencil md-color-white"></i> Review</button>
+                            <button class="md-btn md-btn-primary btn-block md-btn-wave-light waves-effect waves-button waves-light btnView uk-hidden" style="width:90px;"><i class="uk-icon-pencil md-color-white"></i> View</button>
+                            <input type="hidden" class="ParentID" value="@item.value.ParentID" />
+                            <input type="hidden" class="ReviewID" value="@item.value.AppointmentProcessID" />
+                            <input type="hidden" class="AppointmentType" value="@item.value.AppointmentType" />
+                            <input type="hidden" class="IPID" value="@item.value.IPID" />
+                        </td>
+                    </tr>
+                    <tr class="md-bg-white">
+                        <td style="border :0px;width:300px;">OP/IP No</td>
+                        <td style="border :0px;width:500px;">@item.value.TransNo</td>
+                    </tr>
+                   @* <tr class="md-bg-white">
+                        <td style="border :0px;width:300px;">@AHCMS.Patient</td>
+                        <td style="border :0px;width:500px;">@item.value.Patient</td>
+                    </tr>
+                    <tr class="md-bg-white">
+                        <td style="border :0px;width:300px;">@AHCMS.AppointmentType</td>
+                        <td style="border :0px;width:500px;">@item.value.AppointmentType</td>
+                    </tr>
+                    <tr class="md-bg-white">
+                        <td style="border :0px;width:300px;">@AHCMS.ReportedDate</td>
+                        <td style="border :0px;width:500px;">@item.value.ReportedDate.ToString("dd-MMM-yyyy")</td>
+                    </tr>*@
+                    @if (item.value.AppointmentType == "IP")
+                    {
+                        <tr class="md-bg-white">
+                            <td style="border :0px;width:300px;">@AHCMS.DischargedDate</td>
+                            <td style="border :0px;width:500px;">@item.value.DischargedDate</td>
+                        </tr>
+                        <tr class="md-bg-white">
+                            <td style="border :0px;width:300px;">@AHCMS.Disease</td>
+                            <td style="border :0px;width:500px;">@item.value.Disease</td>
+                        </tr>
+                    }
+                    
+                    <tr class="md-bg-white">
+                        <td style="border :0px;width:300px;">@AHCMS.Doctor</td>
+                        <td style="border :0px;width:500px;">@item.value.Doctor</td>
+                    </tr>
+                    <tr class="md-bg-white">
+                        <td style="border :0px;width:300px;">@AHCMS.SuggestedReviewDate</td>
+                        <td style="border :0px;width:500px;">@item.value.SuggestedReviewDate</td>
+                    </tr>
+                    <tr class="md-bg-white">
+                        <td style="border :0px;width:300px;">@AHCMS.PresentingComplaints</td>
+                        <td style="border :0px;width:500px;">@item.value.PresentingComplaints</td>
+                    </tr>
+                    <tr class="md-bg-white">
+                        <td style="border :0px;width:300px;">Associated complaints</td>
+                        <td style="border :0px;width:500px;">@item.value.Associatedcomplaints</td>
+                    </tr>
+                    <tr class="md-bg-white">
+                        <td style="border :0px;width:300px;">Contemporary Diagnosis</td>
+                        <td style="border :0px;width:500px;">@item.value.ContemporaryDiagnosis</td>
+                    </tr>
+                    <tr class="md-bg-white">
+                        <td style="border :0px;width:300px;">Ayurvedic Diagnosis</td>
+                        <td style="border :0px;width:500px;">@item.value.AyurvedicDiagnosis</td>
+                    </tr>
+
+                </thead>
+            </table>
+        </div>
+    }
+}

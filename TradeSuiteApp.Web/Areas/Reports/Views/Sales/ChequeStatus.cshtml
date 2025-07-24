@@ -1,0 +1,167 @@
+﻿@model TradeSuiteApp.Web.Areas.Reports.Models.SalesModel
+@{
+    ViewBag.ReportTitle = "Cheque Status";
+}
+<div id="page_content_inner" class="sales-cheque-report">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+            <div class="uk-grid" data-uk-grid-margin="">
+                <div class="uk-width-medium-2-10 ">
+                    <form action="/Reports/Sales/ChequeStatus" id="report-filter-form" method="POST">
+                        <div class="uk-form-row">
+                            <div class="panel">
+                                <label>Report Name</label>
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-1">
+                                        <input type="radio" name="ReportName" class="cheque_report_name" data-md-icheck  checked="" value="collection" /> @Html.Label("Collection Report")
+                                    </div>
+                                    <div class="uk-width-medium-1-1">
+                                        <input type="radio" name="ReportName" class="cheque_report_name" data-md-icheck  value="cheque" /> @Html.Label("Cheque Report")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="filters uk-form-row collection">
+                            <div class="panel">
+                                <label>Report Type</label>
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-2">
+                                        <input type="radio" name="ReportType" class="cheque_report_type" data-md-icheck checked="" value="summary" /> @Html.Label("Summary")
+                                    </div>
+                                    <div class="uk-width-medium-1-2">
+                                        <input type="radio" name="ReportType" class="cheque_report_type" data-md-icheck value="detailed" /> @Html.Label("Detail")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @Html.HiddenFor(m => m.LocationID)
+                        @Html.HiddenFor(m => m.UserID)
+                        <div class="filters uk-form-row cheque cheque-return-report collection">
+                            <div class="uk-grid" data-uk-grid-margin="">
+                                <div class="uk-width-medium-1-2">
+                                    <div class="uk-input-group">
+                                        <label for="uk_dp_start">@Reports.ReceiptDateFrom</label>
+                                        @Html.TextBoxFor(model => model.ReceiptDateFrom, new { @class = "md-input label-fixed  past-date date" })
+                                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                    </div>
+                                </div>
+                                <div class="uk-width-medium-1-2">
+                                    <div class="uk-input-group">
+                                        <label for="uk_dp_start">@Reports.ReceiptDateTo</label>
+                                        @Html.TextBoxFor(model => model.ReceiptDateTo, new { @class = "md-input label-fixed  past-date date" })
+                                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="filters uk-form-row cheque cheque-return-report collection">
+                            @*<div class="uk-form-row ">*@
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-autocomplete " id="customer-autocomplete">
+                                            <label for="uk_dp_start">@Reports.CustomerName</label>
+                                            @Html.TextBox("Customer", "", new { @class = "md-input label-fixed" })
+                                            <script type="text/autocomplete">
+                                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                    {{~items}}
+                                                    <li data-value="{{$item.Name}}"
+                                                        data-id="{{$item.ID}}"
+                                                        data-name="{{$item.Code}}">
+                                                        <a>
+                                                            {{$item.Name}}
+                                                        </a>
+                                                    </li>
+                                                    {{/items}}
+                                                </ul>
+                                            </script>
+                                        </div>
+                                    </div>
+                                </div>
+                            @*</div>*@
+                            @Html.HiddenFor(m => m.CustomerID)
+                        </div>
+                        <div class="filters uk-form-row cheque uk-hidden">
+                            <div class="uk-grid" data-uk-grid-margin="">
+                                <div class="uk-width-medium-1-1">
+                                    <div class="uk-input-group">
+                                        <label for="uk_dp_start" class="cheque-status">@Reports.ChequeStatus</label>
+                                        @Html.DropDownListFor(Model => Model.ChequeStatus, Model.ChequeStatusList, "Select", new { @class = "md-input label-fixed", @id = "ChequeStatus" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="filters uk-form-row cheque cheque-return-report collection">
+                            <div class="uk-grid" data-uk-grid-margin="">
+                                <div class="uk-width-medium-1-1">
+                                    <div class="uk-input-group">
+                                        <label for="uk_dp_start" class="Location">@Reports.Location</label>
+                                        @Html.DropDownListFor(Model => Model.ItemLocationID, Model.LocationList, "Select", new { @class = "md-input label-fixed", @id = "LocationsID" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="filters uk-form-row  collection">
+                            <div class="uk-form-row ">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-autocomplete " id="cheque-no-autocomplete">
+                                            <label for="uk_dp_start">@Reports.ChequeNo</label>
+                                            @Html.TextBox("ChequeNo", "", new { @class = "md-input label-fixed" })
+                                            <script type="text/autocomplete">
+                                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                    {{~items}}
+                                                    <li data-value="{{$item.Code}}"
+                                                        data-id="{{$item.ID}}">
+                                                        <a>
+                                                            {{$item.Code}}
+                                                        </a>
+                                                    </li>
+                                                    {{/items}}
+                                                </ul>
+                                            </script>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="filters uk-form-row  collection">
+                            <div class="uk-grid" data-uk-grid-margin="">
+                                <div class="uk-width-medium-1-1">
+                                    <div class="uk-input-group">
+                                        <label for="uk_dp_start">@Reports.ChequeDate</label>
+                                        @Html.TextBoxFor(model => model.ChequeDate, new { @class = "md-input label-fixed  past-date date" })
+                                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin>
+                                <div class="uk-width-medium-1-2">
+                                    <div class="md-input-wrapper md-input-filled">
+                                        <label>&nbsp;</label>
+                                        <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="report-filter-submit">Show</button>
+                                    </div>
+                                </div>
+                                <div class="uk-width-medium-1-2">
+                                    <div class="md-input-wrapper md-input-filled">
+                                        <label>&nbsp;</label>
+                                        <a class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light " id="Refresh">Reset</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="uk-width-medium-8-10 ">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="" id="report-viewer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/ChequeStatus")
+

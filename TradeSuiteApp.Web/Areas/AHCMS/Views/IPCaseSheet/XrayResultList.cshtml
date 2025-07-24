@@ -1,0 +1,43 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+<input type="button" id="show-xray-result" data-uk-modal="{target:'#xray-list', center:false}" />
+<div class="uk-modal" id="xray-list" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Xray Result<i class="material-icons" data-uk-tooltip="{pos:'top'}" title="headline tooltip"></i></h3>
+        </div>
+        <table id="xray-result-list" class="uk-table" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="width-20">
+                        @Common.SerialNo
+                    </th>
+                    <th>
+                        @AHCMS.Xray
+                    </th>
+                    <th  class="uk-width-medium-1-8">View</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.XrayResultItems != null)
+                {
+                    foreach (var item in Model.XrayResultItems.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                        <tr>
+                            <td>
+                                @item.i
+                                <input type="hidden" class="path" value="@item.value.path" />
+                            </td>
+                            <td class="xray">@item.value.XrayName</td>
+                            <td align="center"><button class="btn_view_xray_result"><i class="material-icons">remove_red_eye</i></button></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn  uk-modal-close">@Common.Close</button>
+        </div>
+    </div>
+</div>
+
+

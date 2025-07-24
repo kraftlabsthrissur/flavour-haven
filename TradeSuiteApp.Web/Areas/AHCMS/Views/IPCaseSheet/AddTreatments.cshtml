@@ -1,0 +1,132 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+<input type="button" id="show-add-treatment" data-uk-modal="{target:'#add-treatment', center:false}" />
+<div class="uk-modal" id="add-treatment" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Add Treatments<i class="material-icons"></i></h3>
+        </div>
+        <div class="uk-modal-content">
+            <div class="uk-form-row">
+                <div class="uk-grid text-center uk-margin">
+                    <div class="uk-width-medium-1-2">
+                        <label>@AHCMS.Treatment</label>
+                        <div class="uk-autocomplete " id="treatment-autocomplete">
+                            <div class="uk-input-group">
+                                @Html.TextBoxFor(model => model.TreatmentName, new { @class = "md-input label-fixed" })
+                            </div>
+                        </div>
+                        @Html.HiddenFor(model => model.TreatmentID)
+                    </div>
+                    <div class="uk-width-medium-1-2">
+                        <label>@AHCMS.Doctor</label>
+                        @Html.TextBoxFor(m => m.Doctor, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                    </div>
+                </div>
+                <div class="uk-grid text-center uk-margin">
+                    <div class="uk-width-medium-1-2">
+                        <label>@AHCMS.PreferredTherapist</label>
+                        @Html.DropDownListFor(m => m.TherapistID, new SelectList(Model.TherapistList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                    </div>
+
+                    <div class="uk-width-medium-1-2">
+                        <label>Preferred Treatment Room</label>
+                        @Html.DropDownListFor(m => m.TreatmentRoomID, new SelectList(Model.TreatmentRoomList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                </div>
+                <div class="uk-width-1-1">
+                    <label>@AHCMS.Instructions</label>
+                    @Html.TextBoxFor(m => m.Instructions, "", new { @class = "md-input label-fixed" })
+                </div>
+                <div class="uk-grid text-center uk-margin">
+                    <div class="uk-width-medium-1-3">
+                        <div class="uk-input-group">
+                            <label for="uk_dp_start">Tentative Start Date</label>
+                            @Html.TextBoxFor(m => m.TreatmentStartDate, "", new { @class = "md-input label-fixed current-date date" })
+                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                        </div>
+                    </div>
+                    <div class="uk-width-medium-1-3">
+                        <label>Number of treatments</label>
+                        @Html.TextBoxFor(m => m.NoofTreatment, "", new { @class = "md-input label-fixed mask-numeric" })
+                        @*@Html.DropDownListFor(m => m.NoofTreatment, new SelectList(Model.TreatmentNoList, "Value", "Text"), new { @class = "md-input label-fixed" })*@
+                    </div>
+                    <div class="uk-width-medium-1-3">
+                        <div class="uk-input-group">
+                            <label for="uk_dp_start">Tentative End Date</label>
+                            @Html.TextBoxFor(m => m.TentativeEndDate, "", new { @class = "md-input label-fixed current-date date" })
+                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-grid">
+                    <div class="uk-width-medium-1-5">
+                        <input type="checkbox" class="icheckbox MorningTime Treatmentfrequency" id="id-morning" data-md-icheck /><label> Morning</label><br />
+                        @Html.DropDownListFor(m => m.MorningTimeID, new SelectList(Model.MorningList, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                    </div>
+                    <div class="uk-width-medium-1-5">
+                        <input type="checkbox" class="icheckbox NoonTime Treatmentfrequency" id="id-noon" data-md-icheck /><label> Noon</label><br />
+                        @Html.DropDownListFor(m => m.NoonTimeID, new SelectList(Model.NoonList, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                    </div>
+                    <div class="uk-width-medium-1-5">
+                        <input type="checkbox" class="icheckbox EveningTime Treatmentfrequency" id="id-evening" data-md-icheck /><label> Evening</label><br />
+                        @Html.DropDownListFor(m => m.EveningTimeID, new SelectList(Model.EveningList, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                    </div>
+                    <div class="uk-width-medium-1-5">
+                        <input type="checkbox" class="icheckbox NightTime Treatmentfrequency" id="id-night" data-md-icheck /><label> Night</label><br />
+                        @Html.DropDownListFor(m => m.NightTimeID, new SelectList(Model.NightList, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        @Html.Hidden("Frequency")
+                    </div>
+                </div>
+                <hr />
+                <div class="uk-grid text-center uk-margin edit_medicine">
+                    <div class="uk-width-medium-1-2">
+                        <label>@AHCMS.Medicine</label>
+                        <div class="uk-autocomplete " id="medicine-autocomplete">
+                            <div class="uk-input-group">
+                                @Html.TextBoxFor(model => model.Medicine, new { @class = "md-input label-fixed" })
+                            </div>
+                        </div>
+                        @Html.HiddenFor(model => model.MedicineID)
+                        @Html.HiddenFor(model => model.TreatmentMedicineUnitID)
+                    </div>
+                    <div class="uk-width-medium-1-6">
+                        <label>@Masters.Unit</label>
+                        @Html.TextBoxFor(m => m.TreatmentMedicineUnit, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                    </div>
+                    <div class="uk-width-medium-1-6">
+                        <label>@Masters.Qty</label>
+                        @Html.TextBoxFor(m => m.StandardMedicineQty, "", new { maxlength = 10, @class = "md-input label-fixed mask-production-qty" })
+                    </div>
+                    <div class="uk-width-medium-1-8">
+                        <div class="md-input-wrapper md-input-filled">
+                            <label>&nbsp;</label>
+                            <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddTreatmentMedicines">@Common.Add</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div>
+                        <table id="medicinelist" class="uk-table " cellspacing="0" width=100">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@AHCMS.Medicine</th>
+                                    <th class="width-10">@AHCMS.Unit</th>
+                                    <th class="width-20">@AHCMS.Qty</th>
+                                    <th class="width-10"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="uk-modal-footer uk-text-right">
+                    <button type="button" class="md-btn  uk-modal-close">@Common.Close</button>
+                    <button type="button" class="md-btn md-btn-primary" id="btnAddTreatment">Ok</button>
+                    @Html.Hidden("Index")
+                    @Html.Hidden("RowIndex")
+                    @Html.Hidden("treatment-medicine-count")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

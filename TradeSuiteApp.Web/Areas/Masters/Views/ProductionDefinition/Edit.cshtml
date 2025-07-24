@@ -1,0 +1,43 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.ProductionDefinitionModel
+
+@{
+    ViewBag.Title = "Edit Production Definition";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.ProductionDefinition</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.EditProductionDefinition</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSave'>" + Common.Save + "</a>")
+            @Html.ActionLink(Common.Close, "Index", "ProductionDefinition", new { Area = "Masters" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                @{Html.RenderPartial("/Areas/Masters/Views/ProductionDefinition/Form.cshtml", Model); }
+            </div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/Js/Page/ProductionDefinition")
+@Scripts.Render("~/Js/Page/Item")
+
+<script type="text/javascript">
+    ProductionDefinition.init();
+</script>
+
+

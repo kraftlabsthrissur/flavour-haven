@@ -1,0 +1,159 @@
+﻿@model TradeSuiteApp.Web.Areas.Sales.Models.GoodsReceiptModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.InvoiceNo</label>
+                            @Html.TextBoxFor(model => model.TransNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Sales.ReceivedDate</label>
+                            @Html.TextBoxFor(model => model.TransDate, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.CustomerName</label>
+                            @Html.TextBoxFor(model => model.CustomerName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            @Html.HiddenFor(model => model.CustomerID)
+                        </div>
+                        <div class="uk-width-medium-2-4">
+                            <label for="uk_dp_start">@Sales.SalesOrders</label>
+                            @Html.TextBoxFor(model => model.SalesOrderNos, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+
+                        @*<div class="uk-width-medium-1-8 uk-hidden">
+                                <label for="uk_dp_start">@Sales.BillTo</label>
+                                @Html.TextBoxFor(model => model.BillingAddress, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            </div>
+                            <div class="uk-width-medium-1-8 uk-hidden">
+                                <label for="uk_dp_start">@Sales.ShippTo</label>
+                                @Html.TextBoxFor(model => model.ShippingAddress, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            </div>*@
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.GrossAmt</label>
+                            @Html.TextBoxFor(model => model.GrossAmount, new { @class = "md-input label-fixed " + Model.normalclass, @tabindex = "-1", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.DiscAmt</label>
+                            @Html.TextBoxFor(model => model.DiscountAmount, new { @class = "md-input label-fixed " + Model.normalclass, @tabindex = "-1", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.TaxableAmount</label>
+                            @Html.TextBoxFor(model => model.TaxableAmount, new { @class = "md-input label-fixed " + Model.normalclass, @tabindex = "-1", @disabled = "disabled" })
+                        </div>
+                        @*<div class="uk-width-medium-1-8">
+            <label>@Sales.SGST</label>
+            @Html.TextBoxFor(model => model.SGSTAmount, new { @class = "md-input label-fixed " + Model.normalclass, @tabindex = "-1", @disabled = "disabled" })
+        </div>
+        <div class="uk-width-medium-1-8">
+            <label>@Sales.CGST</label>
+            @Html.TextBoxFor(model => model.CGSTAmount, new { @class = "md-input label-fixed " + Model.normalclass, @tabindex = "-1", @disabled = "disabled" })
+        </div>
+        <div class="uk-width-medium-1-8">
+            <label>@Sales.IGST</label>
+            @Html.TextBoxFor(model => model.IGSTAmount, new { @class = "md-input label-fixed " + Model.normalclass, @tabindex = "-1", @disabled = "disabled" })
+        </div>*@
+                        <div class="uk-width-medium-1-8 cess-enabled">
+                            <label>@Sales.CessAmount</label>
+                            @Html.TextBoxFor(model => model.CessAmount, new { @class = "md-input label-fixed " + Model.normalclass, @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.RoundOff</label>
+                            @Html.TextBoxFor(model => model.RoundOff, new { @class = "md-input label-fixed " + Model.normalclass, @tabindex = "-1", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.Remarks</label>
+                            @Html.TextBoxFor(model => model.Remarks, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-1">
+                            <label>@Sales.NetAmount</label>
+                            @Html.TextBoxFor(model => model.NetAmount, new { @class = "md-input label-fixed x-large " + Model.normalclass, @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-grid">
+        <div class="uk-width-1-1">
+            <table id="sales-invoice-items-list" class="uk-table" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="width-10">@Common.SerialNo</th>
+                        <th class="width-250">@Sales.ItemName</th>
+                        <th class="width-40">@Sales.PartsNumber</th>
+                        <th class="width-40">@Sales.Unit</th>
+
+                        <th class="width-100">@Sales.Qty</th>
+                        <th class="width-80">@Sales.OfferQty</th>
+                        <th class="width-100 mrp_hidden">@Sales.MRP</th>
+                        <th class="width-80">@Sales.BasicPrice</th>
+                        <th class="width-100">@Sales.GrossAmt</th>
+                        <th class="width-40">@Sales.TradeDiscPer</th>
+                        <th class="width-80">@Sales.TradeDiscAmt</th>
+                        <th class="width-100">@Sales.TaxableAmount</th>
+                        @*<th class="width-40">@Sales.GST</th>
+                            <th class="width-100">@Sales.GSTAmount</th>
+                            <th class="width-20 cess-enabled">@Sales.Cess</th>
+                            <th class="width-40 cess-enabled">@Sales.CessAmount</th>*@
+                        <th class="width-100">@Sales.NetAmount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items != null)
+                    {
+                        foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                        {
+                            <tr>
+                                <td class="uk-text-center">
+                                    @item.i
+                                </td>
+                                <td class="uk-text-small">@item.value.ItemName</td>
+                                <td>@item.value.PartsNumber</td>
+                                <td>@item.value.SecondaryUnit</td>
+                                <td class="mask-sales2-currency">@item.value.SecondaryQty</td>
+                                <td class="mask-sales2-currency">@item.value.InvoiceOfferQty</td>
+                                <td class="@Model.normalclass mrp_hidden">@item.value.SecondaryMRP</td>
+                                <td class="@Model.normalclass">@item.value.BasicPrice</td>
+                                <td class="@Model.normalclass">@item.value.GrossAmount</td>
+                                <td class="@Model.normalclass">@item.value.DiscountPercentage</td>
+                                <td class="@Model.normalclass">@item.value.DiscountAmount</td>
+                                <td class="@Model.normalclass">@item.value.TaxableAmount</td>
+                                @*<td class="@Model.normalclass">@item.value.GSTPercentage</td>
+                                    <td class="@Model.normalclass">@item.value.GSTAmount</td>
+                                    <td class="@Model.normalclass cess-enabled CessPercentage">@item.value.CessPercentage </td>
+                                    <td class="@Model.normalclass cess-enabled CessAmount"> @item.value.CessAmount</td>*@
+                                <td class="@Model.normalclass">@item.value.NetAmount</td>
+
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/GoodsReceipt")
+@Scripts.Render("~/Js/SignalR")
+<script src="~/signalr/Hubs"></script>
+<script type="text/javascript">
+    GoodsReceipt.details();
+    SignalRClient.init();
+</script>

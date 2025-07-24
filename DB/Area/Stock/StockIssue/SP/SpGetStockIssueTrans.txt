@@ -1,0 +1,30 @@
+        
+ALTER PROCEDURE [Stock].[SpGetStockIssueTrans]        
+(@ID INT,        
+@FinYear INT,        
+@LocationID INT,        
+@ApplicationID INT)        
+AS        
+BEGIN        
+SET NOCOUNT ON        
+  select SIT.ID,SIT.StockIssueID,SIT.ItemID,I.Code ,Ltrim(Rtrim(I.Name)) as ItemName,I.PatentNo,I.Model,I.Make,SIT.ItemType,U.UOM as Unit,SIT.UnitID,        
+  SIT.BatchTypeID,IsNull(B.ID,0) as BatchID,B.BatchNO as BatchName,SIT.ReceiptedQty,SI.IssueDate,SIT.RequestedQty,        
+  BT.Name as BatchTypeName,SIT.IssueQty,SIT.FinYear,SIT.LocationID,SIT.ApplicationID,        
+  dbo.FnGetAvailableStock(SIT.ItemID,SIT.BatchID, SIT.BatchTypeID, SI.IssuePremiseID, @Finyear, @LocationID,       
+  @ApplicationID) + SIT.IssueQty AS Stock,SIT.SecondaryQty,SIT.SecondaryIssueQty,SIT.SecondaryUnit,SIT.SecondaryUnitSize,        
+  SIT.StockRequestTransID,SIT.Rate, SIT.BasicPrice, SIT.GrossAmount, SIT.TradeDiscountPercentage, SIT.TradeDiscount,        
+  SIT.TaxableAmount, SIT.SGSTPercentage, SIT.CGSTPercentage, SIT.IGSTPercentage, SIT.SGSTAmount, SIT.CGSTAmount,        
+  SIT.IGSTAmount, SIT.NetAmount,IsNull(SR.ID,0) as StockRequestID, SR.RequestNO StockRequisitionNo,      
+  I.Category AS Category,I.PackSize,LTRIM(RTRIM(I.MalayalamName)) AS MalayalamName,  
+  I.UnitID as PrimaryUnitID,I.Unit as  PrimaryUnit,B.ExpiryDate,ISNULL(SIT.Remark,'') AS Remark        
+  from StockIssueTrans SIT        
+  Inner join StockIssue SI on SI.ID=SIT.StockIssueID        
+  Inner Join viItem I on I.Id=SIT.ItemID        
+  Left Join BatchType BT on BT.ID=SIT.BatchTypeID        
+  Left Join Batch B on B.ID=SIT.BatchID         
+  left join StockRequisitionTrans SRT on SRT.ID=SIT.StockRequestTransID        
+  left join  StockRequisition SR on SR.ID=SRT.StockRequisitionID        
+  inner join Unit U on U.ID=SIT.UnitID        
+  where SIT.StockIssueID=@ID AND SIT.FinYear = @FinYear AND SIT.LocationID = @LocationID and SIT.ApplicationID=@ApplicationID        
+  Order by I.PackSize Desc,I.Unit Desc,I.Category      
+END        

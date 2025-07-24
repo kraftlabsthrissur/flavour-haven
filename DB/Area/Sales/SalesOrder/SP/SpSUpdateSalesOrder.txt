@@ -1,0 +1,131 @@
+        
+                                
+ALTER PROCEDURE [Sales].[SpSUpdateSalesOrder]        
+(        
+  @SalesOrderID int,        
+  @SalesOrderNo varchar(20),        
+  @OrderDate datetime,        
+  @CustomerID int,        
+  @SchemeAllocationID int,        
+  @DespatchDate datetime,        
+  @FreightAmount numeric(18,4),        
+  @GrossAmt numeric(18,4),        
+  @DiscountAmt numeric(18,4),        
+  @TaxableAmt numeric(18,4),        
+  @SGSTAmt numeric(18,4),        
+  @CGSTAmt numeric(18,4),        
+  @IGSTAmt numeric(18,4),        
+  @CessAmount numeric(18,4),        
+  @RoundOff numeric(18,4),  
+  @CustomerEnquiryNumber varchar(50),  
+  @QuotationExpiry datetime,  
+  @PaymentTerms varchar(1000),  
+  @NetAmt numeric(18,4),        
+  @BillingAddressID int,        
+  @ShippingAddressID int,        
+  @IsDraft bit,           
+  @SalesTypeID int,      
+  @CurrencyID int,        
+  @IsGST int,        
+  @IsVat int,        
+  @CurrencyExchangeRate numeric(18,4),
+  @EnquiryDate datetime,  
+  @Remarks varchar(1000), 
+  @VATAmount numeric(18,4),       
+  @CreatedUserID int,        
+  @FinYear int,        
+  @LocationID int,        
+  @ApplicationID int,        
+  @IsApproved bit,        
+  @SalesOrderTrans XML )        
+AS        
+BEGIN        
+         
+ DECLARE @ErrorCode INT, @BatchTypeID int = 0,@BatchType varchar(20),@SerialNo Varchar(20), @PurchaseOrderID int;        
+         
+ SET NOCOUNT ON;        
+         
+ BEGIN TRAN        
+ SELECT @SerialNo = SalesOrderNo, @PurchaseOrderID = PurchaseOrderID  FROM Sales.SalesOrder WHERE ID = @SalesOrderID        
+        
+ IF (@IsDraft = 0)        
+  BEGIN        
+   EXEC Common.SpUpdateSerialNo 'SalesOrder','Code',@FinYear,@LocationID ,@ApplicationID,@SerialNo = @SerialNo OUT        
+   SET @OrderDate = (select DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0))        
+        
+  END        
+   EXEC SpLogChange 'Sales.SalesOrder','ID',@SalesOrderID,@CreatedUserID,@LocationID,@ApplicationID        
+        
+   EXEC SpLogChange 'Sales.SalesOrderTrans','SalesOrderID',@SalesOrderID,@CreatedUserID,@LocationID,@ApplicationID        
+         
+   UPDATE Sales.SalesOrder SET         
+    SalesOrderNo = @SerialNo,        
+    CustomerID = @CustomerID,        
+    SchemeAllocationID = @SchemeAllocationID,        
+    DespatchDate = @DespatchDate,        
+    FreightAmount = @FreightAmount,        
+    GrossAmt = @GrossAmt,        
+    DiscountAmt = @DiscountAmt,        
+    TaxableAmt = @TaxableAmt,        
+    SGSTAmt = @SGSTAmt,        
+    CGSTAmt = @CGSTAmt,        
+    IGSTAmt = @IGSTAmt,        
+    CessAmount = @CessAmount,        
+    CurrencyID=@CurrencyID,  
+ CustomerEnquiryNumber=@CustomerEnquiryNumber,  
+ QuotationExpiry=@QuotationExpiry,  
+ PaymentTerms=@PaymentTerms,  
+    VATAmount=@VATAmount,      
+    IsGST=@IsGST,      
+    IsVat=@IsVat,      
+    CurrencyExchangeRate=@CurrencyExchangeRate,      
+    RoundOff = @RoundOff,        
+    NetAmt = @NetAmt,        
+    IsProcessed = 0,        
+    BillingAddressID = @BillingAddressID,        
+    ShippingAddressID = @ShippingAddressID,        
+    IsDraft = @IsDraft,        
+    ModifiedDate = current_timestamp,        
+    IsCancelled = 0,        
+    CancelledDate = NULL,        
+    CreatedUserID =  @CreatedUserID,        
+    IsApproved=@IsApproved,
+	EnquiryDate=@EnquiryDate,
+	Remarks=@Remarks
+   WHERE ID = @SalesOrderID         
+   AND FinYear = @FinYear        
+   AND LocationID = @LocationID        
+   AND ApplicationID = @ApplicationID        
+        
+ SELECT @ErrorCode = @@ERROR        
+ IF (@ErrorCode <> 0) GOTO PROBLEM        
+        
+ DELETE FROM Sales.SalesOrderTrans WHERE SalesOrderID = @SalesOrderID         
+ AND FinYear = @FinYear        
+ AND LocationID = @LocationID        
+ AND ApplicationID = @ApplicationID        
+         
+ EXEC [Sales].[InsertSalesOrderItems] @SalesOrderID, @SalesOrderTrans, @FinYear,@LocationID,@ApplicationID        
+        
+ UPDATE Sales.SalesOrder SET SalesTypeID = (SELECT TOP 1 CategoryID FROM Sales.SalesOrderTrans SOT        
+  INNER JOIN Item I ON I.ID = SOT.ItemID WHERE SOT.SalesOrderID = @SalesOrderID ORDER BY SOT.ID ASC) WHERE ID = @SalesOrderID         
+   
+ IF ISNULL(@PurchaseOrderID,0) > 0         
+ BEGIN        
+  UPDATE SOT SET SOT.POTransID = POTR.ID        
+  FROM Sales.SalesOrderTrans SOT        
+  INNER JOIN (SELECT ID,ItemID, SalesOrderID,(ROW_NUMBER() OVER (PARTITION BY SalesOrderID ORDER BY ID ASC)) RowNumber        
+   FROM   Sales.SalesOrderTrans ) SOTR ON SOT.ID = SOTR.ID        
+  INNER JOIN (SELECT ID,ItemID, PurchaseOrderID,(ROW_NUMBER() OVER (PARTITION BY PurchaseOrderID ORDER BY ID ASC)) RowNumber         
+   FROM  PurchaseOrderTrans) POTR ON POTR.PurchaseOrderID = @PurchaseOrderID        
+   AND SOTR.ItemID = POTR.ItemID        
+  WHERE SOT.SalesOrderID = @SalesOrderID         
+ END          
+        
+ COMMIT TRAN        
+ PROBLEM:        
+ IF (@ErrorCode <> 0)         
+ BEGIN        
+  ROLLBACK TRAN        
+ END        
+END 

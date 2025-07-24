@@ -1,0 +1,163 @@
+﻿
+
+@model  TradeSuiteApp.Web.Areas.Asset.Models.DepreciationFilterModel
+@{
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>
+                @Asset.Depreciation
+            </h1>
+            <span class="uk-text-upper uk-text-small">@Asset.DepreciationList</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Filter", "<a class='md-btn btnFilter'>" + Asset.Filter + "</a>")
+            @ActionAuthorization.IsAuthorized("Process", "<a class='md-btn btnProcess'>" + Asset.Process + "</a>")
+        </div>
+    </div>
+    <div id="page_content_inner" class="list-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row uk-hidden filter">
+                        <div class="uk-grid filter" data-uk-grid-margin="">
+                            <div class="uk-width-medium-1-10 ">
+                                <label for="uk_dp_start">@Asset.FromComapnyDepreciationRate</label>
+                                @Html.TextBoxFor(Model => Model.FromCompanyDepreciationRate, new { @class = "md-input label-fixed mask-qty", @id = "FromCompanyDepreciationRate" })
+                            </div>
+                            <div class="uk-width-medium-1-10 ">
+                                <label for="uk_dp_start">@Asset.ToComapnyDepreciationRate</label>
+                                @Html.TextBoxFor(Model => Model.ToCompanyDepreciationRate, new { @class = "md-input label-fixed mask-qty", @id = "ToCompanyDepreciationRate" })
+                            </div>
+                            <div class="uk-width-medium-1-10 ">
+                                <label for="uk_dp_start">@Asset.FromIncomeTaxDepreciationRate</label>
+                                @Html.TextBoxFor(Model => Model.FromIncomeTaxDepreciationRate, new { @class = "md-input label-fixed mask-qty", @id = "FromIncomeTaxDepreciationRate" })
+                            </div>
+                            <div class="uk-width-medium-1-10 ">
+                                <label for="uk_dp_start">@Asset.ToIncomeTaxDepreciationRate</label>
+                                @Html.TextBoxFor(Model => Model.ToIncomeTaxDepreciationRate, new { @class = "md-input label-fixed mask-qty", @id = "ToIncomeTaxDepreciationRate" })
+                            </div>
+                            <div class="uk-width-medium-1-10 ">
+                                <div class="uk-input-group">
+                                    <label for="uk_dp_start">@Asset.FromPeriod</label>
+                                    @Html.TextBoxFor(model => model.TransDateFromStr, new { @class = "md-input label-fixed  past-date date" })
+                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-1-10 ">
+                                <div class="uk-input-group">
+                                    <label for="uk_dp_start">@Asset.ToPeriod</label>
+                                    @Html.TextBoxFor(model => model.TransDateToStr, new { @class = "md-input label-fixed  past-date date" })
+                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-1-10">
+                                <div class="md-input-wrapper md-input-filled">
+                                    <label>&nbsp;</label>
+                                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnSubmit">@Asset.Submit</button>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-1-10">
+                                <div class="md-input-wrapper md-input-filled">
+                                    <label>&nbsp;</label>
+                                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnReset">@Asset.Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid">
+                            <div class="uk-width-1-1">
+                                <table id="capital-items-list" class="uk-table" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                @Common.SerialNo
+                                            </th>
+                                            <th>
+                                                @Asset.AssetName
+                                            </th>
+                                            <th>
+                                                @Asset.ItemName
+                                            </th>
+                                            <th>
+                                                @Asset.SupplierName
+                                            </th>
+                                            <th>
+                                                @Asset.AssetValue
+                                            </th>
+                                            <th>
+                                                @Asset.OpeningWDV
+                                            </th>
+                                            <th>
+                                                @Asset.DepreciationRate
+                                            </th>
+                                            <th>
+                                                @Asset.DepreciationValue
+                                            </th>
+                                            <th>
+                                                @Asset.CumilativeDepreciationValue
+                                            </th>
+                                            <th>
+                                                @Asset.CurrentValue
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <thead class="search">
+                                        <tr>
+                                            <th>
+                                                @Common.SerialNo
+                                            </th>
+                                            <th>
+                                                @Asset.AssetName
+                                            </th>
+                                            <th>
+                                                @Asset.ItemName
+                                            </th>
+                                            <th>
+                                                @Asset.SupplierName
+                                            </th>
+                                            <th>
+                                                @Asset.AssetValue
+                                            </th>
+                                            <th>
+                                                @Asset.OpeningWDV
+                                            </th>
+                                            <th>
+                                                @Asset.DepreciationRate
+                                            </th>
+                                            <th>
+                                                @Asset.DepreciationValue
+                                            </th>
+                                            <th>
+                                                @Asset.CumilativeDepreciationValue
+                                            </th>
+                                            <th>
+                                                @Asset.CurrentValue
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/Js/Page/Depreciation")
+
+
+<script type="text/javascript">
+    depreciation.list();
+</script>
+
+
+

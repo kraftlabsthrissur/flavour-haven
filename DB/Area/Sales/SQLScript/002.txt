@@ -1,0 +1,30 @@
+ALTER TABLE sales.CounterSales
+ADD PrintWithItemName BIT NOT NULL DEFAULT 0;
+
+ALTER TABLE Currency
+ADD DecimalPlaces INT NOT NULL DEFAULT 2;
+
+
+CREATE TABLE [dbo].[Contact](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name1] [varchar](100) NULL,
+	[Name2] [varchar](100) NULL,
+	[PhoneNo] [nvarchar](200) NULL,
+	[AlternateNo] [nvarchar](200) NULL,
+	[EmailID] [varchar](50) NULL,
+	[Address1] [varchar](100) NULL,
+	[Address2] [varchar](100) NULL,
+	[Address3] [varchar](100) NULL,
+	[Designation] [varchar](100) NULL,
+	[CustomerID] [int] NULL,
+	[IsActive] [int] NULL,
+	CONSTRAINT [PK_Contact] PRIMARY KEY ([ID])
+);
+
+ALTER TABLE sales.CounterSales
+ADD ContactID INT NULL
+CONSTRAINT FK_sales_CounterSales_Contact_ContactID 
+FOREIGN KEY (ContactID) REFERENCES Contact(ID)
+
+
+

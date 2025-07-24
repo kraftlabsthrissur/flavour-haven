@@ -1,0 +1,232 @@
+﻿@model TradeSuiteApp.Web.Areas.Purchase.Models.MilkPurchaseModel
+@{
+    ViewBag.Title = "Edit Milk Purchase";
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Purchase.MilkPurchase</h1>
+            <span class="uk-text-upper uk-text-small">@Purchase.EditMilkPurchase</span>
+        </div>
+
+        <div class="heading_actions">
+
+            <span class="icheck-inline" data-md-icheck>
+                <input type="checkbox" id="DirectInvoice" value="1" @(Model.DirectInvoice == true ? "checked" : "") />
+                <label class="inline-label">@Purchase.GenerateInvoice</label>
+            </span>
+            @ActionAuthorization.IsAuthorized("Create", "<a class='md-btn btnSaveMilk'>" + Common.Save + "</a>")
+            @ActionAuthorization.IsAuthorized("Create", "<a class='md-btn btnSaveAndDraft'>" + Common.SaveAsDraft + "</a>")
+            @ActionAuthorization.IsAuthorized("Create", "<a class='md-btn btnSaveMilkAndNew'>" + Common.SaveAndNew + "</a>")
+            @Html.ActionLink(Common.Close, "Index", "MilkPurchase", new { Area = "Purchase" }, new { @class = "md-btn " })
+            @Html.HiddenFor(model => model.ID)
+
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page_content_inner">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.TransNo</label>
+                                            @Html.TextBoxFor(model => model.TransNo, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Purchase.Date</label>
+                                                @Html.TextBoxFor(model => model.DateString, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar current-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <div class="uk-input-group ">
+                                                <label>@Common.PurchaseRequisition</label>
+                                                @Html.TextBoxFor(model => model.PurchaseRequisitionIDS, "", new { @class = "md-input label-fixed", @readonly = "readonly" })
+                                                <span class="uk-input-group-addon">
+                                                    <a data-uk-modal="{target:'#select-milk-pr',center:false }">
+                                                        <i class="uk-input-group-icon uk-icon-search"></i>
+                                                    </a>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.RequiredQuantity</label>
+                                            @Html.TextBoxFor(model => model.RequiredQty, "", new { @class = "md-input label-fixed mask-qty", @readonly = "readonly" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <div class="uk-autocomplete " id="supplier-autocomplete">
+                                                <div class="uk-input-group">
+                                                    <label>@Purchase.Supplier<span>*</span></label>
+                                                    @Html.TextBox("SupplierName", Model.SupplierName, new { @class = "md-input label-fixed" })
+                                                    <span class="uk-input-group-addon" data-uk-modal="{target:'#select-supplier',center:false}">
+                                                        <i class="uk-input-group-icon uk-icon-search"></i>
+                                                    </span>
+                                                    <script type="text/autocomplete">
+                                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                            {{~items}}
+                                                            <li data-value="{{ $item.Name }}"
+                                                                data-id="{{$item.ID}}"
+                                                                data-code="{{$item.Code}}">
+                                                                <a>
+                                                                    {{ $item.Name }} ({{{$item.Code }}})
+                                                                    <div>{{{ $item.Location }}}</div>
+                                                                </a>
+                                                            </li>
+                                                            {{/items}}
+
+                                                        </ul>
+                                                    </script>
+                                                </div>
+                                            </div>
+                                            @Html.HiddenFor(model => model.MilkSupplierID, new { @id = "SupplierID" })
+                                            @Html.Hidden("Code")
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.SlipNo<span>*</span></label>
+                                            <input type="text" class="md-input label-fixed " id="slip_number" />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.FatRange</label>
+                                            <select class="md-input label-fixed" id="FatRange">
+                                                <option value="0" data-price="0">Select</option>
+                                                @foreach (var item in Model.FatList)
+                                                {
+                                                    <option value="@item.ID" data-price="@item.Price">@item.FatRange</option>
+                                                }
+                                            </select>
+                                            @Html.Hidden("FatId")
+                                            @Html.Hidden("FatSupplieId")
+                                            @Html.Hidden("RequisitionIDs")
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.Qty<span>*</span></label>
+                                            <input type="text" class="md-input label-fixed mask-qty" id="txtQty" />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.Rate<span>*</span></label>
+                                            <input type="text" tabindex="-1" class="md-input mask-currency label-fixed" id="rate" readonly="readonly" />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.Amount</label>
+                                            <input type="text" tabindex="-1" class="md-input mask-currency label-fixed" id="amount" readonly="readonly" />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.Remarks<span>*</span></label>
+                                            <input type="text" tabindex="-1"  class="md-input label-fixed" id="Remarks" />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddMilk">@Common.Add</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2">
+                                            <label>Total Quantity</label>
+                                            @Html.TextBoxFor(model => model.TotalQty, new { @id = "totalQty", @class = "md-input label-fixed mask-currency x-large", @readonly = "readonly", @tabindex = "-1" })
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <label>Total Amount</label>
+                                            @Html.TextBoxFor(model => model.TotalAmount, new { @id = "totalAmount", @class = "md-input label-fixed mask-currency x-large", @readonly = "readonly", @tabindex = "-1" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-group">
+                    <table id="milk-purchase-item-list" class="uk-table" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="width-10">@Common.SerialNo</th>
+                                <th class="width-10"></th>
+                                <th class="width-250">@Purchase.SlipNo</th>
+                                <th class="width-80">@Purchase.FatRange</th>
+                                <th class="width-30">@Purchase.Qty</th>
+                                <th class="width-30">@Purchase.Rate</th>
+                                <th class="width-30">@Purchase.Amount</th>
+                                <th class="width-10">@Purchase.Remarks</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                if (Model.MilkPurchaseTrans != null)
+                                {
+                                    foreach (var item in Model.MilkPurchaseTrans.Select((value, i) => new { i = (i + 1), value }))
+                                    {
+                                        <tr class="included">
+                                            <td class="uk-text-center width-10">  @item.i  </td>
+                                            <td class="uk-text-center width-10 checked chkValid" data-md-icheck>
+                                                <input type="checkbox" class="chkCheck" checked />
+                                            </td>
+                                            <td class="slip_number">
+                                                @item.value.SlipNo
+                                            </td>
+                                            <td class="fat">
+                                                @item.value.FatContentFrom % - @item.value.FatContentTo %
+                                                <input type="hidden" class="fatId included" value="@item.value.FatRangeID" />
+                                            </td>
+                                            <td class="width-40">
+                                                <input type="text" class="md-input mask-qty txtQty included" value="@item.value.Qty" />
+                                            </td>
+
+                                            <td class="width-40">
+                                                <input type="text" class="md-input mask-currency rate included" value="@item.value.Rate" readonly="readonly" />
+                                            </td>
+                                            <td class="width-40">
+                                                <input type="text" class="md-input mask-currency amount included" value="@item.value.Amount" readonly="readonly" />
+                                            </td>
+                                            <td class="width-10 ">
+
+                                                <input type="text" class="md-input Remarks included" value="@item.value.Remarks" />
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                    <input type="hidden" id="item-count" value="@Model.MilkPurchaseTrans.Count()" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("~/Areas/Masters/Views/Supplier/PartialList.cshtml")
+@Html.Partial("~/Areas/Purchase/Views/MilkPurchase/GetMilkPurchaseRequisition.cshtml")
+@Scripts.Render("~/Js/Page/Supplier")
+@Scripts.Render("~/Js/Page/MilkPurchase")
+
+<script type="text/javascript">
+    milk_purchase.init();
+</script>

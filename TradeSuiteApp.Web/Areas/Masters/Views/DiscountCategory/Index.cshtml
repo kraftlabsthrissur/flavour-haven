@@ -1,0 +1,93 @@
+﻿@model IEnumerable<TradeSuiteApp.Web.Areas.Masters.Models.DiscountCategoryModel>
+@{
+    ViewBag.Title = @Masters.DiscountCategoryList;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>Discount Category</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.DiscountCategoryList</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Create", Html.ActionLink(Common.Create, "Create", "DiscountCategory", new { Area = "Masters" }, new { @class = "md-btn" }))
+
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="list-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+
+                <table id="Discount-list" class="uk-table">
+                    <thead>
+                        <tr>
+                            <th width="20">
+                                @Common.SerialNo
+                            </th>
+                            <th>
+                                @Masters.DiscountPercentage
+                            </th>
+                            <th class="width-100">
+                                @Masters.DiscountType
+                            </th>
+                            <th class="width-80">
+                                DiscountDays
+                            </th>
+                        </tr>
+                    </thead>
+                    <thead class="search">
+                        <tr>
+                            <th width="20">
+                                @Common.SerialNo
+                            </th>
+                            <th>
+                                @Masters.DiscountPercentage
+                            </th>
+                            <th>
+                                @Masters.DiscountType
+                            </th>
+                            <th>
+                                DiscountDays
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Select((value, i) => new { i = (i + 1), value }))
+                        {
+                            <tr>
+                                <td>
+                                    @item.i
+                                    @Html.HiddenFor(a => item.value.ID, new { @class = "ID" })
+                                </td>
+                                <td>
+                                    @item.value.DiscountPercentage
+                                </td>
+                                <td>
+                                    @item.value.DiscountType
+                                </td>
+                                <td>
+                                    @item.value.Days
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/Js/Page/DiscountCategory")
+<script type="text/javascript">
+    DiscountCategory.list();
+    DiscountCategory.bind_events();
+</script>
+

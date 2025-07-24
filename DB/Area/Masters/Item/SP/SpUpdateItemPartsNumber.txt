@@ -1,0 +1,17 @@
+CREATE PROCEDURE [Master].[SpUpdateItemPartsNumber](        
+@ID INT,        
+@ItemID INT, 
+@CreatedUserID INT
+)        
+AS        
+BEGIN
+
+UPDATE ItemPartsNumber SET IsDefault=0, ModifiedUserID=@CreatedUserID, ModifiedDate=CURRENT_TIMESTAMP WHERE ItemID=@ItemID
+IF(@ID>0)
+BEGIN
+UPDATE ItemPartsNumber SET IsDefault=1, ModifiedUserID=@CreatedUserID, ModifiedDate=CURRENT_TIMESTAMP WHERE ID=@ID
+END
+        
+END  
+  
+  

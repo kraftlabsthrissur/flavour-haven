@@ -1,0 +1,26 @@
+ALTER PROCEDURE [Master].[SpGetShippingAddressLocation]  
+(  
+ @LocationID INT  
+)  
+AS  
+  
+BEGIN  
+  
+SELECT A.LocationID,A.LocationCode,A.Location ,A.SupplierID,A.SupplierCode,A.Supplier,A.AddressID,  
+A.Location AS Place,A.IsDefault,A.IsDefaultShipping,A.StateID ,A.AddressLine1,A.AddressLine2,A.AddressLine3,A.PIN,  
+A.MobileNo,A.State     
+  FROM viShippingAddresses A   
+  INNER JOIN LocationGroup LG on LG.ID = A.LocationGroupID    
+  INNER JOIN LocationHead LH on LH.ID = A.LocationHeadID    
+  WHERE (LocationGroupID <> 1 OR A.LocationID IN (SELECT LocationHeadID FROM Location WHERE ID = @LocationID ))     
+  AND LocationHeadID IN (SELECT LocationHeadID FROM Location WHERE ID = @LocationID )    
+  AND A.PartyType = 'Location'  
+  ORDER BY LocationID  
+    
+END  
+  
+  
+  
+  
+  
+  

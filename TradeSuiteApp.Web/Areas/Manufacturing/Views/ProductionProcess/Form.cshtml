@@ -1,0 +1,145 @@
+﻿@model  TradeSuiteApp.Web.Areas.Manufacturing.Models.ProductionProcessViewModel
+@{
+    ViewBag.Title = "Form";
+}
+
+<div class="uk-grid" data-uk-grid-margin>
+    <div class="uk-width-medium-1-1">
+        <div class="uk-form-row">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-1-10">
+                    <label>@Manufacturing.ProcessNo</label>
+                    @Html.TextBoxFor(model => model.SlNo, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                </div>
+
+            </div>
+        </div>
+        <div class="uk-form-row">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-1-4">
+                    <div class="uk-autocomplete " id="party-autocomplete">
+                        <div class="uk-input-group">
+                            <label>@Manufacturing.ItemName<span>*</span></label>
+                            @Html.TextBoxFor(model => model.ItemName, new { @class = "md-input label-fixed" })
+                            <span class="uk-input-group-addon"><a href="#" data-uk-modal="{target:'#select_party'}"><i class="material-icons md-24"><b></b></i></a></span>
+                            <script type="text/autocomplete">
+                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                    {{~items}}
+                                    <li data-value="{{ $item.Name }}"
+                                        data-id="{{$item.ID}}">
+                                        <a>
+                                            {{ $item.Name }} ({{{ $item.Code }}})
+                                            <div>{{{ $item.Location }}}</div>
+                                        </a>
+                                    </li>
+                                    {{/items}}
+                                </ul>
+                            </script>
+                        </div>
+                    </div>
+                 
+                </div>
+
+
+
+                <div class="uk-width-medium-1-10">
+                    <label for="uk_dp_item">@Manufacturing.BatchNo</label>
+                    @Html.DropDownListFor(model => model.BatchID, Model.BatchList, "Select", new { @class = "md-input label-fixed" })
+                </div>
+
+
+
+
+                <div class="uk-width-medium-1-10">
+                    <label for="uk_dp_start">@Manufacturing.Batchsize</label>
+                    @Html.TextBoxFor(model => model.BatchSize, new { @class = "md-input label-fixed" })
+                </div>
+
+                <div class="uk-width-medium-1-10">
+                    <button class="md-btn" id="btnAddProduct">Add</button>
+                </div>
+
+            </div>
+
+
+            <hr />
+
+
+            <br />
+
+            <div class="uk-grid">
+                <div class="uk-width-1-1">
+
+
+                    <div class="tablescroll">
+                        <table id="production-process-items-list" class="uk-table" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th class="width-10">@Common.SerialNo</th>
+                                    <th class="width-50">@Manufacturing.Stage</th>
+                                    <th class="width-50">@Manufacturing.ProcessName</th>
+                                    <th class="width-50">@Manufacturing.StartTime</th>
+                                    <th class="width-50">@Manufacturing.IPQty</th>
+                                    <th class="width-50">@Manufacturing.EndTime</th>
+                                    <th class="width-50">@Manufacturing.OPQty</th>
+
+                                    <th class="width-50">@Manufacturing.SkilledLabour</th>
+                                    <th class="width-50">@Manufacturing.UnSkilledLabour</th>
+                                    <th class="width-50">@Manufacturing.MachineHour</th>
+                                    <th class="width-50">@Manufacturing.DoneBy</th>
+                                    <th class="width-50">@Manufacturing.Status</th>
+
+                            </thead>
+                            <tbody>
+                                @if (Model.Items != null)
+                                {
+                                    foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                                    {
+                                        <tr>
+                                            <td class="uk-text-center">
+                                                @item.i
+                                                @*<input type="hidden" class="ItemID" readonly="readonly" value="@item.value." />*@
+
+                                            </td>
+
+                                            <td class=""><input type="text" class="md-input uk-text " value="@item.value.stage"  /></td>
+                                            <td class=""><input type="text" class="md-input uk-text " value="@item.value.ProcessName"  /></td>
+                                            <td class=""><input type="text" class="md-input uk-text " value="@item.value.StartTime" /></td>
+                                            <td class=""><input type="number" min="0" class="md-input uk-text mask-qty" value="@item.value.InputQuantity"  /></td>
+                                            <td class=""><input type="text" class="md-input uk-text " value="@item.value.EndTime" /></td>
+
+                                            <td class=""><input type="number" min="0" class="md-input uk-text mask-qty" value="@item.value.OutputQty" /></td>
+
+
+                                            <td class=""><input type="number" min="0" class="md-input uk-text" value="@item.value.SkilledLabours" readonly="readonly" /></td>
+
+                                            <td class=""><input type="text" class="md-input uk-text " value="@item.value.UnSkilledLabours" readonly="readonly" /></td>
+                                            <td class=""><input type="text" class="md-input uk-text " value="@item.value.MachineHours" readonly="readonly" /></td>
+                                            <td class=""><input type="text" class="md-input uk-text " value="@item.value.DoneBy" readonly="readonly" /></td>
+                                            <td class="">@Html.DropDownListFor(model => item.value.StatusId, item.value.StatusList, "Select", new { @class = "md-input" })</td>
+
+
+                                        </tr>;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+
+            <br />
+
+
+        </div>
+    </div>
+</div>
+
+
+@*@{Html.RenderPartial("/Areas/Masters/Views/Party/PartialList.cshtml", Model); }
+    @{Html.RenderPartial("/Areas/Sales/Views/SalesOrder/PartialList.cshtml", Model.SalesOrders); }*@
+

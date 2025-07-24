@@ -1,0 +1,67 @@
+﻿@model List<TradeSuiteApp.Web.Areas.Manufacturing.Models.PreProcessIssueItemModel>
+@*<div class="uk-modal" id="select-issueditem" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog uk-modal-dialog-large" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">@Manufacturing.Item<i class="material-icons" data-uk-tooltip="{pos:'top'}" title="headline tooltip"></i></h3>
+        </div>*@
+
+
+
+        <table id="tbl-preprocess-item" class="uk-table" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th class="width-30">@Common.SerialNo</th>
+                    <th class="width-10"></th>
+                    <th class="width-60">@Manufacturing.IssuedItem</th>
+                    <th class="">@Manufacturing.UOM</th>
+                    <th class="width-120">@Manufacturing.Quantity</th>
+                    @*<th class="">@Manufacturing.TransDate</th>
+                        <th class="width-100">@Manufacturing.Activity</th>*@
+                </tr>
+            </thead>
+            <thead class="search">
+                <tr>
+                    <th>@Common.SerialNo</th>
+                    <th></th>
+                    <th>@Manufacturing.IssuedItem</th>
+                    <th>@Manufacturing.UOM</th>
+                    <th>@Manufacturing.Quantity</th>
+                    @*<th>@Manufacturing.TransDate</th>
+                        <th>@Manufacturing.Activity</th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Count() > 0)
+                {
+                    foreach (var item in Model.Select((value, i) => new { i = i + 1, value }))
+                    {
+                        <tr>
+                            <td>@item.i</td>
+                            <td>
+                                @*<input type='radio' class='uk-radio ItemID' name='ItemID' data-md-icheck value="@item.value.ID" >*@
+
+                                <input type="hidden" class="hdnID" value="@item.value.ID" />
+                                <input type="hidden" class="hdnItemName" value="@item.value.ItemName" />
+                                <input type="hidden" class="hdnItemID" value="@item.value.ItemID" />
+                                <input type="hidden" class="hdnUnit" value="@item.value.Unit" />
+                                <input type="hidden" class="hdnUnitID" value="@item.value.UnitID" />
+                                <input type="hidden" class="hdnQuantity" value="@item.value.Quantity" />
+                                <input type="hidden" class="hdnProcessName" value="@item.value.ProcessName" />
+                                <input type="radio" name="radUnProcessedMaterialPurification" />
+
+                            </td>
+                            <td>@item.value.ItemName</td>
+                            <td>@item.value.Unit</td>
+                            <td>@item.value.Quantity</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+        @*<div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn md-btn-flat uk-modal-close">Close</button>
+            <button type="button" class="md-btn md-btn-flat uk-modal-close" id="btnOKPreProcessIssueItem">Ok</button>
+        </div>
+    </div>
+</div>*@

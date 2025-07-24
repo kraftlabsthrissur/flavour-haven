@@ -1,0 +1,123 @@
+﻿@model  TradeSuiteApp.Web.Areas.Masters.Models.SequenceModel
+@{
+    ViewBag.Title = "view";
+}
+
+<li aria-hidden="false" class="uk-active" style="width:100%">
+    <div class="uk-grid sequence" data-uk-grid-margin>
+        @Html.HiddenFor(m => m.SequenceType, new { @class = "DefinitionSequence" })
+        <div class="uk-width-medium-1-1">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-2-10">
+                    <div class="uk-autocomplete " id="Item-autocomplete">
+                        <label>@Masters.ProductName</label>
+                        @Html.TextBoxFor(m => m.ProductName, "", new { @class = "md-input label-fixed ", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.Unit</label>
+                    @Html.TextBoxFor(m => m.Unit, "", new { @class = "md-input ProductUnit", @readonly = "readonly" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.ProcessStage</label>
+                    @Html.TextBoxFor(m => m.ProcessStage, "", new { @class = "md-input", @readonly = "readonly" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.StandardOutputQty</label>
+                    @Html.TextBoxFor(m => m.StandardOutputQty, "", new { @class = "md-input label-fixed mask-production-qty", @readonly = "readonly" })
+                </div>
+                <div class="uk-width-medium-1-10 BatchTypeList @(Model.SequenceType == "PackingSequence" ? "visible" : "uk-hidden")">
+                    <label for="uk_dp_start">@Manufacturing.BatchType</label>
+                    @Html.DropDownListFor(Model => Model.BatchTypeID, Model.BatchTypeList, "All", new { @class = "md-input label-fixed BatchTypeID" })
+                </div>
+            </div>
+            <br />
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-1-1">
+                    <label class="uk-text-bold">Materials</label>
+                    <table class="uk-table material-list" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="width-20">@Common.SerialNo</th>
+                                <th class="width-20">@Masters.BatchType</th>
+                                <th class="width-60">@Masters.MaterialName</th>
+                                <th class="width-20">@Masters.Unit</th>
+                                <th class="width-30">@Masters.Qty</th>
+                                <th class="width-50">@Masters.UsageMode</th>
+                                <th class="width-50">@Masters.PrimaryToPackingUnitConversionFactor</th>
+                                <th class="width-50">@Masters.StartDate</th>
+                                <th class="width-50">@Masters.EndDate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                            {
+                                <tr data-batch-type-id="@item.value.BatchTypeID">
+                                    <td class="uk-text-center serial-no">@(1 + @Model.Items.IndexOf(item.value))</td>
+                                    <td class="BatchType">@item.value.BatchType</td>
+                                    <td class="uk-text">@item.value.MaterialName
+                                        <input type="hidden" class="ID" value="@item.value.ID" />
+                                    </td>
+                                    <td class="uk-text">@item.value.Unit</td>
+                                    <td class="uk-text-right mask-production-qty">@item.value.Qty</td>
+                                    <td class="uk-text">@item.value.UsageMode</td>
+                                    <td class="uk-text-right mask-production-qty">@item.value.PrimaryToPackUnitConFact</td>
+                                    <td class="uk-text ">@item.value.StartDate</td>
+                                    <td class="uk-text ">@item.value.EndDate</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br />
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-1-1">
+                    <label class="uk-text-bold">Process</label>
+                    <table class="uk-table process-list" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="width-20" rowspan="2">@Common.SerialNo</th>
+                                <th class="width-80" rowspan="2">@Masters.ProcessName</th>
+                                <th class="width-80" rowspan="2">@Masters.Steps</th>
+                                <th class="width-120" colspan="2">@Masters.SkilledLabour</th>
+                                <th class="width-120" colspan="2">@Masters.UnSkilledLabour</th>
+                                <th class="width-120" colspan="2">@Masters.Machine</th>
+                                <th class="width-80" rowspan="2">@Masters.Process</th>
+                            </tr>
+                            <tr>
+                                <th class="width-60">@Masters.Minutes</th>
+                                <th class="width-60">@Masters.Cost</th>
+                                <th class="width-60">@Masters.Minutes</th>
+                                <th class="width-60">@Masters.Cost</th>
+                                <th class="width-60">@Masters.Minutes</th>
+                                <th class="width-60">@Masters.Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model.Processes.Select((value, i) => new { i = (i + 1), value }))
+                            {
+                                <tr>
+                                    <td class="uk-text-center">@(1 + @Model.Processes.IndexOf(item.value))</td>
+                                    <td class="uk-text">
+                                        @item.value.ProcessName
+                                    </td>
+                                    <td class="uk-text">@item.value.Steps</td>
+                                    <td class="uk-text-right mask-qty">@item.value.SkilledLabourMinutes</td>
+                                    <td class="uk-text-right mask-qty">@item.value.SkilledLabourCost</td>
+                                    <td class="uk-text-right mask-qty">@item.value.UnSkilledLabourMinutes</td>
+                                    <td class="uk-text-right mask-qty">@item.value.UnSkilledLabourCost</td>
+                                    <td class="uk-text-right mask-qty">@item.value.MachineMinutes</td>
+                                    <td class="uk-text-right mask-qty">@item.value.MachineCost</td>
+                                    <td class="uk-text">@item.value.Process</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</li>
+

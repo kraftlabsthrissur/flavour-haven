@@ -1,0 +1,120 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Masters.Models.StockAdjustmentScheduleModel
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-1-1">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.TotalNoOfItems</label>
+                            @Html.TextBoxFor(m => m.ItemCount, new { @class = "md-input", @readonly = "readonly" })
+
+
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.TimeToCompleteOneCircle</label>
+                            @Html.TextBoxFor(m => m.TimeLimit, new { @class = "md-input mask-numeric", @readonly = "readonly" })
+
+
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.ItemsToCheckAtATime</label>
+                            @Html.TextBoxFor(m => m.FrequencyOfItem, new { @class = "md-input mask-numeric ", @readonly = "readonly" })
+
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="uk-form-row panel">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-1">
+                            <label>@Masters.TimeToScheduleCheck</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="uk-form-row ">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <label></label>
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.FromTime</label>
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.ToTime</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row ">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.Morning</label>
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <input type="text" class="md-input time txtStartTime" value="@Model.MorningStartTimeStr" id="MorningStartTimeStr" , readonly = "readonly"/>
+
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <input type="text" class="md-input time txtEndTime" value="@Model.MorningEndTimeStr" id="MorningEndTimeStr" , readonly = "readonly" />
+
+                        </div>
+                    </div>
+                </div>
+
+
+                @*<div class="uk-form-row ">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.Evening</label>
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <input type="text" class="md-input time txtStartTime" value="@Model.EveningStartTimeStr" id="EveningStartTimeStr" , readonly = "readonly"/>
+
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <input type="text" class="md-input time txtEndTime" value="@Model.EveningEndTimeStr" id="EveningEndTimeStr" , readonly = "readonly"/>
+
+                        </div>
+                    </div>
+                </div>*@              
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid">
+            <div class="uk-width-1-1">
+                <div id="date-details-tblContainer">
+                    <table id="tbl-date-details" class="uk-table" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="width-10">@Common.SerialNo</th>
+                                <th class="width-250">@Masters.ExcludedDates</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var date in Model.ExcludedDateList)
+                            {
+                                <tr>
+                                    <td class="uk-text-center">
+                                        @(1 + Model.ExcludedDateList.IndexOf(date))
+                                        <input type="hidden" class="ID " value="@date.ID">
+                                    </td>
+                                    <td>@date.Date</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="item-count" value="@Model.ExcludedDateList.Count()">
+    </div>
+</div>

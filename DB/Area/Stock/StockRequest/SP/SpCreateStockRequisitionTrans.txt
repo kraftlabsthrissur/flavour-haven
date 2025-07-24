@@ -1,0 +1,33 @@
+  
+ALTER PROCEDURE [Stock].[SpCreateStockRequisitionTrans](  
+@StockRequisitionID Int,  
+@ItemID Int,  
+@RequiredQty Numeric(18,4),  
+@RequiredDate DateTime,  
+@RequiredTime DateTime,  
+@Remarks Varchar(200),  
+@BatchTypeID Int,  
+@Stock Numeric(18,4),  
+@AverageSales Numeric(18,4),  
+@SuggestedQty numeric(18,4),  
+@UnitID int, 
+@SecondaryUnit Varchar(200),
+@SecondaryUnitSize numeric(18,4),
+@SecondaryQty numeric(18,4),
+@FinYear Int,  
+@LocationID Int,  
+@ApplicationID Int  
+) AS   
+Begin  
+SET NOCOUNT ON  
+Insert into StockRequisitionTrans(StockRequisitionID,ItemID,RequiredQty,RequiredDate,RequiredTime,Remarks,BatchTypeID,  
+IssuedQty,Stock, AverageSales,FinYear,LocationID,ApplicationID,UnitID,SuggestedQty,SecondaryUnit,SecondaryUnitSize,SecondaryQty)  
+Values(@StockRequisitionID, @ItemID,@RequiredQty, @RequiredDate, @RequiredTime, @Remarks, @BatchTypeID,   
+0, @Stock, @AverageSales, @FinYear,@LocationID,@ApplicationID,@UnitID,@SuggestedQty,@SecondaryUnit,@SecondaryUnitSize,@SecondaryQty)  
+End  
+
+
+  
+  
+  
+  

@@ -1,0 +1,159 @@
+﻿@model TradeSuiteApp.Web.Areas.Reports.Models.StockModel
+@{
+    ViewBag.Title = "Stock Ledger Report";
+    ViewBag.ReportTitle = "Stock Ledger ";
+}
+
+@Scripts.Render("~/Js/Page/_Version2/Stock")
+
+<div id="page_content_inner" class="stock-report">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-2-10">
+                            <form action="/Reports/Stock/StockLedgerByDate" id="report-filter-form" method="POST">
+                                <div class="uk-form-row uk-hidden">
+                                    <div class="panel">
+                                        <label>Report Type</label>
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-1-2">
+                                                <input type="radio" class="stock_ledger_type" name="ReportType" data-md-icheck value="Summary" /> @Html.Label("Summary")
+                                            </div>
+                                            <div class="uk-width-medium-1-2">
+                                                <input type="radio" class="stock_ledger_type" name="ReportType" data-md-icheck checked="checked" value="Detail" /> @Html.Label("Detail")
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="uk-form-row mode">
+                                    <div class="panel">
+                                        <label>Mode</label>
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-1-2">
+                                                <input type="radio" class="bytype" id="bytypedate" name="Type" data-md-icheck checked="" value="ByDate" /> @Html.Label("By Date Wise")
+                                            </div>
+                                            <div class="uk-width-medium-1-2">
+
+                                                <input type="radio" class="bytype" id="bytypeitem" name="Type" data-md-icheck value="ByItemWise" /> @Html.Label("By Item Wise")
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2 uk-hidden">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.Fromdate</label>
+                                                @Html.TextBoxFor(model => model.FromDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2 ">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.StockAsOn</label>
+                                                @Html.TextBoxFor(model => model.ToDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label>@Reports.Location</label>
+                                                @Html.DropDownListFor(Model => Model.LocationFromID, Model.LocationList, "Select", new { @class = "md-input label-fixed", @id = "LocationFromID" })
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label>@Reports.Premises</label>
+                                                @Html.DropDownListFor(Model => Model.PremisesFromID, Model.PremiseList, "Select", new { @class = "md-input label-fixed", @id = "PremisesFromID" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="uk-form-row  ">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1 ">
+                                            <label for="uk_dp_start">@Reports.Itemcategory</label>
+                                            @Html.DropDownListFor(Model => Model.ItemCategoryID, Model.ItemCategoryList, "Select", new { @class = "md-input label-fixed", @id = "ItemCategoryID" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="uk-form-row">
+                                    <div class="uk-grid ">
+                                        <div class="uk-width-medium-1-1  ">
+                                            <div class="uk-autocomplete " id="item-autocomplete">
+                                                <label>@Stock.Item</label>
+                                                @Html.TextBox("ItemName", "", new { @class = "md-input label-fixed" })
+
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Name }}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Name }}
+                                                                <div>{{{ $item.Code }}}</div>
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.Hidden("ItemID")
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="uk-form-row uk-hidden ">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1 ValueType">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.ValueOn</label>
+                                                @Html.DropDownListFor(Model => Model.ValueType, Model.ValueList, new { @class = "md-input label-fixed", @id = "ValueType" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="report-filter-submit">Show</button>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <a class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light " id="Refresh">Reset</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="uk-width-medium-8-10 ">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="" id="report-viewer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

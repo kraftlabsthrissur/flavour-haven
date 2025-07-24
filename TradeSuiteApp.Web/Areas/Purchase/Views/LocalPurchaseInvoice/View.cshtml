@@ -1,0 +1,93 @@
+﻿@model TradeSuiteApp.Web.Areas.Purchase.Models.LocalPurchaseInvoiceModel
+@{
+    ViewBag.Title = "Form";
+}
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8 uk-row-first">
+                            <label>@Purchase.TransNo</label>
+                            @Html.TextBoxFor(model => model.PurchaseOrderNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Purchase.PODate</label>
+                            @Html.TextBoxFor(model => model.PurchaseOrderDate, "{0:dd-MMM-yyyy}", new { @class = "md-input", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-6">
+                            <div class="uk-input-group">
+                                <label>@Purchase.SupplierReference</label>
+                                @Html.TextBoxFor(model => model.SupplierReference, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-1">
+                            @Html.HiddenFor(model => model.GSTAmount)
+                            <label>@Purchase.NetAmount</label>
+                            @Html.TextBoxFor(model => model.NetAmount, new { @class = "md-input mask-sales-currency label-fixed x-large", @tabindex = "-1", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="section-group">
+    <div class="tablescroll">
+        <table id="purchase-order-items-list" class="uk-table" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-150">@Purchase.ItemName</th>
+                    <th class="width-20">@Purchase.Unit</th>
+                    <th class="width-50">@Purchase.Qty</th>
+                    <th class="width-80">@Purchase.Rate</th>
+                    <th class="width-80">@Purchase.Value</th>
+                    <th class="width-40">@Purchase.GSTper</th>
+                    <th class="width-80">@Purchase.GSTAmount</th>
+                    <th class="width-100">@Purchase.Total</th>
+                    <th class="width-100">@Purchase.Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items != null)
+                {
+                    foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td class="uk-text-center serial-no">@(1 + @Model.Items.IndexOf(item))</td>
+                            <td class="item-name">@item.ItemName<input type="hidden" class="ItemID" value=@item.ItemName />
+                                <input type="hidden" class="UnitID" value="@item.UnitID" />
+                               <input type="hidden" class="CGST" value="@item.CGSTAmount" />
+                               <input type="hidden" class="CGSTPercent" value="@item.CGSTPercent" /></td>
+                            <td class="Unit">@item.Unit</td>
+                            <td><input type="text" class="md-input mask-production-qty Qty" value="@item.Qty" readonly /></td>
+                            <td><input type="text" class="md-input mask-production-qty Rate" value="@item.Rate" readonly /></td>
+                            <td><input type="text" class="md-input mask-production-qty value" value="@item.Value" readonly /></td>
+                            <td><input type="text" class="md-input mask-production-qty GSTPercentage" value="@item.GSTPercentage"readonly /></td>
+                            <td><input type="text" class="md-input mask-production-qty GSTAmnt" value="@item.GSTAmount" readonly /></td>
+                            <td><input type="text" class="md-input mask-production-qty TotalAmnt" value="@item.TotalAmount"readonly /></td>
+                            <td class="Remarks">@item.Remarks</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <input type="hidden" id="item-count" value="0" />
+    </div>
+</div>
+
+
+
+
+

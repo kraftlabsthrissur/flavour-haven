@@ -1,0 +1,145 @@
+﻿@model TradeSuiteApp.Web.Areas.Sales.Models.SalesInquiryModel
+@{
+    ViewBag.Title = "Form";
+}
+
+<div class="section-group">
+    <div class="section-group">
+        <div class="uk-form-row">
+            <div class="uk-grid" data-uk-grid-margin="">
+                <div class="uk-width-medium-8-10">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-1-8">
+                                <label>@Sales.InquiryNo</label>
+                                @Html.TextBoxFor(model => model.SalesInquiryNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label for="uk_dp_start">@Sales.InquiryDate</label>
+                                @Html.TextBoxFor(model => model.SalesInquiryDate, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <div class="uk-input-group">
+                                    <label for="uk_dp_start">@Sales.RequestedDelivaryDate</label>
+                                    @Html.TextBoxFor(model => model.RequestedDelivaryDate, new { @class = "md-input label-fixed date future-date", @disabled = "disabled" })
+                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <div class="uk-input-group">
+                                    <label for="uk_dp_start">@Sales.RequestExpiryDate</label>
+                                    @Html.TextBoxFor(model => model.RequestExpiryDate, new { @class = "md-input label-fixed date future-date", @disabled = "disabled" })
+                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-2-8">
+                                <label>@Sales.Address</label>
+                                @Html.TextBoxFor(model => model.RequestedCustomerAddress, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Sales.PhoneNumber</label>
+                                @Html.TextBoxFor(model => model.PhoneNo1, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Sales.SecondPhoneNo</label>
+                                @Html.TextBoxFor(model => model.PhoneNo2, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+
+                            <div class="uk-width-medium-2-8">
+                                <label>@Sales.RequestedCustomerName</label>
+                                @Html.TextBoxFor(model => model.RequestedCustomerName, new { @class = "md-input label-fixed", @tabindex = "-1", @disabled = "disabled" })
+                            </div>
+
+                            <div class="uk-width-medium-1-8">
+                                <label>Make</label>
+                                @Html.TextBoxFor(model => model.Make, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>Model</label>
+                                @Html.TextBoxFor(model => model.Model, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>Year</label>
+                                @Html.TextBoxFor(model => model.Year, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            </div>
+                            <div class="uk-width-medium-2-8">
+                                <label>SI/VIN Number</label>
+                                @Html.TextBoxFor(model => model.SIOrVINNumber, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-width-medium-2-10">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-1-1">
+                                <label>@Sales.NetAmount</label>
+                                @Html.TextBoxFor(model => model.NetAmount, new { @class = "md-input label-fixed x-large " + Model.normalclass, @tabindex = "-1", @disabled = "disabled" })
+                                @Html.Hidden("NetAmountValue")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <table id="sales-inquiry-items-list" class="uk-table" cellspacing="0" style="width:100%;">
+        <thead>
+            <tr>
+                <th class="width-10">@Common.SerialNo</th>
+                <th class="width-60">@Sales.ItemCode</th>
+                <th class="width-120">@Sales.ItemName</th>
+                <th class="width-60">@Sales.PartsNumber</th>
+                <th class="width-60">@Sales.Unit</th>
+                <th class="width-60">@Sales.DeliveryTerm</th>
+                <th class="width-60">@Sales.Rate</th>
+                <th class="width-60">@Sales.Qty</th>
+                <th class="width-80">@Sales.GrossAmt</th>
+                <th class="width-30">@Sales.VAT</th>
+                <th class="width-40">@Sales.VATAmount</th>
+                <th class="width-100">@Sales.NetAmount</th>
+                <th class="width-20"></th>
+            </tr>
+
+        </thead>
+        <tbody>
+            @if (Model.Items != null)
+            {
+                foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                {
+                    <tr data-uk-tooltip="{cls:long-text}" title="">
+                        <td class="uk-text-center">@item.i</td>
+                        <td class="">
+                            @item.value.ItemCode
+                            <input type="hidden" class="ItemCode" value="@item.value.ItemCode" />
+                            <input type="hidden" class="ItemID" value="@item.value.ItemID" />
+                        </td>
+                        <td><input type="text" class="md-input Name" value="@item.value.ItemName" readonly="readonly" /></td>
+                        <td><input type="text" class="md-input PartsNumber" value="@item.value.PartsNumber" readonly="readonly" /></td>
+                        <td>@item.value.UnitName</td>
+                        <td><input type="text" class="md-input DeliveryTerm" value=" @item.value.DeliveryTerm" readonly="readonly" />  </td>
+                        <td><input type="text" class="md-input MRP  @Model.normalclass" value="@item.value.Rate" readonly="readonly" /></td>
+                        <td><input type="text" class="md-input mask-sales2-currency Qty" value="@item.value.Qty" readonly="readonly" /></td>
+                        <td><input type="text" class="md-input GrossAmount @Model.normalclass" value="@item.value.GrossAmount" readonly="readonly" /></td>
+                        <td><input type="text" class="VATPercentage mask-sales2-currency" value="@item.value.VATPercentage" readonly="readonly" /></td>
+                        <td><input type="text" class="VATAmount @Model.normalclass" value="@item.value.VATAmount" readonly="readonly" /></td>
+                        <td><input type="text" class="NetAmount @Model.normalclass" value="@item.value.NetAmount" readonly="readonly" /></td>
+                        <td class="uk-text-center">
+                            <a class="remove-item">
+                                <i class="uk-icon-remove"></i>
+                            </a>
+
+                        </td>
+                    </tr>
+
+                }
+            }
+        </tbody>
+    </table>
+</div>

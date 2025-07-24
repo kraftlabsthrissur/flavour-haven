@@ -1,0 +1,108 @@
+INSERT INTO Category (Name,CategoryGroupID,CreatedUserID,CreatedDate)
+SELECT SUB.Item_Category,1,1,CURRENT_TIMESTAMP FROM
+(select distinct Item_Category from Itemtemplate)SUB
+
+INSERT INTO Category (Name,CategoryGroupID,CreatedUserID,CreatedDate)
+SELECT SUB.Part_Class,2,1,CURRENT_TIMESTAMP FROM
+(select distinct Part_Class from Itemtemplate)SUB
+
+INSERT INTO UnitGroup (Name,CreatedUserID,CreatedDate)
+SELECT SUB.UOM_Group,1,CURRENT_TIMESTAMP FROM
+(select distinct UOM_Group from Itemtemplate)SUB
+
+INSERT INTO Unit (Name,QOM,UOM,CF,CreatedUserID,CreatedDate,PackSize,UnitGroupID)
+SELECT SUB.Inventory_UoM,1,SUB.Inventory_UoM,1,1,CURRENT_TIMESTAMP,1,(select ID from UnitGroup g WHERE g.Name=SUB.Inventory_UoM) FROM
+(select distinct Inventory_UoM from Itemtemplate)SUB
+
+INSERT INTO CostingMethod (Name,CreatedUserID,CreatedDate,IsActive)
+SELECT SUB.Cost_Method,1,CURRENT_TIMESTAMP,1 FROM
+(select distinct Cost_Method from Itemtemplate)SUB
+
+
+
+select Item_Code,Item_Name,(select ID from Category c WHERE c.Name=t.Item_Category AND c.CategoryGroupID=1)CategoryID,
+Remarks,Part_Number,(select ID from Category c WHERE c.Name=t.Part_Class AND c.CategoryGroupID=2)PurchaseCategoryID,
+(select ID from Category c WHERE c.Name=t.Part_Group AND c.CategoryGroupID=4)businessCategoryID,
+(select ID from UnitGroup g WHERE g.Name=t.UOM_Group)UnitGroupID,
+(select ID from Unit u WHERE u.Name=t.Inventory_UoM)InventoryUnitID,(select ID from Unit u WHERE u.Name=t.Purchase_UoM)PurchaseUnitID,
+(select ID from Unit u WHERE u.Name=t.Sales_UoM)SalesUnitID,(select ID from Unit u WHERE u.Name=t.Loose_UoM)LooseUnitID,
+Conversion_Factor_Purchase_to_Inventory,Conversion_Factor_Purchase_to_Inventory ConversionFactorPtoI,conversion_Factor_Sales_to_Inventory,
+conversion_Factor_Purchase_to_Loose,(select m.ID from CostingMethod m WHERE m.Name=t.Cost_Method)CostingMethodID,Reorder_Level,Reorder_Quantity,
+Make,Model
+from Itemtemplate t
+
+select Code,Name,CategoryID,SanskritName,Description,PurchaseCategoryID,businessCategoryID,UnitGroupID,
+InventoryUnitID,PurchaseUnitID,SalesUnitID,LooseUnitID,ConversionFactorPurchaseToInventory,ConversionFactorPtoI,ConversionFactorSalesToInventory,
+ConversionFactorPurchaseToLoose,CostingMethodID,ReOrderLevel,ReOrderQty,
+Make,Model from Item
+
+select Cost_Price,Sale_Price,Landed_Cost,Stock_Item_Yes_No,Stock_Value_Yes_No,Tax_Type,Tax_Category,Warehoue,Bin,Lot,Alternate_Item_Name from Itemtemplate
+
+
+
+
+INSERT INTO Item (Code,Name,CategoryID,SanskritName,Description,PurchaseCategoryID,businessCategoryID,UnitGroupID,
+InventoryUnitID,PurchaseUnitID,SalesUnitID,LooseUnitID,ConversionFactorPurchaseToInventory,ConversionFactorPtoI,ConversionFactorSalesToInventory,
+ConversionFactorPurchaseToLoose,CostingMethodID,ReOrderLevel,ReOrderQty,
+Make,Model,ItemTypeID,QcCategoryID,UnitID,IsQCRequired,Price,GSTCategoryID,IsSaleable,IsPORequired,IsStockValue,IsActive,BirthDate,DiscontinuedDate,
+MinSalesQtyFull,MinSalesQtyLoose,MaxSalesQty,MaxSalesQty,IsDiscontinued) 
+
+select Item_Code,Item_Name,(select ID from Category c WHERE c.Name=t.Item_Category AND c.CategoryGroupID=1)CategoryID,
+Remarks,Part_Number,(select ID from Category c WHERE c.Name=t.Part_Class AND c.CategoryGroupID=2)PurchaseCategoryID,
+(select ID from Category c WHERE c.Name=t.Part_Group AND c.CategoryGroupID=4)businessCategoryID,
+(select ID from UnitGroup g WHERE g.Name=t.UOM_Group)UnitGroupID,
+(select ID from Unit u WHERE u.Name=t.Inventory_UoM)InventoryUnitID,(select ID from Unit u WHERE u.Name=t.Purchase_UoM)PurchaseUnitID,
+(select ID from Unit u WHERE u.Name=t.Sales_UoM)SalesUnitID,(select ID from Unit u WHERE u.Name=t.Loose_UoM)LooseUnitID,
+Conversion_Factor_Purchase_to_Inventory,Conversion_Factor_Purchase_to_Inventory ConversionFactorPtoI,conversion_Factor_Sales_to_Inventory,
+conversion_Factor_Purchase_to_Loose,(select m.ID from CostingMethod m WHERE m.Name=t.Cost_Method)CostingMethodID,Reorder_Level,Reorder_Quantity,
+Make,Model,0,0,0,0,0,0,1,0,0,1,GETDATE()-100,GETDATE()+10000,0,0,0,0,0 from Itemtemplate t
+
+
+
+select Code,Name,CategoryID,SanskritName,Description,PurchaseCategoryID,businessCategoryID,UnitGroupID,
+InventoryUnitID,PurchaseUnitID,SalesUnitID,LooseUnitID,ConversionFactorPurchaseToInventory,ConversionFactorPtoI,ConversionFactorSalesToInventory,
+ConversionFactorPurchaseToLoose,CostingMethodID,ReOrderLevel,ReOrderQty,
+Make,Model from Item
+
+
+select Stock_Item_Yes_No,Stock_Value_Yes_No,Tax_Type,Tax_Category,Warehoue,Bin,Lot,Alternate_Item_Name from Itemtemplate
+
+
+insert into Batch (ItemType,ItemID,BatchNo,CustomBatchNo,ManufacturingDate,ExpiryDate,BatchType,IsSuspended,CreatedUserID,
+CreatedDate,LocationID,ApplicationID,BasePriceListID,CostPrice,RetailMRP,LandedCost,CurrencyID)
+select '' ItemType,i.id ItemID,(i.Code+'_'+'_99')BatchNo,(i.Code+'_'+'_99')CustomBatchNo,(GETDATE()-100)ManufacturingDate,(GETDATE()+10000)ExpiryDate,1 BatchType,0 IsSuspended,CreatedUserID,
+CreatedDate,99 LocationID,1 ApplicationID,1 BasePriceListID,t.Cost_Price CostPrice,Sale_Price RetailMRP,Landed_Cost LandedCost,5 CurrencyID from Item i 
+inner join ItemTemplate t on  i.Code=t.Item_Code
+
+
+
+INSERT INTO PriceListDetails( BasePriceListID,PriceListID,ItemID,MRP,LocationID,ApplicationID,CurrencyID)
+select 1 BasePriceListID,1 PriceListID,i.ID ItemID,Sale_Price MRP,99 LocationID,1 ApplicationID,5 CurrencyID from Item i 
+inner join ItemTemplate t on  i.Code=t.Item_Code
+
+
+
+INSERT INTO ItemTax (ItemID,LocationID,TaxTypeID,GSTCategoryID,CreatedDate,CreatedUserID,IsActive )
+select i.ID ItemID,99 LocationID,13 TaxTypeID,10 GSTCategoryID,GETDATE() CreatedDate,1 CreatedUserID,1 IsActive 
+from Item i inner join ItemTemplate t on  i.Code=t.Item_Code
+
+INSERT INTO stock (TransDate,ItemID,BatchID,WareHouseID,Receipt,Issue,TransactionType,sortOrder,CreatedDate, FinYear,LocationID,ApplicationID,
+ForL,BatchTypeID,ExpiryDate,TransactionNo,CurrencyID,Value)
+select GETDATE() TransDate,b.ItemID,b.ID BatchID,144 WareHouseID,t.Stock_Value_Yes_No Receipt,0Issue,'Opening' TransactionType,1 sortOrder,GETDATE() CreatedDate,2022 FinYear,b.LocationID,b.ApplicationID,
+'F'ForL,b.BatchType BatchTypeID,GETDATE()+10000 ExpiryDate,'Opening' TransactionNo,CurrencyID,t.Stock_Value_Yes_No Value 
+from Itemtemplate t join Item i on t.Item_Code=i.Code
+join Batch b on i.ID=b.ItemID WHERE b.LocationID=99
+
+INSERT INTO StockList (
+ItemID,BatchID,WareHouseID,OpeningStock,Receipts,ReceiptsReturn,Issues,IssueReturns,
+Damages,Free, FinYear,LocationID,ApplicationID,BatchTypeID,ExpiryDate)
+select b.ItemID,b.ID BatchID,144 WareHouseID,0 OpeningStock,t.Stock_Value_Yes_No Receipts,0 ReceiptsReturn,0 Issues,0 IssueReturns,
+0 Damages,0 Free,2022 FinYear,b.LocationID,b.ApplicationID,b.BatchType BatchTypeID,GETDATE()+10000 ExpiryDate 
+from Itemtemplate t join Item i on t.Item_Code=i.Code
+join Batch b on i.ID=b.ItemID WHERE b.LocationID=99
+
+
+
+
+
+

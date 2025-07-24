@@ -1,0 +1,230 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+@if (Model.RogaPareekshaItems != null)
+{
+    List<string> Temp = new List<string>();
+    var TempGroupName = "";
+    var count = 0;
+    int slNo = 1;
+    var n = 0;
+    foreach (var item in Model.RogaPareekshaItems.Select((value, i) => new { i = (i + 1), value }))
+    {
+
+        if (item.value.Type == "Description" || item.value.Type == "Blank" || item.value.Type == "TextBox")
+        {
+            <tr>
+                @*giving serialno only for parentGroup*@
+                @if (item.value.IsParent == false)
+                {
+                    <td class="uk-text-center"></td>
+                }
+                else
+                {
+                    <td class="uk-text-center">@slNo</td>
+                    slNo++;
+                }
+                @*providing space for child group*@
+                @if (item.value.IsParent == false)
+                        {
+                    <td class="width-70 Area groupname">
+                        <label>&nbsp;</label><label>&nbsp;</label> @item.value.GroupName
+                    </td>
+                }
+                else
+                {
+                    <td class="width-70 Area groupname">
+                        @item.value.GroupName
+                    </td>
+                }
+
+                @if (item.value.Type == "Blank")
+                        {
+                    <td></td>
+                }
+                else
+                {
+                    <td>
+                        @if (!Model.IsCompleted)
+                        {
+                            <input type="hidden" class="ID" value="@item.value.ID" />
+                            if (item.value.Type == "TextBox")
+                            {
+                                <input type="text" name="@item.value.GroupName" class="md-input label-fixed rogapareekshaResults Roga_Pareeksha_txt" value="@item.value.Description" />
+                            }
+                            else
+                            {
+                                <textarea name="@item.value.GroupName" class="md-input label-fixed rogapareekshaResults Roga_Pareeksha_txt">@item.value.Description</textarea>
+                            }
+                        }
+                        else
+                        {
+                            <input type="hidden" class="ID" value="@item.value.ID" />
+                            if (item.value.Type == "TextBox")
+                            {
+                                @Html.TextBoxFor(model => @item.value.Description, new { @class = "md-input label-fixed rogapareekshaResults Roga_Pareeksha_txt description " + @item.value.Name, @disabled = "disabled" })
+                            }
+                            else
+                            {
+
+                                <textarea name="@item.value.GroupName" class="md-input label-fixed rogapareekshaResults Roga_Pareeksha_txt">@item.value.Description</textarea>
+                            }
+                        }
+                    </td>
+                }
+            </tr>
+        }
+
+
+        else if (item.value.Type == "Group")
+        {
+
+            <tr>
+                @*giving serialno only for parentGroup*@
+                @if (item.value.IsParent == false)
+                {
+                    <td class="uk-text-center"></td>
+                }
+                else
+                {
+                    <td class="uk-text-center">@slNo</td>
+                    slNo++;
+                }
+                @*providing space for child group*@
+                @if (n == 0)
+                {
+                    if (item.value.IsParent == false)
+                    {
+                        <td class="width-70 Area groupname">
+                            <label>&nbsp;</label><label>&nbsp;</label> @item.value.GroupName
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="width-70 Area groupname">
+                            @item.value.Name
+                        </td>
+                    }
+
+
+                }
+                else
+                {
+                    <td class="width-70 Area groupname">
+                        <label>&nbsp;</label><label>&nbsp;</label> @item.value.Name
+
+                    </td>
+                }
+
+                @if (n == 0)
+                {
+                    n++;
+                    @*<td>
+
+                            <input type="text" name="@item.value.GroupName" class="md-input label-fixed casesheetResults case_sheet_txt" value="@item.value.Description" />
+                        </td>*@
+                }
+                else
+                {
+                    <td>
+                        @*@Html.TextBoxFor(model => @item.value.Description, new { @class = "md-input label-fixed casesheetResults description case_sheet_txt" + @item.value.Name })*@
+                        <input type="text" name="@item.value.Name" class="md-input label-fixed rogapareekshaResults Roga_Pareeksha_txt" value="@item.value.Description" />
+                    </td>
+                }
+
+            </tr>
+
+            if (n == 0)
+            {
+                n++;
+                <tr>
+                    <td class="uk-text-center"></td>
+                    <td class="width-70 Area groupname">
+                        @item.value.Name
+                    </td>
+                    <td>
+                        @*@Html.TextBoxFor(model => @item.value.Description, new { @class = "md-input label-fixed casesheetResults description case_sheet_txt" + @item.value.Name })*@
+                        <input type="text" name="@item.value.GroupName" class="md-input label-fixed rogapareekshaResults Roga_Pareeksha_txt" value="@item.value.Description" />
+                    </td>
+                </tr>
+            }
+        }
+        else if (item.value.Type == "Radio")
+        {
+            count += 1;
+            if (TempGroupName == item.value.GroupName)
+            {
+
+                if (item.value.Type == "Radio")
+                {
+
+                    <input type ="radio" name = "@item.value.GroupName" class="rogapareekshaResults" data-md-icheck value = "@item.value.Name" @(item.value.IsChecked == true ? "checked=\"checked\"" : "") /><label class="radio_label">@item.value.Name</label>
+    }
+                else
+                {
+                    <input type = "text" name="@item.value.GroupName" class="md-input label-fixed rogapareekshaResult Roga_Pareeksha_txt" value="@item.value.Description" /><label>@item.value.Name</label>
+}
+
+
+
+            }
+            else
+            {
+                TempGroupName = item.value.GroupName;
+
+                @Html.Raw("<tr>")
+                if(item.value.IsParent==true)
+                {
+                     @Html.Raw("<td class='uk-text-center'>")@slNo
+                    slNo++;
+                }
+                else
+                {
+                    @Html.Raw("<td class='uk-text-center'>")
+
+                }
+                @Html.Raw("</td>")
+                if (item.value.IsParent == true)
+                {
+                @Html.Raw("<td class='width-70 Area groupname'>")
+                @item.value.GroupName
+                }
+                else
+                {
+                    @Html.Raw("<td class='width-70 Area groupname'>")
+                    <label>&nbsp;&nbsp;</label>
+                  @item.value.GroupName
+                }
+                @Html.Raw("</td>")
+                @Html.Raw("<td class='" + @item.value.GroupName + "'>")
+                if (Model.RogaPareekshaItems.Where(a => a.GroupName == TempGroupName).Count() != count)
+                {
+                    if (item.value.Type == "Radio")
+                    {
+                        <input type = "radio" name="@item.value.GroupName" class="rogapareekshaResults" data-md-icheck checked value="@item.value.Name" @(item.value.IsChecked == true ? "checked=\"checked\"" : "") /><label class="radio_label">@item.value.Name</label>
+
+                    }
+                    else
+                    {
+    @*@Html.TextBox("", new { @class = "md-input label-fixed baselineResults baseLine_txt" + @item.value.Name })*@
+                       <label>@item.value.Name</label> <input type = "text" name="@item.value.GroupName" class="md-input label-fixed rogapareekshaResults Roga_Pareeksha_txt" value="@item.value.Description" />
+                    }
+
+
+                }
+                if (!Model.IsCompleted)
+                {
+
+                }
+
+
+            }
+            if (Model.RogaPareekshaItems.Where(a => a.GroupName == TempGroupName).Count() == count)
+            {
+                count = 0;
+
+                @Html.Raw("</td>")
+                @Html.Raw("</tr>")
+            }
+        }
+
+    }
+}

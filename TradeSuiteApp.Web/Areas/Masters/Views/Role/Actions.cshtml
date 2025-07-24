@@ -1,0 +1,45 @@
+﻿@model List<BusinessObject.ActionBO>
+@{
+    ViewBag.Title = "Actions";
+}
+@foreach (var controller in Model.GroupBy(a => a.Controller).Select(a => a.First()).OrderBy(a => a.SortOrder).ToList())
+{
+    <div class="action-group">
+        <h5 class="panel">
+            <input type="checkbox" class="icheckbox action-head" data-md-icheck value=@controller.Controller />
+            @controller.Controller
+        </h5>
+
+        <div class="uk-grid" data-uk-grid-margin>
+            @foreach (var action in Model.Where(a => a.Controller == controller.Controller && a.Type == "Action").ToList())
+                {
+                <div class="uk-width-medium-2-8">
+                    <h5>
+                        <input type="checkbox" class="icheckbox check-box actions" data-md-icheck value="@action.ID" @action.Checked />
+                        @action.Name
+                    </h5>
+                </div>
+            }
+        </div>
+    </div>
+    if (Model.Where(a => a.Controller == controller.Controller && a.Type == "Tab").Count() > 0)
+    {
+        <div class="tab-group">
+            <h5 class="panel">
+                <input type="checkbox" class="icheckbox check-box tab-head" data-md-icheck />
+                Tabs
+            </h5>
+            <div class="uk-grid" data-uk-grid-margin>
+                @foreach (var action in Model.Where(a => a.Controller == controller.Controller && a.Type == "Tab").ToList())
+                    {
+                    <div class="uk-width-medium-2-8">
+                        <h5>
+                            <input type="checkbox" class="icheckbox check-box tab" data-md-icheck value=@action.ID @action.Checked />
+                            @action.Name
+                        </h5>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}

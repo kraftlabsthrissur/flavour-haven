@@ -1,0 +1,46 @@
+﻿
+@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+
+
+@if (Model.LabAndXrayItems != null)
+{
+    foreach (var item in Model.LabAndXrayItems.Select((value, i) => new { i = (i + 1), value }))
+    {
+
+        <tr class="@item.value.Category">
+            <td class="uk-text-center">
+                @item.i
+                <input type="hidden" class="DocumentID" value="@item.value.DocumentID" />
+                <input type="hidden" class="LabTestID" value="@item.value.ItemID" />
+                <input type="hidden" class="ID" value="@item.value.ID" />
+                @foreach (var items in @item.value.SelectedQuotation)
+                {
+                    <input type="hidden" class="SelectedQuotationID" value="@items.ID" />
+                    <input type="hidden" class="URL" value="@items.URL" />
+                    <input type="hidden" class="Path" value="@items.Path" />
+                    <input type="hidden" class="DocumentName" value="@items.Name" />
+                }
+
+            </td>
+            <td class="Date">@item.value.Date</td>
+            <td class="LabItems">@item.value.ItemName</td>
+            <td class="ObserveValue">@item.value.ObserveValue</td>
+            <td class="Unit">@item.value.Unit</td>
+            <td>@item.value.BiologicalReference</td>
+            @*@if(@item.value.DocumentID == 0)
+            {
+                <td></td>
+            }
+            else
+            {*@ 
+            <td align="center"><button class="btn_view_xray_result"><i class="material-icons">remove_red_eye</i></button></td>
+            @*}*@
+            <td></td>
+        </tr>
+    }
+}
+
+
+
+
+

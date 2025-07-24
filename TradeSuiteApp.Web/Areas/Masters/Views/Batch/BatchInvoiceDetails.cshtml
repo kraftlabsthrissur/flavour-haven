@@ -1,0 +1,90 @@
+﻿@model List < TradeSuiteApp.Web.Areas.Masters.Models.PreviousBatchModel>
+
+    <div style="border:solid">
+        <div class="md-card">
+            <div class="md-card-content">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+
+                        <div class="uk-width-medium-4-8 description-heading">
+
+                            <label>Invoice Details </label>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                            <table id="tbl-item-details" class="uk-table" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="width-100">@Purchase.InvoiceNo</th>
+                                        <th class="width-40">@Purchase.CurrentUnit</th>
+                                        <th class="width-40">@Purchase.PreviousUnit</th>
+                                        <th class="width-40">@Purchase.CurrentInvoiceQty</th>
+                                        <th class="width-40">@Purchase.PreviousInvoiceQty</th>
+                                        <th class="width-40">@Purchase.CurrentOfferQty</th>
+                                        <th class="width-40">@Purchase.PreviousOfferQty</th>
+                                        <th class="width-40">@Purchase.CurrentInvoiceRate</th>
+                                        <th class="width-40">@Purchase.PreviousInvoiceRate</th>
+                                        <th class="width-40">@Purchase.CurrentPurchaseRate</th>
+                                        <th class="width-40">@Purchase.PreviousPurchaseRate</th>
+                                        <th class="width-40">@Purchase.CurrentCGST</th>
+                                        <th class="width-40">@Purchase.PreviousCGST</th>
+                                        <th class="width-40">@Purchase.CurrentSGST</th>
+                                        <th class="width-40">@Purchase.PreviousSGST</th>
+                                        <th class="width-40">@Purchase.CurrentDiscount</th>
+                                        <th class="width-40">@Purchase.PreviousDiscount</th>
+                                        <th class="width-40">@Purchase.CurrentProfitRatio</th>
+                                        <th class="width-40">@Purchase.PreviousProfitRatio</th>
+                                    </tr>
+                                </thead>
+
+
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+
+
+                                            <td>
+                                                @item.InvoiceNo
+                                            </td>
+                                            <td>
+                                                @item.Unit
+                                            </td>
+                                            <td>
+                                                @item.PreviousUnit
+                                            </td>
+                                            <td class="uk-text-right Quantity  mask-qty">@item.Quantity</td>
+                                            <td class="uk-text-right PreviousQuantity  mask-qty">@item.PreviousQuantity</td>
+                                            <td class="uk-text-right mask-qty OfferQty ">@item.OfferQty</td>
+                                            <td class="uk-text-right PreviousOfferQty  mask-qty">@item.PreviousOfferQty</td>
+                                            <td class="uk-text-right InvoiceRate  mask-currency">@item.InvoiceRate</td>
+                                            <td class="uk-text-right PreviousInvoiceRate  mask-currency">@item.PreviousInvoiceRate</td>
+                                            <td class="uk-text-right PurchasePrice  mask-currency">@item.PurchasePrice</td>
+                                            <td class="uk-text-right mask-currency PreviousPurchasePrice ">@item.PreviousPurchasePrice</td>
+                                            <td class="uk-text-right mask-currency PreviousSGSTAmt ">@item.PreviousSGSTAmt</td>
+                                            <td class="uk-text-right mask-currency SGSTAmt ">@item.SGSTAmt</td>
+                                            <td class="uk-text-right mask-currency PreviousCGSTAmt ">@item.PreviousCGSTAmt</td>
+                                            <td class="uk-text-right mask-currency SGSTAmt ">@item.SGSTAmt</td>
+                                            <td class="uk-text-right Discount  mask-currency">@item.Discount</td>
+                                            <td class="uk-text-right PreviousDiscount  mask-currency">@item.PreviousDiscount</td>
+                                            <td class="uk-text-right mask-currency ProfitRatio included">@item.ProfitRatio</td>
+                                            <td class="uk-text-right PreviousProfitRatio mask-currency">@item.PreviousProfitRatio</td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+
+                <div class="uk-text-right">
+                    <button type="button" class="md-btn md-btn-primary" id="btnBatch">save</button>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    |

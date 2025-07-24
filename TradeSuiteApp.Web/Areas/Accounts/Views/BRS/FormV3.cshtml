@@ -1,0 +1,85 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.BRSModel
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.TransactionNumber</label>
+                            @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Accounts.Date</label>
+                            @Html.TextBoxFor(m => m.Date, new { @class = "md-input label-fixed current-date date", @id = "Date", disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-2-8">
+                            <label>@Accounts.BankDetails<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.BankID, Model.BankList, "Select", new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-8 uk-hidden">
+                            <div class="uk-input-group">
+                                <label>@Accounts.FromTransactionDate</label>
+                                @Html.TextBoxFor(m => m.FromTransactionDate, new { @class = "md-input label-fixed past-date date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-8 uk-hidden">
+                            <div class="uk-input-group">
+                                <label>@Accounts.ToTransactionDate</label>
+                                @Html.TextBoxFor(m => m.ToTransactionDate, new { @class = "md-input label-fixed past-date date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label>&nbsp;</label>
+                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnshow">@Common.Show</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-1-1">
+                <table id="brs-item-list" class="uk-table" cellspacing="0" accesskey="" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="width-10">Sl.No</th>
+                            <th class="width-10"></th>
+                            <th class="width-60">@Accounts.AccountName</th>
+                            <th class="width-60">@Accounts.DocumentNumber</th>
+                            <th class="width-60">@Accounts.DocumentType</th>
+                            <th class="width-40">@Accounts.InstrumentDate</th>
+                            <th class="width-60">@Accounts.ReferenceNumber</th>
+                            <th class="width-60">@Accounts.Remarks</th>
+                            <th class="width-40">@Accounts.ReconciliationDate</th>
+                            <th class="width-60">@Accounts.Debit</th>
+                            <th class="width-60">@Accounts.Credit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" ID="item-count" />

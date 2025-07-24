@@ -1,0 +1,13 @@
+ALTER PROCEDURE [Master].[SpCreateItemPartsNumber](      
+@ItemID INT,      
+@PartsNumber VARCHAR(100),    
+@CreatedUserID INT,
+@IsDefault BIT
+)      
+AS      
+BEGIN      
+INSERT INTO ItemPartsNumber(PartsNumber,ItemID,CreatedUserID,IsDefault) values(@PartsNumber,@ItemID,@CreatedUserID,@IsDefault)      
+  
+END
+
+

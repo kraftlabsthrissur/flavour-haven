@@ -1,0 +1,230 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.MouldModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="uk-width-medium-8-10">
+    <div class="md-card">
+        <div class="md-card-content master-card-padding">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-1">
+                        <div class="uk-grid" data-uk-grid-margin>
+                            <div class="uk-width-medium-1-8">
+                                @Html.HiddenFor(m => m.ID)
+                                <label>@Masters.Code*</label>
+                                @Html.TextBoxFor(m => m.Code, new { @class = "md-input" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Masters.MouldName*</label>
+                                @Html.TextBoxFor(m => m.MouldName, "", new { maxlength = 100, @class = "md-input label-fixed" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <div class="uk-input-group">
+                                    <label>@Masters.InceptionDate*</label>
+                                    @Html.TextBoxFor(m => m.InceptionDate, new { @class = "md-input label-fixed future-date date" })
+                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <div class="uk-input-group">
+                                    <label>@Masters.ExpairyDate*</label>
+                                    @Html.TextBoxFor(m => m.ExpairyDate, new { @class = "md-input label-fixed future-date date" })
+                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-1-4">
+                                <label>MandatoryMaintenanceTime (InDays)*</label>
+                                @Html.TextBoxFor(m => m.MandatoryMaintenanceTime, new { @class = "md-input label-fixed mask-postive" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>ManufacturedBy</label>
+                                @Html.TextBoxFor(m => m.ManufacturedBy, new { @class = "md-input label-fixed" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-1">
+                        <div class="uk-grid" data-uk-grid-margin>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Masters.CurrentLocation<span>*</span></label>
+                                @if (Model.ID > 0)
+                                {
+                                    @Html.DropDownListFor(Model => Model.CurrentLocationID, Model.LocationList, "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownListFor(Model => Model.CurrentLocationID, Model.LocationList, "Select", new { @class = "md-input label-fixed" })
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+
+                    <div class="uk-width-1-1">
+                        <div class="section-group">
+                            <div class="uk-form-row">
+                                <div class="uk-grid">
+                                    <div class="uk-width-1-1">
+                                        <ul class="uk-tab" data-uk-tab="{connect:'#tabs_1_content'}">
+                                            <li class="uk-active" aria-expanded="true"><a>ITEM DETAILS</a></li>
+                                            <li aria-expanded="true"><a>MACHINE DETAILS</a></li>
+                                        </ul>
+                                        <ul id="tabs_1_content" class="uk-switcher uk-margin" style="width:100%">
+                                            <li aria-hidden="false" class="uk-active" style="width:100%">
+                                                <div class="uk-form-row">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-1-1">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <div class="uk-width-medium-2-8">
+                                                                    <input type="hidden" value=222 id="ItemCategoryID" />
+                                                                    <div class="uk-autocomplete " id="item-autocomplete">
+                                                                        <label>@Masters.ItemName<span>*</span></label>
+                                                                        @Html.TextBox("ItemName", "", new { @class = "md-input label-fixed" })
+
+                                                                        <span class="uk-input-group-addon">
+                                                                            <a data-uk-modal="{target:'#select-item'}">
+                                                                                <i class="uk-input-group-icon uk-icon-search"></i>
+                                                                            </a>
+                                                                        </span>
+
+                                                                        <script type="text/autocomplete">
+                                                                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                                                {{~items}}
+                                                                                <li data-value="{{ $item.ItemName }}"
+                                                                                    data-id="{{$item.ItemID}}"
+                                                                                    data-code="{{$item.ItemCode}}"
+                                                                                    data-stock="{{$item.Stock}}"
+                                                                                    data-primary-unit="{{$item.UnitName}}"
+                                                                                    data-category="{{$item.ItemCategory}}"
+                                                                                    data-inventory-unit="{{$item.InventoryUnit}}"
+                                                                                    data-inventory-unit-id="{{$item.InventoryUnitID}}"
+                                                                                    data-primary-unit-id="{{$item.UnitID}}">
+                                                                                    <a>
+                                                                                        {{ $item.ItemName }}
+                                                                                        <div>{{{ $item.ItemCode }}}</div>
+                                                                                    </a>
+                                                                                </li>
+                                                                                {{/items}}
+                                                                            </ul>
+                                                                        </script>
+                                                                    </div>
+                                                                    @Html.Hidden("ItemID")
+                                                                </div>
+
+                                                                <div class="uk-width-medium-2-8">
+                                                                    <label>@Masters.NoOfCavities*</label>
+                                                                    @Html.TextBox("NoOfCavity", "", new { @class = "md-input label-fixed mask-postive" })
+                                                                </div>
+                                                                <div class="uk-width-medium-2-8">
+                                                                    <label>Std.Time For Single Shot (In Seconds)</label>
+                                                                    @Html.TextBox("StdTime", "", new { @class = "md-input label-fixed mask-postive" })
+                                                                </div>
+                                                                <div class="uk-width-medium-2-8">
+                                                                    <label>Std.Total Weight Of Single Shot (In Kg)</label>
+                                                                    @Html.TextBox("StdWeight", "", new { @class = "md-input label-fixed mask-production-qty" })
+                                                                </div>
+                                                                <div class="uk-width-medium-2-8">
+                                                                    <label>Std.Running Waste Of Single Shot (In Kg)</label>
+                                                                    @Html.TextBox("StdRunningWaste", "", new { @class = "md-input label-fixed mask-production-qty" })
+                                                                </div>
+                                                                <div class="uk-width-medium-2-8">
+                                                                    <label>Std.Shooting Waste Of Single Shot (In Kg)</label>
+                                                                    @Html.TextBox("StdShootingWaste", "", new { @class = "md-input label-fixed mask-production-qty" })
+                                                                </div>
+                                                                <div class="uk-width-medium-2-8">
+                                                                    <label>Std.Grinding Waste Of Single Shot (In Kg)</label>
+                                                                    @Html.TextBox("StdGrindingWaste", "", new { @class = "md-input label-fixed mask-production-qty" })
+                                                                </div>
+                                                                <div class="uk-width-medium-2-8">
+                                                                    <label>&nbsp;</label>
+                                                                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light btnAddItem">@Common.Add</button>
+                                                                </div>
+
+                                                                <div class="uk-width-medium-1-1">
+                                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                                        <div class="uk-width-medium-1-1">
+                                                                            <table id="tbl-Item" class="uk-table" cellspacing="0" width="100%">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th class="width-10">Sl.No</th>
+                                                                                        <th class="width-10">@Masters.Item</th>
+                                                                                        <th class="width-10">@Masters.NoOfCavities</th>
+                                                                                        <th class="width-10">Standard Time For Single Shot(In Days)</th>
+                                                                                        <th class="width-10">Standard Weight For Single Shot</th>
+                                                                                        <th class="width-10">Std.Running Waste Of Single Shot</th>
+                                                                                        <th class="width-10">Std.Shooting Waste Of Single Shot</th>
+                                                                                        <th class="width-10">Std.Grinding Waste Of Single Shot</th>
+                                                                                        <th class="width-10"></th>
+                                                                                    </tr>
+                                                                                </thead>
+
+                                                                                <tbody>
+                                                                                    @if (Model.Items != null)
+                                                                                    {
+                                                                                        foreach (var item in Model.Items)
+                                                                                        {
+                                                                                            <tr>
+                                                                                                <td class="uk-text-center serial-no">
+                                                                                                    @(1 + @Model.Items.IndexOf(item))
+                                                                                                    <input type="hidden" class="ItemID" value="@item.ItemID" />
+                                                                                                </td>
+                                                                                                <td>@item.ItemName</td>
+                                                                                                <td><input type="text" class="md-input mask-postive NoOfCavity" value="@item.NoOfCavity"/></td>
+                                                                                                <td><input type="text" class="md-input mask-postive StdTime" value="@item.StdTime" /></td>
+                                                                                                <td><input type="text" class="md-input mask-production-qty StdWeight" value="@item.StdWeight" /></td>
+                                                                                                <td><input type="text" class="md-input mask-production-qty StdRunningWaste" value="@item.StdRunningWaste" /></td>
+                                                                                                <td><input type="text" class="md-input mask-production-qty StdShootingWaste" value="@item.StdShootingWaste" /></td>
+                                                                                                <td><input type="text" class="md-input mask-production-qty StdGrindingWaste" value="@item.StdGrindingWaste" /></td>
+                                                                                                <td>
+                                                                                                    <a class="remove-item">
+                                                                                                        <i class="uk-icon-remove"></i>
+                                                                                                    </a>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        }
+                                                                                    }
+                                                                                </tbody>
+                                                                            </table>
+                                                                            <input type="hidden" id="Item-count" value="0">
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </li>
+
+                                            <li aria-hidden="false" class="uk-active" style="width:100%">
+                                                <div class="uk-form-row">
+
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        @foreach (var machines in Model.Machines)
+                                                        {
+                                                            <div class="uk-width-medium-2-8">
+                                                                <h5>
+                                                                    <input type="checkbox" class="icheckbox check-box machines" data-md-icheck value=@machines.ID @machines.check />
+                                                                    @machines.Machine
+                                                                </h5>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                    <input type="Hidden" id="machine-count">
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>

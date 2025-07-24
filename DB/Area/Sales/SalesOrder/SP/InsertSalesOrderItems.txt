@@ -1,0 +1,81 @@
+-- =============================================      
+-- Author:  <ajith@kraftlabs.com>      
+-- Create date: <10-Jun-2019>      
+-- Description: <Insert SalesOrder Items XML Method>      
+-- =============================================      
+ALTER  PROCEDURE [Sales].[InsertSalesOrderItems](        
+ @SalesOrderID int,        
+ @SalesOrderTrans XML,        
+ @FinYear int,        
+ @LocationID int,        
+ @ApplicationID int        
+)        
+AS        
+BEGIN        
+ SET NOCOUNT ON;        
+        
+    INSERT INTO Sales.SalesOrderTrans         
+  (SalesOrderID, FullOrLoose, ItemID, UnitID, BatchTypeID, MRP, BasicPrice, Quantity, OfferQty, GrossAmount,         
+   DiscountPercentage, DiscountAmount, AdditionalDiscount, TaxableAmount, SGSTPercentage, CGSTPercentage,         
+   IGSTPercentage, SGSTAmt, CGSTAmt, IGSTAmt, CessPercentage, CessAmount, NetAmt, DiscountID, QtyMet, OfferMet,      
+   VATAmount,VATPercentage,CurrencyID,IsGST,IsVat,PartsNumber,ItemName,DeliveryTerm,Model,  
+   SecondaryUnit,SecondaryOfferQty ,SecondaryUnitSize  ,SecondaryMRP ,SecondaryQty,FinYear, LocationID, ApplicationID)        
+  SELECT         
+  @SalesOrderID,        
+  CONVERT(Char(1), SalesOrderTrans.item.query('FullOrLoose').value('.','VARCHAR(20)')),        
+  CONVERT(INT, SalesOrderTrans.item.query('ItemID').value('.','VARCHAR(20)')),          
+  CONVERT(INT, SalesOrderTrans.item.query('UnitID').value('.','VARCHAR(20)')),        
+  CONVERT(INT, SalesOrderTrans.item.query('BatchTypeID').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('MRP').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('BasicPrice').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('Quantity').value('.','VARCHAR(20)')),          
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('OfferQty').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('GrossAmount').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('DiscountPercentage').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('DiscountAmount').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('AdditionalDiscount').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('TaxableAmount').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('SGSTPercentage').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('CGSTPercentage').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('IGSTPercentage').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('SGSTAmt').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('CGSTAmt').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('IGSTAmt').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('CessPercentage').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('CessAmount').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('NetAmt').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('DiscountID').value('.','VARCHAR(20)')),        
+  0,        
+  0,      
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('VATAmount').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('VATPercentage').value('.','VARCHAR(20)')),        
+  CONVERT(INT, SalesOrderTrans.item.query('CurrencyID').value('.','VARCHAR(20)')),        
+  CONVERT(INT, SalesOrderTrans.item.query('IsGST').value('.','VARCHAR(20)')),        
+  CONVERT(INT, SalesOrderTrans.item.query('IsVat').value('.','VARCHAR(20)')),     
+  CONVERT(VARCHAR(100), SalesOrderTrans.item.query('PartsNumber').value('.','VARCHAR(100)')),  
+  CONVERT(VARCHAR(100), SalesOrderTrans.item.query('ItemName').value('.','VARCHAR(200)')),  
+  CONVERT(VARCHAR(200), SalesOrderTrans.item.query('DeliveryTerm').value('.','VARCHAR(200)')),  
+  CONVERT(VARCHAR(200), SalesOrderTrans.item.query('Model').value('.','VARCHAR(200)')),  
+  CONVERT(VARCHAR(200), SalesOrderTrans.item.query('SecondaryUnit').value('.','VARCHAR(200)')),  
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('SecondaryOfferQty').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('SecondaryUnitSize').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('SecondaryMRP').value('.','VARCHAR(20)')),        
+  CONVERT(Numeric(18,4), SalesOrderTrans.item.query('SecondaryQty').value('.','VARCHAR(20)')),  
+  @FinYear,        
+  @LocationID,        
+  @ApplicationID          
+ FROM @SalesOrderTrans.nodes('/SalesOrderTrans/Item') as SalesOrderTrans(item)        
+        
+ --select ISNULL(F.FSOID,C.FSOID),S.CustomerID,ST.ItemID,I.SalesCategoryID FROM Sales.SalesOrderTrans ST        
+ update  ST SET FSOID=ISNULL(F.FSOID,ISNULL(C.FSOID,0))         
+ FROM Sales.SalesOrderTrans ST        
+ INNER JOIN Sales.SalesOrder S ON S.ID=ST.SalesOrderID        
+ INNER JOIN viitem I on I.ID=ST.ItemID        
+ LEFT JOIN  FSOIncentiveMapping F ON F.CustomerID=S.CustomerID AND         
+  (F.SalesIncentiveCategoryID=I.SalesCategoryID or F.ItemID=ST.ItemID) AND F.IsActive=1        
+ INNER JOIN Customer C on C.ID=S.CustomerID        
+ WHERE St.SalesOrderID=@SalesOrderID          
+        
+         
+         
+END 

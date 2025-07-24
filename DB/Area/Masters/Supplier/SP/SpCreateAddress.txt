@@ -1,0 +1,45 @@
+  
+ALTER PROCEDURE [Master].[SpCreateAddress]    
+(@PartyType VARCHAR(20),
+@PartyID INT,
+@AddressLine1 VARCHAR(50),
+@AddressLine2 VARCHAR(50),
+@AddressLine3 VARCHAR(50),
+@CountryId int,  
+@ContactPerson VARCHAR(50),
+@Place VARCHAR(50),
+@DistrictID INT,
+@StateID INT,
+@PIN VARCHAR(10),
+@LandLine1 VARCHAR(20),
+@LandLine2 VARCHAR(20),
+@MobileNo VARCHAR(20),
+@Fax VARCHAR(50)
+,@Email VARCHAR(50),
+@IsBilling BIT,
+@IsShipping BIT,
+@IsDefault BIT,
+@IsDefaultShipping BIT,
+@CreatedUserID INT,  
+@CreatedDate DATETIME,
+@LocationID INT,@ApplicationID INT)    
+    
+AS    
+BEGIN    
+INSERT INTO Addresses (PartyType,PartyID,AddressLine1,AddressLine2,AddressLine3,CountryID,ContactPerson,Place,DistrictID,StateID,PIN,LandLine1,LandLine2,
+MobileNo,Fax,Email,IsBilling,IsShipping,IsDefault,IsDefaultShipping,CreatedUserID,CreatedDate,LocationID,ApplicationID)    
+VALUES (@PartyType,@PartyID,IsNull(@AddressLine1,''),IsNull(@AddressLine2,''),IsNull(@AddressLine3,''),@CountryId,@ContactPerson,Isnull(@Place,''),  
+@DistrictID,@StateID,@PIN,@LandLine1,@LandLine2,@MobileNo,@Fax,@Email,@IsBilling,@IsShipping,@IsDefault,@IsDefaultShipping,@CreatedUserID,  
+@CreatedDate,@LocationID,@ApplicationID)    
+  
+IF @IsDefaultShipping = 1 AND @IsShipping = 1  AND @PartyType='Customer'  
+    
+BEGIN  
+  
+UPDATE Discount SET CustomerStateID = @StateID WHERE CustomerID = @PartyID  
+  
+END  
+      
+END    
+
+  

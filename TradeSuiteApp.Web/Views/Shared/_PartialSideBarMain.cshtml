@@ -1,0 +1,20 @@
+﻿@{
+    var AppName = System.Configuration.ConfigurationManager.AppSettings["AppName"];
+}
+<aside id="sidebar_main">
+    <div class="sidebar_main_header">
+        <div class="sidebar_logo">
+            <a href="/" class="sSidebar_hide sidebar_logo_large">
+                <img class="logo_regular"   src="~/Assets/img/_@AppName/logo.png" alt="" />
+                <img class="logo_light"     src="~/Assets/img/_@AppName/logo.png" alt="" />
+            </a>
+            <a href="/" class="sSidebar_show sidebar_logo_small">
+                <img class="logo_regular" src="~/Assets/img/_@AppName/logo_small.png" alt="" />
+                <img class="logo_light"   src="~/Assets/img/_@AppName/logo_small.png" alt="" />
+            </a>
+        </div>
+    </div>
+    <div class="menu_section">
+        @{ Html.RenderAction("MainMenu", "Account", new {Area = "" }); }
+    </div>
+</aside>

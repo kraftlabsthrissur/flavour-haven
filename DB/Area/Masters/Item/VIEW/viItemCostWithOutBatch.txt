@@ -1,0 +1,19 @@
+              
+          
+              
+ALTER  VIEW [dbo].[viItemCostWithOutBatch] AS      
+
+SELECT Distinct I.ID ItemID,I.Name AS ItemName, I.Code ItemCode, I.Category, I.SalesCategory,  BT.Name AS BatchType, Unit, InventoryUnit,              
+I.PurchaseUnit, I.SalesUnit, PLD.RetailMRP as MRP, PLD.RetailMRP * 100/(100 + I.IGSTPercent) GrossPrice, PLD.RetailMRP StockPrice,Max(PLD.RetailLooseRate)  LoosePrice,              
+I.IGSTPercent IGSTPercentage, I.CGSTPercent CGSTPercentage, I.SGSTPercent SGSTPercentage,I.VATPercentage,I.TaxType,I.PackSize,              
+I.CategoryID,I.SalesCategoryID,I.UnitID PrimaryUnitID, InventoryUnitID, I.PurchaseUnitID, I.SalesUnitID,  BT.ID AS BatchTypeID,               
+ PLD.BasePriceListID,  1 as PriceListID, PLD.LocationID, PLD.ApplicationID,I.SecondaryUnitID,I.GSTSubcategoryID,PLD.ID BatchID,PLD.BatchNo,
+(Select TOP 1 t.ID FROM WareHouse t WHERE t.LocationID=PLD.LocationID) WareHouseID             
+FROM  viItem I                    
+INNER JOIN Batch PLD on I.ID=PLD.ItemID AND I.LocationID=PLD.LocationID        
+INNER JOIN BatchType BT on BT.ID = PLD.BatchType        
+group by I.ID ,I.Name, I.Code , I.Category, I.SalesCategory,  BT.Name, Unit, InventoryUnit,              
+I.PurchaseUnit, I.SalesUnit, PLD.RetailMRP , I.IGSTPercent,              
+I.IGSTPercent , I.CGSTPercent , I.SGSTPercent,I.VATPercentage,I.TaxType ,I.PackSize,              
+I.CategoryID,I.SalesCategoryID,I.UnitID , InventoryUnitID, I.PurchaseUnitID, I.SalesUnitID,  BT.ID ,               
+PLD.BasePriceListID, PLD.LocationID, PLD.ApplicationID,I.SecondaryUnitID,I.GSTSubcategoryID,PLD.ID,PLD.BatchNo              

@@ -1,0 +1,65 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+@if (Model.RogaNirnayamItems != null)
+{
+    List<string> Temp = new List<string>();
+    var TempGroupName = "";
+    var count = 0;
+
+    foreach (var item in Model.RogaNirnayamItems.Select((value, i) => new { i = (i + 1), value }))
+    {
+        if (item.value.Type == "Description")
+        {
+            <tr>
+                @if (item.value.IsParent == false)
+                {
+                    <td class="uk-text-center"></td>
+                }
+                else
+                {
+                    <td class="uk-text-center">@item.i</td>
+                }
+                <td class="width-70 Area">
+                    @item.value.GroupName
+                </td>
+
+                <td>
+                    @if (!Model.IsCompleted)
+                    {
+                        <input type="hidden" class="ID" value="@item.value.ID" />
+                        @Html.TextBoxFor(model => @item.value.Description, new { @class = "md-input label-fixed examination-results description " + @item.value.Name })
+                    }
+                    else
+                    {
+                        < input type = "hidden" class="ID" value="@item.value.ID" />
+                        @Html.TextBoxFor(model => @item.value.Description, new { @class = "md-input label-fixed examination-results-description " + @item.value.Name, @disabled = "disabled" })
+
+                    }
+                </td>
+
+            </tr>
+        }
+        @*else
+        {
+            <tr>
+                <td class="uk-text-center">@item.i</td>
+
+                <td class="width-70 Area">
+
+                    @item.value.GroupName
+                </td>
+
+                <td>
+                    <input type="hidden" class="ID" value="@item.value.ID" />
+
+
+                    <div class="uk-autocomplete " id="name-autocomplete">
+                        <input type="text" value="@item.value.Diagnosis" class="md-input label-fixed" />
+                        <input type="hidden" id="DiagnosisID" class="value examination-results" value="@item.value.Value" />
+                    </div>
+
+                </td>
+
+            </tr>
+        }*@
+    }
+}

@@ -1,0 +1,308 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.SLAModel
+@{
+    var AllNoList= new List<SelectListItem>() { new SelectListItem { Text = "ALL", Value = "0" }, new SelectListItem { Text = "No", Value = "-1" } };
+    var YesNoList = new List<SelectListItem>() { new SelectListItem { Text = "Yes", Value = "0" }, new SelectListItem { Text = "No", Value = "-1" } };
+    var PositiveNegativeList = new List<SelectListItem>() { new SelectListItem { Text = "No", Value = "0" }, new SelectListItem { Text = "Positive", Value = "1" }, new SelectListItem { Text = "Negative", Value = "-1" }, new SelectListItem { Text = "Positive & Negative", Value = "-2" } };
+
+}
+<div class="uk-width-medium-8-10">
+    <div class="md-card">
+        <div class="md-card-content master-card-padding">
+            <div class="uk-width-medium-1-1">
+                <div class="panel uk-margin-top-25">
+                    <label class="uk-text-uppercase uk-text-bold">General Details</label>
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.ProcessCycle</label>
+                            @Html.DropDownListFor(Model => Model.Cycle, new SelectList(Model.ProcessCycleList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.TransactionType</label>
+                            @Html.DropDownListFor(Model => Model.TransactionType, new SelectList(Model.TransactionTypeList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.SLAKeyValue</label>
+                            @Html.DropDownListFor(Model => Model.KeyValue, new SelectList(Model.SLAKeyValueLists, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.Guidance</label>
+                            @Html.TextBoxFor(m => m.Guidance, "", new { maxlength = 500, @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.Location</label>
+                            @Html.DropDownListFor(Model => Model.Location, AllNoList, new { @class = "md-input label-fixed" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel uk-margin-top-25">
+                    <label class="uk-text-uppercase uk-text-bold">Item Details</label>
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-2-8">
+                            <div class="uk-autocomplete" id="item-autocomplete">
+                                <label>@Stock.Item</label>
+                                @Html.TextBoxFor(m => m.Item, "", new { @class = "md-input label-fixed" })
+                                <script type="text/autocomplete">
+                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                        <li data-value="ALL" data-id="0"><a>ALL</a></li>
+                                        <li data-value="No" data-id="-1"><a>No</a></li>
+                                        {{~items}}
+                                        <li data-value="{{ $item.ItemName }}" data-id="{{$item.ItemID}}">
+                                            <a>{{ $item.ItemName }}</a>
+                                        </li>
+                                        {{/items}}
+                                    </ul>
+                                </script>
+                            </div>
+                            @Html.HiddenFor(m => m.ItemID)
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.ItemAccountCategory</label>
+                            @Html.DropDownListFor(Model => Model.ItemAccountsCategory, new SelectList(Model.ItemAccountCategoryList, "Value", "Text"),  new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.ItemTaxCategory</label>
+                            @Html.DropDownListFor(Model => Model.ItemTaxCategory, new SelectList(Model.GSTCategoryList, "Value", "Text"), new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.BatchPrefix</label>
+                            @Html.DropDownListFor(Model => Model.BatchPrefix, YesNoList, new { @class = "md-input label-fixed" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel uk-margin-top-25">
+                    <label class="uk-text-uppercase uk-text-bold">Supplier Details</label>
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-2-8">
+                            <div class="uk-autocomplete " id="supplier-autocomplete">
+                                <div class="uk-input-group">
+                                    <label>@Purchase.Supplier</label>
+                                    @Html.TextBoxFor(m => m.Supplier, new { @class = "md-input  label-fixed" })
+                                    @Html.HiddenFor(m => m.SupplierID)
+                                    <script type="text/autocomplete">
+                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                            <li data-value="ALL" data-id="0"><a>ALL</a></li>
+                                            <li data-value="No" data-id="-1"><a>No</a></li>
+                                            {{~items}}
+                                            <li data-value="{{ $item.Name }}"
+                                                data-id="{{$item.ID}}">
+                                                <a>
+                                                    {{ $item.Name }} ({{ $item.Code }})
+                                                    <div>{{{ $item.Location }}}</div>
+                                                </a>
+                                            </li>
+                                            {{/items}}
+                                        </ul>
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.SupplierAccountCategory</label>
+                            @Html.DropDownListFor(Model => Model.SupplierAccountsCategory, new SelectList(Model.SuppliersAccountCategoryList, "Value", "Text"), new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.SuppliersTaxCategory</label>
+                            @Html.DropDownListFor(Model => Model.SupplierTaxCategory, new List<SelectListItem>() { new SelectListItem { Text = "ALL", Value = "0" }, new SelectListItem { Text = "No", Value = "-1" } }, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.SuppliersTaxSubCategory</label>
+                            @Html.DropDownListFor(Model => Model.SupplierTaxSubCategory, new SelectList(Model.SuppliersTaxSubCategoryList, "Value", "Text"), new { @class = "md-input label-fixed" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel uk-margin-top-25">
+                    <label class="uk-text-uppercase uk-text-bold">Customer Details</label>
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.CustomerCategory</label>
+                            @Html.DropDownListFor(Model => Model.CustomerCategory, new SelectList(Model.CustomerCategoryList, "Value", "Text"), new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <div class="uk-autocomplete " id="customer-autocomplete">
+                                <div class="uk-input-group">
+                                    <label>@Sales.Customer</label>
+                                    @Html.TextBoxFor(model => model.Customer, new { @class = "md-input label-fixed" })
+                                    <script type="text/autocomplete">
+                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                            <li data-value="ALL" data-id="0"><a>ALL</a></li>
+                                            <li data-value="No" data-id="-1"><a>No</a></li>
+                                            {{~items}}
+                                            <li data-value="{{ $item.Name }}"
+                                                data-id="{{$item.ID}}">
+                                                <a>
+                                                    {{ $item.Name }} ({{{ $item.Code }}})
+                                                    <div>{{{ $item.Location }}}</div>
+                                                </a>
+                                            </li>
+                                            {{/items}}
+                                        </ul>
+                                    </script>
+                                </div>
+                            </div>
+                            @Html.HiddenFor(model => model.CustomerID)
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.CustomerAccountCategory</label>
+                            @Html.DropDownListFor(Model => Model.CustomerAccountsCategory, new SelectList(Model.CustomerAccountsCategoryList, "Value", "Text"), new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.CustomerTaxCategory</label>
+                            @Html.DropDownListFor(Model => Model.CustomerTaxCategory, AllNoList, new { @class = "md-input label-fixed" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel uk-margin-top-25">
+                    <label class="uk-text-uppercase uk-text-bold">Account Details</label>
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-autocomplete " id="debitaccountnumber-autocomplete">
+                                <label>@Accounts.DebitAccountNumber</label>
+                                @Html.TextBoxFor(model => model.DebitAccount, new { @class = "md-input label-fixed" })
+                                <script type="text/autocomplete">
+                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                        {{~items}}
+                                        <li data-value="{{ $item.AccountID}}"
+                                            data-id="{{$item.ID}}"
+                                            data-number="{{$item.AccountID}}"
+                                            data-name="{{$item.AccountName}}">
+                                            <a>
+                                                {{$item.AccountID}}
+                                            </a>
+                                        </li>
+                                        {{/items}}
+                                    </ul>
+                                </script>
+                            </div>
+                            @Html.HiddenFor(model => model.DebitAccountID)
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.DebitAccountDescription</label>
+                            @Html.TextBoxFor(m => m.DebitAccountDescription, "", new { maxlength = 500, @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-autocomplete " id="creditaccountnumber-autocomplete">
+                                <label>@Accounts.CreditAccountNumber</label>
+                                @Html.TextBoxFor(model => model.CreditAccount, new { @class = "md-input label-fixed" })
+                                <script type="text/autocomplete">
+                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                        {{~items}}
+                                        <li data-value="{{ $item.AccountID}}"
+                                             data-id="{{$item.ID}}"
+                                            data-number="{{$item.AccountID}}"
+                                            data-name="{{$item.AccountName}}">
+                                            <a>
+                                                {{$item.AccountID}}
+                                            </a>
+                                        </li>
+                                        {{/items}}
+                                    </ul>
+                                </script>
+                            </div>
+                            @Html.HiddenFor(model => model.CreditAccountID)
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.CreditAccountDescription</label>
+                            @Html.TextBoxFor(m => m.CreditAccountDescription, "", new { maxlength = 500, @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel uk-margin-top-25">
+                    <label class="uk-text-uppercase uk-text-bold">Entry Details</label>
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.EntryInLocation</label>
+                            @Html.DropDownListFor(Model => Model.EntryInLocation, PositiveNegativeList, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.EntryInDepartment</label>
+                            @Html.DropDownListFor(Model => Model.EntryInDepartment, PositiveNegativeList, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.EntryInEmployee</label>
+                            @Html.DropDownListFor(Model => Model.EntryInEmployee, PositiveNegativeList, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.ItemSubLedger</label>
+                            @Html.DropDownListFor(Model => Model.ItemSubLedger, PositiveNegativeList, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.EntryInInterCompanyField</label>
+                            @Html.DropDownListFor(Model => Model.EntryInInterCompanyField, PositiveNegativeList, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.EntryInProjectField</label>
+                            @Html.DropDownListFor(Model => Model.EntryInProjectField, PositiveNegativeList, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.SupplierSubLedger</label>
+                            @Html.DropDownListFor(Model => Model.SupplierSubLedger, PositiveNegativeList, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.CustomerSubLedger</label>
+                            @Html.DropDownListFor(Model => Model.CustomerSubLedger, PositiveNegativeList, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.EmployeeSubLedger</label>
+                            @Html.DropDownListFor(Model => Model.EmployeeSubLedger, PositiveNegativeList, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.AssetsSubLedger</label>
+                            @Html.DropDownListFor(Model => Model.AssetsSubLedger, PositiveNegativeList, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.PatientsSubLedger</label>
+                            @Html.DropDownListFor(Model => Model.PatientsSubLedger, PositiveNegativeList, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.BankCashSubLedger</label>
+                            @Html.DropDownListFor(Model => Model.BankCashSubLedger, PositiveNegativeList, new { @class = "md-input label-fixed" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel uk-margin-top-25">
+                    <label class="uk-text-uppercase uk-text-bold">Other Conditions</label>
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.DepreciationCategory</label>
+                            @Html.DropDownListFor(Model => Model.DepartmentCategory, YesNoList, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.Capitilization</label>
+                            @Html.DropDownListFor(Model => Model.Capitilization, YesNoList, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.CostComponent</label>
+                            @Html.DropDownListFor(Model => Model.CostComponent, YesNoList, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label>@Masters.StartDate</label>
+                                @Html.TextBoxFor(m => m.StartDateStr, new { @class = "md-input label-fixed past-date date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label>@Masters.EndDate</label>
+                                @Html.TextBoxFor(m => m.EndDateStr, new { @class = "md-input label-fixed future-date date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.Condition 1</label>
+                            @Html.TextBoxFor(m => m.Condition1, "", new { maxlength = 500, @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.Condition 2</label>
+                            @Html.TextBoxFor(m => m.Condition2, "", new { maxlength = 500, @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.Remarks</label>
+                            @Html.TextBoxFor(m => m.Remarks, "", new { maxlength = 500, @class = "md-input label-fixed" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

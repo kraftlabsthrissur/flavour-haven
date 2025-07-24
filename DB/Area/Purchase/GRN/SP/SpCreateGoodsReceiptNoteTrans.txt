@@ -1,0 +1,143 @@
+  
+    
+ALTER  PROCEDURE [Purchase].[SpCreateGoodsReceiptNoteTrans]    
+(    
+ @GoodsReceiptNoteID INT,    
+ @PurchaseOrderID int,    
+ @POTransID int,    
+ @ItemID INT,    
+ @Batch varchar(10),    
+ @ExpiryDate DATETIME,    
+ @PurchaseOrderQty NUMERIC(18,4),    
+ @ReceivedQty NUMERIC(18,4),    
+ @QualityCheckQty NUMERIC(18,4),    
+ @AcceptedQty NUMERIC(18,4),    
+ @RejectedQty NUMERIC(18,4),    
+ @ItemOrderPreference INT,    
+ @Remarks VARCHAR(200),    
+ @FinYear INT,    
+ @LocationID INT,    
+ @ApplicationID INT,    
+ @QCNo varchar(20),    
+ @ReferenceNo varchar(20),    
+ @IsQCRequired bit,  
+ @BatchNo varchar(20) ,  
+ @QtyTolerance NUMERIC(18,4),
+ @VATPercentage NUMERIC(18,4),
+ @CurrencyID INT,
+ @IsGST INT,
+ @IsVat INT,
+ @Model VARCHAR(200),
+ @PartsNumber VARCHAR(200),
+ @ItemName VARCHAR(200),
+ @NetAmount NUMERIC(18,4),
+ @UnitID int,  
+ @RetValue int out    
+)    
+    
+AS  
+BEGIN    
+SET NOCOUNT ON;    
+  
+------Variable Setting  
+ SET @RetValue = 1;  
+ Declare @DefaultQuarantineStore int,@qtymet numeric(18,4),@qty  numeric(18,4), @GRNTransID int,@WareHouseID int,  
+ @BatchID int,@GRNNo varchar(50),@SupplierID int,@GRNDate DateTime,@PurchaseOrderRate Numeric(18,2)  ,@IsDraft Bit,  
+ @BatchTypeID int,@AcceptedQtyToStock numeric(18,4),@SupplierAccountsCategoryID int,@CreatedUserID int  
+   
+ declare @ShippingLocationID int  
+ select @ShippingLocationID=ID from Addresses where PartyID=@LocationID and PartyType='Location'   
+  
+  
+ Select  @qtymet=QtyMet,@qty =Quantity,@PurchaseOrderRate = Rate, @QtyTolerance = (Quantity * i.QtyTolerancePercent /100),  
+ @BatchTypeID = BatchTypeID  
+ from PurchaseOrderTrans pt   
+ inner join viitem i on i.ID = pt.ItemID  
+ inner join PurchaseOrder PO on PO.ID=pt.PurchaseOrderID  
+ where pt.ID = @POTransID and ItemID = @ItemID    
+  
+ Select @SupplierID = SupplierID,@GRNDate = Date,@WareHouseID = WarehouseID,@GRNNo = Code,@IsDraft = IsDraft,@CreatedUserID=CreatedUserID from GoodsReceiptNote where ID = @GoodsReceiptNoteID    
+ Select @SupplierAccountsCategoryID = SupplierAccountsCategoryID from Supplier where ID = @SupplierID  
+ Select @DefaultQuarantineStore = ConfigValue from  configuration where ConfigName = 'DefaultGRNStore' and LocationID = @LocationID  
+  
+ Select @IsQCRequired = IsQCRequired from Item where Id = @ItemID  
+  
+ if(@qty+@QtyTolerance>=(@qtymet+@AcceptedQty))  
+ begin  
+ -------Insert into GoodsReceiptNoteTrans  
+  INSERT INTO GoodsReceiptNoteTrans (GoodsReceiptNoteID,PurchaseOrderID,POTransID,ItemID,Batch,ExpiryDate,PurchaseOrderQty,ReceivedQty,  
+  QualityCheckQty,AcceptedQty,RejectedQty,PurchasedQty,Remarks,FinYear,LocationID,ApplicationID,UnitID,VATPercentage,CurrencyID,IsGST,IsVat,Model,PartsNumber,ItemName)    
+  VALUES(@GoodsReceiptNoteID,@PurchaseOrderID,@POTransID,@ItemID,@Batch,@ExpiryDate,@PurchaseOrderQty,@ReceivedQty,@QualityCheckQty,@AcceptedQty,  
+  @RejectedQty,@ItemOrderPreference,@Remarks,@FinYear,@LocationID,@ApplicationID,@UnitID,@VATPercentage,@CurrencyID,@IsGST,@IsVat,@Model,@PartsNumber,@ItemName)    
+  SET @GRNTransID= SCOPE_IDENTITY();  
+      
+  if @IsDraft = 0  
+  Begin  
+   -------Insert into Batch    
+   declare @Date DateTime = Current_Timestamp,@ExpDate DateTime =  Current_Timestamp + 365  
+   Select @ExpDate = case when @ExpiryDate is null then Current_Timestamp + 365 else @ExpiryDate end  
+   
+   exec  [Common].[SpCreateBatch] 'RM',@ItemID,@BatchNo,@Batch,@Date,@ExpDate,0 ,1,@LocationID ,@ApplicationID,@BatchID OUT  
+   ------------------------------------------  
+   update GoodsReceiptNoteTrans set Batch=@BatchID where ID=@GRNTransID  
+   ------------------------------------------------------------  
+  
+  
+  -------If QC is not Required then insert into SLAMapping And Stock   
+  Declare @GRNEntryDate Datetime  
+  Set @GRNEntryDate = Convert(Date,@GRNDate)  
+  
+  if @AcceptedQty > 0  
+  Begin  
+  Declare @PostingValue Numeric(18,4),@SLARemarks varchar(100)  
+  Set @PostingValue = @AcceptedQty*@PurchaseOrderRate   
+  Set @SLARemarks = 'grn'+CAST(@GRNTransID AS varchar(5))  
+  
+ -----------------------------------------------------------------------------  
+    --set @AcceptedQtyToStock=@AcceptedQty  
+    set @AcceptedQtyToStock=dbo.FnConvertStockToInventoryUnit(@ItemID,@AcceptedQty,@UnitID)  
+ --------------------------------------------------------------------------------  
+   if @IsQCRequired = 0  OR @SupplierAccountsCategoryID = 3  
+   begin   
+    if @SupplierAccountsCategoryID <> 3  
+    begin  
+     exec SpInsertSLAMappingItem 'RTG_Approve','ApprovedValue'  
+     ,@SLARemarks,@PostingValue,'GoodsReceiptNote','GoodsReceiptNote',  
+     @GRNNo,@GRNTransID,@FinYear ,@LocationID ,@ApplicationID ,@SupplierID ,-2,-2,  
+     -2,@ItemID,0,@AcceptedQty,@PurchaseOrderRate,0,0,0,0,0,0,0,0,0,0,0,@GRNEntryDate,1  
+       
+    end  
+  
+    else  
+    Begin  
+    SET @WareHouseID=ISNULL((select configValue from configuration where ConfigName='defaultStore' and userID=@CreatedUserID and locationID=@LocationID),@WareHouseID)  
+    Update Goodsreceiptnote set WarehouseID=@WareHouseID where ID=@GoodsReceiptNoteID  
+    End  
+    Exec SpStockUpdate @GRNEntryDate,'F',@ItemID,@BatchID,@WareHouseID,@AcceptedQtyToStock,0,'GRN',@LocationID,@FinYear,2,@ApplicationID,'Receipts',1,@BatchTypeID,@GRNNo  
+   end    
+   else   
+   begin  
+    exec SpStockUpdate @GRNEntryDate,'F',@ItemID,@BatchID,@DefaultQuarantineStore,@AcceptedQtyToStock,0,'GRN',@LocationID,@FinYear,2,@ApplicationID,'Receipts',1,@BatchTypeID,@GRNNo  
+   end  
+    
+   -----Update QtyMet and OfferMet  
+   update PurchaseOrderTrans set QtyMet = ISNULL(QtyMet,0)+@AcceptedQty where ID = @POTransID and ItemID = @ItemID  AND FinYear = @FinYear and ApplicationID = @ApplicationID  
+   if(Select Count(*) from PurchaseOrderTrans where PurchaseOrderID = @PurchaseOrderID  and Quantity > QtyMet and IsSuspended=0) < 1    
+   begin    
+    update PurchaseOrder set OrderMet = 1,Status='Processed' where ID = @PurchaseOrderID  AND FinYear = @FinYear  and ApplicationID = @ApplicationID   
+   end    
+   Else  
+   Begin  
+   update PurchaseOrder set Status='PartiallyProcessed' where ID = @PurchaseOrderID  AND FinYear = @FinYear  and ApplicationID = @ApplicationID   
+    
+   End  
+     
+  End  
+  End    
+ end   
+ else  
+ begin  
+  SET @RetValue  =-1;  
+ end  
+END  
+  

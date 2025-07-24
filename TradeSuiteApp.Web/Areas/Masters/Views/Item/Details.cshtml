@@ -1,0 +1,814 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.ItemModel
+
+@{
+    ViewBag.Title = "Item Details";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.Item</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.ItemDetails</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "edit", "Item", new { Area = "Masters", @id = Model.ID }, new { @class = "md-btn " }))
+
+            @Html.HiddenFor(m => m.ID)
+            @Html.ActionLink(Common.Back, "Index", "Item", new { Area = "Masters" }, new { @class = "md-btn " })
+            <form action="/Reports/Item/Print/@Model.ID" method="POST">
+                @ActionAuthorization.IsAuthorized("Print", "<input type='submit' class='md-btn' value='Print' />")
+
+            </form>
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="uk-width-medium-1-1">
+        <div class="md-card">
+            <div class="md-card-content ">
+
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-1-1">
+
+                        <div class="uk-form-row">
+                            <div class="uk-grid">
+                                <div class="uk-width-1-1">
+                                    @*<ul class="uk-tab uk-hidden" data-uk-tab="{connect:'#tabs_1_content'}">
+                                    <li class="uk-active" aria-expanded="true"><a>GENERAL DETAILS</a></li>
+                                    <li aria-expanded="true"><a>SUPPLY CHAIN</a></li>
+                                    <li aria-expanded="true"><a>PURCHASE</a></li>
+                                    <li aria-expanded="true"><a>QUALITY CHECKING</a></li>
+                                    <li aria-expanded="true"><a>PRODUCTION</a></li>
+                                    <li aria-expanded="true"><a>SALES</a></li>
+                                    <li aria-expanded="true"><a>COST</a></li>
+                                    <li aria-expanded="true"><a>ACCOUNTS</a></li>
+                                    <li aria-expanded="true"><a>LOCATION MAPPING DETAILS</a></li>
+                                </ul>*@
+                                    @*<ul id="tabs_1_content" class="uk-switcher uk-margin" style="width:100%">
+                                <li aria-hidden="false" class="uk-active" style="width:100%">*@
+                                    <div class="uk-form-row">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-1-1">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.ItemCategory </label>
+                                                        @Html.TextBoxFor(m => m.CategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.BusinessCategory </label>
+                                                        @Html.TextBoxFor(m => m.BusinessCategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.ItemName </label>
+                                                        @Html.TextBoxFor(m => m.Name, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8 uk-hidden">
+                                                        <label>@Masters.NameMalayalam</label>
+                                                        @Html.TextBoxFor(m => m.MalayalamName, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8 uk-hidden">
+                                                        <label>@Masters.NameHindi</label>
+                                                        @Html.TextBoxFor(m => m.HindiName, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8 uk-hidden">
+                                                        <label>@Masters.NameSanskrit</label>
+                                                        @Html.TextBoxFor(m => m.SanskritName, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8 uk-hidden">
+                                                        <label>@Masters.OldItemName</label>
+                                                        @Html.TextBoxFor(m => m.OldName, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+
+                                                    <div class="uk-width-medium-2-8 uk-hidden">
+                                                        <label>@Masters.StorageCategory</label>
+                                                        @Html.TextBoxFor(m => m.StorageCategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    @*<div class="uk-width-medium-2-8 ">
+                                                    <label>
+                                                        @Masters.ItemType @if (Model.ID == 0)
+                                                        {
+                                                            <span>*</span>
+                                                        }
+                                                    </label>
+                                                    @Html.DropDownListFor(Model => Model.ItemTypeID, new SelectList(Model.ItemTypeList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                </div>*@
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>
+                                                            @Masters.Code @if (Model.ID == 0)
+                                                                    {
+                                                                <span>*</span>
+                                                                    }
+                                                        </label>
+                                                        @Html.TextBoxFor(m => m.Code, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8 uk-hidden">
+                                                        <label>@Masters.OldCode</label>
+                                                        @Html.TextBoxFor(m => m.OldItemCode, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8 uk-hidden">
+                                                        <label>@Masters.OldCode 2</label>
+                                                        @Html.TextBoxFor(m => m.OldItemCode2, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.HSNCode </label>
+                                                        @Html.TextBoxFor(m => m.HSNCode, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8 uk-hidden">
+                                                        <label>@Masters.BarCode</label>
+                                                        @Html.TextBoxFor(m => m.BarCode, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8 uk-hidden">
+                                                        <label>@Masters.QRCode</label>
+                                                        @Html.TextBoxFor(m => m.QRCode, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.InventoryUOM </label>
+                                                        @Html.TextBoxFor(m => m.InventoryUnitName, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.UOM </label>
+                                                        @Html.TextBoxFor(m => m.UnitName, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.ConversionFactorP2I </label>
+                                                        @Html.TextBoxFor(m => m.ConversionFactorPtoI, "", new { maxlength = 10, @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.PurchaseUOM <span>*</span></label>
+                                                        @Html.TextBoxFor(Model => Model.PurchaseUnitName, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.ConversionFactorPurchase2Iinventory <span>*</span></label>
+                                                        @Html.TextBoxFor(m => m.ConversionFactorPurchaseToInventory, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.PackSize </label>
+                                                        @Html.TextBoxFor(m => m.PackSize, "", new { maxlength = 10, @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.SalesUOM <span>*</span></label>
+                                                        @Html.TextBoxFor(Model => Model.SalesUnit, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.ConversionFactorP2s <span>*</span></label>
+                                                        @Html.TextBoxFor(m => m.ConversionFactorPtoS, "", new { maxlength = 10, @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.ConversionFactorSales2Iinventory <span>*</span></label>
+                                                        @Html.TextBoxFor(m => m.ConversionFactorSalesToInventory, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.SecondaryUOM <span>*</span></label>
+                                                        @Html.TextBoxFor(Model => Model.SecondaryUnitName, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.ConversionFactorP2Secondary <span>*</span></label>
+                                                        @Html.TextBoxFor(m => m.ConversionFactorPtoSecondary, "", new { maxlength = 10, @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.GSTCategory </label>
+                                                        @Html.TextBoxFor(m => m.GSTCategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.GSTSubCategory <span>*</span></label>
+                                                        @Html.TextBoxFor(m => m.GSTSubCategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.Manufacturer</label>
+                                                        @Html.TextBoxFor(m => m.Manufacturer, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8 uk-hidden">
+                                                        <label>@Masters.Description</label>
+                                                        @Html.TextBoxFor(m => m.Description, new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-1">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsStockValue)
+                                                        <input type="checkbox" class="icheckbox IsStockValue" data-md-icheck disabled />&nbsp;<label class="stock-value">Stock Value</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="uk-form-row">
+                                        <table id="tbl-invoice-details" class="uk-table" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th class="width-10">@Common.SerialNo</th>
+                                                    @*<th class="width-10"></th>*@
+                                                    <th class="width-50">@Purchase.InvoiceNo</th>
+                                                    <th class="width-100">@Purchase.InvoiceDate</th>
+                                                    <th class="width-100">@Purchase.Supplier</th>
+                                                    <th class="width-50">@Purchase.PurchaseUnit</th>
+                                                    <th class="width-50">@Purchase.InvoiceQty</th>
+                                                    <th class="width-50">@Purchase.OfferQty</th>
+                                                    <th class="width-50">@Purchase.TotalQuantity</th>
+                                                    <th class="width-50">@Purchase.PurchaseRate</th>
+                                                    <th class="width-50">@Purchase.NetPurchaseRate</th>
+                                                    <th class="width-50">@Purchase.PurchaseLooseRate</th>
+                                                    <th class="width-50">@Purchase.SGSTAmt</th>
+                                                    <th class="width-50">@Purchase.CGSTAmt</th>
+                                                    <th class="width-50">@Purchase.DiscountPer</th>
+                                                    <th class="width-50">@Purchase.Discount</th>
+                                                    <th class="width-50">@Purchase.ProfitRatio</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.InvoiceDetails)
+                                                        {
+                                                    <tr class="included">
+                                                        <td class="uk-text-center">@(1 + Model.InvoiceDetails.IndexOf(item))</td>
+                                                        @*<td class="uk-text-center checked" data-md-icheck="">
+                                                            <input type="checkbox" class="include-item" value="@item.ItemID" checked="checked">
+                                                        </td>*@
+                                                        <td class="InvoiceNo">
+                                                            <input type="hidden" class="hdnId" value="@item.ID">
+                                                            <input type="hidden" class="RetailMRP" value="@item.RetailMRP">
+                                                            <input type="hidden" class="CessPercentage" value="@item.CessPercentage">
+                                                            <input type="hidden" class="GSTPercentage" value="@item.GSTPercentage">
+                                                            <input type="hidden" class="PreviousQuantity" value="@item.Quantity">
+                                                            <input type="hidden" class="PreviousOfferQty" value="@item.OfferQty">
+                                                            <input type="hidden" class="PreviousInvoiceRate" value="@item.InvoiceRate">
+                                                            <input type="hidden" class="PreviousPurchasePrice" value="@item.PurchasePrice">
+                                                            <input type="hidden" class="PreviousPurchaseLooseRate" value="@item.PurchaseLooseRate">
+                                                            <input type="hidden" class="PreviousSalesRate" value="@item.SalesRate">
+                                                            <input type="hidden" class="PreviousLooseSalesRate" value="@item.LooseSalesRate">
+                                                            <input type="hidden" class="PreviousGSTAmount" value="@item.GSTAmount">
+                                                            <input type="hidden" class="PreviousDiscount" value="@item.Discount">
+                                                            <input type="hidden" class="PreviousProfitRatio" value="@item.ProfitRatio">
+
+                                                            <input type="hidden" class="PreviousProfitRatio" value="@item.ProfitRatio">
+                                                            <input type="hidden" class="SalesRate" value="@item.SalesRate">
+                                                            <input type="hidden" class="LooseSalesRate" value="@item.LooseSalesRate">
+                                                            <input type="hidden" class="PreviousCGSTAmt" value="@item.CGSTAmt">
+                                                            <input type="hidden" class="PreviousSGSTAmt" value="@item.SGSTAmt">
+
+                                                            @item.InvoiceNo
+                                                        </td>
+                                                        <td class="InvoiceDate">@item.InvoiceDate</td>
+                                                        <td>@item.SupplierName</td>
+                                                        <td class="PreviousUnit">                                                @item.Unit                                        </td>
+                                                        <td>
+                                                            <input type="text" class="md-input Quantity  mask-qty" value="@item.Quantity" readonly />
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="md-input OfferQty mask-qty" value="@item.OfferQty" readonly />
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="md-input LooseQty  mask-currency" value="@item.LooseQty" readonly />
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="md-input InvoiceRate mask-crrency" value="@item.InvoiceRate" readonly />
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="md-input PurchasePrice mask-currency" value="@item.PurchasePrice" readonly />
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="md-input PurchaseLooseRate  mask-currency" value="@item.PurchaseLooseRate" readonly />
+                                                        </td>
+                                                        @*<td>
+                                                        <input type="text" class="md-input SalesRate  mask-currency" value="@item.SalesRate" readonly/>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="md-input LooseSalesRate  mask-currency" value="@item.LooseSalesRate" readonly/>
+                                                    </td>*@
+
+                                                        <td>
+                                                            <input type="text" class="md-input SGSTAmt mask-currency" value="@item.SGSTAmt" readonly />
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="md-input CGSTAmt mask-currency" value="@item.CGSTAmt" readonly />
+
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="md-input DiscountPercent mask-currency" value="@item.DiscountPercent" readonly />
+
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="md-input Discount mask-currency" value="@item.Discount" readonly />
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="md-input ProfitRatio  mask-currency" value="@item.ProfitRatio" readonly />
+
+                                                        </td>
+                                                    </tr>
+                                                        }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    @*</li>*@
+                                    @*<li aria-hidden="false" class="uk-active uk-hidden" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.BusinessCategory </label>
+                                                    @Html.TextBoxFor(m => m.BusinessCategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.SecondaryUOM </label>
+                                                    @Html.TextBoxFor(m => m.SecondaryUnitName, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.InventoryUOM </label>
+                                                    @Html.TextBoxFor(m => m.InventoryUnitName, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.UOM </label>
+                                                    @Html.TextBoxFor(m => m.UnitName, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.PackSize </label>
+                                                    @Html.TextBoxFor(m => m.PackSize, "", new { maxlength = 10, @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.ConversionFactorP2I </label>
+                                                    @Html.TextBoxFor(m => m.ConversionFactorPtoI, "", new { maxlength = 10, @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-input-group">
+                                                        <label>@Masters.BirthDate </label>
+                                                        @Html.TextBoxFor(m => m.BirthDate, new { @class = "md-input label-fixed  date", @disabled = "disabled" })
+
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-input-group">
+                                                        <label>@Masters.DisContinuedDate </label>
+                                                        @Html.TextBoxFor(m => m.DisContinuedDate, new { @class = "md-input label-fixed future-date date", @disabled = "disabled" })
+
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.MinStockQTY </label>
+                                                    @Html.TextBoxFor(m => m.MinStockQTY, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.MaxStockQTY </label>
+                                                    @Html.TextBoxFor(m => m.MaxStockQTY, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty", @disabled = "disabled" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-1-1">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <label>&nbsp;</label>
+                                                            </div>
+                                                            @Html.HiddenFor(m => m.IsStockItem)
+                                                            <input type="checkbox" class="icheckbox IsStockItem" data-md-icheck disabled />&nbsp;<label class="stock-item">Stock item</label>
+                                                        </div>
+                                                        <div class="uk-width-medium-1-1">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <label>&nbsp;</label>
+                                                            </div>
+                                                            @Html.HiddenFor(m => m.IsStockValue)
+                                                            <input type="checkbox" class="icheckbox IsStockValue" data-md-icheck disabled />&nbsp;<label class="stock-value">Stock Value</label>
+
+                                                        </div>
+                                                        <div class="uk-width-medium-1-1">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <label>&nbsp;</label>
+                                                            </div>
+                                                            @Html.HiddenFor(m => m.IsDemandPlanRequired)
+                                                            <input type="checkbox" class="icheckbox IsDemandPlanRequired" data-md-icheck disabled />&nbsp;<label class="demand-plan">Demand Plan Required</label>
+                                                        </div>
+                                                        <div class="uk-width-medium-1-1">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <label>&nbsp;</label>
+                                                            </div>
+                                                            @Html.HiddenFor(m => m.IsMaterialPlanRequired)
+                                                            <input type="checkbox" class="icheckbox IsMaterialPlanRequired" data-md-icheck disabled />&nbsp;<label class="material-plan">Material Plan Required</label>
+                                                        </div>
+                                                        <div class="uk-width-medium-1-1">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <label>&nbsp;</label>
+                                                            </div>
+                                                            @Html.HiddenFor(m => m.IsPhantomItem)
+                                                            <input type="checkbox" class="icheckbox IsPhantomItem" data-md-icheck disabled />&nbsp;<label class="phantom-item">Phantom item</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active uk-hidden" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.PurchaseCategory </label>
+                                                    @Html.TextBoxFor(m => m.PurchaseCategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.PurchaseUOM </label>
+                                                    @Html.TextBoxFor(m => m.PurchaseUnitName, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.ReOrderQty</label>
+                                                    @Html.TextBoxFor(m => m.ReOrderQty, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.ReOrderLevelQty</label>
+                                                    @Html.TextBoxFor(m => m.ReOrderLevel, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.MinPurchaseQty</label>
+                                                    @Html.TextBoxFor(m => m.MinPurchaseQTY, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.MaxPurchaseQty</label>
+                                                    @Html.TextBoxFor(m => m.MaxPurchaseQTY, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.QtyTolerancePercent </label>
+                                                    @Html.TextBoxFor(m => m.QtyTolerancePercent, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty", @disabled = "disabled" })
+                                                </div>
+
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-input-group">
+                                                        <label>@Masters.SeasonStarts</label>
+                                                        @Html.TextBoxFor(m => m.SeasonPurchaseStarts, new { @class = "md-input label-fixed past-date date", @disabled = "disabled" })
+
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-input-group">
+                                                        <label>@Masters.SeasonEnds</label>
+                                                        @Html.TextBoxFor(m => m.SeasonPurchaseEnds, new { @class = "md-input label-fixed future-date date", @disabled = "disabled" })
+
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.PurchaseLeadTime </label>
+                                                    @Html.TextBoxFor(m => m.PurchaseLeadTime, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.ConversionFactorPurchase2Iinventory </label>
+                                                    @Html.TextBoxFor(m => m.ConversionFactorPurchaseToInventory, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                            </div>
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-1-1">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-2-8 item-align-icheck">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <label>&nbsp;</label>
+                                                            </div>
+                                                            @Html.HiddenFor(m => m.IsPurchaseItem)
+                                                            <input type="checkbox" class="icheckbox IsPurchaseItem" data-md-icheck disabled />&nbsp;<label class="purchase-item">Purchase Item</label>
+                                                        </div>
+                                                        <div class="uk-width-medium-1-1 item-align-icheck">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <label>&nbsp;</label>
+                                                            </div>
+                                                            @Html.HiddenFor(m => m.IsSeasonalPurchase)
+                                                            <input type="checkbox" class="icheckbox IsSeasonalPurchase" data-md-icheck disabled />&nbsp;<label class="seasonal-purchase">Seasonal Purchase</label>
+                                                        </div>
+                                                        <div class="uk-width-medium-1-1 item-align-icheck">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <label>&nbsp;</label>
+                                                            </div>
+                                                            @Html.HiddenFor(m => m.IsPORequired)
+                                                            <input type="checkbox" class="icheckbox IsPORequired" data-md-icheck checked disabled />&nbsp;<label class="po-item">PO Item</label>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active uk-hidden" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.BotanicalName</label>
+                                                    @Html.TextBoxFor(m => m.BotanicalName, "", new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.QCCategory </label>
+                                                    @Html.TextBoxFor(m => m.QCCategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.PatentNo</label>
+                                                    @Html.TextBoxFor(m => m.PatentNo, "", new { maxlength = 10, @class = "md-input label-fixed", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.ConversionFactorP2Secondary </label>
+                                                    @Html.TextBoxFor(m => m.ConversionFactorPtoSecondary, "", new { maxlength = 10, @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                </div>
+                                            </div>
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8 ">
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsQCRequired)
+                                                        <input type="checkbox" class="icheckbox IsQCRequired" data-md-icheck disabled />&nbsp;<label class="qc-purchase">QC Purchase</label>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsQCRequiredForProduction)
+                                                        <input type="checkbox" class="icheckbox IsQCRequiredForProduction" data-md-icheck disabled />&nbsp;<label class="qc-production">QC Production</label>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsProprietary)
+                                                        <input type="checkbox" class="icheckbox IsProprietary" data-md-icheck disabled />&nbsp;<label class="proprietary-item">Proprietary item</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active uk-hidden" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.ProductionGroup </label>
+                                                    @Html.TextBoxFor(Model => Model.ProductionGroup, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.ProductionCategory *</label>
+                                                    @Html.TextBoxFor(m => m.ProductionCategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.MasterFormula </label>
+                                                    @Html.TextBoxFor(m => m.MasterFormulaName, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.NormalLossQty </label>
+                                                    @Html.TextBoxFor(m => m.NormalLossQty, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.NormalLossPercent </label>
+                                                    @Html.TextBoxFor(m => m.NormalLossPercent, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.ProdLeadTime </label>
+                                                    @Html.TextBoxFor(m => m.ProductLeadDays, "", new { maxlength = 10, @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.BatchSizeQty </label>
+                                                    @Html.TextBoxFor(m => m.BatchSizeQTY, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.ShelfLifeInDays </label>
+                                                    @Html.TextBoxFor(m => m.ShelfLifeMonths, "", new { maxlength = 10, @class = "md-input label-fixed mask-numeric", @disabled = "disabled" })
+                                                </div>
+                                            </div>
+
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8 ">
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsMasterFormula)
+                                                        <input type="checkbox" class="icheckbox IsMasterFormula" data-md-icheck disabled />&nbsp;<label class="formula-item">Formula Item</label>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsReProcessAllowed)
+                                                        <input type="checkbox" class="icheckbox IsReProcessAllowed" data-md-icheck disabled />&nbsp;<label class="reprocess-item">Re-Process item</label>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsBatch)
+                                                        <input type="checkbox" class="icheckbox IsBatch" data-md-icheck disabled />&nbsp;<label class="batch-item">Batch item</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active uk-hidden" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-1-1">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.SalesIncentiveCategory </label>
+                                                            @Html.TextBoxFor(m => m.SalesIncentiveCategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.SalesCategory </label>
+                                                            @Html.TextBoxFor(m => m.SalesCategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.DiseaseCategory </label>
+                                                            @Html.TextBoxFor(m => m.DiseaseCategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.DrugScheduleType </label>
+                                                            @Html.TextBoxFor(m => m.DrugScheduleName, new { @class = "md-input", @disabled = "disabled" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.SalesUOM </label>
+                                                            @Html.TextBoxFor(m => m.SalesUnitName, new { @class = "md-input", @disabled = "disabled" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.MinSalesQtyFull </label>
+                                                            @Html.TextBoxFor(m => m.MinSalesQtyFull, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty", @disabled = "disabled" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.MinSalesQtyLoose </label>
+                                                            @Html.TextBoxFor(m => m.MinSalesQtyLoose, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty", @disabled = "disabled" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.MaxSaleQTY </label>
+                                                            @Html.TextBoxFor(m => m.MaxSalesQty, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty", @disabled = "disabled" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.ConversionFactorP2s</label>
+                                                            @Html.TextBoxFor(m => m.ConversionFactorPtoS, "", new { maxlength = 10, @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.ConversionFactorSales2Iinventory </label>
+                                                            @Html.TextBoxFor(m => m.ConversionFactorSalesToInventory, new { @class = "md-input", @disabled = "disabled" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <div class="uk-input-group">
+                                                                <label>@Masters.SeasonStarts</label>
+                                                                @Html.TextBoxFor(m => m.SeasonStarts, new { @class = "md-input label-fixed future-date date", @disabled = "disabled" })
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <div class="uk-input-group">
+                                                                <label>@Masters.SeasonEnds</label>
+                                                                @Html.TextBoxFor(m => m.SeasonEnds, new { @class = "md-input label-fixed future-date date", @disabled = "disabled" })
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <div class="uk-width-medium-1-1 item-align-icheck">
+                                                                <div class="uk-grid" data-uk-grid-margin>
+                                                                    <label>&nbsp;</label>
+                                                                </div>
+                                                                @Html.HiddenFor(m => m.IsSaleable)
+                                                                <input type="checkbox" class="icheckbox IsSaleable" data-md-icheck disabled />&nbsp;<label class="saleable-item">Saleable iten</label>
+                                                            </div>
+                                                            <div class="uk-width-medium-1-1 item-align-icheck">
+                                                                <div class="uk-grid" data-uk-grid-margin>
+                                                                    <label>&nbsp;</label>
+                                                                </div>
+                                                                @Html.HiddenFor(m => m.N2GActivity)
+                                                                <input type="checkbox" class="icheckbox N2GActivity" data-md-icheck disabled />&nbsp;<label class="n2g">N2G Activity</label>
+                                                            </div>
+                                                            <div class="uk-width-medium-1-1 item-align-icheck">
+                                                                <div class="uk-grid" data-uk-grid-margin>
+                                                                    <label>&nbsp;</label>
+                                                                </div>
+                                                                @Html.HiddenFor(m => m.IsMrp)
+                                                                <input type="checkbox" class="icheckbox IsMrp" data-md-icheck disabled />&nbsp;<label class="mrp">MRP</label>
+                                                            </div>
+
+                                                            <div class="uk-width-medium-1-1 item-align-icheck">
+                                                                <div class="uk-grid" data-uk-grid-margin>
+                                                                    <label>&nbsp;</label>
+                                                                </div>
+                                                                @Html.HiddenFor(m => m.IsPriceListReference)
+                                                                <input type="checkbox" class="icheckbox IsPriceListReference" data-md-icheck disabled />&nbsp;<label class="pricelist">Price List Reference</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active uk-hidden" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.CostCategory </label>
+                                                    @Html.TextBoxFor(m => m.CostingCategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active uk-hidden" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.AssetCategory </label>
+                                                    @Html.TextBoxFor(m => m.AssetCategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.GSTCategory </label>
+                                                    @Html.TextBoxFor(m => m.GSTCategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.GSTSubCategory</label>
+                                                    @Html.TextBoxFor(m => m.GSTSubCategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.AccountCategory </label>
+                                                    @Html.TextBoxFor(m => m.AccountsCategoryName, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+
+                                            </div>
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8 ">
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsLocation)
+                                                        <input type="checkbox" class="icheckbox IsLocation" data-md-icheck disabled />&nbsp;<label class="location">Location</label>
+                                                    </div>
+
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsInterCompany)
+                                                        <input type="checkbox" class="icheckbox IsInterCompany" data-md-icheck disabled />&nbsp;<label class="inercomapny">Inter Company</label>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsDepartment)
+                                                        <input type="checkbox" class="icheckbox IsDepartment" data-md-icheck disabled />&nbsp;<label class="department">Department</label>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsEmployee)
+                                                        <input type="checkbox" class="icheckbox IsEmployee" data-md-icheck disabled />&nbsp;<label class="employee">Employee</label>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsProject)
+                                                        <input type="checkbox" class="icheckbox IsProject" data-md-icheck disabled />&nbsp;<label class="project">Project</label>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsAsset)
+                                                        <input type="checkbox" class="icheckbox IsAsset" data-md-icheck disabled />&nbsp;<label class="asset">Asset</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="true" class="uk-active uk-hidden" style="width:100%">
+                                        <div id="location-Container" class="item-location">
+                                            <div class="uk-width-medium-1-1">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    @foreach (var location in Model.LocationList)
+                                                    {
+                                                        <div class="uk-width-medium-2-8 Locationdiv">
+                                                            <input class="md-input label-fixed" type="text" value="@location.Text" disabled />
+                                                            @*<input type="checkbox" class="icheckbox itemLocation" value="@location.Value" data-md-icheck />&nbsp;
+                                                                <label id="locationLabel">@location.Text</label>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <input type="hidden" id="Item-Location-Mapping" value="0">
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>*@
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/Item")
+<script type="text/javascript">
+    Item.Details();
+</script>

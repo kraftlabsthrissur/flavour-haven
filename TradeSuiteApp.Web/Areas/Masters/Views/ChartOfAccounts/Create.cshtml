@@ -1,0 +1,141 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.ChartOfAccountsModel
+@{
+    ViewBag.Title = @Masters.CreateChartOfAccounts;
+}
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.ChartOfAccounts</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.CreateChartOfAccounts</span>
+        </div>
+        <div class="heading_actions">
+
+            @Html.ActionLink(Common.Close, "Index", "ChartOfAccounts", new { Area = "Masters" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content">
+        <div id="page_content_inner">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-1-1">
+                    <div class="md-card">
+                        <div class="md-card-content">
+                            <h3 class="heading_a uk-margin-small-bottom">Account Heads</h3>
+                            <div id="tA">
+                                <ul>
+                                    @foreach (var level1 in Model.AccountList.Where(a => a.ParentID == 0))
+                                    {
+                                        <li>
+                                            @{ int number = 10;
+                                                <span class="uk-input-group-addon">
+                                                    <button class="btnAddAccount" data-level="@(@level1.Level - @number)" data-parent-id="@level1.ID">+</button>
+                                                    <button class="btnEditAccount" data-name="@level1.AccountName" data-amount="@level1.OpeningAmount" data-id="@level1.ID" data-ismanual="@level1.IsManual"> <i class="uk-icon-pencil-square-o" aria-hidden="true"></i></button>
+                                                    @*<button class="btnCancel" data-id="@level1.ID"><i class="uk-icon-times" aria-hidden="true"></i></button>*@
+                                                    @level1.AccountName (@level1.AccountID)
+                                                </span>
+                                            }
+                                            <ul>
+                                                @foreach (var level2 in Model.AccountList.Where(a => a.ParentID == level1.ID))
+                                                {
+                                                    <li>
+                                                        @{ int number1 = 20;
+                                                            <span class="uk-input-group-addon">
+                                                                <button class="btnAddAccount" data-level="@(@level2.Level-@number1)" data-parent-id="@level2.ID">+</button>
+                                                                <button class="btnEditAccount" data-name="@level2.AccountName" data-amount="@level2.OpeningAmount" data-id="@level2.ID" data-ismanual="@level2.IsManual"> <i class="uk-icon-pencil-square-o" aria-hidden="true"></i></button>
+                                                                @*<button class="btnCancel" data-id="@level2.ID"><i class="uk-icon-times" aria-hidden="true"></i></button>*@
+                                                                @level2.AccountName (@level2.AccountID)
+                                                            </span>
+                                                        }
+                                                        <ul>
+                                                            @foreach (var level3 in Model.AccountList.Where(a => a.ParentID == level2.ID))
+                                                            {
+                                                                <li data-icon="envato_ico.png">
+                                                                    <span class="uk-input-group-addon">
+                                                                        <button class="btnAddAccount" data-level="@level3.Level" data-parent-id="@level3.ID">+</button>
+                                                                        <button class="btnEditAccount" data-name="@level3.AccountName" data-amount="@level3.OpeningAmount" data-id="@level3.ID" data-ismanual="@level3.IsManual"> <i class="uk-icon-pencil-square-o" aria-hidden="true"></i></button>
+                                                                        @*<button class="btnCancel" data-id="@level3.ID"><i class="uk-icon-times" aria-hidden="true"></i></button>*@
+                                                                        @level3.AccountName (@level3.AccountID)
+                                                                    </span>
+                                                                    <ul>
+                                                                        @foreach (var level4 in Model.AccountList.Where(a => a.ParentID == level3.ID))
+                                                                        {
+                                                                            <li>
+                                                                                <span class="uk-input-group-addon">
+                                                                                    <button class="btnAddAccount" data-level="@level4.Level" data-parent-id="@level4.ID">+</button>
+                                                                                    <button class="btnEditAccount" data-name="@level4.AccountName" data-amount="@level4.OpeningAmount" data-id="@level4.ID" data-ismanual="@level4.IsManual"> <i class="uk-icon-pencil-square-o" aria-hidden="true"></i></button>
+                                                                                    @*<button class="btnCancel" data-id="@level4.ID"><i class="uk-icon-times" aria-hidden="true"></i></button>*@
+                                                                                    @level4.AccountName (@level4.AccountID)
+                                                                                </span>
+                                                                                <ul>
+                                                                                    @foreach (var level5 in Model.AccountList.Where(a => a.ParentID == level4.ID))
+                                                                                    {
+                                                                                        <li>
+                                                                                            <span class="uk-input-group-addon">
+                                                                                                <button class="btnAddAccount" data-level="@level5.Level" data-parent-id="@level5.ID">+</button>
+                                                                                                <button class="btnEditAccount" data-name="@level5.AccountName" data-amount="@level5.OpeningAmount" data-id="@level5.ID" data-ismanual="@level5.IsManual"> <i class="uk-icon-pencil-square-o" aria-hidden="true"></i></button>
+                                                                                                @*<button class="btnCancel" data-id="@level5.ID"><i class="uk-icon-times" aria-hidden="true"></i></button>*@
+                                                                                                @level5.AccountName (@level5.AccountID)
+                                                                                            </span>
+                                                                                            <ul>
+                                                                                                @foreach (var level6 in Model.AccountList.Where(a => a.ParentID == level5.ID))
+                                                                                                {
+                                                                                                    <li data-icon="envato_ico.png">
+                                                                                                        <span class="uk-input-group-addon">
+                                                                                                            <button class="btnEditAccount" data-name="@level6.AccountName" data-amount="@level6.OpeningAmount" data-id="@level6.ID" data-ismanual="@level6.IsManual"> <i class="uk-icon-pencil-square-o" aria-hidden="true"></i></button>
+                                                                                                            @*<button class="btnCancel" data-id="@level6.ID"><i class="uk-icon-times" aria-hidden="true"></i></button>*@
+                                                                                                            @level6.AccountName (@level6.AccountID)
+                                                                                                        </span>
+                                                                                                        
+                                                                                                    </li>
+                                                                                                }
+                                                                                            </ul>
+                                                                                        </li>
+                                                                                    }
+                                                                                </ul>
+                                                                            </li>
+                                                                        }
+                                                                    </ul>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    </li>
+                                                   }
+                                            </ul>
+                                        </li>
+                                       }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Html.Partial("~/Areas/Masters/Views/ChartOfAccounts/AddAccountHead.cshtml")
+
+<link href="~/Assets/css/ui.fancytree.min.css" rel="stylesheet" />
+<link href="~/Assets/css/jquery-ui.min.css" rel="stylesheet" />
+
+<script src="~/Assets/scripts/plugins/jquery-ui.min.js"></script>
+<script src="~/Assets/scripts/plugins/jquery.fancytree-all.min.js"></script>
+
+@Scripts.Render("~/Js/Page/ChartOfAccounts")
+<script type="text/javascript">
+    ChartOfAccounts.init();
+</script>
+
+
+
+
+
+
+

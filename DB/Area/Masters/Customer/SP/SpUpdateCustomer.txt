@@ -1,0 +1,71 @@
+    
+CREATE PROCEDURE [Master].[SpUpdateCustomer]           
+(@ID INT,@Code VARCHAR(20),@Name VARCHAR(100),@Name2 VARCHAR(100),@CategoryID INT,          
+@ContactPersonName VARCHAR(100),@PriceListID INT,          
+@DiscountID INT,@CashDiscountID INT,@CustomerTaxCategoryID INT,@CustomerAccountsCategoryID INT,          
+@IsGSTRegistered BIT,@AadhaarNo VARCHAR(20),@PANNo VARCHAR(20),@GSTNo VARCHAR(20),          
+@FaxNo VARCHAR(30),@EmailID VARCHAR(50),@Creditdays INT,          
+@MinimumCreditLimit NUMERIC,@MaxCreditLimit NUMERIC,@PaymentTypeID INT,          
+@StartDate DATETIME,@ExpiryDate DATETIME,@IsInterCompany BIT,          
+@IsMappedtoExpsEntries BIT,@IsBlockedForSalesOrders BIT,@IsBlockedForSalesInvoices BIT,          
+@IsAlsoASupplier BIT,@SupplierID INT,@CustomerRouteID INT,@CashDiscountCategoryID INT,          
+@FSOID INT,@OldCode VARCHAR(25),@CustomerMonthlyTarget numeric(18,4),@TradeLegalName varchar(50),  
+@IsMappedtoServiceSales BIT,@IsDraft BIT,  
+@CurrencyID int,  
+@Currency VARCHAR(50),  
+@LocationID INT,  
+@ApplicationID INT,  
+@FinYear INT,  
+@CreatedUserID INT)          
+          
+AS          
+BEGIN          
+ SET NOCOUNT ON;      
+   
+ DECLARE @DiscountPercentage NUMERIC(18,2),@CustomerStateID INT,@Count INT,@SerialNo Varchar(20),@IsAlreadySave BIT  
+  
+ SELECT @SerialNo = Code FROM Customer WHERE ID = @ID  
+ SELECT @IsAlreadySave = CASE WHEN   IsDraftCustomer = 1 THEN 0  
+ ELSE 1 END FROM Customer WHERE ID = @ID  
+  
+ IF (@IsDraft = 0 AND @IsAlreadySave = 0)  
+  BEGIN  
+   exec Common.SpUpdateSerialNo 'Customer','Code',@FinYear,@LocationID ,@ApplicationID,@SerialNo = @SerialNo OUT  
+  END  
+  
+ EXEC SpLogChange 'Customer','ID',@ID,@CreatedUserID,@LocationID,@ApplicationID  
+  
+ EXEC SpLogChange 'CustomerLocationMapping','CustomerID',@ID,@CreatedUserID,@LocationID,@ApplicationID  
+       
+ UPDATE Customer SET Code= @SerialNo,Name=@Name,Name2=@Name2,CategoryID = @CategoryID,ContactPersonName=@ContactPersonName,PriceListID=@PriceListID,          
+ DiscountID=@DiscountID,CustomerTaxCategoryID=@CustomerTaxCategoryID,CustomerAccountsCategoryID=@CustomerAccountsCategoryID,          
+ IsGSTRegistered=@IsGSTRegistered,AadhaarNo=@AadhaarNo,PANNo=@PANNo,GSTNo=@GSTNo,MinimumCreditLimit=@MinimumCreditLimit,MaxCreditLimit=@MaxCreditLimit,          
+ PaymentTypeID=@PaymentTypeID,StartDate=@StartDate,ExpiryDate=@ExpiryDate,IsInterCompany=@IsInterCompany,IsMappedtoExpsEntries=@IsMappedtoExpsEntries,          
+ IsBlockedForSalesOrders=@IsBlockedForSalesOrders,IsBlockedForSalesInvoices=@IsBlockedForSalesInvoices,IsAlsoASupplier=@IsAlsoASupplier,SupplierID= @SupplierID,          
+ CustomerRouteID=@CustomerRouteID,CashDiscountCategoryID=@CashDiscountCategoryID,FSOID=@FSOID,OldCode=@OldCode,    
+ Creditdays = @Creditdays,ApplicationID=@ApplicationID,CashDiscountID=@CashDiscountID ,CustomerMonthlyTarget=@CustomerMonthlyTarget,  
+ TradeLegalName=@TradeLegalName,IsMappedtoServiceSales = @IsMappedtoServiceSales,IsDraftCustomer = @IsDraft,currency=@Currency,currencyID=@CurrencyID  
+  
+ where ID = @ID          
+       
+  DELETE FROM CustomerLocationMapping WHERE CustomerID = @ID      
+    
+ SELECT @DiscountPercentage = DiscountPercentage FROM DiscountCategory WHERE ID = @DiscountID   
+ SELECT @Count=COUNT(*) from Discount   
+  Where CustomerID=@ID AND ItemID=0 AND BusinessCategoryID=0 AND SalesIncentiveCategoryID=0 AND SalesCategoryID=0  
+ IF @Count>0  
+  BEGIN  
+   SELECT @CustomerStateID=StateID FROM Addresses WHERE PartyID=@ID AND PartyType = 'Customer' AND IsDefault = 1 AND IsBilling = 1  
+   Update Discount  SET DiscountCategoryID=@DiscountID,DiscountPercentage=@DiscountPercentage,CustomerCategoryID=@CategoryID   
+   WHERE CustomerID=@ID AND ItemID=0   
+   AND BusinessCategoryID=0 AND SalesIncentiveCategoryID=0 AND SalesCategoryID=0   
+  END  
+ IF @DiscountPercentage>0 AND @Count=0  
+  BEGIN    
+   SELECT @DiscountPercentage = DiscountPercentage FROM DiscountCategory WHERE ID = @DiscountID  
+   INSERT INTO Discount SELECT @Code,0,@ID,@CategoryID,@CustomerStateID,0,0,0,@DiscountID,1,Current_Timestamp,@LocationID,  
+   @ApplicationID,@DiscountPercentage  
+  END  
+END   
+    
+  

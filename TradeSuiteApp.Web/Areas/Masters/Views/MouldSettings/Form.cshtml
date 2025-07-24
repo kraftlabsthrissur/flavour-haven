@@ -1,0 +1,95 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.MouldSettingsModel
+@{
+    ViewBag.Title = "Form";
+}
+
+<div class="uk-width-medium-8-10">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-1-1">
+                <div class="uk-grid" data-uk-grid-margin>
+                        @Html.HiddenFor(m => m.ID)
+
+                    <div class="uk-width-medium-2-8">
+                        <div class="uk-autocomplete " id="Mould-autocomplete">
+                            <div class="uk-input-group">
+                                <label>@Masters.MouldName<span>*</span></label>
+                                @Html.TextBoxFor(model => model.MouldName, new { @class = "md-input label-fixed", })
+                                <span class="uk-input-group-addon">
+                                    <a data-uk-modal="{target:'#select-mould',center:false }">
+                                        <i class="uk-input-group-icon uk-icon-search"></i>
+                                    </a>
+                                </span>
+                                <script type="text/autocomplete">
+                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                        {{~items}}
+                                        <li data-value="{{ $item.MouldName }}"
+                                            data-id="{{$item.ID}}"
+                                            data-Code="{{$item.Code}}"
+                                                <a>
+                                                    {{ $item.MouldName }} ({{ $item.Code }})
+                                                   
+                                                </a>
+                                            </li>
+                                        {{/items}}
+                                    </ul>
+                                </script>
+                            </div>
+                            @Html.HiddenFor(model => model.MouldID)
+                        </div>
+                    </div>
+                    <div class="uk-width-medium-1-8">
+                        <div class="uk-input-group">
+                            <label class="add">@Masters.AddTime*</label>
+                            <label  class="remove">@Masters.RemoveTime*</label>
+                          @Html.TextBoxFor(m => m.SettingTime, new { @class = "md-input label-fixed time" })
+                        </div>
+                    </div>
+                    <div class="uk-width-medium-2-8">
+                        <label>@Masters.Reason*</label>
+                        @Html.TextBoxFor(m => m.Reason, "", new { maxlength = 100, @class = "md-input label-fixed" })
+                    </div>
+                </div>
+            </div>
+
+            <div id="page_content_inner" class="list-view">
+                <div class="md-card uk-margin-medium-bottom">
+                    <div class="md-card-content">
+                        <table id="mouldsettings-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-50">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th class="width-100">
+                                        @Masters.Date
+                                    </th>
+                                    <th class="width-100">
+                                         SettingTime
+                                    </th>
+                                    <th class="width-200">
+                                        @Masters.Mould
+                                    </th>
+                                    <th class="width-100">
+                                        Add/Remove
+                                    </th>
+                                    <th class="width-200">
+                                        Reason
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        </div>
+    
+    </div>
+
+
+

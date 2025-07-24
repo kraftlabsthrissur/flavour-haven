@@ -1,0 +1,410 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.SchemeAllocationModel
+@{
+    ViewBag.Title = "_form";
+}
+
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_item">@Masters.Code</label>
+                            @Html.TextBoxFor(m => m.Code, "", new { @class = "md-input", @readonly = "readonly" })
+                        </div>
+                        @Html.HiddenFor(m => m.ID)
+                        @if (Model.ID > 0)
+                        {
+                            <div class="uk-width-medium-2-8">
+                                <label for="uk_dp_item">@Masters.Scheme</label>
+                                @Html.TextBoxFor(m => m.Scheme, "", new { @class = "md-input", @disabled = "disabled" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Masters.StartDate </label>
+                                @Html.TextBoxFor(m => m.StartDate, new { @class = "md-input label-fixed past-date date", @disabled = "disabled" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <div class="uk-input-group">
+                                    <label>@Masters.EndDate </label>
+                                    @Html.TextBoxFor(m => m.EndDate, new { @class = "md-input label-fixed future-date date" })
+                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="uk-width-medium-2-8">
+                                <label for="uk_dp_item">@Masters.Scheme</label>
+                                @Html.TextBoxFor(m => m.Scheme, "", new { @class = "md-input" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <div class="uk-input-group">
+                                    <label>@Masters.StartDate </label>
+                                    @Html.TextBoxFor(m => m.StartDate, new { @class = "md-input label-fixed past-date date" })
+                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date "></i></span>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <div class="uk-input-group">
+                                    <label>@Masters.EndDate </label>
+                                    @Html.TextBoxFor(m => m.EndDate, new { @class = "md-input label-fixed future-date date" })
+                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="uk-grid">
+        <div class="uk-width-1-1">
+            <ul class="uk-tab" data-uk-tab="{connect:'#tabs-invoice-content',animation:'slide-horizontal'}" id="tabs-invoice">
+                <li class="uk-active" id="item-tab"><a>Basic Details</a></li>
+                <li id="amount-tab"><a id="item-details">@Masters.ItemDetails</a></li>
+            </ul>
+            <ul id="tabs-invoice-content" class="uk-switcher uk-margin">
+                <li>
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-2-10">
+                                <div class="uk-autocomplete " id="customer-autocomplete">
+                                    <div class="uk-input-group">
+                                        <label for="uk_dp_start">@Sales.CustomerName<span>*</span></label>
+                                        @Html.TextBox("CustomerName", "", new { @class = "md-input label-fixed" })
+                                        <span class="uk-input-group-addon">
+                                            <a data-uk-modal="{target:'#select-customer',center:false}">
+                                                <i class="uk-input-group-icon uk-icon-search"></i>
+                                            </a>
+                                        </span>
+                                        <script type="text/autocomplete">
+                                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                {{~items}}
+                                                <li data-value="{{ $item.Name }}"
+                                                    data-id="{{$item.ID}}"
+                                                    data-code="{{$item.Code}}"
+                                                    data-location="{{$item.Location}}"
+                                                    data-state-id="{{$item.StateID}}"
+                                                    data-country-id="{{$item.CountryID}}"
+                                                    data-district-id="{{$item.DistrictID}}"
+                                                    data-price-list-id="{{$item.PriceListID}}"
+                                                    data-customer-category-id="{{$item.CustomerCategoryID}}"
+                                                    data-is-gst-registered="{{$item.IsGSTRegistered}}">
+                                                    <a>
+                                                        {{ $item.Name }} ({{{ $item.Code }}})
+                                                        <div>{{{ $item.Location }}}</div>
+                                                    </a>
+                                                </li>
+                                                {{/items}}
+                                            </ul>
+                                        </script>
+                                    </div>
+                                </div>
+                                @Html.Hidden("CustomerID")
+                            </div>
+
+                            <div class="uk-width-medium-1-10">
+                                <div class="md-input-wrapper md-input-filled">
+                                    <label>&nbsp;</label>
+                                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="addCustomer">@Common.Add</button>
+                                </div>
+                                <input type="hidden" id="item-count" value="@Model.Items.Count()" />
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="customer-count" value="0">
+                    <table id="tbl_Customer" class="uk-table" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="width-50">@Common.SerialNo</th>
+                                <th>@Masters.CustomerName</th>
+                                <th class="width-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                if (Model.Customers != null)
+                                {
+                                    foreach (var cust in Model.Customers)
+                                    {
+                                        <tr class="">
+                                            <td class="uk-text-center">
+                                                @(1 + @Model.Customers.IndexOf(cust))
+                                                <input type="hidden" class="CustomerID" value="@cust.CustomerID" />
+                                            </td>
+                                            <td class="CustomerName">@cust.Customer</td>
+                                            <td class="uk-text-center remove-customer">
+                                                <a data-uk-tooltip="{pos:" bottom"}">
+                                                    <i class="md-btn-icon-small uk-icon-remove"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                    <div class="uk-form-row  customer-category-container ">
+                        <div class="uk-grid">
+                            <div class="uk-width-1-1">
+                                <label>@Masters.CustomerCategory </label>
+
+                                <div id="customer-Category-Container">
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-2-10 ">
+                                                <input type="checkbox" class="icheckbox customercategoryall" value="0" data-md-icheck />&nbsp;
+                                                <label class="CustomerCategoryLabel">All</label>
+                                            </div>
+                                            @foreach (var category in Model.CustomerCategory)
+                                            {
+                                                <div class="uk-width-medium-2-10 ">
+                                                    @if (category.SchemeCategoryID != 0)
+                                                    {
+                                                        <input type="checkbox" class="icheckbox customercategory" value="@category.CustomerCategoryID" checked="checked" data-md-icheck />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" class="icheckbox customercategory" value="@category.CustomerCategoryID" data-md-icheck />
+                                                    }
+                                                    <label class="customercategoryLabel">@category.CustomerCategory</label>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="uk-form-row countryName ">
+                        <div class="uk-grid">
+                            <div class="uk-width-1-1">
+                                <div class="uk-width-medium-2-10 ">
+                                    <label>@Masters.CountryName</label>
+                                    @Html.DropDownListFor(Model => Model.CountryID, new SelectList(Model.CountryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="uk-form-row state-container">
+                        <div class="uk-grid">
+                            <div class="uk-width-1-1">
+                                <label>@Masters.States </label>
+                                <div id="state-Container" class="">
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-grid statediv " data-uk-grid-margin>
+                                            <div class="uk-width-medium-2-10 ">
+                                                <input type="checkbox" class="icheckbox stateall" value="0" data-md-icheck />
+                                                <label class="StateLabel">All</label>
+                                            </div>
+                                            @foreach (var state in Model.States)
+                                            {
+                                                <div class="uk-width-medium-2-10 ">
+                                                    @if (state.StateID == state.SchemeStateID)
+                                                    {
+                                                        <input type="checkbox" class="icheckbox state" value="@state.StateID" data-country-id ="@state.CountryID" data-md-icheck checked="checked" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" class="icheckbox state" value="@state.StateID" data-country-id ="@state.CountryID"  data-md-icheck />
+                                                    }
+                                                    <label class="StateLabel">@state.State</label>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="uk-form-row district-container">
+                        <div class="uk-grid">
+                            <div class="uk-width-1-1">
+                                <label>@Masters.District </label>
+                                <br />
+                                <div id="district-Container" class="">
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-grid districtdiv" data-uk-grid-margin>
+                                            <div class="uk-width-medium-2-10 ">
+                                                <input type="checkbox" class="icheckbox districtall" value="0" data-md-icheck />&nbsp;
+                                                <label class="districtLabel">All</label>
+                                            </div>
+                                            @foreach (var district in Model.Districts)
+                                            {
+                                                <div class="uk-width-medium-2-10 ">
+                                                    @if (district.DistrictID == district.SchemeDistrictID)
+                                                    {
+                                                        <input type="checkbox" class="icheckbox district" value="@district.DistrictID" data-state-id="@district.StateID" data-country-id ="@district.CountryID" checked="checked" data-md-icheck />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" class="icheckbox district" value="@district.DistrictID" data-state-id="@district.StateID" data-country-id ="@district.CountryID" data-md-icheck />
+                                                    }
+                                                    &nbsp;
+                                                    <label class="districtLabel">@district.District</label>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="uk-form-row">
+                        <table class="uk-table">
+                            <tbody>
+                                <tr>
+                                    <td>@Masters.CustomerCategory</td>
+                                    <td>@Masters.CustomerList</td>
+                                    <td>@Masters.CountryName</td>
+                                    <td>@Masters.State</td>
+                                    <td>@Masters.District</td>
+                                </tr>
+                                <tr>
+                                    <td><label class="CustomerCategory-list"></label></td>
+                                    <td><label class="customer-list"></label></td>
+                                    <td><label class="country-name"></label></td>
+                                    <td><label class="state-list"></label></td>
+                                    <td><label class="district-list"></label></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br />
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-1-10">
+                                <label>@Masters.SalesCategory</label>
+                                @Html.DropDownListFor(Model => Model.SalesCategoryID, new SelectList(Model.SalesCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                                <div class="uk-autocomplete " id="item-autocomplete">
+                                    <label>@Masters.Item<span>*</span></label>
+                                    @Html.TextBox("ItemName", "", new { @class = "md-input label-fixed" })
+                                    <span class="uk-input-group-addon">
+                                        <a data-uk-modal="{target:'#select-item'}">
+                                            <i class="uk-input-group-icon uk-icon-search"></i>
+                                        </a>
+                                    </span>
+                                    <script type="text/autocomplete">
+                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                            {{~items}}
+                                            <li data-value="{{ $item.Name }}"
+                                                data-id="{{$item.ID}}"
+                                                data-code="{{$item.Code}}"
+                                                data-stock="{{$item.Stock}}"
+                                                data-unit="{{$item.Unit}}"
+                                                data-category="{{$item.ItemCategory}}"
+                                                data-sales-category="{{$item.SalesCategory}}"
+                                                data-sales-categoryID="{{$item.SalesCategoryID}}"
+                                                data-unit-id="{{$item.UnitID}}">
+                                                <a>
+                                                    {{ $item.Name }}
+                                                    <div>{{{ $item.Code }}}</div>
+                                                </a>
+                                            </li>
+                                            {{/items}}
+                                        </ul>
+                                    </script>
+                                </div>
+                                @Html.Hidden("ItemID")
+                                @Html.Hidden("SalesCategory")
+                                @Html.Hidden("ItemSalesCategoryID")
+                                @Html.Hidden("ItemCategoryID", 222)
+                            </div>
+                            <div class="uk-width-medium-1-10">
+                                <label>@Masters.InvoiceQty </label>
+                                @Html.TextBox("InvoiceQty", "", new { maxlength = 10, @class = "md-input label-fixed mask-qty" })
+                            </div>
+                            <div class="uk-width-medium-1-10">
+                                <label>@Masters.OfferQty </label>
+                                @Html.TextBox("OfferQty", "", new { maxlength = 10, @class = "md-input label-fixed mask-qty" })
+                            </div>
+                            <div class="uk-width-medium-1-10">
+                                <label>@Masters.StartDate </label>
+                                @Html.TextBoxFor(m => m.StartDate, new { @class = "md-input label-fixed future-date date", @ID = "ItemStartDate", @readonly = "readonly" })
+                            </div>
+                            <div class="uk-width-medium-1-10">
+                                <label>@Masters.EndDate </label>
+                                @Html.TextBoxFor(m => m.EndDate, new { @class = "md-input label-fixed future-date date", @Id = "ItemEndDate", @readonly = "readonly" })
+                            </div>
+                            @Html.Hidden("HiddenOfferQty")
+                            @Html.Hidden("HiddenInvoiceQty")
+                            @Html.Hidden("HiddenOfferItemID")
+                            @Html.Hidden("HiddenItemID")
+                            @Html.Hidden("HiddenStartDate")
+                            @Html.Hidden("HiddenEndDate")
+                            @Html.Hidden("HiddenIsEnded")
+                            <div class="uk-width-medium-1-10">
+                                <div class="md-input-wrapper md-input-filled">
+                                    <label>&nbsp;</label>
+                                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnadd">@Common.Add</button>
+                                </div>
+                                <input type="hidden" id="item-count" value="@Model.Items.Count()" />
+                            </div>
+                        </div>
+                    </div>
+                    <table id="tbl_scheme" class="uk-table" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="width-40">@Common.SerialNo</th>
+                                <th>@Masters.Item</th>
+                                <th class="width-200">@Masters.SalesCategory</th>
+                                <th class="width-80">@Masters.InvoiceQty</th>
+                                <th class="width-80">@Masters.OfferQty</th>
+                                <th class="width-80">@Masters.StartDate</th>
+                                <th class="width-80">@Masters.EndDate</th>
+                                <th class="width-20"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model.Items)
+                            {
+                                var disabled = @item.IsEnded == 1 ? "disabled" : "";
+
+                                <tr class="">
+                                    <td class="uk-text-center index">
+                                        @(1 + @Model.Items.IndexOf(item))
+                                        
+                                    </td>
+                                    <td>
+                                        @item.Item
+                                        <input type="hidden" class="ID" value="@item.ID" />
+                                        <input type="hidden" class="ItemID " value="@item.ItemID" />
+                                        <input type="hidden" class="OfferItemID  " value="@item.OfferItemID" />
+                                        <input type="hidden" class="BusinessCategoryID  " value="@item.BusinessCategoryID" />
+                                        <input type="hidden" class="SalesCategoryID   " value="@item.SalesCategoryID" />
+                                        <input type="hidden" class="oldInvoiceQty " value="@item.InvoiceQty" />
+                                        <input type="hidden" class="oldOfferQty  " value="@item.OfferQty" />
+                                        <input type="hidden" class="oldStartDate  " value="@item.StartDate" />
+                                        <input type="hidden" class="IsEnded" value="@item.IsEnded" />
+                                        <input type="hidden" class="oldEndDate   " value="@item.EndDate" />
+                                        <input type="hidden" class="Isnew" value="false" />
+                                    </td>
+                                    <td> @item.SalesCategory</td>
+                                    <td><input type="text" class="md-input InvoiceQty  mask-qty" value="@item.InvoiceQty" @disabled /></td>
+                                    <td><input type="text" class="md-input OfferQty  mask-qty" value="@item.OfferQty" @disabled /></td>
+                                    <td>
+                                        <input class="md-input label-fixed startDate" type="text" value="@item.StartDate" readonly="readonly">
+                                    </td>
+                                    <td>
+                                        <input class="md-input label-fixed endDate" type="text" value="@item.EndDate" readonly="readonly">
+                                    </td>
+                                    <td class="uk-text-center remove-item">
+                                        <a data-uk-tooltip="{pos:" bottom"}">
+                                            <i class="md-btn-icon-small uk-icon-remove"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </li>
+            </ul>
+        </div>
+    </div>

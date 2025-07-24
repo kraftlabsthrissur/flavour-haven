@@ -1,0 +1,83 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Masters.Models.RoleModel
+@{
+    ViewBag.Title = "Actions";
+}
+
+<div class="uk-form-row">
+    <div class="uk-grid" data-uk-grid-margin>
+        <div class="uk-width-medium-1-1">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-10">
+                        <label>@Masters.Code</label>
+                        @Html.TextBoxFor(m => m.Code, new { @class = "md-input label-fixed ", @readonly="readonly", })
+                    </div>
+                    <div class="uk-width-medium-1-5">
+                        <label for="uk_dp_start">@Masters.RoleName<span>*</span></label>
+                        @Html.TextBoxFor(m => m.RoleName, new { @class = "md-input ", @readonly = "readonly" })
+                    </div>
+                    <div class="uk-width-medium-1-5">
+                        <label>@Masters.Remarks<span>*</span></label>
+                        @Html.TextBoxFor(m => m.Remarks, new { @class = "md-input ", @readonly = "readonly" })
+                    </div>
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-8-10">
+                            @foreach (var area in Model.Areas)
+                            {
+                                <h3>@area.Area</h3>
+                                <div class="uk-accordion-content">
+                                    @foreach (var controller in Model.Actions.Where(a => a.Area == area.Area).GroupBy(a => a.Controller).Select(a => a.First()).OrderBy(a => a.SortOrder).ToList())
+                                    {
+
+                                        <h5 class="panel">
+                                            @controller.ControllerNameFormatted
+                                        </h5>
+
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            @foreach (var action in Model.Actions.Where(a => a.Area == area.Area && a.Controller == controller.Controller).ToList())
+                                            {
+                                                if (@action.Type == "Action")
+                                                {
+                                                <div class="uk-width-medium-2-8">
+                                                    <h5>
+                                                        @action.Name
+                                                    </h5>
+                                                </div>
+                                                }
+                                               
+                                            }
+                                        </div>
+                                        <h5 class="panel">
+                                            Tabs
+                                        </h5>
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            @foreach (var action in Model.Actions.Where(a => a.Area == area.Area && a.Controller == controller.Controller).ToList())
+                                            {
+                                            if (@action.Type == "Tab")
+                                            {
+                                                <div class="uk-width-medium-2-8">
+                                                    <h5>
+                                                        @action.Name
+                                                    </h5>
+                                                </div>
+                                            }
+                                            }
+                                        </div>
+                                    }
+                                        </div>
+                                    }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+

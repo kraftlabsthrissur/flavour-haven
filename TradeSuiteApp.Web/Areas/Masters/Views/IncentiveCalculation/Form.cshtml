@@ -1,0 +1,59 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.IncentiveCalculationModel
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-1-10">
+                <label>PartyType</label>
+                @Html.DropDownListFor(Model => Model.Party, new SelectList(Model.PartyList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Masters.Duration</label>
+                @Html.DropDownListFor(Model => Model.DurationID, Model.DurationList, "Select", new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Masters.TimePeriod</label>
+                @Html.DropDownListFor(Model => Model.TimePeriodID, Model.TimePeriodList, "Select", new { @class = "md-input label-fixed" })
+            </div>
+            @Html.HiddenFor(Model => Model.ID)
+
+            <div class="uk-width-medium-1-8">
+                <div class="md-input-wrapper md-input-filled">
+                    <label>&nbsp;</label>
+                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btn-calculate-incentive">Show Incentive</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="uk-form-row">
+       
+    </div>
+</div>
+<div class="section-group">
+    <table id="calculatied-incentive-list" class="uk-table" cellspacing="0">
+        <thead>
+            <tr>
+                <th class="width-20">@Common.SerialNo</th>
+                <th class="width-100">FSO/Branches</th>
+                <th class="width-60">@Masters.ClassicalTarget</th>
+                <th class="width-60">@Masters.PatentTarget</th>
+                <th class="width-60">@Masters.TotalTarget</th>
+                <th class="width-60">@Masters.AchievedClassicalPercent</th>
+                <th class="width-60">@Masters.AchievedPatentPercent</th>
+                <th class="width-60">@Masters.AchievedTotalPercent</th>
+                <th class="width-60">@Masters.ClassicalIncentiveAmount</th>
+                <th class="width-60">@Masters.PatentIncentiveAmount</th>
+                <th class="width-60">@Masters.TotalIncentiveAmount</th>
+                <th class="width-60">@Masters.IncentiveExtra</th>
+                <th class="width-60">@Masters.EligibleIncentive</th>
+                <th class="width-60">@Masters.ExtraAmount</th>
+            </tr>
+        </thead>
+
+        <tbody>
+           
+        </tbody>
+
+    </table>
+    <input type="hidden" id="item-count" />
+</div>
+

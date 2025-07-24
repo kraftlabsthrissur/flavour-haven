@@ -1,0 +1,28 @@
+﻿@model IEnumerable<TradeSuiteApp.Web.Areas.AHCMS.Models.LabTestItemModel>
+<input type="button" id="labtestcategory" data-uk-modal="{target:'#show-labtestcategory', center:false}" />
+<div class="uk-modal" id="show-labtestcategory" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog uk-modal-dialog-medium" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Lab Test / x-ray<i class="material-icons"></i></h3>
+        </div>
+        <div class="md-card-content uk-margin-bottom">
+            <h3 class="heading_a uk-margin-bottom">Muliple open items</h3>
+            <div class="uk-accordion" data-uk-accordion="{ collapse: false }">
+                @foreach (var Item in Model.GroupBy(a => a.LabTestCategory).ToList())
+                {
+                    <h3 class="uk-accordion-title">Heading 1</h3>
+                    <div data-wrapper="true" style="height: 0px; position: relative; overflow: hidden;" aria-expanded="false">
+
+                        <div class="uk-accordion-content">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn md-btn-primary" id="btn_lab_item_save">@Common.Add</button>
+            <button type="button" class="md-btn " id="btn_lab_item_close">@Common.Close</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,423 @@
+﻿@model   BusinessObject.ServicePurchaseInvoiceBO
+@{
+    ViewBag.Title = Purchase.EditPurchaseInvoice;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Purchase.PurchaseInvoiceForService</h1>
+            <span class="uk-text-upper uk-text-small">@Purchase.CreateNewPurchaseInvoice</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSaveNew'>" + Common.Update + "</a>")
+            @ActionAuthorization.IsAuthorized("SaveAsDraft", "<a class='md-btn btnSaveAsDraft'>" + Common.SaveAsDraft + "</a>")
+            
+            @Html.HiddenFor(m => m.ServicePurchaseInvoiceID, new { @id = "hdnServicePurchaseInvoiceID" })
+            @Html.ActionLink(Common.Close, "Index", "ServicePurchaseInvoice", new { Area = "Purchase" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.TransNo</label>
+                                            @Html.TextBoxFor(m => m.PurchaseNo, new { @class = "md-input label-fixed", @id = "txtTransNo", @readonly = "readonly" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Purchase.TransDate</label>
+                                                @Html.TextBoxFor(m => m.TransDate, Model.TransDate.ToString("dd-MM-yyyy"), new { @class = "md-input label-fixed current-date ", @id = "txtTransDate", @readonly = "readonly" })
+
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <div class="uk-input-group">
+                                                <label>@Purchase.Supplier</label>
+                                                <input type="text" class="md-input label-fixed" id="SupplierName" value="@Model.SupplierName"  readonly = "readonly"/>
+                                                <span class="uk-input-group-addon">
+                                                    @if (Model.ServicePurchaseInvoiceID <= 0)
+                                                    {           //Edit.
+                                                        <input type="text" class="md-input label-fixed" id="SupplierName" value="@Model.SupplierName"  />
+
+                                                        <a data-uk-modal="{target:'#select_supplier'}"><i class="material-icons md-24"><b></b></i></a>
+                                                    }
+                                                </span>
+                                            </div>
+                                        </div>
+                                        @Html.HiddenFor(model => model.SupplierID)
+                                        @Html.HiddenFor(model => model.IsGSTRegistered)
+                                        @Html.HiddenFor(m => m.SrDate)
+                                        @Html.HiddenFor(m => m.ServicePurchaseInvoiceID)
+                                        @Html.HiddenFor(model => model.StateID)
+                                        @Html.HiddenFor(model => model.ShippingStateID)
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.BillNo</label>
+                                            @Html.TextBoxFor(m => m.InvoiceNo, new { @class = "md-input label-fixed ", @id = "txtInvoiceNo" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Purchase.InvoiceDate</label>
+                                                @if (Model.ServicePurchaseInvoiceID > 0)
+                                                {
+                                                    @Html.TextBoxFor(m => m.InvoiceDate, Model.InvoiceDate.ToString("dd-MM-yyyy"), new { @class = "md-input label-fixed past-date date", @id = "txtInvoiceDate" })
+                                                }
+                                                else
+                                                {
+                                                    @Html.TextBoxFor(m => m.InvoiceDate, " ", new { @class = "md-input label-fixed past-date date", @id = "txtInvoiceDate" })
+                                                }
+
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.InvoiceTotal</label>
+                                            @Html.TextBoxFor(m => m.InvoiceAmount, new { @class = "md-input label-fixed uk-text-right mask-currency", @id = "txtInvoiceTotal" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" data-uk-modal="{target:'#select-srn'}">@Purchase.AddSRN</button>
+                                            </div>
+                                        </div>
+                                   
+                                      
+
+                                        <input type="hidden" id="DummyInvoiceTotal" value="0" />
+
+                                  
+                                    </div>
+                                </div>
+                                <div class="uk-form-row ">
+                                    <div class="uk-grid " data-uk-grid-margin>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Purchase.GstNo</label>
+                                            @Html.TextBoxFor(m => m.GSTNo, new { @class = "md-input  label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 ">
+                                            <label>@Purchase.SupplierLocation</label>
+                                            @Html.TextBoxFor(m => m.SupplierLocation, new { @class = "md-input  label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                            <label>@Purchase.InvoiceValue</label>
+                                            @Html.TextBoxFor(m => m.InvoiceAmount, new { @class = "md-input label-fixed uk-text-right mask-currency", @id = "txtTotalInvoiceValueCalculated", @disabled = "disabled" })
+
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.Difference</label>
+                                            @Html.TextBoxFor(m => m.DifferenceAmount, new { @class = "md-input label-fixed uk-text-right mask-currency", @id = "txtTotalDifferenceCalculated", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 ">
+                                            <label>@Purchase.TDSCode</label>
+                                            @Html.DropDownListFor(Model => Model.Rate, Model.TDSCodeList, "Select", new { @class = "md-input label-fixed", @id = "TDSCode" })
+                                        </div>
+                                        @Html.HiddenFor(m => m.TDSID)
+
+
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.TDS</label>
+                                            @Html.TextBoxFor(m => m.TDS, new { @class = "md-input label-fixed uk-text-right mask-currency", @id = "txtTDS", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.TDSOnAdvance</label>
+                                            @Html.TextBoxFor(m => m.TDSOnAdvance, new { @class = "md-input label-fixed uk-text-right mask-currency", @id = "txtTDSOnAdvance", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.NetTDS</label>
+                                            @Html.TextBoxFor(m => m.NetTDS, new { @class = "md-input label-fixed uk-text-right mask-currency", @id = "txtNetTDS", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.Discount</label>
+                                            @Html.TextBoxFor(m => m.Discount, new { @class = "md-input label-fixed uk-text-right mask-currency", @id = "txtDiscount" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.OtherDeductions</label>
+                                            @Html.TextBoxFor(m => m.OtherDeductions, new { @class = "md-input label-fixed uk-text-right mask-currency", @id = "txtDeductions" })
+                                        </div>
+                                        @Html.Hidden("TaxableValue")
+                                        @Html.Hidden("TDSOnAdvance")
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1">
+                                            <label>@Purchase.TotalInvoiceAmountPayable</label>
+                                            @*@Html.TextBoxFor(m => m.NetAmountPayable, new { @class = "md-input uk-text-right mask-currency x-large", @id = "txtNetPayable", @disabled = "disabled" })*@@*@Html.TextBoxFor(m => m.NetAmountPayable, new { @class = "md-input uk-text-right mask-currency x-large", @id = "txtNetPayable", @disabled = "disabled" })*@
+
+                                            @Html.TextBoxFor(m => m.NetAmountPayable, new { @class = "md-input uk-text-right mask-qty x-large", @id = "txtNetPayable", @disabled = "disabled" })
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-group">
+                    <div class="uk-grid">
+                        <div class="uk-width-1-1">
+                            <ul class="uk-tab" data-uk-tab="{connect:'#tabs_1_content'}" id="tabs_1">
+                                <li class="uk-active" aria-expanded="true"><a >@Purchase.ItemDetails</a></li>
+                                <li aria-expanded="false" class="" id="tabTaxDetails"><a >@Purchase.TaxDetails</a></li>
+                            </ul>
+
+                            <ul id="tabs_1_content" class="uk-switcher uk-margin">
+                                <li aria-hidden="false" class="uk-active">
+                                    <div class="tablescroll" id="item-details-tblContainer">
+                                        <table id="item-details" class="uk-table" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="width-10">@Common.SerialNo</th>
+                                                    <th class="width-10"></th>
+                                                    <th class="width-250">@Purchase.Item</th>
+                                                    <th class="width-40">@Purchase.Unit</th>
+                                                    <th class="width-40">@Purchase.AcceptedQty</th>
+                                                    <th class="width-40">@Purchase.UnmatchedQty</th>
+                                                    <th class="width-100">@Purchase.PORate</th>
+                                                    <th class="width-100">@Purchase.GSTper</th>
+                                                    <th class="width-80">@Purchase.AcceptedValue</th>
+                                                    <th class="width-80">@Purchase.InvoiceQty</th>
+                                                    <th class="width-100">@Purchase.InvoiceRate</th>
+                                                    <th class="width-100">@Purchase.InvoiceValue</th>
+                                                    <th class="width-80">@Purchase.Difference</th>
+                                                    <th class="width-200">@Purchase.Remarks</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                @if (Model.InvoiceTransItems != null)
+                                                {
+                                                    foreach (var item in Model.InvoiceTransItems.Select((value, i) =>
+                                                    new
+                                                    {
+                                                        i = (i + 1),
+                                                        dynChkID = "chk_unprocItem_" + value.ItemID,
+                                                        dynRowID = "tr_unproc_" + value.ItemID,
+                                                        InclusiveGST = value.IsInclusiveGST == true ? 1 : 0,
+                                                        value
+                                                    }))
+                                                    {
+                                                        <tr id="@item.dynRowID" class="included">
+
+                                                            <td style="cursor:pointer;" class="uk-text-center">
+                                                                @item.i
+
+                                                            </td>
+                                                            <td class="uk-text-center checked" data-md-icheck>
+                                                                <input type="hidden" class="hdnSRNID included" value="@item.value.SRNID" />
+                                                                <input type="hidden" class="hdnSRNTransID included" value="@item.value.SRNTransID" />
+                                                                <input type="hidden" class="hdnPOServiceID included" value="@item.value.POServiceID" />
+                                                                <input type="hidden" class="SGSTPercent included" value="@item.value.SGSTPercent" />
+                                                                <input type="hidden" class="CGSTPercent included" value="@item.value.CGSTPercent" />
+                                                                <input type="hidden" class="IGSTPercent included" value="@item.value.IGSTPercent" />
+                                                                <input type="hidden" class="IsInclusiveGST included" value="@item.InclusiveGST" />
+                                                                @if (item.value.PurchaseInvoiceID <= 0)
+                                                                {               //Create
+                                                                    <input type="checkbox" class="chkItem include-item" id="@item.dynChkID" value="@item.value.ItemID" />
+                                                                }
+                                                                else
+                                                                {               //Edit
+                                                                    <input type="checkbox" class="chkItem include-item" id="@item.dynChkID" value="@item.value.ItemID" checked />
+                                                                }
+                                                            </td>
+                                                            <td>@item.value.ItemName</td>
+                                                            <td>@item.value.Unit</td>
+                                                            <td class="itemAcceptedQty included mask-qty">@item.value.AcceptedQty</td>
+                                                            <td class="itemUnMatchedQty included mask-qty">@item.value.UnMatchedQty</td>
+                                                            <td class="itemPORate included mask-currency">@item.value.PORate</td>
+                                                            <td>
+                                                                @Html.DropDownListFor(model => item.value.GSTPercent, new SelectList(
+                                               Model.GstList, "GSTPercentage", "GSTPercentage", item.value.InvoiceGSTPercent), new { @class = "md-input label-fixed gstPercentage", @id = "gstPercentage" })
+                                                            </td>
+
+                                                            @*<td>@Html.DropDownList("gstPercentage", (SelectList)ViewBag.TaxPercentages, new { @class = "md-input uk-text uk-text-right gstPercentage" })</td>*@
+
+                                                            <td class="itemAcceptedValue included mask-currency">@item.value.AcceptedValue</td>
+                                                            <td><input type="text" class="md-input txtItemInvoiceQty included mask-qty" value="@item.value.InvoiceQty" /></td>
+                                                            <td><input type="text" class="md-input txtItemInvoiceRate included mask-currency" value="@item.value.InvoiceRate" /></td>
+                                                            <td><input type="text" class="md-input txtItemInvoiceValue included mask-currency" value="@item.value.InvoiceValue" disabled /></td>
+                                                            <td><input type="text" class="md-input itemDiffValue included mask-currency" value="@( item.value.InvoiceValue-item.value.AcceptedValue )" disabled /></td>
+                                                            <td><input type="text" class="md-input  txtItemRemarks " value="@item.value.Remarks" /></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td></td>
+                                                            <td colspan="13">
+                                                                <div class="uk-grid" data-uk-grid-margin>
+                                                                    <div class="uk-width-medium-1-1">
+                                                                        <div class="uk-form-row">
+                                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                                <div class="uk-width-medium-1-5">
+                                                                                    <label>@Common.Location</label>
+                                                                                    @Html.DropDownListFor(model => item.value.ServiceLocationID, new SelectList(ViewBag.Locations, "Key", "Value", item.value.ServiceLocationID), "Select", new { @class = "md-input label-fixed location-id" })
+                                                                                </div>
+                                                                                <div class="uk-width-medium-1-5">
+                                                                                    <label>@Common.Department</label>
+                                                                                    @Html.DropDownListFor(model => item.value.DepartmentID, new SelectList(ViewBag.Departments, "Key", "Value", item.value.DepartmentID), "Select", new { @class = "md-input label-fixed department-id" })
+                                                                                </div>
+                                                                                <div class="uk-width-medium-1-5">
+                                                                                    <label>@Common.Employee</label>
+                                                                                    @Html.DropDownListFor(model => item.value.EmployeeID, new SelectList(ViewBag.Employees, "Key", "Value", item.value.EmployeeID), "Select", new { @class = "md-input label-fixed employee-id" })
+                                                                                </div>
+                                                                                <div class="uk-width-medium-1-5">
+                                                                                    <label>@Common.Company</label>
+                                                                                    @Html.DropDownListFor(model => item.value.CompanyID, new SelectList(ViewBag.Companies, "Key", "Value", item.value.CompanyID), "Select", new { @class = "md-input label-fixed company-id" })
+                                                                                </div>
+                                                                                <div class="uk-width-medium-1-5">
+                                                                                    <label>@Common.Project</label>
+                                                                                    @Html.DropDownListFor(model => item.value.ProjectID, new SelectList(ViewBag.Projects, "Key", "Value", item.value.ProjectID), "Select", new { @class = "md-input label-fixed project-id" })
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        if (item.value.CategoryID > 0)
+                                                        {
+                                                            <tr>
+                                                                <td></td>
+                                                                <td colspan="16">
+                                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                                        <div class="uk-width-medium-1-1">
+                                                                            <div class="uk-form-row">
+                                                                                <div class="uk-grid" data-uk-grid-margin>
+                                                                                    <div class="uk-width-medium-1-10">
+                                                                                        <label>@Purchase.TravelFrom</label>
+                                                                                        <div>@item.value.TravelFrom</div>
+
+                                                                                    </div>
+                                                                                    <div class="uk-width-medium-1-10">
+                                                                                        <label>@Purchase.TravelTo</label>
+                                                                                        <div>@item.value.TravelTo</div>
+                                                                                    </div>
+                                                                                    <div class="uk-width-medium-1-5">
+                                                                                        <label>@Purchase.ModeOfTransport</label>
+                                                                                        <div>@item.value.TransportMode</div>
+                                                                                    </div>
+                                                                                    <div class="uk-width-medium-1-5">
+                                                                                        <label>@Purchase.TravelDate</label>
+                                                                                        <div>@item.value.TravelDateString</div>
+                                                                                    </div>
+                                                                                    <div class="uk-width-medium-1-5">
+                                                                                        <label>@Purchase.TravelRemarks</label>
+                                                                                        <div>@item.value.TravelingRemarks</div>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+
+                                                            </tr>
+                                                        }
+                                                    }
+                                                }
+
+                                            </tbody>
+                                        </table>
+                                        @*<input type="hidden" id="item-count" value=@Model.InvoiceTransItems.Count()>*@
+                                        <input type="hidden" id="item-count" value="@Model.InvoiceTransItems.Count()">
+                                        <input type="hidden" id="invoice-count" value="0" />
+                                        
+                                        @Html.HiddenFor(m => Model.AcceptedAmount)
+                                    </div>
+                                </li>
+                                <li aria-hidden="true" class="">
+                                    <div class="tablescroll">
+                                        <table id="tax-details" class="uk-table" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="width-10">@Common.SerialNo</th>
+                                                    <th class="width-80">@Purchase.Particulars</th>
+                                                    <th class="width-80">@Purchase.Tax</th>
+                                                    <th class="width-100">@Purchase.POValue</th>
+                                                    <th class="width-100">@Purchase.InvoiceValue</th>
+                                                    <th class="width-40">@Purchase.Difference</th>
+                                                    <th class="width-250">@Purchase.Remarks</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                @if (Model.TaxDetails != null)
+                                                {
+                                                    foreach (var item in Model.TaxDetails.Select((value, i) => new { i = (i + 1), value }))
+                                                    {
+                                                        var inclusive_gst = Model.InvoiceTransItems[0].InclusiveGST ? "" : "gst-extra";
+
+                                                        <tr class="@item.value.Particular">
+                                                            <td>1</td>
+                                                            <td>
+                                                                @item.value.Particular @@ @item.value.TaxPercentage.ToString("0.00")%
+                                                                <input type="hidden" class="tax-particular" value="@item.value.Particular">
+                                                            </td>
+                                                            <td class="mask-currency tax-percentage">@item.value.TaxPercentage</td>
+                                                            <td class="po-value mask-currency'">@item.value.POValue</td>
+                                                            <td><input type="text" class="md-input tax-invoice-value gst-extra mask-currency" value="@item.value.InvoiceValue"></td>
+                                                            <td><input type="text" class="md-input tax-diff-value mask-currency" value="@item.value.DifferenceValue" disabled="disabled"></td>
+                                                            <td>
+                                                                <input type="text" class="md-input tax-remarks " value="@item.value.Remarks">
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+
+
+                                            </tbody>
+                                        </table>
+                                        @Html.HiddenFor(m => Model.SGSTAmount)
+                                        @Html.HiddenFor(m => Model.CGSTAmount)
+                                        @Html.HiddenFor(m => Model.IGSTAmount)
+                                    </div>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="uk-modal" id="select-srn" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Select SRN <i class="material-icons" data-uk-tooltip="{pos:'top'}" title="headline tooltip"></i></h3>
+        </div>
+        <div id="service-purchase-requisition-list-tblContainer">
+            @{Html.RenderPartial("~/Areas/Purchase/Views/ServicePurchaseInvoice/_srnList.cshtml", new List<BusinessObject.SRNBO>()); }
+        </div>
+
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn uk-modal-close">Close</button>
+            <button type="button" class="md-btn md-btn-primary uk-modal-close" id="btnSRNSelectedOk">Ok</button>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/ServicePurchaseInvoice")
+<script type="text/javascript">
+    service_purchase_invoice.init();
+    service_purchase_invoice.CalculateNetValue();   
+    service_purchase_invoice.get_invoice_number_count();
+</script>

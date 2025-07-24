@@ -1,0 +1,69 @@
+﻿@model  TradeSuiteApp.Web.Areas.Manufacturing.Models.PreProcessReceiptViewModel
+@{
+    ViewBag.Title = "Form";
+}
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Manufacturing.TransNo</label>
+                            @Html.TextBoxFor(model => model.TransNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Manufacturing.TransDate</label>
+                            @Html.TextBoxFor(model => model.TransDateStr, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <table id="preprocess-receipt-items-list" class="uk-table" cellspacing="0">
+        <thead>
+            <tr>
+                <th class="width-10">@Common.SerialNo</th>
+                <th>@Manufacturing.IssuedItem</th>
+                <th class="width-40">@Manufacturing.UOM</th>
+                <th class="width-80">@Manufacturing.IssuedQty</th>
+                <th class="width-80">@Manufacturing.IssueDate</th>
+                <th class="width-100">@Manufacturing.Activity</th>
+                <th>@Manufacturing.ReceiptItem</th>
+                <th class="width-40">@Manufacturing.UOM</th>
+                <th class="width-80">@Manufacturing.ReceiptQty</th>
+                <th class="width-80">@Manufacturing.RecieptDate</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.PreProcessReceiptPurificationItemModelList != null)
+            {
+                foreach (var item in Model.PreProcessReceiptPurificationItemModelList.Select((value, i) => new { i = (i + 1), value }))
+                {
+                    <tr>
+                        <td>@(item.i )</td>
+                        <td>@item.value.IssuedItemName</td>
+                        <td>@item.value.IssuedItemUnit</td>
+                        <td class="mask-production-qty">@item.value.IssuedQuantity</td>
+                        <td>@item.value.IssuedDateStr</td>
+                        <td>@item.value.ProcessName</td>
+                        <td>@item.value.ReceiptItem</td>
+                        <td>@item.value.ReceiptItemUnit</td>
+                        <td class="mask-production-qty">@item.value.ReceiptQuantity</td>
+                        <td>@item.value.ReceiptDateStr</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

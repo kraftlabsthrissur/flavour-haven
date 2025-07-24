@@ -1,0 +1,38 @@
+﻿
+@model TradeSuiteApp.Web.Areas.AHCMS.Models.AppointmentScheduleModel
+
+<input type="button" id="show-add-discount" data-uk-modal="{target:'#add-discount', center:false}" />
+<div class="uk-modal" id="add-discount" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog uk-modal-dialog-large" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Discount Details<i class="material-icons"></i></h3>
+        </div>
+        <div class="uk-modal-content">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-1-8">
+                        <label>@Masters.Code</label>
+                        @Html.TextBoxFor(m => m.Code, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                    </div>
+                    <div class="uk-width-medium-1-4">
+                        <label>@Masters.Name<span>*</span></label>
+                        @Html.TextBoxFor(m => m.Name, new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-1-8">
+                        <label>@Masters.Gender <span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.Gender, new SelectList(Model.GenderList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+
+                </div>
+            </div>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn  btncloseDiscount">@Common.Close</button>
+            <button type="button" class="md-btn md-btn-primary" id="btnOkDiscount">@Common.Save</button>
+        </div>
+    </div>
+</div>

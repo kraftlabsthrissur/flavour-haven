@@ -1,0 +1,192 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Asset.Models.AssetModel
+
+@{
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 48, media: 960 }">
+        <div class="heading_title">
+            <h1>@Asset.Assets</h1>
+            <span class="uk-text-upper uk-text-small">@Asset.CreateAsset</span>
+        </div>
+        <div class="heading_actions">
+
+            
+            @ActionAuthorization.IsAuthorized("ChangeStatus", "<a class='md-btn btnChangeStatus'>" + Asset.ChangeStatus + "</a>")
+            @Html.ActionLink(Common.Close, "Index", "Asset", new { Area = "Asset" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a >@Common.Action</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                @Html.HiddenFor(m => m.ID)
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="le ft-block">
+                                    <div class="uk-form-row">
+                                        <div class="uk-grid" data-uk-grid-margin="">
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.TransNo</label>
+                                                @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input", @disabled = "disabled", @id = "TransNo" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.TransDate</label>
+                                                @Html.TextBoxFor(m => m.TransDateStr, new { @class = "md-input", @disabled = "disabled", @id = "TransDate" })
+                                            </div>
+
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.AssetCode</label>
+                                                @Html.TextBoxFor(m => m.AssetCode, new { @class = "md-input", @disabled = "disabled", @id = "AssetNumber" })
+                                            </div>
+                                            @Html.HiddenFor(m => m.IsCapital)
+
+                                        </div>
+                                    </div>
+                                    <div class="uk-form-row">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Asset.ItemName</label>
+                                                @Html.TextBoxFor(m => m.ItemName, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Asset.AssetName</label>
+                                                @Html.TextBoxFor(m => m.AssetName, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Asset.SupplierName</label>
+                                                @Html.TextBoxFor(m => m.SupplierName, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.AssetUniqueNo</label>
+                                                @Html.TextBoxFor(m => m.AssetUniqueNo, new { @class = "md-input", @disabled = "disabled" })
+
+                                            </div>
+                                            <input type="hidden" value=@Model.Status id="StatusDetail" />                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.AccountCategory</label>
+                                                @Html.TextBoxFor(m => m.ItemAccountCategory, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            @if (Model.IsRepairable == true)
+                                            {
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Asset.IsRepairable</label>
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-1-3">
+                                                            <input type="radio" name="Type" class="isrepairable" data-md-icheck checked="" value="true" readonly="readonly" /> @Html.Label("Yes")
+                                                        </div>
+                                                        <div class="uk-width-medium-1-3">
+                                                            <input type="radio" name="Type" class="isrepairable" data-md-icheck value="false" readonly="readonly" /> @Html.Label("No")
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Asset.IsRepairable</label>
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-1-3">
+                                                            <input type="radio" name="Type" class="isrepairable" data-md-icheck value="true" readonly="readonly" /> @Html.Label("Yes")
+                                                        </div>
+                                                        <div class="uk-width-medium-1-3">
+                                                            <input type="radio" name="Type" class="isrepairable" data-md-icheck checked="" value="false" readonly="readonly" /> @Html.Label("No")
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.AssetValue</label>
+                                                @Html.TextBoxFor(m => m.AssetValue, new { @class = "md-input mask-qty", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Asset.CompaniesDepreciationRate</label>
+                                                @Html.TextBoxFor(m => m.CompanyDepreciationRate, new { @class = "md-input mask-qty", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Asset.IncomeTax</label>
+                                                @Html.TextBoxFor(m => m.IncomeTaxDepreciationRate, new { @class = "md-input  mask-qty", @disabled = "disabled" })
+                                            </div>
+
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.LifeInYears</label>
+                                                @Html.TextBoxFor(m => m.LifeInYears, new { @class = "md-input mask-qty", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.AdditionToAssetNo</label>
+                                                @Html.TextBoxFor(m => m.AdditionToAssetNo, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.ResidualValue</label>
+                                                @Html.TextBoxFor(m => m.ResidualValue, new { @class = "md-input mask-qty", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.AssetQty</label>
+                                                @Html.TextBoxFor(m => m.Qty, new { @class = "md-input mask-qty", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.Department</label>
+                                                @Html.TextBoxFor(m => m.Department, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.Location</label>
+                                                @Html.TextBoxFor(m => m.Location, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.Employee</label>
+                                                @Html.TextBoxFor(m => m.Employee, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.Project</label>
+                                                @Html.TextBoxFor(m => m.Project, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.Remark</label>
+                                                @Html.TextBoxFor(m => m.Remark, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.Status</label>
+                                                @Html.DropDownListFor(Model => Model.Status, Model.StatusList, "Select", new { @class = "md-input label-fixed", @id = "Status" })
+                                            </div>
+                                          
+                                            @if (Model.Status == "Capital")
+                                            {
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Asset.DepreciationStartDate</label>
+                                                    @Html.TextBoxFor(m => m.DepreciationStartDateStr, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Asset.DepreciationEndDate</label>
+                                                    @Html.TextBoxFor(m => m.DepreciationEndDateStr, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-group">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/Asset")
+<script type="text/javascript">
+    asset.init();
+</script>
+
+

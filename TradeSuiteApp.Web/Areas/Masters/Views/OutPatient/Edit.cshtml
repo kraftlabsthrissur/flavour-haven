@@ -1,0 +1,114 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.OutPatientModel
+@{
+    ViewBag.Title = "Edit Patient";
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Common.Patient</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.EditPatient</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSave'>" + Common.Save + "</a>")
+
+            @Html.ActionLink(Common.Close, "Index", "OutPatient", new { Area = "Masters" }, new { @class = "md-btn " })
+
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.Code<span>*</span></label>
+                                            @Html.TextBoxFor(m => m.Code, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            @Html.HiddenFor(m => m.ID)
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.Category<span>*</span></label>
+                                            @Html.DropDownListFor(Model => Model.Category, new SelectList(Model.CategoryList, "Value", "Text"), new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-4">
+                                            <label>@Masters.Name<span>*</span></label>
+                                            @Html.TextBoxFor(m => m.Name, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-4">
+                                            <label>@Masters.AddressLine1<span>*</span></label>
+                                            @Html.TextBoxFor(m => m.AddressLine1, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-4">
+                                            <label>@Masters.AddressLine2</label>
+                                            @Html.TextBoxFor(m => m.AddressLine2, new { @class = "md-input label-fixed" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.Country<span>*</span></label>
+                                            @Html.DropDownListFor(Model => Model.CountryID, Model.CountryList, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.States<span>*</span></label>
+                                            @Html.DropDownListFor(Model => Model.StateID, Model.StateList, "Select", new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.District<span>*</span></label>
+                                            @Html.DropDownListFor(Model => Model.DistrictID, Model.DistrictList, "Select", new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.PIN<span>*</span></label>
+                                            @Html.TextBoxFor(m => m.PinCode, new { @class = "md-input label-fixed"})
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.MobileNo<span>*</span></label>
+                                            @Html.TextBoxFor(m => m.MobileNumber, new { @class = "md-input label-fixed", @maxlength = "30" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <div class="uk-input-group">
+                                                <label>@Masters.DOB<span>*</span></label>
+                                                @Html.TextBoxFor(m => m.DOB, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.GSTNo</label>
+                                            @Html.TextBoxFor(m => m.GSTNo, new { @class = "md-input label-fixed",@maxlength = "16" })
+                                        </div>
+                                        <div class="uk-width-medium-1-4">
+                                            <label>@Masters.Email</label>
+                                            @Html.TextBoxFor(m => m.Email, new { @class = "md-input label-fixed" })
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+@Scripts.Render("~/Js/Page/OutPatient")
+<script type="text/javascript">
+    OutPatient.init();
+</script>
+

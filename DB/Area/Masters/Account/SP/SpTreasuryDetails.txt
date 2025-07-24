@@ -1,0 +1,13 @@
+  
+ALTER PROCEDURE  [Accounts].[SpTreasuryDetails]      
+(@TreasuryID int)      
+AS      
+BEGIN      
+ SELECT S.ID,S.Type,S.BankCode,S.AccountCode,A.AccountName,S.BankName,S.AliasName,S.CoBranchName,S.BankBranchName,S.AccountType1,  
+ S.AccountType2,S.AccountNo,S.IFSC,S.StartDate,S.EndDate,S.LocationMapping AS LocationMappingID,  
+ ISNULL(L.Name,'') AS LocationMapping,S.remarks,IsPayment,IsReceipt     
+ FROM Treasury S     
+ INNER JOIN Location L ON S.LocationMapping = L.ID     
+ LEFT JOIN AccountHead A ON S.AccountCode = A.AccountId    
+ WHERE S.ID = @TreasuryID      
+END      

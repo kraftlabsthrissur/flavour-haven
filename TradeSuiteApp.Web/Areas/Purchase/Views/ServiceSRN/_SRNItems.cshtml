@@ -1,0 +1,88 @@
+﻿@model IEnumerable<TradeSuiteApp.Web.Areas.Purchase.Models.SRNtransViewModel>
+
+@if (Model != null)
+{
+
+    foreach (var transBO in Model.Select((value, i) => new { i = i + 1, value }))
+    {
+        <tr class="rowsrn">
+
+            <td class="uk-text-center"> @transBO.i </td>
+            <td class="uk-text-center checked" data-md-icheck>
+                <input type="checkbox" class="include-item ChkSRN "    />
+                <input type="hidden" class="POSId" value="@transBO.value.POServiceID ">
+                <input type="hidden" class="POSTransID" value="@transBO.value.POServiceTransID ">
+                <input type="hidden" class="ItemId" value="@transBO.value.ItemID ">
+                <input type="hidden" class="qty-tolerance-percent" value="@transBO.value.QtyTolerancePercent" />
+                <input type="hidden" class="tolaranceQty" value="@transBO.value.TolaranceQty" />
+                <input type="hidden" class="PORate" value="@transBO.value.PORate" />
+            </td>
+            <td>@transBO.value.ItemName</td>
+            <td class="uk-text-right">@transBO.value.Unit </td>
+            <td>@transBO.value.PurchaseOrderNo</td>
+            <td class="uk-text-right">@transBO.value.PORate</td>
+            <td class="uk-text-right PurchaseOrderQty ">@transBO.value.PurchaseOrderQty </td>
+            <td class="uk-text-right clRQty "><input type="text" class="md-input mask-qty ReceivedQty" readonly="readonly" value="@transBO.value.ReceivedQty" /></td>
+            <td class="uk-text-right  "><input type="text" class="md-input mask-qty AcceptedQty" readonly="readonly" value="@transBO.value.AcceptedQty" /></td>
+            <td class="uk-text-right  "><input type="text" class="md-input mask-qty AcceptedValue" disabled="disabled" value="@transBO.value.AcceptedValue" /></td>
+
+
+            @*<td class="uk-text-right">@transBO.value.Unit </td>*@
+            <td>
+                @Html.DropDownList("ddlLocation", new SelectList(ViewBag.Locations, "Value", "Text", transBO.value.ServiceLocationID), "Select", new { @class = "md-input label-fixed clLocation" })
+            </td>
+            <td>
+                @Html.DropDownList("ddlDepartment", new SelectList(ViewBag.Departments, "Value", "Text", transBO.value.DepartmentID), "Select", new { @class = "md-input label-fixed clDepartment" })
+            </td>
+            <td>
+                @Html.DropDownList("ddlEmpoloyee", new SelectList(ViewBag.Employees, "Value", "Text", transBO.value.EmployeeID), "Select", new { @class = "md-input label-fixed clEmployee" })
+            </td>
+            <td>
+                @Html.DropDownList("ddlCompany", new SelectList(ViewBag.Companies, "Value", "Text", transBO.value.CompanyID), "Select", new { @class = "md-input label-fixed clCompany" })
+            </td>
+            <td>
+                @Html.DropDownList("ddlProject", new SelectList(ViewBag.Projects, "Value", "Text", transBO.value.ProjectID), "Select", new { @class = "md-input label-fixed clProject" })
+            </td>
+            <td><input type="text" class="md-input clRemarks" value="@transBO.value.Remarks"/></td>
+        </tr>
+        if (transBO.value.CategoryID > 0)
+        {
+            <tr>
+                <td></td>
+                <td colspan="16">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-1">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-10">
+                                        <label>@Purchase.TravelFrom</label>
+                                        <div>@transBO.value.TravelFrom</div>
+
+                                    </div>
+                                    <div class="uk-width-medium-1-10">
+                                        <label>@Purchase.TravelTo</label>
+                                        <div>@transBO.value.TravelTo</div>
+                                    </div>
+                                    <div class="uk-width-medium-1-5">
+                                        <label>@Purchase.ModeOfTransport</label>
+                                        <div>@transBO.value.TransportMode</div>
+                                    </div>
+                                    <div class="uk-width-medium-1-5">
+                                        <label>@Purchase.TravelDate</label>
+                                        <div>@transBO.value.TravelDateString</div>
+                                    </div>
+                                    <div class="uk-width-medium-1-5">
+                                        <label>@Purchase.TravelRemarks</label>
+                                        <div>@transBO.value.TravelingRemarks</div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+            </tr>
+        }
+    }
+}

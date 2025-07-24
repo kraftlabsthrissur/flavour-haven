@@ -1,0 +1,76 @@
+﻿@model TradeSuiteApp.Web.Areas.User.Models.DashboardModel
+<div class="md-card" data-uk-grid-margin="">
+    <div class="md-card-content uk-row-first">
+        <div class="uk-width-medium-1-1">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-8-10 heading_a uk-margin-bottom">
+                    <label>@Masters.ProductionInProgress</label>
+                </div>
+                <div class="uk-width-medium-2-10">
+                    @Html.DropDownListFor(Model => Model.SalesCategoryID, Model.SalesCategoryList, "ALL", new { @class = "md-input label-fixed", @id = "production-progress-category-id" })
+                </div>
+            </div>
+        </div>
+        <div class="Category-Wise">
+            <div class="uk-width-1-1">
+                <ul class="uk-tab" data-uk-tab="{connect:'#production-in-progress'}" id="production-in-progress-tab">
+                    <li class="uk-active"  id="tky-production-progress-tab" data-tab="VOS TKY"><a>VOS TKY</a></li>
+                    <li id="pol-production-progress-tab" data-tab="VOS POL" ><a>VOS POL</a></li>
+                    <li id="chu-production-progress-tab" data-tab="VOS CHU" ><a>VOS CHU</a></li>
+                    
+                </ul>
+                <ul id="production-in-progress" class="uk-switcher uk-margin">
+                    <li aria-hidden="false" class="uk-active">
+                        <div>
+                            <table id="production-in-progress_table-tky" class="uk-table">
+                                <thead>
+                                    <tr>
+                                        <th class="uk-text-center serial-no width-20">@Common.SerialNo</th>
+                                        <th class="width-80">@Masters.Batch</th>
+                                        <th>@Masters.ItemName</th>
+                                        <th class="width-100">@Masters.InKgs</th>
+                                        <th class="width-150">@Masters.ExpectedEndDate</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </li>
+                    <li aria-hidden="true" class="">
+                        <div>
+                            <table id="production-in-progress_table-pol" class="uk-table">
+                                <thead>
+                                    <tr>
+                                        <th class="uk-text-center serial-no width-20">@Common.SerialNo</th>
+                                        <th class="width-80">@Masters.Batch</th>
+                                        <th>@Masters.ItemName</th>
+                                        <th class="width-100">@Masters.InKgs</th>
+                                        <th class="width-150">@Masters.ExpectedEndDate</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </li>
+                    <li aria-hidden="true" class="">
+                        <div>
+                            <table id="production-in-progress_table-chu" class="uk-table">
+                                <thead>
+                                    <tr>
+                                        <th class="uk-text-center serial-no width-20">@Common.SerialNo</th>
+                                        <th class="width-80">@Masters.Batch</th>
+                                        <th>@Masters.ItemName</th>
+                                        <th class="width-100">@Masters.InKgs</th>
+                                        <th class="width-150">@Masters.ExpectedEndDate</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+

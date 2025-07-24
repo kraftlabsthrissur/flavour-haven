@@ -1,0 +1,155 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+@{
+    ViewBag.Title = AHCMS.ScreeningList;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@AHCMS.Screening</h1>
+            <span class="uk-text-upper uk-text-small">@AHCMS.ScreeningList</span>
+        </div>
+        <div class="heading_actions">
+            @*@ActionAuthorization.IsAuthorized("Create", Html.ActionLink(Common.Create, "Create", "Diagnosis", new { Area = "Masters" }, new { @class = "md-btn" }))*@
+
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="list-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <ul class="uk-tab hai" data-uk-tab="{connect:'#tabs-case-sheet-content',animation:'slide-horizontal'}" id="tabs-case-sheet">
+                    <li data-tab="Previous"><a>@AHCMS.Previous</a></li>
+                    <li class="uk-active" data-tab="Today"><a>@AHCMS.Today</a></li>
+                    @*<li data-tab="ReferedToIP"><a>@AHCMS.IPPatient</a></li>*@
+                    @*<li data-tab="Completed"><a>@AHCMS.Completed</a></li>*@
+                </ul>
+                <ul id="tabs-case-sheet-content" class="uk-switcher uk-margin">
+                    <li>
+                        <table class="uk-table" id="previous-list" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th class="width-50">@AHCMS.PatientCode</th>
+                                    <th>@AHCMS.Patient</th>
+                                    <th class="width-50">@AHCMS.Time</th>
+                                    <th class="width-50">@AHCMS.TokenNo</th>
+                                    <th class="width-100">@AHCMS.Date</th>
+                            
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th>@AHCMS.PatientCode</th>
+                                    <th>@AHCMS.Patient</th>
+                                    <th>@AHCMS.Time</th>
+                                    <th>@AHCMS.TokenNo</th>
+                                    <th>@AHCMS.Date</th>
+                                   
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table class="uk-table" id="today-list" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th class="width-50">@AHCMS.PatientCode</th>
+                                    <th>@AHCMS.Patient</th>
+                                    <th class="width-50">@AHCMS.Time</th>
+                                    <th class="width-50">@AHCMS.TokenNo</th>
+                                    <th class="width-100">@AHCMS.Date</th>
+                                   
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th>@AHCMS.PatientCode</th>
+                                    <th>@AHCMS.Patient</th>
+                                    <th>@AHCMS.Time</th>
+                                    <th>@AHCMS.TokenNo</th>
+                                    <th>@AHCMS.Date</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    @*<li>
+                        <table class="uk-table" id="IP-list" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th class="width-50">@AHCMS.PatientCode</th>
+                                    <th>@AHCMS.Patient</th>
+                                    <th class="width-50">@AHCMS.Time</th>
+                                    <th class="width-50">@AHCMS.TokenNo</th>
+                                    <th class="width-100">@AHCMS.Date</th>
+                                   
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th>@AHCMS.PatientCode</th>
+                                    <th>@AHCMS.Patient</th>
+                                    <th>@AHCMS.Time</th>
+                                    <th>@AHCMS.TokenNo</th>
+                                    <th>@AHCMS.Date</th>
+                                   
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>*@
+                    @*<li>
+                        <table class="uk-table" id="completed-list" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th class="width-50">@AHCMS.PatientCode</th>
+                                    <th>@AHCMS.Patient</th>
+                                    <th class="width-50">@AHCMS.Time</th>
+                                    <th class="width-50">@AHCMS.TokenNo</th>
+                                    <th class="width-100">@AHCMS.Date</th>
+                                   
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th>@AHCMS.PatientCode</th>
+                                    <th>@AHCMS.Patient</th>
+                                    <th>@AHCMS.Time</th>
+                                    <th>@AHCMS.TokenNo</th>
+                                    <th>@AHCMS.Date</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>*@
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/Js/Page/ScreeningV2")
+<script type="text/javascript">
+    Screening.init();
+</script>
+
+
+
+

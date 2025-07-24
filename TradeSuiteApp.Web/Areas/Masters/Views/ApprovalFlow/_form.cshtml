@@ -1,0 +1,100 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.ApprovalFlowModel
+
+<div class="uk-form-row">
+    <div class="uk-grid" data-uk-grid-margin>
+        <div class="uk-width-medium-1-1">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-2-10">
+                        <label>@Approvals.Location<span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.UserLocationID, new SelectList(Model.LocationList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-2-10">
+                        <label>@Approvals.ForDepartment<span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.ForDepartmentID, new SelectList(Model.DeptList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-2-10">
+                        <label>@Approvals.AmountAbove</label>
+                        @Html.TextBoxFor(m => m.AmountAbove, "", new { @class = "md-input mask-sales-currency label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-2-10">
+                        <label>@Approvals.AmountBelow</label>
+                        @Html.TextBoxFor(m => m.AmountBelow, "", new { @class = "md-input mask-sales-currency label-fixed" })
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<br />
+<div class="uk-form-row">
+    <div class="uk-grid" data-uk-grid-margin>
+        <div class="uk-width-medium-1-1">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-2-10">
+                        <label>@Approvals.ItemCategoryName<span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.ItemCategoryID, Model.ItemCategoryList, "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-2-10">
+                        <label>@Approvals.ItemAccountsCategoryName<span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.ItemAccountsCategoryID, Model.ItemAccountsCategoryList, "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-2-10">
+                        <label>@Approvals.ApprovalQueue<span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.ApprovalQueueID, Model.ApprovalList, "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-1-10">
+                        <div class="md-input-wrapper md-input-filled">
+                            <label>&nbsp;</label>
+                            <a class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAdd">@Common.Filter</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="uk-form-row">
+    <div class="uk-grid" data-uk-grid-margin>
+        <div class="uk-width-medium-1-1">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-2-10">
+                        <label>@Approvals.SuppliercategoryName<span>(Except)</span></label>
+                        @Html.DropDownListFor(Model => Model.SupplierCategoryID, Model.SuppliercategoryList, "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-2-10">
+                        <label>@Approvals.SupplierAccountscategoryName<span>(Except)</span></label>
+                        @Html.DropDownListFor(Model => Model.SupplierAccountsCategoryID, Model.SupplierAccountscategoryList, "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<h5><b>Already Defined Approval Flows</b></h5>
+<div class="uk-form-row">
+    <div>
+        <table id="ApprovalFlowList" class="uk-table ">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-100">@Approvals.Location</th>
+                    <th class="width-200">@Approvals.ForDepartment</th>
+                    <th class="width-100">@Approvals.ItemCategory</th>
+                    <th class="width-100">@Approvals.ItemAccountsCategory</th>
+                    <th class="width-100">@Approvals.AmountAbove </th>
+                    <th class="width-100">@Approvals.AmountBelow </th>
+                    <th class="width-100">@Approvals.ApprovalQueue </th>
+                    <th class="width-100">@Approvals.SupplierCategory</th>
+                    <th class="width-100">@Approvals.SupplierAccountsCategory</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <input type="hidden" id="item-count" />
+    </div>
+</div>

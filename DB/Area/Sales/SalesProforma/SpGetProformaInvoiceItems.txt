@@ -1,0 +1,69 @@
+         
+            
+-- =============================================                        
+-- Author:  <ajith@kraftlabs.com>                        
+-- Create date: <31-Aug-2018>                        
+-- Description: <Get Proforma Invoice items by ProformaInvoiceId>                        
+-- =============================================               
+                   
+ALTER PROCEDURE [Sales].[SpGetProformaInvoiceItems](                        
+ @ProformaInvoiceID varchar(max),                        
+ @For varchar(30) = 'Sales',                        
+ @FinYear INT,                         
+ @LocationID INT,                        
+ @ApplicationID INT                        
+)                        
+AS                        
+BEGIN                        
+                        
+ SET NOCOUNT ON;                        
+ DECLARE @FromWarehouseID int,@CustomerID int ,@PriceListID int,@LocationHeadID int                   
+                    
+ SELECT @LocationHeadID = LocationHeadID FROM Location WHERE ID = @LocationID                         
+                       
+ SELECT  @CustomerID = CustomerID FROM Sales.ProformaInvoice WHERE ID IN (Select * from dbo.fnSplitString(@ProformaInvoiceID,','))                     
+                        
+ SELECT @PriceListID = PriceListID FROM Customer WHERE ID = @CustomerID                        
+                   
+                       
+ IF @For = 'Sales'                        
+ BEGIN                         
+  SELECT @FromWarehouseID = ConfigValue FROM configuration WHERE ConfigName LIKE 'DefaultHoldonStore' AND LocationID = @LocationID AND ApplicationID = @ApplicationID                        
+ END                        
+ ELSE                        
+ BEGIN                        
+  SET @FromWarehouseID = NULL                        
+ END                        
+       
+ SELECT DISTINCT PIT.ID, ProformaInvoiceID, CASE WHEN @For = 'sales' THEN 0 ELSE SalesOrderTranID END AS SalesOrderTranID, PIT.ItemID,    
+I.Code ItemCode,PIT.ItemName,PIT.PartsNumber,PIT.DeliveryTerm,PIT.Model,PIT.PrintWithItemName, PIT.CurrencyID,PIT.IsGST,PIT.IsVat , PIT.Quantity,     
+PIT.MRP, PIT.BasicPrice, PIT.OfferQty,PIT.GrossAmount, PIT.DiscountPercentage, PIT.DiscountAmount,PIT.AdditionalDiscount, PIT.TurnoverDiscount,     
+PIT.TaxableAmount,PIT.VATAmount,PIT.VatPercentage,PIT.SecondaryUnit,PIT.SecondaryOfferQty,PIT.SecondaryUnitSize,PIT.SecondaryMRP,PIT.SecondaryQty,      
+PIT.SGSTPercentage, PIT.CGSTPercentage, PIT.IGSTPercentage, PIT.SGSTAmt, PIT.CGSTAmt, PIT.IGSTAmt, PIT.NetAmt,SO.OrderDate,                        
+ISNULL(@FromWarehouseID, PIT.WareHouseID) AS WareHouseID, U.UOM  AS UnitName, I.Code, PIT.SortOrder, BatchID, BatchNo, PIT.BatchTypeID,                         
+case when I.CategoryID=222 then BT.Name else '' end as BatchTypeName, InvoiceQty, InvoiceOfferQty, SO.SalesOrderNo, ISNULL(PD.MRP, ISNULL(IC.TransferPrice,0.0)) AS Rate,                                   
+ISNULL(PD.LoosePrice, (ISNULL(IC.TransferPrice,0.0) * dbo.FnConvertUnit(I.ID,0,I.UnitID,I.SalesUnitID) ))                       
+LooseRate,I.SalesUnitID,PIT.CessAmount,PIT.CessPercentage,dbo.FnConvertStockFromInventoryUnit(PIT.ItemID,             
+dbo.FnGetAvailableStock(PIT.ItemID, PIT.BatchID, PIT.BatchTypeID, ISNULL(@FromWarehouseID, PIT.WareHouseID),            
+@FinYear, @LocationID, @ApplicationID),PIT.UnitID) + CASE WHEN PI.HoldStock = 1 AND @For <> 'Sales' THEN PIT.InvoiceQty ELSE 0.00 END Stock,            
+PIT.UnitID, I.SalesCategory AS Category,I.PackSize,ISNULL(I.MalayalamName,'') AS MalayalamName,ISNULL(cu.Name,'')CurrencyName,            
+US.UOM AS PrimaryUnit, I.CategoryID                
+FROM Sales.ProformaInvoiceTrans PIT              
+INNER JOIN Sales.ProformaInvoice PI ON PI.ID = PIT.ProformaInvoiceID                      
+INNER JOIN viItem I ON I.ID = PIT.ItemID                        
+INNER JOIN Batch B ON B.ID = PIT.BatchID    
+LEFT JOIN Currency cu on cu.ID=PIT.CurrencyID  
+LEFT JOIN BatchType BT ON BT.ID = BatchTypeID    
+LEFT JOIN Sales.SalesOrderTrans SOT ON SOT.ID = PIT.SalesOrderTranID                        
+LEFT JOIN Sales.SalesOrder SO ON SO.ID = SOT.SalesOrderID                        
+LEFT join Unit U on U.ID=PIT.UnitID               
+LEFT JOIN Unit US ON US.ID = I.UnitID                     
+LEFT JOIN PriceListDetails PD on PD.ItemID = I.ID AND PD.PriceListID = PIT.BatchTypeID AND PD.BasePriceListID = B.BasePriceListID                       
+LEFT JOIN ItemwiseCostHistory IC ON IC.ItemID = I.ID AND IC.IsActive = 1 AND IC.LocationHeadID = @LocationHeadID                         
+WHERE PIT.ProformaInvoiceID IN (Select * from dbo.fnSplitString(@ProformaInvoiceID,','))                         
+AND PIT.Finyear = @FinYear                         
+AND PIT.LocationID = @LocationID             
+AND PIT.ApplicationID = @ApplicationID                         
+ORDER BY I.SalesCategory,PIT.ID                         
+              
+END 

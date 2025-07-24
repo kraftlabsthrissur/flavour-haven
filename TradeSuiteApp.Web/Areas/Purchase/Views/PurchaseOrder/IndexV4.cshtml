@@ -1,0 +1,297 @@
+﻿
+@model IEnumerable<TradeSuiteApp.Web.Areas.Purchase.Models.PurchaseOrderModel>
+@{
+    ViewBag.Title = "Stock Purchase Order List";
+
+}
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Purchase.PurchseOrdersForStockItems</h1>
+            <span class="uk-text-upper uk-text-small">@Purchase.PurchaseOrderList</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Create", Html.ActionLink(Common.CreateReOrder, "Create", "ReOrder", new { Area = "Purchase" }, new { @class = "md-btn" }))
+            @ActionAuthorization.IsAuthorized("Create", Html.ActionLink(Common.Create, "CreateV4", "PurchaseOrder", new { Area = "Purchase" }, new { @class = "md-btn" }))
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="list-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <ul class="uk-tab" data-uk-tab="{connect:'#tabs-purchase-order-content',animation:'slide-horizontal'}" id="tabs-purchase-order">
+                    <li class="uk-active" data-tab="Draft" ><a>@Purchase.Draft</a></li>
+                    @*<li data-tab="ToBeApproved" ><a>@Purchase.ToBeApproved</a></li>
+                    <li data-tab="PartiallyApproved" ><a>@Purchase.PartiallyApproved</a></li>*@
+                    <li data-tab="Approved" ><a>@Purchase.Pending</a></li>
+                    @*<li data-tab="PartiallyProcessed" ><a>@Purchase.PartiallyReceived</a></li>*@
+                    <li data-tab="Processed" ><a>@Purchase.FullyReceived</a></li>
+                    <li data-tab="Suspended" ><a>@Purchase.Suspended</a></li>
+                    <li data-tab="Cancelled" ><a>@Purchase.Cancelled</a></li>
+                </ul>
+                <ul id="tabs-purchase-order-content" class="uk-switcher uk-margin">
+                    <li>
+                        <table id="purchase-order-draft-list" class="uk-table">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th class="width-60">@Purchase.TransNo</th>
+                                    <th class="width-80">@Purchase.TransDate</th>
+                                    <th>@Purchase.SupplierName</th>
+                                    <th class="width-40">@Purchase.NetAmount</th>
+                                    <th class="width-80">@Purchase.CategoryName</th>
+                                    <th>@Purchase.ItemName</th>
+                                    <th class="width-40"></th>
+                                    @*<th class="width-40"></th>*@
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th>@Common.SerialNo</th>
+                                    <th>@Purchase.TransNo</th>
+                                    <th>@Purchase.TransDate</th>
+                                    <th>@Purchase.SupplierName</th>
+                                    <th>@Purchase.NetAmount</th>
+                                    <th>@Purchase.ItemCategory</th>
+                                    <th>@Purchase.ItemName</th>
+                                    <th></th>
+                                    @*<th></th>*@
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                  @*<li>
+                        <table id="purchase-order-to-be-approved-list" class="uk-table">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th class="width-60">@Purchase.TransNo</th>
+                                    <th class="width-80">@Purchase.TransDate</th>
+                                    <th>@Purchase.SupplierName</th>
+                                    <th class="width-40">@Purchase.NetAmount</th>
+                                    <th class="width-80">@Purchase.CategoryName</th>
+                                    <th>@Purchase.ItemName</th>
+                                    <th class="width-40"></th>
+                                    <th class="width-40"></th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th>@Common.SerialNo</th>
+                                    <th>@Purchase.TransNo</th>
+                                    <th>@Purchase.TransDate</th>
+                                    <th>@Purchase.SupplierName</th>
+                                    <th>@Purchase.NetAmount</th>
+                                    <th>@Purchase.ItemCategory</th>
+                                    <th>@Purchase.ItemName</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table id="purchase-order-partially-approved-list" class="uk-table">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th class="width-60">@Purchase.TransNo</th>
+                                    <th class="width-80">@Purchase.TransDate</th>
+                                    <th>@Purchase.SupplierName</th>
+                                    <th class="width-40">@Purchase.NetAmount</th>
+                                    <th class="width-80">@Purchase.CategoryName</th>
+                                    <th>@Purchase.ItemName</th>
+                                    <th class="width-40"></th>
+                                    <th class="width-40"></th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th>@Common.SerialNo</th>
+                                    <th>@Purchase.TransNo</th>
+                                    <th>@Purchase.TransDate</th>
+                                    <th>@Purchase.SupplierName</th>
+                                    <th>@Purchase.NetAmount</th>
+                                    <th>@Purchase.ItemCategory</th>
+                                    <th>@Purchase.ItemName</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>*@
+                    <li>
+                        <table id="purchase-order-approved-list" class="uk-table">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th class="width-60">@Purchase.TransNo</th>
+                                    <th class="width-80">@Purchase.TransDate</th>
+                                    <th>@Purchase.SupplierName</th>
+                                    <th class="width-40">@Purchase.NetAmount</th>
+                                    <th class="width-80">@Purchase.CategoryName</th>
+                                    <th>@Purchase.ItemName</th>
+                                    <th class="width-40"></th>
+                                    @*<th class="width-40"></th>*@
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th>@Common.SerialNo</th>
+                                    <th>@Purchase.TransNo</th>
+                                    <th>@Purchase.TransDate</th>
+                                    <th>@Purchase.SupplierName</th>
+                                    <th>@Purchase.NetAmount</th>
+                                    <th>@Purchase.ItemCategory</th>
+                                    <th>@Purchase.ItemName</th>
+                                    <th></th>
+                                    @*<th></th>*@
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    @*<li>
+                        <table id="purchase-order-partially-processed-list" class="uk-table">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th class="width-60">@Purchase.TransNo</th>
+                                    <th class="width-80">@Purchase.TransDate</th>
+                                    <th>@Purchase.SupplierName</th>
+                                    <th class="width-40">@Purchase.NetAmount</th>
+                                    <th class="width-80">@Purchase.CategoryName</th>
+                                    <th>@Purchase.ItemName</th>
+                                    <th class="width-40"></th>
+                                    <th class="width-40"></th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th>@Common.SerialNo</th>
+                                    <th>@Purchase.TransNo</th>
+                                    <th>@Purchase.TransDate</th>
+                                    <th>@Purchase.SupplierName</th>
+                                    <th>@Purchase.NetAmount</th>
+                                    <th>@Purchase.ItemCategory</th>
+                                    <th>@Purchase.ItemName</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>*@
+                    <li>
+                        <table id="purchase-order-processed-list" class="uk-table">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th class="width-60">@Purchase.TransNo</th>
+                                    <th class="width-80">@Purchase.TransDate</th>
+                                    <th>@Purchase.SupplierName</th>
+                                    <th class="width-40">@Purchase.NetAmount</th>
+                                    <th class="width-80">@Purchase.CategoryName</th>
+                                    <th>@Purchase.ItemName</th>
+                                    <th class="width-40"></th>
+                                    @*<th class="width-40"></th>*@
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th>@Common.SerialNo</th>
+                                    <th>@Purchase.TransNo</th>
+                                    <th>@Purchase.TransDate</th>
+                                    <th>@Purchase.SupplierName</th>
+                                    <th>@Purchase.NetAmount</th>
+                                    <th>@Purchase.ItemCategory</th>
+                                    <th>@Purchase.ItemName</th>
+                                    <th></th>
+                                    @*<th></th>*@
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table id="purchase-order-suspended-list" class="uk-table">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th class="width-60">@Purchase.TransNo</th>
+                                    <th class="width-80">@Purchase.TransDate</th>
+                                    <th>@Purchase.SupplierName</th>
+                                    <th class="width-40">@Purchase.NetAmount</th>
+                                    <th class="width-80">@Purchase.CategoryName</th>
+                                    <th>@Purchase.ItemName</th>
+                                    <th class="width-40"></th>
+                                    @*<th class="width-40"></th>*@
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th>@Common.SerialNo</th>
+                                    <th>@Purchase.TransNo</th>
+                                    <th>@Purchase.TransDate</th>
+                                    <th>@Purchase.SupplierName</th>
+                                    <th>@Purchase.NetAmount</th>
+                                    <th>@Purchase.ItemCategory</th>
+                                    <th>@Purchase.ItemName</th>
+                                    <th></th>
+                                    @*<th></th>*@
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table id="purchase-order-cancelled-list" class="uk-table">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th class="width-60">@Purchase.TransNo</th>
+                                    <th class="width-80">@Purchase.TransDate</th>
+                                    <th>@Purchase.SupplierName</th>
+                                    <th class="width-40">@Purchase.NetAmount</th>
+                                    <th class="width-80">@Purchase.CategoryName</th>
+                                    <th>@Purchase.ItemName</th>
+                                    <th class="width-40"></th>
+                                    @*<th class="width-40"></th>*@
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th>@Common.SerialNo</th>
+                                    <th>@Purchase.TransNo</th>
+                                    <th>@Purchase.TransDate</th>
+                                    <th>@Purchase.SupplierName</th>
+                                    <th>@Purchase.NetAmount</th>
+                                    <th>@Purchase.ItemCategory</th>
+                                    <th>@Purchase.ItemName</th>
+                                    <th></th>
+                                    @*<th></th>*@
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/PurchaseOrder")
+<script type="text/javascript">
+    purchase_order.list();
+</script>

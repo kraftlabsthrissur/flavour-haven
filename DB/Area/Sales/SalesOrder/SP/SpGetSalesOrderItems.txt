@@ -1,0 +1,29 @@
+--Exec  [Sales].[SpGetSalesOrderItems] 170,2022,99,1    
+ALTER PROCEDURE [Sales].[SpGetSalesOrderItems](                        
+ @ID int,                        
+ @FinYear int,                        
+ @LocationID int,                        
+ @ApplicationID int                        
+)AS                          
+BEGIN                          
+ SELECT ST.ID AS SalesOrderTransID,SalesOrderID,FullOrLoose,ItemID,CategoryID,ST.UnitID,U.UOM as Unit,ISNULL(ST.ItemName ,'')AS ItemName,I.Code AS ItemCode,ST.PartsNumber,  
+ isnull(ST.DeliveryTerm,'')as DeliveryTerm,ST.Model,Quantity,MRP,BasicPrice,OfferQty,QtyMet,OfferMet,GrossAmount,DiscountPercentage,DiscountAmount,AdditionalDiscount,TaxableAmount,  
+ SGSTPercentage,CGSTPercentage,(Select TOP 1 S.PrintWithItemName From Sales.SalesOrder S WHERE S.ID=ST.SalesOrderID )PrintWithItemName,ST.CurrencyID,ISNULL(ST.ExchangeRate,1)ExchangeRate,            
+ IGSTPercentage,ST.SGSTAmt,ST.CGSTAmt,ST.IGSTAmt,ST.CessPercentage,ST.CessAmount,ST.VATPercentage,ST.VATAmount,ST.SecondaryUnit,ST.SecondaryMRP,ST.SecondaryQty,    
+ ISNULL((SELECT STRING_AGG(Name+'|'+CAST(PackSize AS varchar(10)), ',') FROM SecondaryUnit su  join ItemSecondaryUnit iu on iu.SecondaryUnitID=su.ID WHERE iu.ItemID=ST.ItemID  AND  su.UnitID=ST.UnitID),'')SecondaryUnits,     
+ ST.SecondaryUnitSize,ST.SecondaryOfferQty,ST.IsGST,ST.IsVat,IsNULL( Cu.Name,'')CurrencyName , ST.NetAmt,I.Category AS Category,isnull(I.Make,'')as Make,                      
+ Case when I.SalesUnitID=ST.UnitID then I.MinSalesQtyFull else I.MinSalesQtyLoose end as MinSalesQty,                      
+ Case when I.SalesUnitID=ST.UnitID then I.MaxSalesQty else 5000 end as MaxSalesQty,                        
+ Case when I.CategoryID=222 then  BT.Name else '' end as BatchType, ST.BatchTypeID                        
+ FROM Sales.SalesOrderTrans ST                           
+ INNER JOIN viItem I on I.ID = ST.ItemID                          
+ INNER JOIN Unit U on U.ID=ST.UnitID               
+ LEFT JOIN BatchType BT on BT.ID=ST.BatchTypeID                      
+ LEFT JOIN Currency Cu on Cu.ID=ST.CurrencyID     
+                      
+ WHERE ST.SalesOrderID = @ID                         
+ AND ST.FinYear = @FinYear                           
+ AND ST.LocationID = @LocationID                           
+ AND ST.ApplicationID = @ApplicationID                       
+ ORDER BY ST.ID ASC                      
+END 

@@ -1,0 +1,61 @@
+             
+ALTER PROCEDURE [Purchase].[SpGetPurchaseOrderDetails] (                      
+ @ID INT = NULL,                      
+ @UserID INT,                          
+ @FinYear INT,                          
+ @LocationID INT,                      
+ @ApplicationID INT                      
+) AS                      
+BEGIN                          
+SET NOCOUNT ON                          
+                      
+ DECLARE @IsViewer int,@CreatedDepartmentID int, @LoginDeparmentID int,@CreatedUserID int,@FromDeparmentID Int,@FromLocationID Int;                      
+ SELECT @CreatedUserID=CreatedUserID from PurchaseOrder WHERE ID = @ID                       
+ SELECT @CreatedDepartmentID=DepartmentID from Employee WHERE USERID=@CreatedUserID                      
+ SELECT @LoginDeparmentID=DepartmentID from Employee WHERE UserID=@UserID                      
+                        
+ SELECT @IsViewer = CASE WHEN COUNT(*) = 0 THEN 0 ELSE 1 END                        
+ FROM AspNetUsers U LEFT JOIN UserRoles UR ON U.ID = UR.UserID                      
+ LEFT JOIN Roles R ON R.ID = UR.RoleID                        
+ WHERE  ((R.Name LIKE 'TRANSACTION VIEWER'AND UR.LocationID = @LocationID) OR UserName LIKE 'admin')                      
+ AND U.ID = @UserID                      
+                        
+ SELECT PO.ID,PO.PurchaseOrderNo,PO.PurchaseOrderDate,PO.SupplierID,SM.Name AS SupplierName, PO.IsGST, PO.IsVAT,CY.Name as CurrencyName,      
+ CY.Code as CurrencyCode,isnull(SA.AddressLine1,'') as AddressLine1 ,isnull(SA.AddressLine2,'') as AddressLine2,isnull(SA.AddressLine3,'') as AddressLine3, 
+ isnull(BA.AddressLine1,'') as BAddressLine1 ,isnull(BA.AddressLine2,'') as BAddressLine2,isnull(BA.AddressLine3,'') as BAddressLine3, 
+ isnull(BA.MobileNo,'') as MobileNo , isnull(BA.Email,'') as Email ,isnull((SELECT TOP 1 Name FROM Country c WHERE c.ID=CY.CountryID ),'') as CountryName ,    
+PO.CurrencyExchangeRate,(select DISTINCT First_value(I.Name) OVER (PARTITION BY POT.PurchaseOrderID ORDER BY POT.ID)                         
+  from PurchaseOrderTrans POT Inner join viItem I on I.ID = POT.ItemID                       
+  where POT.PurchaseOrderID = PO.ID  AND POT.FinYear = @FinYear                       
+  AND POT.LocationID = @LocationID ) AS ItemName,                        
+ (select DISTINCT First_value(I.Category) OVER (PARTITION BY POT.PurchaseOrderID ORDER BY POT.ID)                         
+  from PurchaseOrderTrans POT Inner join viItem I on I.ID = POT.ItemID            
+            
+  where POT.PurchaseOrderID = PO.ID AND POT.FinYear = @FinYear AND POT.LocationID = @LocationID) AS ItemType,                        
+ ISNULL(SMA.StateID,0) AS SupplierStateID,SM.IsGSTRegistered,ISNULL(SMA.Place,'') AS SupplierLocation,                          
+ PO.AdvancePercentage,PO.AdvanceAmount,PO.PaymentModeID,PM.Name AS PaymentMode,PO.BillingAddressID,ISNULL(BL.Name,'') AS BillingLocation,                      
+ PO.ShippingAddressID,ISNULL(SA.StateID,0) AS ShippingStateID, ISNULL(SL.Name,'') AS ShipplingLocation,PO.InclusiveGST,PO.GSTExtra,PO.SelectedQuotationID,                      
+ PO.OtherQuotationIDS,PO.freightAmt,PO.SGSTAmt,PO.CGSTAmt,PO.IGSTAmt, PO.OtherCharges,PO.PackingShippingCharge,PO.GrossAmount,PO.VATAmount,PO.Discount,            
+ PO.SuppDocCode,PO.SuppShipCode,PO.SuppOtherRemark,PO.SuppQuotNo,PO.Shipment,PO.OrderType,PO.SuppDocAmount,PO.SuppShipAmount,PO.SuppOtherCharge,            
+ PO.NetAmt,PO.OrderMet,PO.IsDraft,PO.Remarks,PO.SupplierReferenceNo,PO.TermsOfPrice,PO.Cancelled,PO.CancelledDate,PO.CreatedUserID,PO.CreatedDate,                          
+ PO.FinYear,PO.LocationID,PO.ApplicationID,PO.DeliveryWithin, PO.PaymentWithinID,ISNULL(PD.Days,0) AS PaymentWithin,PO.IsApproved,PO.IsSuspended  ,                      
+ case when SM.SupplierAccountsCategoryID=3 then 1 else 0 end as IsInterCompany,SalesOrderLocationID,0 InterCompanyLocationID                      
+ FROM PurchaseOrder PO                          
+ INNER JOIN Supplier SM ON PO.SupplierID = SM.ID left JOIN PaymentDays PD on PD.ID = PO.PaymentWithinID        
+ Inner join PurchaseOrderTrans PT on PO.ID=PT.PurchaseOrderID          
+ Inner Join Currency CY on CY.ID=PT.CurrencyID          
+ left join PaymentMode PM on PM.ID = PO.PaymentModeID             
+ LEFT join Addresses SA on SA.PartyID = SM.ID  left join Location SL on SL.ID = SA.PartyID AND SA.PartyType = 'Supplier'               
+ LEFT join Addresses BA on BA.PartyID = SM.ID  left join Location BL on BL.ID = BA.PartyID AND BA.PartyType = 'Supplier'                              
+ left join Addresses SMA on SMA.PartyID = SM.ID and SMA.PartyType = 'Supplier' and SMA.IsDefault = 1                       
+ --Left Join Location L on L.SupplierID=SM.ID                      
+ WHERE PO.ID = @ID AND ((@CreatedDepartmentID =@LoginDeparmentID AND PO.LocationID=@LocationID) OR @IsViewer = 1                       
+ OR @UserID in (Select UserID From dbo.FnGetPrivilegedUsers(PO.CreatedUserID,PO.LocationID,ISNULL(PO.PRToDepartmentID,@CreatedDepartmentID),ISNULL(PO.PRFromDepartmentID,@CreatedDepartmentID),PO.LocationID))                      
+ OR @UserID in(Select AT.UserID from approvals.approvals A                       
+   Inner join approvals.approvaltrans AT on AT.ApprovalID=A.ID                       
+   Where A.TransID=PO.ID AND A.Name='Purchase Order')                      
+   )                       
+ --AND PO.FinYear = @FinYear                     
+ AND  PO.ApplicationID=@ApplicationID                          
+ ORDER BY PO.ID DESC                          
+END 

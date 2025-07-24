@@ -1,0 +1,133 @@
+﻿@model List<TradeSuiteApp.Web.Areas.Purchase.Models.ServicePurchaseInvoiceItemModel>
+@{
+    Layout = null;
+}
+
+@if (Model != null)
+{
+    foreach (var item in Model.Select((value, i) =>
+                new
+                {
+                    i = (i + 1),
+                    dynChkID = "chk_unprocItem_" + value.ItemID,
+                    dynRowID = "tr_unproc_" + value.ItemID,
+                    otherChargesStr = value.FreightAmt + "`" + value.OtherCharges + "`" + value.PackingShippingCharge,
+                    InclusiveGST = value.IsInclusiveGST == true ? 1 : 0,
+                    value
+                }))
+    {
+        <tr id="@item.dynRowID">
+
+            <td style="cursor:pointer;" class="uk-text-center">
+                @item.i
+                <input type="hidden" class="hdnId" value="@item.value.ID" />
+      
+            </td>
+            <td class="uk-text-center checked" data-md-icheck>
+                <input type="hidden" class="hdnSRNID" value="@item.value.SRNID" />
+                <input type="hidden" class="hdnSRNTransID" value="@item.value.SRNTransID" />
+                <input type="hidden" class="hdnCharges" value="@item.otherChargesStr" />
+                <input type="hidden" class="hdnPOServiceID" value="@item.value.POServiceID" />
+                <input type="hidden" class="SGSTPercent" value="@item.value.SGSTPercent" />
+                <input type="hidden" class="CGSTPercent" value="@item.value.CGSTPercent" />
+                <input type="hidden" class="IGSTPercent" value="@item.value.IGSTPercent" />
+                <input type="hidden" class="IsInclusiveGST" value="@item.InclusiveGST" />
+              
+                @if (item.value.PurchaseInvoiceID <= 0)
+                {               //Create
+                    <input type="checkbox" class="chkItem include-item" id="@item.dynChkID" value="@item.value.ItemID" />
+                }
+                else
+                {               //Edit
+                    <input type="checkbox" class="chkItem" id="@item.dynChkID" value="@item.value.ItemID" checked disabled />
+                }
+            </td>
+            <td>@item.value.ItemName</td>
+            <td>@item.value.Unit</td>
+            <td class="uk-text-right itemAcceptedQty mask-qty">@item.value.AcceptedQty</td>
+            <td class="uk-text-right itemUnMatchedQty mask-qty">@item.value.UnMatchedQty</td>
+            <td class="uk-text-right itemPORate mask-currency">@item.value.PORate</td>
+            <td>@Html.DropDownList("gstPercentage", (SelectList)ViewBag.TaxPercentages, new { @class = "md-input uk-text uk-text-right gstPercentage" })</td>
+
+            <td class="uk-text-right itemAcceptedValue mask-currency">@item.value.ApprovedValue</td>
+            <td class="uk-text-right"><input type="text" class="md-input txtItemInvoiceQty mask-qty" value="@item.value.InvoiceQty" readonly /></td>
+            <td class="uk-text-right"><input type="text" class="md-input txtItemInvoiceRate mask-production-qty" value="@item.value.InvoiceRate" readonly /></td>
+            <td class="uk-text-right"><input type="text" class="md-input txtItemInvoiceValue mask-currency" value="@item.value.InvoiceValue" disabled /></td>
+            <td class="uk-text-right itemDiffValue mask-currency">@(item.value.InvoiceValue - item.value.AcceptedValue)</td>
+            <td><input type="text" class="md-input  txtItemRemarks" value="@item.value.Remarks" /></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="13">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-1">
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin>
+                                <div class="uk-width-medium-1-5">
+                                    <label>@Common.Location</label>
+                                    @Html.DropDownListFor(model => item.value.ServiceLocationID, new SelectList(ViewBag.Locations, "Key", "Value", item.value.ServiceLocationID), "Select", new { @class = "md-input label-fixed location-id" })
+                                </div>
+                                <div class="uk-width-medium-1-5">
+                                    <label>@Common.Department</label>
+                                    @Html.DropDownListFor(model => item.value.DepartmentID, new SelectList(ViewBag.Departments, "Key", "Value", item.value.DepartmentID), "Select", new { @class = "md-input label-fixed department-id" })
+                                </div>
+                                <div class="uk-width-medium-1-5">
+                                    <label>@Common.Employee</label>
+                                    @Html.DropDownListFor(model => item.value.EmployeeID, new SelectList(ViewBag.Employees, "Key", "Value", item.value.EmployeeID), "Select", new { @class = "md-input label-fixed employee-id" })
+                                </div>
+                                <div class="uk-width-medium-1-5">
+                                    <label>@Common.Company</label>
+                                    @Html.DropDownListFor(model => item.value.CompanyID, new SelectList(ViewBag.Companies, "Key", "Value", item.value.CompanyID), "Select", new { @class = "md-input label-fixed company-id" })
+                                </div>
+                                <div class="uk-width-medium-1-5">
+                                    <label>@Common.Project</label>
+                                    @Html.DropDownListFor(model => item.value.ProjectID, new SelectList(ViewBag.Projects, "Key", "Value", item.value.ProjectID), "Select", new { @class = "md-input label-fixed project-id" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        if (item.value.CategoryID > 0)
+        {
+            <tr>
+                <td></td>
+                <td colspan="16">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-1">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-10">
+                                        <label>@Purchase.TravelFrom</label>
+                                        <div>@item.value.TravelFrom</div>
+
+                                    </div>
+                                    <div class="uk-width-medium-1-10">
+                                        <label>@Purchase.TravelTo</label>
+                                        <div>@item.value.TravelTo</div>
+                                    </div>
+                                    <div class="uk-width-medium-1-5">
+                                        <label>@Purchase.ModeOfTransport</label>
+                                        <div>@item.value.TransportMode</div>
+                                    </div>
+                                    <div class="uk-width-medium-1-5">
+                                        <label>@Purchase.TravelDate</label>
+                                        <div>@item.value.TravelDateString</div>
+                                    </div>
+                                    <div class="uk-width-medium-1-5">
+                                        <label>@Purchase.TravelRemarks</label>
+                                        <div>@item.value.TravelingRemarks</div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+            </tr>
+        }
+    }
+}

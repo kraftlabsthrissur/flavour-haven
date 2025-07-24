@@ -1,0 +1,169 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.BankExpensesModel
+@{
+    ViewBag.Title = Accounts.FinancialExpenses;
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.TransNo</label>
+                            @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input  label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Accounts.TransDate</label>
+                            <input class="md-input label-fixed current-date date" type="text" disabled="disabled" id="Date" value="@DateTime.Now.ToString("dd-MM-yyyy")">
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Accounts.FromBankDetails<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.BankID, Model.BankList, "Select", new { @class = "md-input label-fixed" })
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        @*<div class="uk-width-medium-1-8">
+                                <div class="uk-autocomplete " id="accountnumber-autocomplete">
+                                    <label>@Accounts.AccountCode <span>*</span></label>
+                                    <input type="text" id="AccountCode" class="md-input label-fixed" />
+                                    <script type="text/autocomplete">
+                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                            {{~items}}
+                                            <li data-value="{{ $item.AccountCode}}"
+                                                data-id="{{$item.AccountHeadID}}"
+                                                data-number="{{$item.AccountCode}}"
+                                                data-name="{{$item.AccountName}}">
+                                                <a>
+                                                    {{$item.AccountCode}}
+                                                </a>
+                                            </li>
+                                            {{/items}}
+                                        </ul>
+                                    </script>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-2-8">
+                                <div class="uk-autocomplete " id="accountname-autocomplete">
+                                    <label>@Accounts.AccountName <span>*</span></label>
+                                    <input type="text" id="AccountName" class="md-input label-fixed" />
+                                    <script type="text/autocomplete">
+                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                            {{~items}}
+                                            <li data-value="{{$item.AccountName}}"
+                                                data-id="{{$item.AccountHeadID}}"
+                                                data-number="{{$item.AccountCode}}"
+                                                data-name="{{ $item.AccountName}}">
+                                                <a>
+                                                    {{$item.AccountName}}
+                                                </a>
+                                            </li>
+                                            {{/items}}
+                                        </ul>
+                                    </script>
+                                </div>
+                                @Html.Hidden("AccountHeadID")
+                            </div>*@
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.InstrumentNumber</label>
+                            @Html.TextBoxFor(m => m.TransactionNumber, new { @class = "md-input  label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label for="uk_dp_start">@Accounts.InstrumentDate</label>
+                                @Html.TextBoxFor(m => m.TransactionDate, new { @class = "md-input label-fixed current-date date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.ItemName<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.ItemID, Model.ItemList, "Select", new { @class = "md-input label-fixed", })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.ModeOfPayment<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.ModeOfPaymentID, Model.ModeOfPaymentList, "Select", new { @class = "md-input label-fixed", })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.Amount<span>*</span></label>
+                            @Html.TextBoxFor(m => m.Amount, new { @class = "md-input  label-fixed mask-currency" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.ReferenceNumber</label>
+                            @Html.TextBoxFor(m => m.ReferenceNo, new { @class = "md-input label-fixed" })
+
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.Remarks</label>
+                            @Html.TextBoxFor(m => m.Remarks, new { @class = "md-input  label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-10">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label>&nbsp;</label>
+                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddItem">@Common.Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-1">
+                            <label>@Accounts.TotalAmount</label>
+                            @Html.TextBoxFor(m => m.TotalAmount, new { @class = "md-input label-fixed x-large mask-currency", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <table id="bank-expenses-item-list" class="uk-table" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-100">@Accounts.InstrumentNumber</th>
+                    <th class="width-40">@Accounts.InstrumentDate</th>
+                    <th class="width-80">@Accounts.ItemName</th>
+                    <th class="width-60">@Accounts.ModeOfPayment</th>
+                    <th class="width-80">@Accounts.Amount</th>
+                    <th class="width-80">@Accounts.Remarks</th>
+                    <th class="width-80">@Accounts.ReferenceNumber</th>
+                    <th class="width-10"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items != null)
+                {
+                    foreach (var itm in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                        <tr>
+                            <td class="uk-text-center">@itm.i</td>
+                            <td class="TransactionNumber">@itm.value.TransactionNumber</td>
+                            <td class="TransactionDate">@itm.value.TransactionDate</td>
+                            <td class="ItemName">
+                                <input type="hidden" class="ItemID" value="@itm.value.ItemID" />
+                                <input type="hidden" class="ModeOfPaymentID" value="@itm.value.ModeOfPaymentID" />
+                                @itm.value.ItemName
+                            </td>
+                            <td class="ModeOfPayment">@itm.value.ModeOfPayment</td>
+                            <td class="Amount mask-currency">@itm.value.Amount</td>
+                            <td class="Remarks">@itm.value.Remarks</td>
+                            <td class="ReferenceNo">@itm.value.ReferenceNo</td>
+                            <td class="uk-text-center"><a class="remove-item"><i class="uk-icon-remove"></i></a></td>
+                        </tr>;
+                    }
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,60 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.AppointmentScheduleModel
+
+
+<div class="uk-modal-header">
+    <h3 class="uk-modal-title">Edit<i class="material-icons"></i></h3>
+</div>
+<div class="uk-modal-content">
+    <div class="uk-form-row">
+        <div class="uk-grid text-center uk-margin">
+            <div class="uk-width-medium-2-10">
+                <label>@AHCMS.Patient</label>
+                @Html.TextBoxFor(model => model.PatientName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-input-group">
+                    <label for="uk_dp_start">@AHCMS.AppointmentDate</label>
+                    @Html.TextBoxFor(model => model.AppointmentDate, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                </div>
+            </div> 
+            <div class="uk-width-medium-3-10">
+                <div class="uk-autocomplete " id="doctor-autocomplete">
+                    <div class="uk-input-group">
+                        <label for="uk_dp_start">@AHCMS.Doctor<span>*</span></label>
+                        @Html.TextBoxFor(m => m.DoctorName, new { @class = "md-input label-fixed" })                       
+                        <script type="text/autocomplete">
+                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                {{~items}}
+                                <li data-value="{{ $item.Name}}"
+                                    data-id="{{$item.ID}}"
+                                    data-EmployeeCode="{{$item.Code}}"
+                                    data-placement="{{$item.Location}}">
+                                    <a>
+                                        {{ $item.Name }}
+                                        <div>{{ $item.Code }}</div>
+                                    </a>
+                                </li>
+                                {{/items}}
+                            </ul>
+                        </script>
+                    </div>
+                </div>                
+            </div>
+            <div class="uk-width-medium-2-10">
+                <label>@Common.Department</label>
+                @Html.DropDownListFor(Model => Model.DepartmentID, new SelectList(Model.DepartmentList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+            </div>    
+        </div>
+    </div>
+</div>
+<div class="uk-modal-footer uk-text-right">
+    <button type="button" class="md-btn  uk-modal-close" id="btn_close">@Common.Close</button>
+    <button type="button" class="md-btn md-btn-primary" id="btn-save-edit">Save</button>
+    @Html.HiddenFor(m => m.PatientID)
+    @Html.HiddenFor(m => m.DoctorID)
+    @Html.HiddenFor(m => m.AppointmentScheduleItemID)
+    @Html.HiddenFor(m => m.BillableID)
+</div>
+<script type="text/javascript">
+    AppointmentSchedule.init();
+</script>

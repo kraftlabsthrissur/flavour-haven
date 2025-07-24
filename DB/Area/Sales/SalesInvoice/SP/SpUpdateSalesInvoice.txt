@@ -1,0 +1,204 @@
+  
+  
+ALTER procedure [Sales].[SpUpdateSalesInvoice]  
+(  
+ @SalesInvoiceID int,  
+ @Invoice XML,  
+ @Items XML,  
+ @AmountDetails XML,  
+ @PackingDetails XML,  
+ @CreatedUserID int,  
+ @FinYear int,  
+ @LocationID int,  
+ @ApplicationID int,  
+ @RetValue INT = 0 OUT  
+ )  
+AS  
+BEGIN  
+   
+ DECLARE @ErrorCode INT;  
+ DECLARE @IssueDate DateTime = CURRENT_TIMESTAMP, @FromWarehouseID int, @ToWarehouseID int = 0  
+ DECLARE @count int = 0, @i int = 1, @ItemID int, @Quantity Numeric(18,4), @OfferQuantity Numeric(18,4), @SortOrder int  
+ DECLARE @SalesOrderItemID int, @SalesOrderID int, @ProformaInvoiceTransID int, @ProformaInvoiceID int   
+ DECLARE @BatchID int, @BatchTypeID int, @WarehouseID int, @ID int, @IsDraft bit   
+  
+ SET NOCOUNT ON;  
+  
+ SELECT @IsDraft = convert(BIT, @Invoice.value('(/Invoices/Invoice/IsDraft)[1]','VARCHAR(10)'))  
+  
+ EXEC SpLogChange 'Sales.SalesInvoice','ID',@SalesInvoiceID,@CreatedUserID,@LocationID,@ApplicationID  
+  
+ EXEC SpLogChange 'Sales.SalesInvoiceTrans','SalesInvoiceID',@SalesInvoiceID,@CreatedUserID,@LocationID,@ApplicationID  
+  
+ EXEC SpLogChange 'Sales.SalesInvoiceAmountDetails','SalesInvoiceID',@SalesInvoiceID,@CreatedUserID,@LocationID,@ApplicationID  
+  
+ EXEC SpLogChange 'PackingDetails','ReferenceID',@SalesInvoiceID,@CreatedUserID,@LocationID,@ApplicationID  
+  
+ IF (@IsDraft = 0)  
+  
+ BEGIN  
+  declare @SerialNo Varchar(20)  
+  
+  exec Common.SpUpdateSerialNo 'SalesInvoice','Code',@FinYear,@LocationID ,@ApplicationID,@SerialNo = @SerialNo OUT  
+  
+  UPDATE Sales.SalesInvoice SET   
+  TransNo = @SerialNo,  
+  InvoiceDate = (select DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0))  
+  WHERE ID = @SalesInvoiceID  
+ END  
+  
+ ELSE  
+  
+ BEGIN  
+  
+  UPDATE Sales.SalesInvoice SET   
+  TransNo = convert(VARCHAR(100), @Invoice.value('(/Invoices/Invoice/TransNo)[1]','VARCHAR(30)')),  
+  InvoiceDate = convert(datetime, @Invoice.value('(/Invoices/Invoice/TransDate)[1]','VARCHAR(30)'))  
+  WHERE ID = @SalesInvoiceID  
+ END  
+ UPDATE Sales.SalesInvoice SET   
+     SalesOrderNos = convert(VARCHAR(100), @Invoice.value('(/Invoices/Invoice/SalesOrderNos)[1]','VARCHAR(100)')),   
+  SchemeID = convert(int, @Invoice.value('(/Invoices/Invoice/SchemeID)[1]','VARCHAR(16)')) ,   
+  GrossAmt = convert(Numeric(18,4), @Invoice.value('(/Invoices/Invoice/GrossAmount)[1]','VARCHAR(40)')),   
+  DiscountAmt = convert(Numeric(18,4), @Invoice.value('(/Invoices/Invoice/DiscountAmount)[1]','VARCHAR(40)')),   
+  TurnoverDiscount = convert(Numeric(18,4), @Invoice.value('(/Invoices/Invoice/TurnoverDiscount)[1]','VARCHAR(40)')),   
+  AdditionalDiscount = convert(Numeric(18,4), @Invoice.value('(/Invoices/Invoice/AdditionalDiscount)[1]','VARCHAR(40)')),   
+  TaxableAmt = convert(Numeric(18,4), @Invoice.value('(/Invoices/Invoice/TaxableAmount)[1]','VARCHAR(40)')),   
+  SGSTAmt = convert(Numeric(18,4), @Invoice.value('(/Invoices/Invoice/SGSTAmount)[1]','VARCHAR(40)')),   
+  CGSTAmt = convert(Numeric(18,4), @Invoice.value('(/Invoices/Invoice/CGSTAmount)[1]','VARCHAR(40)')),   
+  IGSTAmt = convert(Numeric(18,4), @Invoice.value('(/Invoices/Invoice/IGSTAmount)[1]','VARCHAR(40)')),   
+  RoundOff = convert(Numeric(18,4), @Invoice.value('(/Invoices/Invoice/RoundOff)[1]','VARCHAR(40)')),  
+  CashDiscount = convert(Numeric(18,4), @Invoice.value('(/Invoices/Invoice/CashDiscount)[1]','VARCHAR(40)')),    
+  NetAmt = convert(Numeric(18,4), @Invoice.value('(/Invoices/Invoice/NetAmount)[1]','VARCHAR(40)')),   
+  IsDraft = convert(BIT, @Invoice.value('(/Invoices/Invoice/IsDraft)[1]','VARCHAR(10)')),   
+  ModifiedDate = current_timestamp,   
+  HoldStock = convert(BIT, @Invoice.value('(/Invoices/Invoice/CheckStock)[1]','VARCHAR(10)')),   
+  SalesTypeID = convert(INT, @Invoice.value('(/Invoices/Invoice/SalesTypeID)[1]','VARCHAR(40)')),  
+  PaymentModeID = convert(INT, @Invoice.value('(/Invoices/Invoice/PaymentModeID)[1]','VARCHAR(40)')),  
+  BillingAddressID = convert(INT, @Invoice.value('(/Invoices/Invoice/BillingAddressID)[1]','VARCHAR(40)')),  
+  ShippingAddressID= convert(INT, @Invoice.value('(/Invoices/Invoice/ShippingAddressID)[1]','VARCHAR(40)')),  
+  NoOfBags=convert(int, @Invoice.value('(/Invoices/Invoice/NoOfBags)[1]','VARCHAR(40)')),  
+  NoOfBoxes=convert(int, @Invoice.value('(/Invoices/Invoice/NoOfBoxes)[1]','VARCHAR(40)')),  
+  NoOfCans=convert(int, @Invoice.value('(/Invoices/Invoice/NoOfCans)[1]','VARCHAR(40)')),  
+  CessAmount  = convert(Numeric(18,4), @Invoice.value('(/Invoices/Invoice/CessAmount )[1]','VARCHAR(40)')),  
+  FreightAmount=convert(Numeric(18,4), @Invoice.value('(/Invoices/Invoice/FreightAmount )[1]','VARCHAR(40)')),  
+  Remarks=convert(VARCHAR(250), @Invoice.value('(/Invoices/Invoice/Remarks)[1]','VARCHAR(250)')),
+  OtherCharges=convert(Numeric(18,4), @Invoice.value('(/Invoices/Invoice/OtherCharges)[1]','VARCHAR(40)')),  
+  CustomerPONo=convert(VARCHAR(200), @Invoice.value('(/Invoices/Invoice/CustomerPONo)[1]','VARCHAR(200)'))   
+  WHERE ID = @SalesInvoiceID  
+ SELECT @ErrorCode = @@ERROR  
+ IF (@ErrorCode <> 0) GOTO PROBLEM  
+  
+  
+ --------------Turnoverdiscount  
+ Declare @BalanceAmount Numeric(18,4) = 0, @TODID int,--@IsDraft bit  
+ @CustomerID int, @TurnoverDiscount numeric(18,4)  
+ select  @TurnoverDiscount =  TurnoverDiscount,@CustomerID =CustomerID,@IsDraft=IsDraft  from Sales.SalesInvoice where ID=@SalesInvoiceID  
+ If(@IsDraft = 0)  
+ Begin  
+  WHILE (@TurnoverDiscount > 0)  
+  BEGIN  
+   Select Top 1 @TODID =  ID,@BalanceAmount = Amount - SettledAmount from TurnoverDiscount where CustomerID = @CustomerID and IsProcessed = 0 ORDER BY ID  
+   UPDATE Turnoverdiscount set SettledAmount = Case When @BalanceAmount >= @TurnoverDiscount then  SettledAmount + @TurnoverDiscount else SettledAmount+@BalanceAmount end,  
+   IsProcessed = Case When SettledAmount + @TurnoverDiscount>=Amount then 1 else 0 end  
+   WHERE CustomerID = @CustomerID AND ID = @TODID  
+   Set @TurnoverDiscount = @TurnoverDiscount -  case when @BalanceAmount >= @TurnoverDiscount then @TurnoverDiscount else  @BalanceAmount end  
+  END  
+ End  
+ -----------------------------  
+  
+ DELETE FROM Sales.SalesInvoiceTrans WHERE SalesInvoiceID = @SalesInvoiceID   
+ DELETE FROM Sales.SalesInvoiceAmountDetails WHERE SalesInvoiceID = @SalesInvoiceID  
+ DELETE FROM PackingDetails WHERE ReferenceID = @SalesInvoiceID  
+  
+ EXEC Sales.SpCreateSalesInvoiceTrans @SalesInvoiceID, @Items, @FinYear, @LocationID, @ApplicationID,@RetValue = @RetValue OUTPUT  
+  
+ SELECT @ErrorCode = @@ERROR  
+ IF (@ErrorCode <> 0) GOTO PROBLEM  
+  
+ UPDATE Sales.SalesInvoice SET SalesTypeID = (SELECT TOP 1 CategoryID FROM Sales.SalesInvoiceTrans SIT  
+ INNER JOIN Item I ON I.ID = SIT.ItemID WHERE SIT.SalesInvoiceID = @SalesInvoiceID ORDER BY SIT.ID ASC) WHERE ID = @SalesInvoiceID   
+  
+ IF(@Retvalue = 0)  
+    begin   
+  
+  INSERT INTO Sales.SalesInvoiceAmountDetails  
+  SELECT   
+  @SalesInvoiceID,  
+  CONVERT(Numeric(18,4), AmountDetails.item.query('Amount').value('.','VARCHAR(30)')),  
+  AmountDetails.item.query('Particulars').value('.','VARCHAR(40)'),  
+  CONVERT(Numeric(18,4), AmountDetails.item.query('Percentage').value('.','VARCHAR(30)')),  
+  @FinYear,  
+  @LocationID,  
+  @ApplicationID,  
+  CONVERT(Numeric(18,2), AmountDetails.item.query('TaxableAmount').value('.','VARCHAR(30)'))  
+  FROM @AmountDetails.nodes('/AmountDetails/Item') as AmountDetails(item)  
+  
+  
+   INSERT INTO PackingDetails  
+   SELECT  
+   @SalesInvoiceID,  
+   'SalesInvoice',  
+   CONVERT(varchar(50), PackingDetails.item.query('PackSize').value('.','VARCHAR(50)')),   
+   CONVERT(int, PackingDetails.item.query('UnitID').value('.','VARCHAR(50)')),   
+   CONVERT(numeric(18,4), PackingDetails.item.query('Quantity').value('.','VARCHAR(50)')),   
+   @FinYear,    
+   @ApplicationID ,  
+   @LocationID  
+   FROM @PackingDetails.nodes('/PackingDetails/Item') as PackingDetails(item)    
+  
+  SELECT @ErrorCode = @@ERROR  
+  IF (@ErrorCode <> 0) GOTO PROBLEM  
+ END  
+  
+ IF @IsDraft = 0  
+ BEGIN   
+      
+     -----Updating InvoiceNo In SalesOrder-------  
+  
+       UPDATE Sales.SalesOrder SET InvoiceNo = (SELECT TransNo FROM Sales.SalesInvoice WHERE ID = @SalesInvoiceID)  
+       WHERE ID IN (SELECT DISTINCT SO.ID FROM Sales.SalesInvoiceTrans SIT     
+       INNER JOIN  Sales.SalesOrderTrans SOT ON SOT.ID = SIT.SalesOrderTransID    
+       INNER JOIN Sales.SalesOrder SO ON SO.ID = SOT.SalesOrderID    
+  WHERE  SIT.SalesInvoiceID=@SalesInvoiceID)   
+  
+     ---------------------------------------------  
+  
+  if (Select Count(ID) From SalesInvoice where ID = @SalesInvoiceID AND IsDraft = 0) > 0    
+    begin    
+     exec SpCreateSLAMappingofSalesItem @SalesInvoiceID,@FinYear,@LocationID,@ApplicationID    
+    End      
+  EXEC Sales.SpUpdateQuantityMetInSalesOrder @SalesInvoiceID, 'SalesInvoice', @RetValue = @RetValue OUTPUT  
+  IF @RetValue=0   
+  Begin  
+   EXEC Sales.SpUpdateQuantityMetInProformaInvoice @SalesInvoiceID,@RetValue = @RetValue OUTPUT  
+  END  
+  
+  IF @RetValue=0   
+  Begin  
+   EXEC Sales.SpCheckCreditStatusSales @SalesInvoiceID, @ApplicationID,  @RetValue = @RetValue OUTPUT  
+  END  
+  
+  IF @RetValue=0   
+  Begin    
+    
+  SELECT @ToWarehouseID = ConfigValue FROM configuration WHERE ConfigName LIKE 'DefaultStore' AND LocationID = @LocationID AND ApplicationID = @ApplicationID   
+     AND UserID = @CreatedUserID   
+      IF ((SELECT TOP 1 ProformaInvoiceTransID FROM Sales.SalesInvoiceTrans WHERE SalesInvoiceID = @SalesInvoiceID) > 0)  
+       BEGIN  
+           EXEC Stock.SpReleaseHoldedStock 'SalesInvoice', @SerialNo, @SalesInvoiceID, @ToWarehouseID, @FinYear, @LocationID, @ApplicationID  
+          END   
+     EXEC Sales.SpInvoiceIssueItems @SalesInvoiceID, @ToWarehouseID, 'SalesInvoice', @FinYear, @LocationID, @ApplicationID, @RetValue = @RetValue OUTPUT    
+     SELECT @ErrorCode = @@ERROR  
+     IF (@ErrorCode <> 0) GOTO PROBLEM     
+  END  
+ END  
+  
+ PROBLEM:  
+ IF (@ErrorCode <> 0)   
+ BEGIN  
+  SET @RetValue = -1  
+ END  
+End  
+  
+  

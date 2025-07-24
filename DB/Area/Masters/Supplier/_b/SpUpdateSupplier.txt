@@ -1,0 +1,79 @@
+    
+    
+CREATE Procedure [Master].[SpUpdateSupplier]    
+(@ID INT,  
+@Name VARCHAR(200),  
+@SupplierCategoryID INT,  
+@GstNo VARCHAR(20),  
+@AdharNo VARCHAR(20),  
+@PanCardNo VARCHAR(20),    
+@CreditDays INT,  
+@SupplierAccountsCategoryID INT,  
+@SupplierTaxCategoryID INT,  
+@SupplierTaxSubCategoryID INT,  
+@PaymentMethodID INT,    
+@PaymentGroupID INT,  
+@RelatedSupplierID INT,  
+@StartDate DATETIME,  
+@IsDeactivated BIT,  
+@DeactivateedDate DATETIME,  
+@IsBlockForPurchase BIT,    
+@IsBlockForReceipts BIT,  
+@IsBlockForPayment BIT,  
+@IsGSTRegistered BIT,  
+@IsCustomer BIT,  
+@CustomerID INT,  
+@OldSupplierCode VARCHAR(20),  
+@UanNo VARCHAR(20),  
+@BankName VARCHAR(100),  
+@BranchName VARCHAR(100),  
+@AcNo VARCHAR(25),  
+@IfscNo VARCHAR(25),  
+@IsEmployee BIT,  
+@TradeLegalName varchar(50),  
+@EmployeeID INT,  
+@IsActiveSupplier BIT,  
+@CurrencyID int,  
+@Currency VARCHAR(50),  
+@CreatedUserID int,  
+@LocationID int,  
+@ApplicationID int,  
+@FinYear int  
+)    
+AS    
+BEGIN    
+ SET NOCOUNT ON;  
+ declare @SerialNo Varchar(20),@IsAlreadySave BIT  
+ SELECT @SerialNo = Code FROM Supplier WHERE ID = @ID  
+  SELECT @IsAlreadySave = CASE WHEN   IsActiveSupplier = 1 THEN 1  
+ ELSE 0 END FROM Supplier WHERE ID = @ID  
+  
+ IF (@IsActiveSupplier = 1 AND @IsAlreadySave=0)  
+ BEGIN  
+   exec Common.SpUpdateSerialNo 'Supplier','Code',@FinYear,@LocationID ,@ApplicationID,@SerialNo = @SerialNo OUT  
+ END  
+  
+ EXEC SpLogChange 'Supplier','ID',@ID,@CreatedUserID,@LocationID,@ApplicationID  
+  
+  EXEC SpLogChange 'SupplierItemCategory','SupplierID',@ID,@CreatedUserID,@LocationID,@ApplicationID  
+  
+  EXEC SpLogChange 'SupplierLocationMapping','SupplierID',@ID,@CreatedUserID,@LocationID,@ApplicationID  
+  
+  EXEC SpLogChange 'RelatedSupplier','SupplierID',@ID,@CreatedUserID,@LocationID,@ApplicationID  
+  
+     
+ UPDATE Supplier SET Code = @SerialNo, Name = @Name,SupplierCategoryID=@SupplierCategoryID,GSTNo=@GstNo,AdharNo=@AdharNo,    
+ PanCardNo=@PanCardNo,CreditDays=@CreditDays,SupplierAccountsCategoryID=@SupplierAccountsCategoryID,    
+ SupplierTaxCategoryID=@SupplierTaxCategoryID,SupplierTaxSubCategoryID=@SupplierTaxSubCategoryID,    
+ PaymentMethodID=@PaymentMethodID,PaymentGroupID=@PaymentGroupID,RelatedSupplierID=@RelatedSupplierID,    
+ StartDate=@StartDate,IsDeactivated=@IsDeactivated,DeactivatedDate=@DeactivateedDate,IsBlockForPurchase=@IsBlockForPurchase,    
+ IsBlockForReceipts=@IsBlockForReceipts,IsBlockForPayment=@IsBlockForPayment,IsGSTRegistered=@IsGSTRegistered,    
+ IsCustomer=@IsCustomer,CustomerID=@CustomerID,OldSupplierCode = @OldSupplierCode,UanNo=@UanNo,BankName=@BankName,  
+ BranchName=@BranchName,BankAcNo=@AcNo,IfscNo=@IfscNo,IsEmployee=@IsEmployee,EmployeeID =@EmployeeID  ,  
+ TradeLegalName=@TradeLegalName,IsActiveSupplier=@IsActiveSupplier,currency=@Currency,currencyID=@CurrencyID  
+ WHERE ID = @ID    
+ DELETE FROM SupplierItemCategory WHERE SupplierID = @ID    
+ DELETE FROM SupplierLocationMapping WHERE SupplierID = @ID  
+ DELETE FROM RelatedSupplier WHERE SupplierID = @ID  
+END  
+  

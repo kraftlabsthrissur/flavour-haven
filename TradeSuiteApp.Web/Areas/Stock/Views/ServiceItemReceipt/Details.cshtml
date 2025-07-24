@@ -1,0 +1,117 @@
+﻿@model TradeSuiteApp.Web.Areas.Stock.Models.StockReceiptViewModel
+@{
+    ViewBag.Title = @Stock.ServiceItemReceiptDetail;
+}
+<div id="page_content">
+    <div id="page_heading">
+        <div class="heading_title">
+            <h1>@Stock.ServiceItemReceipt</h1>
+            <span class="uk-text-upper uk-text-small">@Stock.ServiceItemReceiptDetail</span>
+        </div>
+        <div class="heading_actions">
+            @Html.ActionLink(Common.Back, "Index", "ServiceItemReceipt", new { Area = "Stock" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>@Common.Action</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="details-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-1">
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin>
+                                <div class="uk-width-medium-1-10">
+                                    <label>@Stock.ReceiptNo</label>
+                                    @Html.TextBoxFor(m => m.ReceiptNo, new { @class = "md-input", @disabled = "disabled" })
+                                </div>
+                                <div class="uk-width-medium-1-10">
+                                    <label for="uk_dp_start">@Stock.ReceiptDate</label>
+                                    @Html.TextBoxFor(m => m.Date, new { @class = "md-input", @disabled = "disabled" })
+                                </div>
+                                <div class="uk-width-medium-1-10">
+                                    <label>@Stock.IssueLocation</label>
+                                    @Html.TextBoxFor(model => model.IssueLocationName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                </div>
+                                <div class="uk-width-medium-1-10">
+                                    <label>@Stock.IssuePremise</label>
+                                    @Html.TextBoxFor(model => model.IssuePremiseName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                </div>
+                                <div class="uk-width-medium-1-10">
+                                    <label>@Stock.ReceiptLocation</label>
+                                    @Html.TextBoxFor(model => model.ReceiptLocationName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                </div>
+
+                                <div class="uk-width-medium-1-10">
+                                    <label>@Stock.ReceiptPremise</label>
+                                    @Html.TextBoxFor(model => model.ReceiptPremiseName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                </div>
+                                <div class="uk-width-medium-2-10">
+                                    <label>@Stock.NetAmount</label>
+                                    @Html.TextBoxFor(m => m.NetAmount, new { @class = "md-input mask-sales-currency label-fixed x-large", @readonly = "readonly" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div>
+                    <table id="stock-request-items-list" class="uk-table scroll-table-dynamic" cellspacing="0" width=100">
+                        <thead>
+                            <tr>
+                                <th class="width-20">@Common.SerialNo</th>
+                                <th class="width-250">@Stock.ItemName</th>
+                                <th class="width-40">@Stock.Unit</th>
+                                <th class="width-60">@Stock.IssueQty</th>
+                                <th class="width-60">@Stock.ReceiptQty</th>
+                                <th data-inter-branch="true" class="width-50 inter-branch">@Stock.BasicPrice</th>
+                                <th data-inter-branch="true" class="width-80 inter-branch">@Stock.GrossAmount</th>
+                                <th data-inter-branch="true" class="width-40 inter-branch">@Stock.TradeDiscountPer</th>
+                                <th data-inter-branch="true" class="width-60 inter-branch">@Stock.TradeDiscount</th>
+                                <th data-inter-branch="true" class="width-80 inter-branch">@Stock.TaxableAmount</th>
+                                <th data-inter-branch="true" class="width-40 inter-branch">@Stock.GSTPercentage</th>
+                                <th data-inter-branch="true" class="width-60 inter-branch">@Stock.GSTAmount</th>
+                                <th data-inter-branch="true" class="width-80 inter-branch">@Stock.NetAmount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Item.Select((value, i) => new { i = (i + 1), value }))
+                            {
+                                var GSTAmount = @item.value.IGSTAmount + @item.value.CGSTAmount + @item.value.SGSTAmount;
+                                <tr>
+                                    <td class="uk-text-center">@(1 + @Model.Item.IndexOf(item.value))</td>
+                                    <td>@item.value.Name</td>
+                                    <td> @item.value.Unit</td>
+                                    <td class="mask-production-qty"> @item.value.IssueQty</td>
+                                    <td class="mask-production-qty"> @item.value.ReceiptQty</td>
+                                    <td class="inter-branch mask-currency">@item.value.BasicPrice</td>
+                                    <td class="inter-branch mask-currency">@item.value.GrossAmount</td>
+                                    <td class="inter-branch mask-currency">@item.value.TradeDiscountPercent</td>
+                                    <td class="inter-branch mask-currency">@item.value.TradeDiscount</td>
+                                    <td class="inter-branch mask-currency">@item.value.TaxableAmount</td>
+                                    <td class="inter-branch mask-currency">@item.value.IGSTPercentage</td>
+                                    <td class="inter-branch mask-currency">@GSTAmount</td>
+                                    <td class="inter-branch mask-currency">@item.value.NetAmount</td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/Js/Page/ServiceItemReceipt")
+<script type="text/javascript">
+    ServiceItemReceipt.details();
+</script>
+
+

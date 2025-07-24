@@ -1,0 +1,229 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.JournalModel
+@{
+    ViewBag.Title = Common.Journal;
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.VoucherNumber</label>
+                            @Html.TextBoxFor(m => m.VoucherNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label for="uk_dp_start">@Accounts.Date</label>
+                                @{
+                                    var date = Convert.ToDateTime(Model.FirstOpenDate);
+                                    var datarelaxation = (date - @DateTime.Now).TotalDays;
+                                }
+                                <input class="md-input label-fixed past-date date" type="text" id="Date" data-relaxation=@datarelaxation value="@Model.Date">
+                                <span class="uk-input-group-addon"><i data-relaxation=@datarelaxation class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-autocomplete " id="debitaccountnumber-autocomplete">
+                                <label>@Accounts.DebitAccountNumber <span>*</span></label>
+                                <input type="text" id="DebitAccountCode" class="md-input label-fixed" />
+                                <script type="text/autocomplete">
+                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                        {{~items}}
+                                        <li data-value="{{ $item.DebitAccountCode}}"
+                                            data-id="{{$item.DebitAccountHeadID}}"
+                                            data-number="{{$item.DebitAccountCode}}"
+                                            data-name="{{$item.DebitAccountName}}">
+                                            <a>
+                                                {{$item.DebitAccountCode}}
+                                            </a>
+                                        </li>
+                                        {{/items}}
+                                    </ul>
+                                </script>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <div class="uk-autocomplete " id="debitaccountname-autocomplete">
+                                <label>@Accounts.DebitAccountName </label>
+                                <input type="text" id="DebitAccountName" class="md-input label-fixed" />
+                                <script type="text/autocomplete">
+                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                        {{~items}}
+                                        <li data-value="{{$item.DebitAccountName}}"
+                                            data-id="{{$item.DebitAccountHeadID}}"
+                                            data-number="{{$item.DebitAccountCode}}"
+                                            data-name="{{ $item.DebitAccountName}}">
+                                            <a>
+                                                {{$item.DebitAccountName}}
+                                            </a>
+                                        </li>
+                                        {{/items}}
+                                    </ul>
+                                </script>
+                            </div>
+                            @Html.Hidden("DebitAccountHeadID")
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.DebitAmount<span>*</span></label>
+                            @Html.TextBoxFor(m => m.DebitAmount, new { @class = "md-input label-fixed mask-currency" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.DebitCurrencyName<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.DebitCurrencyID, Model.CurrencyLists, "Select", new { @class = "md-input label-fixed" })
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-autocomplete " id="creditaccountnumber-autocomplete">
+                                <label>@Accounts.CreditAccountNumber <span>*</span></label>
+                                <input type="text" id="CreditAccountCode" class="md-input label-fixed" />
+                                <script type="text/autocomplete">
+                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                        {{~items}}
+                                        <li data-value="{{ $item.CreditAccountCode}}"
+                                            data-id="{{$item.CreditAccountHeadID}}"
+                                            data-number="{{$item.CreditAccountCode}}"
+                                            data-name="{{$item.CreditAccountName}}">
+                                            <a>
+                                                {{$item.CreditAccountCode}}
+                                            </a>
+                                        </li>
+                                        {{/items}}
+                                    </ul>
+                                </script>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <div class="uk-autocomplete " id="creditaccountname-autocomplete">
+                                <label>@Accounts.CreditAccountName </label>
+                                <input type="text" id="CreditAccountName" class="md-input label-fixed" />
+                                <script type="text/autocomplete">
+                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                        {{~items}}
+                                        <li data-value="{{$item.CreditAccountName}}"
+                                            data-id="{{$item.CreditAccountHeadID}}"
+                                            data-number="{{$item.CreditAccountCode}}"
+                                            data-name="{{ $item.CreditAccountName}}">
+                                            <a>
+                                                {{$item.CreditAccountName}}
+                                            </a>
+                                        </li>
+                                        {{/items}}
+                                    </ul>
+                                </script>
+                            </div>
+                            @Html.Hidden("CreditAccountHeadID")
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.CreditAmount<span>*</span></label>
+                            @Html.TextBoxFor(m => m.CreditAmount, new { @class = "md-input label-fixed mask-currency" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.CreditCurrencyName<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.CreditCurrencyID, Model.CurrencyLists, "Select", new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Accounts.Narration</label>
+                            <input type="text" id="Remarks" class="md-input label-fixed " />
+                        </div>
+                        @Html.HiddenFor(model => model.DebitExchangeRate)
+                        @Html.HiddenFor(model => model.CreditExchangeRate)
+                        <div class="uk-width-medium-1-10">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label>&nbsp;</label>
+                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddItem">@Common.Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-1">
+                            <label>@Accounts.TotalDebitAmount</label>
+                            @Html.TextBoxFor(m => m.TotalDebitAmount, new { @class = "md-input label-fixed mask-sales3-currency x-large", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-1">
+                            <label>@Accounts.TotalCreditAmount</label>
+                            @Html.TextBoxFor(m => m.TotalCreditAmount, new { @class = "md-input label-fixed mask-sales3-currency x-large", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="uk-width-medium-3-1">
+                        <label>@Accounts.LocalCurrencyName<span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.CurrencyID, Model.CurrencyLists, "Select", new { @class = "md-input label-fixed",@disabled ="disabled" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <table id="journal-item-list" class="uk-table" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-80">@Accounts.DebitAccountNumber</th>
+                    <th class="width-80">@Accounts.DebitAccountName</th>
+                    <th class="width-80">@Accounts.CreditAccountNumber</th>
+                    <th class="width-80">@Accounts.CreditAccountName</th>
+                    <th class="width-80">@Accounts.DebitCurrencyName</th>
+                    <th class="width-80">@Accounts.CreditCurrencyName</th>
+                    <th class="width-80">@Accounts.DebitAmount</th>
+                    <th class="width-80">@Accounts.CreditAmount</th>
+                    <th class="width-80">@Accounts.LocalDebitAmount</th>
+                    <th class="width-80">@Accounts.LocalCreditAmount</th>
+                    <th class="width-100">@Accounts.Narration </th>
+                    <th class="width-10"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items != null)
+                {
+                    foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                        <tr>
+                            <td class="uk-text-center">
+                                @item.i
+                                <input type="hidden" class="ItemID" readonly="readonly" value="@item.value.ID" />
+                            </td>
+                            <td class="DebitAccountCode"> @item.value.DebitAccountCode<input type="hidden" class="DebitAccountHeadID" value="@item.value.DebitAccountHeadID" /></td>
+                            <td class="DebitAccountName"> @item.value.DebitAccountName</td>
+                            <td class="CreditAccountCode">
+                                @item.value.CreditAccountCode
+                                <input type="hidden" class="CreditAccountHeadID" value="@item.value.CreditAccountHeadID" />
+                                <input type="hidden" class="DebitCurrencyID" value="@item.value.DebitCurrencyID" />
+                                <input type="hidden" class="CreditCurrencyID" value="@item.value.CreditCurrencyID" />
+                                <input type="hidden" class="DebitExchangeRate" value="@item.value.DebitExchangeRate" />
+                                <input type="hidden" class="CreditExchangeRate" value="@item.value.CreditExchangeRate" />
+                            </td>
+                            <td class="CreditAccountName"> @item.value.CreditAccountName</td>
+                            <td class="DebitCurrency"> @item.value.DebitCurrency</td>
+                            <td class="CreditCurrency"> @item.value.CreditCurrency</td>
+                            <td class="DebitAmount mask-currency"> @item.value.DebitAmount</td>
+                            <td class="CreditAmount mask-currency"> @item.value.CreditAmount</td>
+                            <td class="LocalDebitAmount mask-currency"> @item.value.LocalDebitAmount</td>
+                            <td class="LocalCreditAmount mask-currency"> @item.value.LocalCreditAmount</td>
+                            <td class="Remarks"> @item.value.Remarks</td>
+                            <td class="uk-text-center"><a class="remove-item"><i class="uk-icon-remove"></i></a></td>
+                        </tr>;
+                    }
+                }
+            </tbody>
+        </table>
+        <input type="hidden" id="item-count" value="@Model.Items.Count" />
+    </div>
+</div>
+

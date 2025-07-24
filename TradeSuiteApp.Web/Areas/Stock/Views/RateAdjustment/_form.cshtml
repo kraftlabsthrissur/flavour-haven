@@ -1,0 +1,130 @@
+﻿@model TradeSuiteApp.Web.Areas.Stock.Models.RateAdjustmentModel
+@{
+    ViewBag.Title = "_form";
+}
+<div class="uk-form-row">
+    <div class="uk-grid" data-uk-grid-margin>
+        <div class="uk-width-medium-1-1">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-10">
+                        <label>@Stock.TransNo</label>
+                        @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input", @disabled = "disabled", @id = "TransNo" })
+                    </div>
+                    <div class="uk-width-medium-1-10">
+                        <label for="uk_dp_start">@Stock.Date</label>
+                        @Html.TextBoxFor(m => m.Date, new { @class = "md-input", @id = "txtDate", @disabled = "disabled" })
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+        @Html.HiddenFor(m => m.ID)
+        <div class="uk-width-medium-1-10">
+            <label>@Stock.ItemCategory<span>*</span></label>
+            @Html.DropDownListFor(Model => Model.ItemCategoryID, Model.CategoryList, "Select", new { @class = "md-input label-fixed", @id = "DDLItemCategory" })
+        </div>
+        <div class="uk-width-medium-2-10">
+            <div class="uk-autocomplete " id="item-autocomplete">
+                <div class="uk-input-group">
+                    <label for="uk_dp_start">@Stock.Item<span>*</span></label>
+                    @Html.TextBox("ItemName", "", new { @class = "md-input label-fixed" })
+                    <span class="uk-input-group-addon">
+                        <a data-uk-modal="{target:'#select-item',center:false} ">
+                            <i class="uk-input-group-icon uk-icon-search"></i>
+                        </a>
+                    </span>
+                    <script type="text/autocomplete">
+                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                            {{~items}}
+                            <li data-value="{{ $item.Name }}"
+                                data-id="{{$item.ID}}">
+                                <a>
+                                    {{ $item.Name }}
+                                </a>
+                            </li>
+                            {{/items}}
+                        </ul>
+                    </script>
+                </div>
+            </div>
+
+            @Html.Hidden("ItemID")
+        </div>
+        <input type="hidden" value="stock" id="type" />
+
+
+        <div class="uk-width-medium-1-10">
+            <div class="md-input-wrapper md-input-filled">
+                <label>&nbsp;</label>
+                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnFilter">@Common.Filter</button>
+            </div>
+        </div>
+
+
+    </div>
+    <br />
+    <div class="uk-form-row">
+        <div>
+
+            <table id="rate-adjustment-items-list" class="uk-table " cellspacing="0" width=100">
+                <thead>
+                    <tr>
+
+                        <th class="width-50">@Common.SerialNo</th>
+                        <th class="width-10"></th>
+                        <th class="width-200">@Stock.ItemName</th>
+                        <th class="width-200">@Stock.ItemCategory</th>
+                        @*<th class="width-200">@Stock.DateFromEffect</th>*@
+                        <th class="width-100">@Stock.SystemStockQty</th>
+                        <th class="width-100">@Stock.SystemAvgCost</th>
+                        <th class="width-100">@Stock.ActualAvgCost</th>
+                        <th class="width-100">@Stock.DiffInAvgCost</th>
+                        <th class="width-100">@Stock.SystemStockValue</th>
+                        <th class="width-100">@Stock.ActualStockValue</th>
+                        <th class="width-100">@Stock.DifferenceInStockValue</th>
+                        <th class="width-100">@Stock.Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                        <tr class="included">
+                            <td class="uk-text-center">
+                                @(1 + @Model.Items.IndexOf(item.value))
+
+                            </td>
+                            <td class="uk-text-center" data-md-icheck>
+                                <input type="checkbox" class="check-box" checked />
+                                <input type="hidden" class="ItemID" value="@item.value.ItemID" />
+
+                            </td>
+                            <td class="itemname">@item.value.ItemName</td>
+                            <td class="Category">@item.value.Category</td>
+                            @*<td>
+                                <div class="uk-input-group">
+                                    <input class="md-input label-fixed past-date date effect-date" type="text" value="@item.value.EffectDate">
+                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                </div>
+                            </td>*@
+                            <td class="mask-production-qty SystemStockQty"> @item.value.SystemStockQty</td>
+                            <td class="mask-production-qty SystemAvgCost">@item.value.SystemAvgCost</td>
+                            <td class="uk-text-right "><input type="text" class="md-input mask-production-qty ActualAvgCost" value="@item.value.ActualAvgCost"></td>
+                            <td class="mask-production-qty DifferenceInAvgCost"> @item.value.DifferenceInAvgCost</td>
+                            <td class="mask-production-qty SystemStockValue">@item.value.SystemStockValue</td>
+                            <td class="mask-production-qty ActualStockValue"> @item.value.ActualStockValue</td>
+                            <td class="mask-production-qty DifferenceInStockValue"> @item.value.DifferenceInStockValue</td>
+                            <td class="uk-text-right "><input type="text" class="md-input  Remark" value="@item.value.Remark"></td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <input type="hidden" id="item-count" value="@Model.Items.Count()" />
+        </div>
+
+    </div>
+</div>
+

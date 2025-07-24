@@ -1,0 +1,252 @@
+ALTER TABLE PurchaseReturnOrder
+ADD VATPercentage Numeric(18,4)
+
+ALTER TABLE PurchaseReturnOrder
+ADD CurrencyID int
+
+ALTER TABLE PurchaseReturnOrder
+ADD IsGST int DEFAULT 0;
+
+ALTER TABLE PurchaseReturnOrder
+ADD IsVat int DEFAULT 0;
+
+ALTER TABLE PurchaseReturnOrder
+ADD CurrencyExchangeRate Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseReturnOrder
+ADD DocumentCharges Numeric(18,4)
+
+ALTER TABLE PurchaseReturnOrder
+ADD SupplierOtherCharges Numeric(18,4)
+
+ALTER TABLE PurchaseOrder
+ADD GrossAmount Numeric(18,4) NOT NULL DEFAULT 0;
+
+
+ALTER TABLE PurchaseOrderTrans
+ADD SecondaryUnitSize  Numeric(18,4) NOT NULL DEFAULT 1;
+
+ALTER TABLE PurchaseOrderTrans
+ADD SecondaryRate   Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseOrderTrans
+ADD SecondaryQty   Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseOrderTrans
+ADD SecondaryUnit  VARCHAR(200) 
+
+
+
+ALTER TABLE GoodsReceiptNoteTrans
+ADD SecondaryUnitSize  Numeric(18,4) NOT NULL DEFAULT 1;
+
+ALTER TABLE GoodsReceiptNoteTrans
+ADD SecondaryRate   Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE GoodsReceiptNoteTrans
+ADD SecondaryUnit  VARCHAR(200) 
+
+
+
+ALTER TABLE PurchaseOrder
+ADD SuppDocCode VARCHAR(200);
+
+ALTER TABLE PurchaseOrder
+ADD SuppShipCode VARCHAR(200);
+
+ALTER TABLE PurchaseOrder
+ADD SuppOtherRemark VARCHAR(200);
+
+ALTER TABLE PurchaseOrder
+ADD OrderType VARCHAR(200);
+
+ALTER TABLE PurchaseOrder
+ADD SuppQuotNo VARCHAR(200);
+
+ALTER TABLE PurchaseOrder
+ADD Shipment VARCHAR(200);
+
+
+
+
+ALTER TABLE PurchaseOrder
+ADD SuppDocAmount Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseOrder
+ADD SuppShipAmount Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseOrder
+ADD SuppOtherCharge Numeric(18,4) NOT NULL DEFAULT 0;
+
+
+ALTER TABLE GoodsReceiptNote
+ADD SuppDocAmount Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE GoodsReceiptNote
+ADD SuppShipAmount Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE GoodsReceiptNote
+ADD SuppOtherCharge Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE GoodsReceiptNote
+ADD VATAmount Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE GoodsReceiptNoteTrans
+ADD VATAmount Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE GoodsReceiptNoteTrans
+ADD TaxableAmount Numeric(18,4) NOT NULL DEFAULT 0;
+
+
+
+ALTER TABLE PurchaseInvoice
+ADD VATAmount Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseInvoice
+ADD SuppDocAmount Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseInvoice
+ADD SuppShipAmount Numeric(18,4) NOT NULL DEFAULT 0;
+
+
+
+ALTER TABLE PurchaseInvoiceTrans
+ADD SecondaryUnit VARCHAR(200);
+
+ALTER TABLE PurchaseInvoiceTrans
+ADD SecondaryInvoiceQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseInvoiceTrans
+ADD SecondaryOfferQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseInvoiceTrans
+ADD SecondaryRate Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseInvoiceTrans
+ADD SecondaryUnitSize  Numeric(18,4) NOT NULL DEFAULT 1;
+
+ALTER TABLE PurchaseInvoiceTrans
+ADD VATAmount Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseInvoiceTrans
+ADD LandingCost Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE GoodsReceiptNoteTrans
+ADD LandingCost Numeric(18,4) NOT NULL DEFAULT 0;
+
+
+ALTER TABLE PurchaseRequisition
+ADD PurchaseRequisitedCustomer VARCHAR(200);
+
+ALTER TABLE PurchaseRequisition
+ADD RequisitedCustomerAddress VARCHAR(MAX);
+
+ALTER TABLE PurchaseRequisition
+ADD RequisitedPhoneNumber1 VARCHAR(100);
+
+ALTER TABLE PurchaseRequisition
+ADD RequisitedPhoneNumber2 VARCHAR(100);
+
+ALTER TABLE PurchaseRequisition
+ADD Remarks VARCHAR(MAX);
+
+ALTER TABLE PurchaseRequisitionTrans
+ADD PartsNumber VARCHAR(200);
+
+ALTER TABLE PurchaseRequisitionTrans
+ADD ItemCode VARCHAR(200);
+
+ALTER TABLE PurchaseRequisitionTrans
+ADD ItemName VARCHAR(200);
+
+ALTER TABLE PurchaseOrder
+ADD PurchaseRequisitionID INT NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseOrderTrans
+ADD PurchaseRequisitionID INT NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseOrderTrans
+ADD PurchaseRequisitionTrasID INT NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseRequisitionTrans
+DROP CONSTRAINT FK_PurchaseRequisitionTrans_Item;
+
+ALTER TABLE PurchaseRequisitionTrans
+ADD UnitName VARCHAR(100);
+
+ALTER TABLE GoodsReceiptNote
+ADD CurrencyExchangeRate Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE GoodsReceiptNote
+ADD PackingForwarding Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE GoodsReceiptNote
+ADD SuppFreight Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE GoodsReceiptNote
+ADD LocalCustomsDuty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE GoodsReceiptNote
+ADD LocalFreight Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE GoodsReceiptNote
+ADD LocalMiscCharge Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE GoodsReceiptNote
+ADD LocalOtherCharges Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE GoodsReceiptNote
+ADD Remarks VARCHAR(1000) NULL
+
+
+ALTER TABLE PurchaseInvoice
+ADD PackingForwarding Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseInvoice
+ADD LocalCustomsDuty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseInvoice
+ADD LocalFreight Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseInvoice
+ADD LocalMiscCharge Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseInvoice
+ADD LocalOtherCharges Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseReturnOrderTrans
+ADD SecondaryUnitSize Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseReturnOrderTrans
+ADD SecondaryUnit NVARCHAR(200);
+
+ALTER TABLE PurchaseReturnOrderTrans
+ADD SecondaryReturnQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseReturnOrderTrans
+ADD SecondaryRate Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchasereturnTrans
+ADD SecondaryUnitSize Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchasereturnTrans
+ADD SecondaryUnit NVARCHAR(200);
+
+ALTER TABLE PurchasereturnTrans
+ADD SecondaryReturnQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchasereturnTrans
+ADD SecondaryRate Numeric(18,4) NOT NULL DEFAULT 0;
+
+
+ALTER TABLE PurchaseRequisitionTrans
+ADD PurchaseMRP Numeric(18,4) NOT NULL DEFAULT 0;
+
+
+ALTER TABLE PurchaseRequisition 
+ALTER COLUMN FromDeptID INT NULL;
+
+ALTER TABLE PurchaseRequisition 
+ALTER COLUMN ToDeptID INT NULL;
+
+

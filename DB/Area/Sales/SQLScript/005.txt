@@ -1,0 +1,98 @@
+CREATE TABLE sales.GoodsReceiptNote (
+ID INT PRIMARY KEY IDENTITY(1,1) NOT NULL, 
+TransNo VARCHAR(100),
+ReceiptDate DATETIME,
+ReceiptReferenceNo VARCHAR(200),
+SalesOrders VARCHAR(MAX),
+CustomerID INT, 
+GrossAmount NUMERIC, 
+DiscountPercentage NUMERIC, 
+DiscountAmount NUMERIC, 
+TurnoverDiscount NUMERIC, 
+AdditionalDiscount NUMERIC, 
+TaxableAmount NUMERIC,
+SGSTAmount NUMERIC, 
+CGSTAmount NUMERIC, 
+IGSTAmount NUMERIC, 
+RoundOff NUMERIC, 
+NetAmount NUMERIC, 
+IsDraft BIT DEFAULT((0)),
+IsCancelled BIT DEFAULT((0)),
+CancelledDate DATETIME, 
+CreatedUserID INT,
+CreatedDate DATETIME, 
+ModifiedDate DATETIME,
+FinYear INT NOT NULL, 
+LocationID INT NOT NULL, 
+ApplicationID INT NOT NULL, 
+CessAmount NUMERIC NOT NULL DEFAULT((0)), 
+IsApproved INT NOT NULL DEFAULT((0)), 
+FreightAmount NUMERIC,
+GoodsReceiptStatus VARCHAR(50) DEFAULT(''),
+Remarks VARCHAR(200));
+
+
+CREATE TABLE sales.GoodsReceiptNoteItemTrans (
+ID INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
+GoodsReceiptNoteID  INT NOT NULL,  
+SalesOrdersID int, 
+SalesOrderTranID INT,
+SalesInvoiceID INT,
+SalesInvoiceTranID INT,
+CounterSalesID INT,
+CounterSalesTranID INT,
+ItemID INT, 
+BatchID INT, 
+BatchTypeID INT,
+Quantity NUMERIC(18,4), 
+MRP NUMERIC(18,4), 
+BasicPrice NUMERIC(18,4),
+OfferQty NUMERIC(18,4), 
+GrossAmount NUMERIC(18,4), 
+DiscountID INT, 
+DiscountPercentage NUMERIC(18,4), 
+DiscountAmount NUMERIC(18,4), 
+AdditionalDiscount NUMERIC(18,4), 
+TurnoverDiscount NUMERIC(18,4), 
+TaxableAmount NUMERIC(18,4),
+SGSTPercentage NUMERIC(18,4), 
+CGSTPercentage NUMERIC(18,4), 
+IGSTPercentage NUMERIC(18,4), 
+SGSTAmount NUMERIC(18,4), 
+CGSTAmount NUMERIC(18,4), 
+IGSTAmount NUMERIC(18,4), 
+NetAmount NUMERIC(18,4),
+WareHouseID INT, 
+FinYear INT NOT NULL, 
+LocationID INT NOT NULL, 
+ApplicationID INT NOT NULL, 
+SortOrder INT,
+QuantityMet NUMERIC(18,4),
+OfferMet NUMERIC(18,4), 
+InvoiceQty NUMERIC(18,4) NOT NULL DEFAULT((0)),
+InvoiceOfferQty NUMERIC(18,4) NOT NULL DEFAULT((0)),
+UnitID INT DEFAULT((0)), 
+CessPercentage NUMERIC(18,4) NOT NULL DEFAULT((0)), 
+CessAmount NUMERIC(18,4) NOT NULL DEFAULT((0)),
+PrintWithItemName BIT DEFAULT((0)), 
+VATPercentage NUMERIC(18,4), CurrencyID INT, 
+IsGST INT DEFAULT((0)),
+IsVat INT DEFAULT((0)), 
+Model NVARCHAR(200), 
+PartsNumber NVARCHAR(200), 
+ItemName NVARCHAR(200));
+
+ALTER TABLE sales.GoodsReceiptNoteItemTrans
+ADD CONSTRAINT FK_GoodsReceiptNoteItemTrans_GoodsReceiptNote_GoodsReceiptNoteID 
+FOREIGN KEY (GoodsReceiptNoteID) REFERENCES sales.GoodsReceiptNote(ID)
+
+
+ALTER TABLE sales.SalesOrder 
+ADD IsGoodsReceived BIT DEFAULT 0;
+
+ALTER TABLE sales.SalesInvoice 
+ADD IsGoodsReceived BIT DEFAULT 0;
+
+ALTER TABLE sales.CounterSales 
+ADD IsGoodsReceived BIT DEFAULT 0;
+

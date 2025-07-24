@@ -1,0 +1,165 @@
+                  
+                  
+                  
+                                       
+ALTER PROCEDURE [Purchase].[SpCreatePurchaseInvoiceTransWithOverRule] (                  
+ @PurchaseInvoiceID INT,                    
+ @GRNID INT,                   
+ @GRNTransID INT,                   
+ @ItemID INT,                    
+ @InvoiceQty NUMERIC(18,4),                    
+ @InvoiceRate NUMERIC(18,4),                    
+ @InvoiceValue NUMERIC(18,4),                    
+ @AcceptedQty NUMERIC(18,4),                    
+ @ApprovedQty NUMERIC(18,4),                    
+ @PORate NUMERIC(18,4),                    
+ @Difference NUMERIC(18,4),                    
+ @Remarks VARCHAR(100),                    
+ @UnMatchedQty numeric(18,4),                  
+ @IGSTPercent numeric(18,4),                  
+ @CGSTPercent numeric(18,4),                  
+ @SGSTPercent numeric(18,4),                  
+ @InvoiceGSTPercent numeric(18,4),                  
+ @MilkPurchaseID int,                  
+ @UnitID int,                  
+ @BatchID int,                  
+ @BasicPrice numeric(18,4),                  
+ @DiscountPercentage numeric(18,4),                  
+ @DiscountAmount numeric(18,4),            
+ @TurnOverDiscount numeric(18,4),                  
+ @AdditionalDiscount numeric(18,4),                  
+ @TaxableAmount numeric(18,4),               
+ @VATPercentage numeric(18,4),            
+ @VATAmount numeric(18,4),            
+ @SecondaryUnit VARCHAR(200),            
+ @SecondaryInvoiceQty numeric(18,4),            
+ @SecondaryOfferQty numeric(18,4),            
+ @SecondaryRate numeric(18,4),            
+ @SecondaryUnitSize numeric(18,4),            
+ @CurrencyID int,                
+ @IsGST int,              
+ @IsVat int,              
+ @Model VARCHAR(100),               
+ @PartsNumber VARCHAR(100),               
+ @ItemName VARCHAR(100),               
+ @CashDiscount numeric(18,4),                  
+ @SalesInvoiceID int,                  
+ @SalesInvoiceTransID int,                  
+ @GrossAmount numeric(18,4),                  
+ @NetAmount numeric(18,4),                  
+ @SGSTAmount numeric(18,4),                  
+ @IGSTAmount numeric(18,4),                  
+ @CGSTAmount numeric(18,4),                  
+ @OfferQty numeric(18,4),    
+ @LandingCost numeric(18,4),
+ @ExchangeRate numeric(18,4),
+ @FinYear INT,                    
+ @LocationID INT,                    
+ @ApplicationID INT,                  
+ @RetValue int out                    
+)                    
+AS                    
+BEGIN                    
+ Declare @PurchaseTransID int, @SupplierID int, @TransNo varchar(20), @TotalDifference Numeric(18,4), @IsDraft BIT,@SupplierAccountsCategoryID int                  
+ ,@TransDate Datetime,@InvoiceNo varchar(20),@WareHouseID int,@CreatedUserID int,@PurchaseWareHouseID int,@FGWarehouseID int,                  
+ @CurrentBatchNetProfit numeric(18,4),@PreviousBatchNetProfit numeric(18,4),@AcceptedQtyToStock numeric(18,4),@ProfitTolerance numeric(18,4),@GRNWarehouseID int,                  
+ @CurrntBatchTolerance numeric(18,4),@PackSize numeric(18,4),@MRP numeric(18,4),@NetPurchasePrice numeric(18,4),@IsOverRuled bit,@GST int,@CessPercent numeric(18,4),                  
+ @SalesRate numeric(18,4),@purchaseprice numeric(18,4),@purchasevalue numeric(18,4),@ProfitPrice numeric(18,4),@InvoiceLocalRate  numeric(18,4);               
+ SET @RetValue = 1;                    
+ Select @FGWarehouseID=ID from Warehouse where locationid=@LocationID and name='Pharmacy'                  
+ Select @PurchaseWareHouseID=ID from Warehouse where locationid=@LocationID and name='Purchase'                  
+ Select @GRNWarehouseID=warehouseID from Goodsreceiptnote where id=@GRNID                  
+ SELECT @TransDate = PurchaseDate,@SupplierID = SupplierID,@TransNo =PurchaseNo,@TotalDifference = TotalDifference, @IsDraft = IsDraft,                   
+ @InvoiceNo=InvoiceNo,@CreatedUserID=CreatedUserID  from PurchaseInvoice where ID = @PurchaseInvoiceID                    
+ Select @SupplierAccountsCategoryID = SupplierAccountsCategoryID from Supplier Where ID = @SupplierID      
+ SET @FGWarehouseID=ISNULL((select configValue from configuration where ConfigName='DefaultFGStore' and userID=@CreatedUserID and locationID=@LocationID),@FGWarehouseID)                  
+ Select @PurchaseWareHouseID= configValue from configuration where ConfigName='DefaultPurchase' and locationID=@LocationID                  
+ SET @ProfitTolerance=ISNULL((select configValue from configuration where ConfigName='Profit Ratio Tolerance' ),0)                  
+ Select @PackSize=PackSize from unit where id=@UnitId                  
+                   
+ Select @PreviousBatchNetProfit=isnull(PIT.BatchNetProfitRatio,0)  from PurchaseInvoicetrans PIT                  
+ Inner join  Batch B on B.ID=PIt.BatchID                   
+  where PIT.ItemID=@ItemID and PIt.ID= (Select max(ID) From PurchaseInvoicetrans where ItemID=@ItemID and PurchaseInvoiceID<>@PurchaseInvoiceID                   
+  and LocationID=@LocationID and ApplicationID=@ApplicationID)                   
+                    
+  Set @GrossAmount=@InvoiceQty*@InvoiceRate                  
+  Select @MRP=RetailMRP From Batch where ID=@BatchID and LocationID=@LocationID and ApplicationID=@ApplicationID                              
+  Select @GST=ISNULL(IGSTPercent,0),@CessPercent=ISNULL(CessPercentage,0) from viitem where ID=@ItemID                  
+  Set @purchaseprice=(@InvoiceValue-@DiscountAmount)                  
+ --Set @purchasevalue=(@purchaseprice*@InvoiceQty)                  
+ Set @NetPurchasePrice=(@purchaseprice)/(@InvoiceQty+@OfferQty)                  
+ Set @SalesRate= @MRP*(100/(100+@GST+@CessPercent))          
+ IF(@SalesRate>0)      
+ BEGIN      
+ Set @CurrentBatchNetProfit=((@SalesRate-@NetPurchasePrice)/@SalesRate)*100                  
+ Set @ProfitPrice=((@SalesRate-@InvoiceRate)/@SalesRate)*100                  
+ END      
+ If @SalesInvoiceID<>0                  
+ begin                  
+  select @GRNTransID= ID from goodsreceiptnoteTrans where Goodsreceiptnoteid=@GRNID and ItemID=@ItemID and LocationID=@LocationID and ApplicationID=@ApplicationID                  
+ End                  
+                   
+                  
+  IF((@CurrentBatchNetProfit+@CurrntBatchTolerance)<@PreviousBatchNetProfit)                  
+  BEGIN                  
+   SET @IsOverRuled = 1;                  
+  END                  
+  IF(@RetValue = 1)                  
+ BEGIN                  
+  INSERT INTO PurchaseInvoiceTrans (PurchaseInvoiceID, GRNID,GRNTransID, ItemID, InvoiceQty, InvoiceRate, InvoiceValue, AcceptedQty, ApprovedQty,                   
+  PORate, Difference, Remarks,UnMatchedQty,IGSTPercent,SGSTPercent,CGSTPercent, InvoiceGSTPercent,  FinYear, LocationID, ApplicationID,                  
+  MilkPurchaseID,UnitID,BatchID,BasicPrice,DiscountPercentage,DiscountAmount,TurnOverDiscount,AdditionalDiscount,TaxableAmount,                  
+  CashDiscount,SalesInvoiceID,SalesInvoiceTransID,GrossAmount,NetAmount,IGSTAmount,CGSTAmount,SGSTAmount,OfferQty,BatchRate,                  
+  BatchNetProfitRatio,IsOverRuled,SalesRate,NetPurchasePrice,VATPercentage,CurrencyID,IsGST,IsVat,Model,PartsNumber,ItemName,            
+  VATAmount,SecondaryUnit,SecondaryInvoiceQty,SecondaryOfferQty,SecondaryRate,SecondaryUnitSize,LandingCost)                    
+  VALUES(@PurchaseInvoiceID, @GRNID,@GRNTransID, @ItemID, @InvoiceQty, @InvoiceRate, @InvoiceValue,@AcceptedQty,@ApprovedQty, @PORate,                   
+  @Difference, @Remarks,@UnMatchedQty,@IGSTPercent,@SGSTPercent,@CGSTPercent,@InvoiceGSTPercent, @FinYear, @LocationID, @ApplicationID,                  
+  @MilkPurchaseID,@UnitID,@BatchID,@BasicPrice,@DiscountPercentage,@DiscountAmount,@TurnOverDiscount,@AdditionalDiscount,@TaxableAmount,                  
+  @CashDiscount,@SalesInvoiceID,@SalesInvoiceTransID,@GrossAmount,@NetAmount,@IGSTAmount,@CGSTAmount,@SGSTAmount,@OfferQty,@InvoiceRate,                  
+  @CurrentBatchNetProfit,1,@SalesRate,@NetPurchasePrice ,@VATPercentage,@CurrencyID,@IsGST,@IsVat,@Model,@PartsNumber,@ItemName,            
+  @VATAmount,@SecondaryUnit,@SecondaryInvoiceQty,@SecondaryOfferQty,@SecondaryRate,@SecondaryUnitSize,@LandingCost)                    
+                   
+  SET @PurchaseTransID = SCOPE_IDENTITY()    
+  set @InvoiceLocalRate=@InvoiceRate/ (CASE WHEN @ExchangeRate>0 THEN @ExchangeRate ELSE 1 END)      
+  IF(@LandingCost>0 AND @IsDraft = 0 )  
+  BEGIN  
+    EXEC [dbo].[UpdateItemCostAndLandLaningCost] @ItemID,@InvoiceQty ,@LandingCost,@InvoiceLocalRate,@LocationID,@FinYear  
+  END  
+                  
+  Update GoodsReceiptNote set PurchaseCompleted=1 where ID=@GRNID                  
+                  
+  update PurchaseInvoice Set Remarks = Replace(Remarks,'OVERRULED','')+ 'OVERRULED' where ID = @PurchaseInvoiceID                  
+   update PurchaseInvoiceTrans set BatchTypeID=(select BatchTypeID From PurchaseOrderTrans POT                   
+   inner join GoodsReceiptNoteTrans GRNT on GRNT.POTransID=POT.ID                   
+   where GRNT.ID=@GRNTransID ) where id=@PurchaseTransID                  
+    Update Batch Set Netloosepurchaseprice=@NetPurchasePrice,NetprofitRatio=@CurrentBatchNetProfit,ProfitPrice=@ProfitPrice Where ID=@BatchID                  
+                    
+    --set @AcceptedQtyToStock=(@InvoiceQty+@OfferQty)*@PackSize                  
+   set @AcceptedQtyToStock=dbo.FnConvertStockToInventoryUnit(@ItemID,@InvoiceQty+@OfferQty,@UnitID)                  
+                    
+  IF @SalesInvoiceID>0                  
+  begin                  
+   update sales.salesinvoice set IsPurchaseorderProcessed=1 where id=@SalesInvoiceID                  
+  End                  
+  IF @IsDraft = 0                   
+  BEGIN                  
+  DECLARE @IsStockUpdationInGRN bit,@Category VARCHAR(25)                  
+   SELECT @IsStockUpdationInGRN=ISNULL(ConfigValue ,0)FROM Configuration Where ConfigName='IsStockUpdationInGRN'                  
+   IF @IsStockUpdationInGRN=0                  
+    BEGIN                  
+     SELECT @Category=C.Name FROM Item I INNER JOIN Category C ON I.SalesCategoryID=C.ID                   
+     IF (@Category='Arishtams' OR @Category='Asavams' OR @Category='Kashayams' OR @Category='Kuzhambu' OR @Category='Thailam (Enna)' OR @Category='Thailam (Keram)' OR  @Category='Dravakam')                  
+      BEGIN                  
+      set @AcceptedQtyToStock=dbo.FnConvertStockToInventoryUnit(@ItemID,@InvoiceQty+@OfferQty,@UnitID)                  
+      END                  
+     ELSE                  
+      BEGIN                  
+      set @AcceptedQtyToStock=(@InvoiceQty+@OfferQty)*@PackSize                  
+      END                  
+     Exec SpStockUpdate @TransDate,'F',@ItemID,@BatchID,@PurchaseWareHouseID,@AcceptedQtyToStock,0,'Invoice',@LocationID,@FinYear,2,@ApplicationID,'Receipts',1,1,@TransNo                  
+    END                  
+                       
+                   
+  END                   
+ END                  
+END 

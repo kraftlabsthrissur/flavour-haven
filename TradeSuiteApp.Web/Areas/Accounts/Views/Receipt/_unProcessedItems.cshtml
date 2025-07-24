@@ -1,0 +1,67 @@
+﻿@model List<BusinessObject.PurchaseOrderBO>
+
+@{
+    string test = "";
+    //if (Model == null || Model.GetType() == new List<TradeSuiteApp.Web.Areas.Purchase.Models.PurchaseInvoiceTaxViewModel>().GetType())
+    //{
+    //}
+}
+
+<table id="GRN-list" class="uk-table" cellspacing="0">
+    <thead>
+        <tr>
+            <th class="width-40">@Common.SerialNo</th>
+            <th class="width-120">@Payment.InvoiceDebitNoteAdvanceNo</th>
+            <th class="width-40">@Payment.APPODate</th>
+            <th class="width-40">@Payment.APPOTerms</th>
+            <th class="width-200">@Payment.APItemName</th>
+            <th class="width-40">@Payment.APAmount</th>
+            <th class="width-40">@PurchaseInvoice.TDSCode</th>
+            <th class="width-40">@PurchaseInvoice.TDSAmount</th>
+            <th class="width-200">@Payment.APRemarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count() > 0)
+        {
+            foreach (var poItem in Model.Select((value, i) => new { i = i + 1, value }))
+            {
+                <tr>
+                    <input type="hidden" class="hdnPOID" value="@poItem.value.ID" />
+                    <input type="hidden" class="hdnItemID" />
+
+                    <td class="uk-text-center">@poItem.i</td>
+                    <td>@poItem.value.PurchaseOrderNo</td>
+                    <td>@poItem.value.PurchaseOrderDate.ToString("dd-MM-yyyy")</td>
+                    <td class="poTerms">@poItem.value.PaymentWithin</td>
+                    <td><input type="text" class="md-input txtItemName" name="txtItemName" /></td>
+                    <td><input type="text" class="md-input uk-text-right txtAmount decimalnum" /></td>
+                    <td>
+                        @*<input type="text" class="md-input txtTDSCode" />*@
+                    @Html.DropDownList("ddlTDSCode", new SelectList(ViewBag.TDSCodes, "Text", "Value"), "Select", new { @class = "md-input label-fixed ddlTDSCode" })
+                </td>
+                <td><input type="text" class="md-input uk-text-right txtTDSAmount decimalnum" readonly /></td>
+                <td><input type="text" class="md-input txtRemarks" /></td>
+            </tr>
+            }
+            @*<tr>
+                    <td class="uk-text-center">1</td>
+                    <td>PO20170001</td>
+                    <td>02-Nov-2017</td>
+                    <td>0</td>
+                    <td><input type="text" class="md-input" /></td>
+                    <td><input type="text" class="md-input uk-text-right" /></td>
+                    <td><input type="text" class="md-input" /></td>
+                    <td><input type="text" class="md-input uk-text-right" /></td>
+                    <td><input type="text" class="md-input" /></td>
+                </tr>*@
+            <tr>
+                <td colspan="5"><b>Total</b></td>
+                <td id="totalAmount"></td>
+                <td></td>
+                <td id="totalTDSAmount"></td>
+                <td></td>
+            </tr>
+        }
+    </tbody>
+</table>

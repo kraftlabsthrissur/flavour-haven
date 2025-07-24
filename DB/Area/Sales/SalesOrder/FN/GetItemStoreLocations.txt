@@ -1,0 +1,17 @@
+ALTER FUNCTION dbo.GetItemStoreLocations(@ItemID INT)
+RETURNS NVARCHAR(MAX)
+AS
+BEGIN
+    DECLARE @result NVARCHAR(MAX);
+     SELECT @result = CONCAT(ISNULL(@result,''),
+            '; STORE:', w.Name, ',BIN:', b.BinCode, ',LOT: ', l.LotNumber,
+            ',DEFAULT:', CASE WHEN iw.IsDefault = 1 THEN 'Yes' ELSE 'No' END
+        )
+        FROM ItemWareHouse iw
+        JOIN WareHouse w ON iw.WareHouseID = w.ID
+        JOIN bin b ON iw.BinID = b.ID
+        JOIN Lot l ON iw.LotID = l.ID
+        WHERE iw.ItemID = @ItemID
+		ORDER BY iw.IsDefault DESC
+    RETURN @result;
+END;

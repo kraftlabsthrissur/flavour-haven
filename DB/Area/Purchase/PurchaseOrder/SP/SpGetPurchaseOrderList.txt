@@ -1,0 +1,113 @@
+ALTER PROCEDURE[Purchase].[SpGetPurchaseOrderList](  
+ @Type varchar(20),  
+ @TransNoHint varchar(20),  
+ @TransDateHint varchar(20),  
+ @SupplierNameHint varchar(100),   
+ @ItemNameHint varchar(100),  
+ @CategoryNameHint varchar(100),  
+ @NetAmtHint varchar(20),  
+ @SortField varchar(100),  
+ @SortOrder varchar(10),  
+ @Offset int = 0,  
+ @Limit int = 20,  
+ @UserID int,  
+ @FinYear int,  
+ @LocationID int,  
+ @ApplicationID int  
+)  
+AS  
+BEGIN  
+IF 1 = 2 -- For generation of result object in entity framework  
+ BEGIN  
+   SELECT 0 ID,'' TransNo,  CAST(null as datetime) TransDate, ''SupplierName, cast(null as numeric(18,4)) NetAmt, ''ItemName,  
+  '' CategoryName,'' [Status],cast(null as bit) IsDraft,cast(null as bit) IsProcessed,0 IsPartiallyProcessed,  
+  cast(null as bit) IsApproved, cast(null as bit) IsCancelled,cast(null as bit) IsSuspended, '' CreatedUserID,  
+   CAST(null as int) FinYear, CAST(null as int) LocationID, CAST(null as int) recordsFiltered,CAST(null as int)  totalRecords  
+  
+ END    
+  
+ SET NOCOUNT ON;  
+ SET @Offset = @Offset + 1  
+    DECLARE @totalRecords int = 0;  
+   
+ DECLARE @IsViewer int,@LoginDeparmentID int;  
+  
+ SELECT @LoginDeparmentID=DepartmentID from Employee WHERE UserID=@UserID  
+ SELECT @IsViewer = CASE WHEN COUNT(*) = 0 THEN 0 ELSE 1 END    
+ FROM AspNetUsers U   
+ LEFT JOIN UserRoles UR ON U.ID = UR.UserID  
+ LEFT JOIN Roles R ON R.ID = UR.RoleID    
+ WHERE  ((R.Name LIKE 'TRANSACTION VIEWER'AND UR.LocationID = @LocationID) OR UserName LIKE 'admin')  
+ AND U.ID = @UserID  
+  
+   
+  Select @totalRecords =  COUNT(*) FROM viPurchaseOrder P  
+  WHERE P.[Status] = @Type      
+  AND TransNo LIKE '%' + ISNULL(@TransNoHint,'')+ '%'   
+  AND TransDate LIKE '%' + ISNULL(@TransDateHint,'')+ '%'   
+  AND SupplierName LIKE '%' + ISNULL(@SupplierNameHint,'')+ '%'   
+  AND (@ItemNameHint IS NULL OR ItemName LIKE '%'+@ItemNameHint+'%' )
+  AND (@CategoryNameHint IS NULL OR CategoryName LIKE '%'+@CategoryNameHint+'%') 
+  AND NetAmt LIKE '%' + ISNULL(@NetAmtHint,'')+ '%'   
+  AND SupplierName not like '%Local Purchase%'   
+  AND ((P.CreatedDepartmentID =@LoginDeparmentID  AND P.LocationID=@LocationID) OR @IsViewer = 1   
+  OR @UserID in (select UserID FROM dbo.FnGetPrivilegedUsers(P.CreatedUserID,P.LocationID,p.ToDepartmentID,p.CreatedDepartmentID,p.LocationID))    
+  OR @UserID in(Select AT.UserID from approvals.approvals A   
+   Inner join approvals.approvaltrans AT on AT.ApprovalID=A.ID   
+   Where A.TransID=P.ID AND A.Name='Purchase Order')  
+   )   
+  AND ApplicationID = @ApplicationID  
+  
+     --;WITH P_CTE AS (  
+  SELECT top 10000  Count(*) OVER (Partition by 1) AS recordsFiltered, P.ID, P.TransNo, P.TransDate, P.SupplierName, P.NetAmt,  
+  ISNULL(P.ItemName,'') AS ItemName,ISNULL(P.CategoryName,'') AS CategoryName,P.[Status], P.IsDraft, P.IsProcessed, P.IsPartiallyProcessed, P.IsApproved, P.IsSuspended,  
+   P.IsCancelled, P.CreatedUserID, P.FinYear, P.LocationID,   
+  ROW_NUMBER() OVER ( ORDER BY    
+   CASE WHEN @SortField+@SortOrder = 'TransNoASC' THEN P.ID END ASC,  
+   CASE WHEN @SortField+@SortOrder = 'TransNoDESC' THEN P.ID END DESC,  
+     
+   CASE WHEN @SortField+@SortOrder = 'TransDateASC' THEN TransDate END ASC,  
+   CASE WHEN @SortField+@SortOrder = 'TransDateDESC' THEN TransDate END DESC,  
+  
+   CASE WHEN @SortField+@SortOrder = 'SupplierNameASC' THEN SupplierName END ASC,  
+   CASE WHEN @SortField+@SortOrder = 'SupplierNameDESC' THEN SupplierName END DESC,  
+     
+   CASE WHEN @SortField+@SortOrder = 'NetAmtASC' THEN NetAmt END ASC,  
+   CASE WHEN @SortField+@SortOrder = 'NetAmtDESC' THEN NetAmt END DESC,  
+     
+   CASE WHEN @SortField+@SortOrder = 'ItemNameASC' THEN ItemName END ASC,  
+   CASE WHEN @SortField+@SortOrder = 'ItemNameDESC' THEN ItemName END DESC,  
+     
+   CASE WHEN @SortField+@SortOrder = 'CategoryNameASC' THEN CategoryName END ASC,  
+   CASE WHEN @SortField+@SortOrder = 'CategoryNameDESC' THEN CategoryName END DESC     
+   ) AS RowNum into #temp  
+  FROM viPurchaseOrder P     
+  WHERE P.[Status] = @Type      
+  AND TransNo LIKE '%' + ISNULL(@TransNoHint,'')+ '%'   
+  AND TransDate LIKE '%' + ISNULL(@TransDateHint,'')+ '%'   
+  AND SupplierName LIKE '%' + ISNULL(@SupplierNameHint,'')+ '%'   
+  AND (@ItemNameHint IS NULL OR ItemName LIKE '%'+@ItemNameHint+'%' )
+  AND (@CategoryNameHint IS NULL OR CategoryName LIKE '%'+@CategoryNameHint+'%') 
+  AND NetAmt LIKE '%' + ISNULL(@NetAmtHint,'')+ '%'   
+  AND SupplierName not like '%Local Purchase%'   
+  AND ((P.CreatedDepartmentID =@LoginDeparmentID  AND P.LocationID=@LocationID) OR @IsViewer = 1   
+  OR @UserID in (select UserID FROM dbo.FnGetPrivilegedUsers(P.CreatedUserID,P.LocationID,p.ToDepartmentID,p.CreatedDepartmentID,p.LocationID))    
+  OR @UserID in(Select AT.UserID from approvals.approvals A   
+   Inner join approvals.approvaltrans AT on AT.ApprovalID=A.ID   
+   Where A.TransID=P.ID AND A.Name='Purchase Order')  
+   )   
+  AND ApplicationID = @ApplicationID  
+ --)  
+  
+ SELECT ID, TransNo, TransDate, SupplierName, NetAmt, ItemName, CategoryName,[Status], IsDraft, IsProcessed, IsPartiallyProcessed,  
+  IsApproved, IsCancelled,IsSuspended, CreatedUserID, FinYear, LocationID, recordsFiltered, @totalRecords totalRecords  
+ FROM #temp  
+ --SELECT ID, TransNo, TransDate, SupplierName, NetAmt, ItemName, CategoryName,[Status], IsDraft, IsProcessed, IsPartiallyProcessed,  
+ -- IsApproved, IsCancelled,IsSuspended, CreatedUserID, FinYear, LocationID, recordsFiltered, @totalRecords totalRecords  
+ --FROM P_CTE  
+ WHERE RowNum >= @Offset  
+ AND RowNum < @Offset + @Limit  
+END  
+  
+  
+  

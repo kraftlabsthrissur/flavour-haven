@@ -1,0 +1,75 @@
+﻿@model TradeSuiteApp.Web.Areas.Reports.Models.IncentiveReportModel
+@{
+    ViewBag.ReportTitle = "Incentive Report";
+}
+
+
+
+<div id="page_content_inner">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-2-10 ">
+                            <form action="/Reports/Sales/IncentiveReport" id="report-filter-form" method="POST" data-name="IncentiveReport">
+
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <label>PartyType</label>
+                                            @Html.DropDownListFor(Model => Model.PartyType, new SelectList(Model.PartyList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                        </div>
+                                       
+                                    </div>
+                                </div>
+
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <label>@Masters.Duration</label>
+                                            @Html.DropDownListFor(Model => Model.DurationID, Model.DurationList, "Select", new { @class = "md-input label-fixed" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <label>@Masters.TimePeriod</label>
+                                            @Html.DropDownListFor(Model => Model.TimePeriodID, Model.TimePeriodList, "Select", new { @class = "md-input label-fixed" })
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="report-filter-submit">Show</button>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <a class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light " id="Refresh">Reset</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="uk-width-medium-8-10 ">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="" id="report-viewer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/IncentiveReport")

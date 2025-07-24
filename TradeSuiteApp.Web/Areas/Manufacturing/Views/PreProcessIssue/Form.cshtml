@@ -1,0 +1,138 @@
+﻿@model  TradeSuiteApp.Web.Areas.Manufacturing.Models.PreProcessIssueViewModel
+@{
+    ViewBag.Title = "Form";
+}
+
+@Html.HiddenFor(m => m.ID, new { @id = "hdnPreprocessIssueID" })
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Manufacturing.IssueNo</label>
+                            @Html.TextBoxFor(model => model.IssueNo, new { @class = "md-input label-fixed", @id = "txtIssueNo", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Manufacturing.IssueDate</label>
+                            @Html.TextBoxFor(model => model.IssueDateStr, new { @class = "md-input label-fixed", @id = "txtIssueDate", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-2-8">
+                            <div class="uk-autocomplete " id="preprocessIssueItem-autocomplete">
+                                <div class="uk-input-group">
+                                    <label>@Manufacturing.ItemName<span>*</span></label>
+                                    @Html.TextBox("ItemName", "", new { @class = "md-input label-fixed", @id = "txtItemName" })
+                                    <span class="uk-input-group-addon">
+                                        <a data-uk-modal="{target:'#select-preprocess-issue-item', center:false}">
+                                            <i class="uk-input-group-icon uk-icon-search"></i>
+                                        </a>
+                                    </span>
+                                    <script type="text/autocomplete">
+                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                            {{~items}}
+                                            <li data-value="{{ $item.Name }}"
+                                                data-itemid="{{$item.ID}}"
+                                                data-unitid="{{$item.UnitID}}"
+                                                data-stock="{{$item.Stock}}"
+                                                data-unit="{{$item.Unit}}"
+                                                data-processid="{{$item.ProcessID}}"
+                                                data-processname="{{$item.Activity}}">
+                                                <a>
+                                                    {{ $item.Name }} ({{{ $item.Unit }}})
+                                                    <div>{{{ $item.Activity }}}</div>
+                                                </a>
+                                            </li>
+                                            {{/items}}
+                                        </ul>
+                                    </script>
+                                </div>
+                            </div>
+                            @Html.Hidden("ItemID")
+                            @Html.Hidden("ProcessID")
+                            @Html.Hidden("Stock")
+                            @Html.Hidden("UnitID")
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_item">@Manufacturing.Unit</label>
+                            @Html.TextBox("Unit", " ", new { @id = "txtUnit", @class = "md-input label-fixed", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_item">@Manufacturing.Qty</label>
+                            @Html.TextBox("Quantity", " ", new { @id = "txtQty", @class = "md-input label-fixed mask-production-qty positive" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Manufacturing.Preprocess</label>
+                            @Html.TextBox("PreProcess", " ", new { @class = "md-input label-fixed", @readonly = "readonly", @id = "txtPreprocess" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label>&nbsp;</label>
+                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddProduct">@Common.Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <table id="preprocess-issue-items-list" class="uk-table" cellspacing="0">
+        <thead>
+            <tr>
+                <th class="width-40">@Common.SerialNo</th>
+                <th>@Manufacturing.ItemName</th>
+                <th class="width-80">@Manufacturing.Unit</th>
+                <th class="width-80">@Manufacturing.BatchNo</th>
+                <th class="width-80">@Manufacturing.AvailableStock</th>
+                <th class="width-120">@Manufacturing.IssuedQty</th>
+                <th class="width-100">@Manufacturing.Preprocess</th>
+                <th class="width-40"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Items != null)
+            {
+                foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                {
+                    <tr>
+                        <td class="uk-text-center index">
+                            @item.i
+                            @*<input type="hidden" class="ItemID" readonly="readonly" value="@item.value." />*@
+                        </td>
+                        <td>
+                            <input type="hidden" class="hdnID" value="@item.value.ID" />
+                            <input type="hidden" class="hdnItemID" value="@item.value.ItemID" />
+                            <input type="hidden" class="hdnProcessID" value="@item.value.ProcessID" />
+                            <input type="hidden" class="Stock" value="@item.value.Stock" />
+                            <input type="hidden" class="UnitID" value="@item.value.UnitID" />
+                            <input type="hidden" class="BatchID" value="@item.value.BatchID" />
+                            @item.value.ItemName
+                        </td>
+                        <td>@item.value.Unit</td>
+                        <td>@item.value.BatchNo</td>
+                        <td class="uk-text-right mask-production-qty">@item.value.Stock</td>
+                        <td><input type="text" class="md-input mask-production-qty txtQuantity positive" value="@item.value.Quantity" /></td>
+                        <td>@item.value.ProcessName</td>
+                        <td><i class="uk-close uk-float-right removeItem"></i></td>
+                    </tr>;
+                }
+            }
+        </tbody>
+     </table>
+  
+    <input type="hidden" id="item-count" value="@Model.Items.Count" />
+
+</div>
+@Html.Partial("~/Areas/Masters/Views/Item/PreProcessIssueItem.cshtml")

@@ -1,0 +1,79 @@
+﻿<div class="uk-modal" id="select-source" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog uk-modal-dialog-large" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Select Sales order / Proforma Invoice<i class="material-icons"></i></h3>
+        </div>
+        <ul class="uk-tab" data-uk-tab="{connect:'#tabs-source-content',animation:'slide-horizontal'}" id="tabs-source">
+            <li  class="uk-active" id="proforma-invoice-tab"><a>@Sales.ProformaInvoice</a></li>
+            <li id="sales-order-tab"><a>@Sales.SalesOrders</a></li>       
+        </ul>
+        <ul id="tabs-source-content" class="uk-switcher uk-margin">
+   
+            <li>
+                <table id="proforma-invoice-list" class="uk-table" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="width-20">@Common.SerialNo</th>
+                            <th class="width-20"></th>
+                            <th class="width-80">@Sales.InvoiceNo</th>
+                            <th class="width-80">@Sales.InvoiceDate</th>
+                            <th class="width-80">@Sales.SalesType</th>
+                            <th>@Sales.CustomerName</th>
+                            <th class="width-120">@Sales.CustomerLocation</th>
+                            <th class="width-80">@Sales.NetAmount</th>
+                        </tr>
+                    </thead>
+                    <thead class="search">
+                        <tr>
+                            <th>@Common.SerialNo</th>
+                            <th></th>
+                            <th>@Sales.InvoiceNo</th>
+                            <th>@Sales.InvoiceDate</th>
+                            <th>@Sales.SalesType</th>
+                            <th>@Sales.CustomerName</th>
+                            <th>@Sales.CustomerLocation</th>
+                            <th>@Sales.NetAmount</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="uk-modal-footer uk-text-right">
+                    <button type="button" class="md-btn uk-modal-close">Close</button>
+                    <button type="button" class="md-btn md-btn-primary uk-modal-close" id="btnOkProformaInvoice">Ok</button>
+                </div>
+            </li>
+
+            <li>
+                <table id="sales-order-list" class="uk-table" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="width-20">@Common.SerialNo</th>
+                            <th class="width-20"></th>
+                            <th class="width-80">@Sales.OrderNo</th>
+                            <th class="width-80">@Sales.OrderDate</th>
+                            <th class="width-80">@Sales.SalesType</th>
+                            <th>@Sales.CustomerName</th>
+                            <th class="width-40">@Sales.NetAmount</th>
+                        </tr>
+                    </thead>
+                    <thead class="search">
+                        <tr>
+                            <th>@Common.SerialNo</th>
+                            <th></th>
+                            <th>@Sales.OrderNo</th>
+                            <th>@Sales.OrderDate</th>
+                            <th>@Sales.SalesType</th>
+                            <th>@Sales.CustomerName</th>
+                            <th>@Sales.NetAmount</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="uk-modal-footer uk-text-right">
+                    <button type="button" class="md-btn uk-modal-close">Close</button>
+                    <button type="button" class="md-btn md-btn-primary uk-modal-close" id="btnOkSalesOrder">Ok</button>
+                </div>
+            </li>
+        </ul>    
+    </div>
+</div>

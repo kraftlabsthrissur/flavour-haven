@@ -1,0 +1,115 @@
+﻿@model TradeSuiteApp.Web.Areas.Sales.Models.SalesReturnModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.ReturnNo</label>
+                            @Html.TextBoxFor(model => model.SRNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Sales.ReturnDate</label>
+                            @Html.TextBoxFor(model => model.SRDate, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+
+                        <div class="uk-width-medium-2-8">
+                            <label>@Sales.CustomerName<span>*</span></label>
+                            @Html.TextBoxFor(model => model.CustomerName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            @Html.HiddenFor(model => model.CustomerID, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.InvoiceNo<span>*</span></label>
+                            @Html.TextBoxFor(model => model.InvoiceNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.RoundOff</label>
+                            @Html.TextBoxFor(model => model.RoundOff, new { @class = "md-input mask-sales-currency label-fixed", @tabindex = "-1", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-1">
+                            <label>@Sales.NetAmount</label>
+                            @Html.TextBoxFor(model => model.NetAmount, new { @class = "md-input mask-sales-currency label-fixed x-large", @tabindex = "-1", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-1">
+                            <label>@Masters.CurrencyCode</label>
+                            @Html.TextBoxFor(model => model.CurrencyCode, new { @class = "md-input label-fixed", @tabindex = "-1", @Disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <table id="sales-return-items-list" class="uk-table" cellspacing="0">
+        <thead>
+            <tr>
+                <th class="width-10">@Common.SerialNo</th>
+                <th class="width-40">@Sales.ItemCode</th>
+                <th class="">@Sales.ItemName</th>
+                <th class="width-50">@Sales.Batch</th>
+                <th class="width-10">@Sales.Unit</th>
+                <th class="width-50">@Sales.MRP</th>
+                <th class="width-50">@Sales.BasicPrice</th>
+                <th class="width-50">@Sales.SaleQty</th>
+                <th class="width-50">@Sales.OfferQty</th>
+                <th class="width-50">@Sales.ReturnQty</th>
+                <th class="width-50">@Sales.OfferReturnQty</th>
+                <th class="width-50">@Sales.GrossAmt</th>
+                <th class="width-50">@Sales.Disc</th>
+                <th class="width-50">@Sales.DiscAmt</th>
+                @*<th class="width-50">@Sales.GSTAmount</th>*@
+                <th class="width-50">@Sales.VATPercentage</th>
+                <th class="width-50">@Sales.VATAmount</th>
+                <th class="width-50">@Sales.NetAmount</th>
+                <th class="width-100">@Sales.LogicCode</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Items != null)
+            {
+                foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                {
+                    var GST = item.value.CGST + item.value.SGST + item.value.IGST;
+                    <tr>
+                        <td class="uk-text-center">
+                            @item.i
+                        </td>
+                        <td>@item.value.ItemCode</td>
+
+                        <td>@item.value.ItemName</td>
+                        <td>@item.value.Batch</td>
+                        <td> @item.value.SecondaryUnit  </td>
+                        <td class="mask-qty">@item.value.SecondaryMRP</td>
+                        <td class="mask-qty">@item.value.BasicPrice</td>
+                        <td class="mask-qty">@item.value.SaleQty" </td>
+                        <td class="mask-qty">@item.value.OfferQty</td>
+                        <td class="mask-qty">@item.value.SecondaryQty" </td>
+                        <td class="mask-qty">@item.value.OfferReturnQty" </td>
+                        <td class="mask-qty">@item.value.GrossAmount</td>
+                        <td class="mask-qty">@item.value.DiscountPercentage</td>
+                        <td class="mask-qty">@item.value.DiscountAmount</td>
+                        @*<td class="mask-qty">@GST</td>*@
+                        <td class="mask-qty">@item.value.VATPercentage</td>
+                        <td class="mask-qty">@item.value.VATAmount</td>
+                        <td class="mask-qty">@item.value.NetAmount</td>
+                        <td>@item.value.LogicCode : @item.value.LogicName</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+

@@ -1,0 +1,40 @@
+﻿@model IEnumerable<TradeSuiteApp.Web.Areas.Manufacturing.Models.PackingMaterialModel>
+@{
+    Layout = null;
+}
+@foreach (var item in Model.Select((value, i) => new { i = (i + 1), value }))
+{
+    <tr class="@(item.value.IsDraft ? "new":"saved")">
+        <td>
+            @item.i
+            <input type="hidden" class="ItemID" value="@item.value.ItemID" />
+            <input type="hidden" class="AvailableStock" value="@item.value.AvailableStock" />
+            <input type="hidden" class="BatchTypeID" value="@item.value.BatchTypeID" />
+            <input type="hidden" class="UnitID" value="@item.value.UnitID" />
+            <input type="hidden" class="StoreID" value="@item.value.StoreID" />
+            <input type="hidden" class="PackingIssueID" value="@item.value.PackingIssueID" />
+            <input type="hidden" class="PackingMaterialMasterID" value="@item.value.PackingMaterialMasterID" />
+            <input type="hidden" class="IsAdditionalIssue" value="0">
+            <input type="hidden" class="IsMaterialReturn" value="0">
+        </td>
+        <td>@item.value.ItemCode</td>
+        <td>@item.value.ItemName</td>
+        <td>@item.value.UOM</td>
+        <td class="BatchType">
+            @item.value.BatchType
+        </td>
+        <td class="mask-production-qty Stock">@item.value.AvailableStock</td>
+        <td class="mask-production-qty StandardQty">@item.value.StandardQty</td>
+        <td class="mask-production-qty ActualQty">@item.value.ActualQty</td>
+        <td>
+            <input type="text" class="md-input mask-production-qty IssueQty" value="@item.value.ActualQty" />
+        </td>
+        <td>
+            <input type="text" class="md-input mask-production-qty Variance" value="@item.value.Variance" disabled="disabled" />
+        </td>
+        <td>
+            <input type="text" class="md-input  Remarks" value="@item.value.Remarks" />
+        </td>
+        <td></td>
+    </tr>
+}

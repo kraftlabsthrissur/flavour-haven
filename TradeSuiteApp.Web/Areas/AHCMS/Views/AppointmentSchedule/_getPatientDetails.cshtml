@@ -1,0 +1,33 @@
+﻿
+<input type="button" id="show-item-details" data-uk-modal="{target:'#item-details', center:false}" />
+<div class="uk-modal" id="item-details" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">@AHCMS.AppointmentScheduleList<i class="material-icons"></i></h3>
+        </div>
+        <br />
+        <div class="section-group">
+            <table id="Patient-list" class="uk-table" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="width-10">@Common.SerialNo</th>
+
+                        <th class="width-250">@AHCMS.Patient</th>
+                        <th class="width-80">@AHCMS.PatientCode</th>
+
+                        <th class="width-100">@AHCMS.Age</th>
+                        <th class="width-40">Gender</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn  uk-modal-close">@Common.Close</button>
+            <button type="button" class="md-btn md-btn-primary" id="btn_print_code">Print</button>
+          @Html.Hidden("PATIENTID")
+        </div>
+    </div>
+</div>

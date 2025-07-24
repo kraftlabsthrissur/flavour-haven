@@ -1,0 +1,87 @@
+ALTER PROCEDURE [Sales].[SpCreateGoodsReceiptNoteTrans] (      
+ @GoodsReceiptNoteID int,      
+ @Items XML,      
+ @CreatedUserID int,      
+ @FinYear int,      
+ @LocationID int,      
+ @ApplicationID int,      
+ @RetValue int OUTPUT      
+)      
+AS      
+BEGIN      
+ SET NOCOUNT ON;      
+ DECLARE @ErrorCode int      
+ SET @RetValue = 1      
+        
+ INSERT INTO Sales.GoodsReceiptNoteItemTrans (GoodsReceiptNoteID,SalesOrdersID, SalesOrderTranID,SalesInvoiceID,SalesInvoiceTranID,CounterSalesID,CounterSalesTranID,ItemID,  
+ BatchID, BatchTypeID, Quantity, MRP, BasicPrice,OfferQty, GrossAmount, DiscountID, DiscountPercentage, DiscountAmount, AdditionalDiscount, TurnoverDiscount,TaxableAmount,  
+ SGSTPercentage, CGSTPercentage, IGSTPercentage, SGSTAmount, CGSTAmount, IGSTAmount, NetAmount, WareHouseID, FinYear, LocationID,ApplicationID, SortOrder, InvoiceQty,   
+ InvoiceOfferQty,UnitID,CessPercentage,CessAmount,PrintWithItemName, VATPercentage, CurrencyID,IsGST,IsVat,Model,PartsNumber,ItemName,SecondaryUnit,SecondaryMRP,SecondaryQty)      
+  SELECT       
+  @GoodsReceiptNoteID,      
+  CONVERT(INT, InvoiceTrans.item.query('SalesOrderID').value('.','VARCHAR(20)')),  
+  CONVERT(INT, InvoiceTrans.item.query('SalesOrderItemTransID').value('.','VARCHAR(20)')),  
+  CONVERT(INT, InvoiceTrans.item.query('SalesInvoiceID').value('.','VARCHAR(20)')),  
+  CONVERT(INT, InvoiceTrans.item.query('SalesInvoiceTransID').value('.','VARCHAR(20)')),  
+  CONVERT(INT, InvoiceTrans.item.query('CounterSalesID').value('.','VARCHAR(20)')),  
+  CONVERT(INT, InvoiceTrans.item.query('CounterSalesItemTransID').value('.','VARCHAR(20)')),  
+  CONVERT(INT, InvoiceTrans.item.query('ItemID').value('.','VARCHAR(20)')),      
+  CONVERT(INT, InvoiceTrans.item.query('BatchID').value('.','VARCHAR(20)')),       
+  CONVERT(INT, InvoiceTrans.item.query('BatchTypeID').value('.','VARCHAR(20)')),       
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('Quantity').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('MRP').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('BasicPrice').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('OfferQty').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('GrossAmount').value('.','VARCHAR(40)')),      
+  0, --DiscountID      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('DiscountPercentage').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('DiscountAmount').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('AdditionalDiscount').value('.','VARCHAR(40)')),      
+  0, --TurnoverDiscount      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('TaxableAmount').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('SGSTPercentage').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('CGSTPercentage').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('IGSTPercentage').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('SGSTAmt').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('CGSTAmt').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('IGSTAmt').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('NetAmount').value('.','VARCHAR(40)')),      
+  CONVERT(INT, InvoiceTrans.item.query('StoreID').value('.','VARCHAR(20)')),      
+  @FinYear,      
+  @LocationID,      
+  @ApplicationID,      
+  CONVERT(int, InvoiceTrans.item.query('SortOrder').value('.','VARCHAR(16)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('InvoiceQty').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('InvoiceOfferQty').value('.','VARCHAR(40)')),      
+  CONVERT(int, InvoiceTrans.item.query('UnitID').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,2), InvoiceTrans.item.query('CessPercentage').value('.','VARCHAR(16)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('CessAmount').value('.','VARCHAR(16)')),    
+  CONVERT(BIT, InvoiceTrans.item.query('PrintWithItemName').value('.','VARCHAR(5)')),    
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('VATPercentage').value('.','VARCHAR(20)')),    
+  CONVERT(INT, InvoiceTrans.item.query('CurrencyID').value('.','VARCHAR(20)')),     
+  CONVERT(INT, InvoiceTrans.item.query('IsGST').value('.','VARCHAR(20)')),    
+  CONVERT(INT, InvoiceTrans.item.query('IsVat').value('.','VARCHAR(20)')),     
+  CONVERT(VARCHAR, InvoiceTrans.item.query('Model').value('.','VARCHAR(200)')),    
+  CONVERT(VARCHAR, InvoiceTrans.item.query('PartsNumber').value('.','VARCHAR(200)')),    
+  CONVERT(VARCHAR, InvoiceTrans.item.query('ItemName').value('.','VARCHAR(200)')) ,
+  CONVERT(VARCHAR, InvoiceTrans.item.query('SecondaryUnit').value('.','VARCHAR(200)')) ,
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('SecondaryMRP').value('.','VARCHAR(40)')),  
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('SecondaryQty').value('.','VARCHAR(40)'))
+  FROM @Items.nodes('/InvoiceTrans/Item') as InvoiceTrans(item);      
+      
+      
+UPDATE sales.SalesOrder SET IsGoodsReceived=1 WHERE ID in (SELECT T.SalesOrdersID   FROM Sales.GoodsReceiptNoteItemTrans T WHERE T.GoodsReceiptNoteID=@GoodsReceiptNoteID)  
+  
+UPDATE sales.SalesInvoice SET IsGoodsReceived=1 WHERE ID in (SELECT T.SalesInvoiceID   FROM Sales.GoodsReceiptNoteItemTrans T WHERE T.GoodsReceiptNoteID=@GoodsReceiptNoteID)  
+  
+UPDATE sales.CounterSales SET IsGoodsReceived=1 WHERE ID in (SELECT T.CounterSalesID   FROM Sales.GoodsReceiptNoteItemTrans T WHERE T.GoodsReceiptNoteID=@GoodsReceiptNoteID)  
+  
+ SELECT @ErrorCode = @@ERROR              
+ IF (@ErrorCode <> 0)         
+ BEGIN        
+  SET @RetValue = -1        
+ END  
+  
+END      
+      
+      

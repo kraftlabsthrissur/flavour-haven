@@ -1,0 +1,57 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.CategoryModel
+@{
+    ViewBag.Title = "Edit Category";
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.Categories</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.EditCategories</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Create", "<a class='md-btn btnSave'>" + Common.Save + "</a>")
+
+            @Html.HiddenFor(m => m.ID)
+            @Html.HiddenFor(m => m.CategoryType)
+            @Html.ActionLink(Common.Close, "Index", "Categories", new { Area = "Masters" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-4">
+                                            <label>@Masters.CategoryType<span>*</span></label>
+                                            @Html.DropDownListFor(Model => Model.CategoryTypeID, new SelectList(Model.CategoryTypeList, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @id = "LocationID" })
+                                        </div>
+                                        <div class="uk-width-medium-1-4">
+                                            <label>@Masters.CategoryName<span>*</span></label>
+                                            @Html.TextBoxFor(m => m.CategoryName, new { @class = "md-input label-fixed" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/Categories")
+<script type="text/javascript">
+    Categories.init();
+</script>

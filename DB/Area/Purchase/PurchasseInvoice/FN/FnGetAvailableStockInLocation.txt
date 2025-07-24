@@ -1,0 +1,18 @@
+CREATE FUNCTION [dbo].[FnGetAvailableStockInLocation]          
+(          
+ @ItemID int,                           
+ @LocationID int,    
+ @FinYear int    
+)          
+RETURNS Numeric(18,4)          
+AS          
+BEGIN          
+ DECLARE @Stock Numeric(18,4) = 0.0          
+ SELECT @Stock = SUM(Value)           
+ FROM Stock S       
+ WHERE S.ItemID = @ItemID                          
+ AND S.FinYear = @FinYear           
+ AND S.LocationID = @LocationID           
+ AND S.ApplicationID = 1               
+ RETURN ISNULL(@Stock,0)          
+END 

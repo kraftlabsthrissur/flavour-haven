@@ -1,0 +1,312 @@
+ALTER PROCEDURE [dbo].[SpGenerateSLAForSales](@SLAMappingItemID int,@TransactionType varchar(50),@KeyValue varchar(50),@ItemID int,  
+ @Batch varchar(20),@SupplierID int,@Amount Numeric(18,2),@DifferenceValue Numeric(18,2),  
+ @CustomerID int,@DepartmentCategoryID int,@LocationID int,@TreasuryID int,@EmployeeID int,@PatientID int,@AssetID int ,@PaymentModeID int)   
+AS  
+Begin  
+ CREATE TABLE #TempSalesInvoice(  
+ id int identity(1,1),  
+ [Remarks] [varchar](100) NULL,  
+ cycle varchar(100),  
+ [TransactionType] [varchar](100) NULL,  
+ KeyValue varchar(100),  
+ guidance varchar(500),  
+ [Item] [varchar](100) NULL,  
+ [ItemAccountsCategory] [varchar](100) NULL,  
+ [ItemTaxCategory] [varchar](100) NULL,  
+ [BatchPrefix] [varchar](100) NULL,  
+ [Supplier] [varchar](100) NULL,  
+ [SupplierAccountsCategory] [varchar](100) NULL,  
+ [SupplierTaxCategory] [varchar](100) NULL,  
+ [SupplierTaxSubCategory] [varchar](100) NULL,  
+ [Customer] [varchar](100) NULL,  
+ [CustomerAccountsCategory] [varchar](100) NULL,  
+ CustomerCategory  [varchar](100) NULL,  
+ [CustomerTaxCategory] [varchar](100) NULL,  
+ [CostComponent] [varchar](100) NULL,  
+ [DepartmentCategory] [varchar](100) NULL,  
+ [Capitilization] [varchar](100) NULL,  
+ [Location] [varchar](100) NULL,  
+ [Condition1] [varchar](250) NULL,  
+ [Condition2] [varchar](250) NULL,  
+ [DebitAccount] [varchar](100) NULL,  
+ [DebitAccountDescription] [varchar](100) NULL,  
+ [CreditAccount] [varchar](100) NULL,  
+ [CreditAccoungtDescription] [varchar](100) NULL,  
+ [EntryInLocation] [varchar](100) NULL,  
+ [EntryInDepartment] [varchar](100) NULL,  
+ [EntryInEmployee] [varchar](100) NULL,  
+ [EntryInInterCompanyField] [varchar](100) NULL,  
+ [EntryInProjectField] [varchar](100) NULL,  
+ [ItemSubLedger] [varchar](100) NULL,  
+ [SupplierSubLedger] [varchar](100) NULL,  
+ [CustomerSubLedger] [varchar](100) NULL,  
+ [EmployeeSubLedger] [varchar](100) NULL,  
+ [AssetsSubLedger] [varchar](100) NULL,  
+ [PatientsSubLedger] [varchar](100) NULL,  
+ [BankCashSubLedger] [varchar](100) NULL,  
+ startD varchar(100),  
+ endD varchar(100),  
+ SLAID int)  
+ --insert into #TempSalesInvoice select * from SLA  
+--select * from SLA  
+--select * from #TempSalesInvoice  
+ Declare @ItemAccountsCategory int=-1,@ItemTaxCategory int =-1,@SupplierAccountsCategory int,@SupplierTaxCategory int ,@SupplierTaxSubCategory int  
+ Declare @CustomerCategoryID int,@CustomerAccountsCategoryID int,@CustomerTaxCategoryID int --,@CustomerTaxSubCategory int  
+ Declare @CostComponent int,@AssetCategoryID int  
+ Declare @ApplicationID int = 1,@FinYear int = 2018 --- Hard Coded, Have to remove  
+ Declare @count int = 1  
+ Declare @total int  
+ insert into #TempSalesInvoice select * from SLA where TransactionType = @TransactionType and KeyValue = @KeyValue and Current_timestamp between StartDate and enddate  
+ --insert into #TempSalesInvoice select * from SLA where TransactionType = ' RTG_QC Approve'  
+ print 'Item : '+cast (@ItemId as varchar)  
+ Select @ItemAccountsCategory = AccountsCategoryID,@ItemTaxCategory = GSTCategoryID,@CostComponent =CostComponentID,@AssetCategoryID = AssetCategoryID from Item where ID = @ItemID   
+ Select @SupplierAccountsCategory = SupplierAccountsCategoryID,@SupplierTaxCategory=SupplierTaxCategoryID,@SupplierTaxSubCategory = SupplierTaxSubCategoryID  from Supplier where ID = @SupplierID  
+ Select @CustomerCategoryID = CategoryID,@CustomerAccountsCategoryID = CustomerAccountsCategoryID,@CustomerTaxCategoryID=CustomerTaxCategoryID  from Customer where ID = @CustomerID  
+ print 'ItemAccountsCategory'+cast (@ItemAccountsCategory as varchar)  
+ Select @total = Count(*) from #TempSalesInvoice  
+print 'Total Count : '+cast(@total as varchar )  
+ --while @count <= (Select Count(*) from #TempSalesInvoice)  
+ --Begin  
+   
+ --select * from SLA  
+  if (Select Count(*) from #TempSalesInvoice where Item = @ItemID) > 0  
+  begin  
+   delete from #TempSalesInvoice where Item <> @ItemId  
+  end  
+  else   
+  begin  
+   delete from #TempSalesInvoice where Item > 0    
+  end  
+print 'step 1'  
+print '@ItemAccountsCategory :' +CAST(@ItemAccountsCategory AS VARCHAR)  
+  
+Select @total = Count(*) from #TempSalesInvoice  
+print 'Total Counts1 : '+cast(@total as varchar )  
+  
+  if(Select Count(*) from #TempSalesInvoice where ItemAccountsCategory = @ItemAccountsCategory) > 0  
+  begin  
+   delete from #TempSalesInvoice where ItemAccountsCategory <> @ItemAccountsCategory  
+  end  
+  else   
+  begin  
+   delete from #TempSalesInvoice where ItemAccountsCategory > 0    
+  end  
+print 'step 2'  
+  
+Select @total = Count(*) from #TempSalesInvoice  
+print 'Total Count2 : '+cast(@total as varchar )  
+  
+  if(Select Count(*) from #TempSalesInvoice where ItemTaxCategory = @ItemTaxCategory) > 0  
+  begin  
+   delete from #TempSalesInvoice where ItemTaxCategory <> @ItemTaxCategory  
+  end  
+  else   
+  begin  
+   delete from #TempSalesInvoice where ItemTaxCategory > 0    
+  end  
+  -------------------------------------------------------------------  
+  
+  if(Select Count(*) from #TempSalesInvoice where BatchPrefix = @Batch) > 0  
+  begin  
+   delete from #TempSalesInvoice where BatchPrefix <> @Batch   
+  end  
+  --else   
+  --begin  
+  -- delete from #TempSalesInvoice where BatchPrefix > 0    
+  --end  
+    ------------------------------------------------------------------------  
+print 'step 3'  
+  
+  Select @total = Count(*) from #TempSalesInvoice  
+print 'Total Counts : '+cast(@total as varchar )  
+  
+  if(Select Count(*) from #TempSalesInvoice where Supplier = @SupplierID) > 0  
+  begin  
+   delete from #TempSalesInvoice where Supplier <> @SupplierID  
+  end  
+  else   
+  begin  
+   delete from #TempSalesInvoice where Supplier > 0    
+  end  
+    
+  Select @total = Count(*) from #TempSalesInvoice  
+print 'Total Countss : '+cast(@total as varchar )  
+  
+  
+  if(Select Count(*) from #TempSalesInvoice where SupplierAccountsCategory = @SupplierAccountsCategory) > 0  
+  begin  
+  print 'step 4'  
+   delete from #TempSalesInvoice where SupplierAccountsCategory <> @SupplierAccountsCategory  
+  end  
+  else   
+  begin  
+   delete from #TempSalesInvoice where SupplierAccountsCategory > 0    
+  end  
+    
+  Select @total = Count(*) from #TempSalesInvoice  
+print 'Total Countsss : '+cast(@total as varchar )  
+  
+  
+  if(Select Count(*) from #TempSalesInvoice where SupplierTaxCategory = @SupplierTaxCategory) > 0  
+  begin  
+  print 'step 4'  
+   delete from #TempSalesInvoice where SupplierTaxCategory <> @SupplierTaxCategory  
+  end  
+  else   
+  begin  
+   delete from #TempSalesInvoice where SupplierTaxCategory > 0    
+  end  
+    
+  Select @total = Count(*) from #TempSalesInvoice  
+print 'Total Countssss : '+cast(@total as varchar )  
+  
+  if(Select Count(*) from #TempSalesInvoice where SupplierTaxSubCategory = @SupplierTaxSubCategory) > 0  
+  begin  
+  print 'step 5'  
+   delete from #TempSalesInvoice where SupplierTaxSubCategory <> @SupplierTaxSubCategory  
+  end  
+  else   
+  begin  
+   delete from #TempSalesInvoice where SupplierTaxSubCategory > 0    
+  end  
+    
+  -------------------------------------------------------------------  
+  if(Select Count(*) from #TempSalesInvoice where CostComponent = @CostComponent) > 0  
+  begin  
+   delete from #TempSalesInvoice where CostComponent <> @CostComponent  
+  end  
+  else   
+  begin  
+   delete from #TempSalesInvoice where CostComponent > 0    
+  end  
+  ----------------------------Customer---------------------------------------------  
+  if(Select Count(*) from #TempSalesInvoice where Customer = @CustomerID) > 0   
+  begin  
+   delete from #TempSalesInvoice where Customer <> @CustomerID  
+  end  
+  else   
+  begin  
+   delete from #TempSalesInvoice where Customer > 0    
+  end  
+  
+  if(Select Count(*) from #TempSalesInvoice where CustomerAccountsCategory = @CustomerAccountsCategoryID) > 0   
+  begin  
+   delete from #TempSalesInvoice where CustomerAccountsCategory <> @CustomerAccountsCategoryID  
+  end  
+  else   
+  begin  
+   delete from #TempSalesInvoice where CustomerAccountsCategory > 0    
+  end  
+  
+  if(Select Count(*) from #TempSalesInvoice where CustomerCategory = @CustomerCategoryID) > 0   
+  begin  
+   delete from #TempSalesInvoice where CustomerCategory <> @CustomerCategoryID  
+  end  
+  else   
+  begin  
+   delete from #TempSalesInvoice where CustomerCategory > 0    
+  end  
+  
+  if(Select Count(*) from #TempSalesInvoice where CustomerTaxCategory = @CustomerTaxCategoryID) > 0   
+  begin  
+   delete from #TempSalesInvoice where CustomerTaxCategory <> @CustomerTaxCategoryID  
+  end  
+  else   
+  begin  
+   delete from #TempSalesInvoice where CustomerTaxCategory > 0    
+  end  
+--------------------------------------------------------------------------------------------------------------------------  
+if (select Count(*) from #TempSalesInvoice) > 1  
+declare @LocationStateID int,@LocationHeadID int,@LocationCountryID int,@CustomerStateID int,@CustomerCountryID int,@Condition1 varchar(255), @Condition2 varchar(255)  
+Select @LocationHeadID =  LocationHeadID,@LocationStateID = StateID,@LocationCountryID = S.CountryID from location L inner join State S on S.ID = L.StateID where L.ID = @LocationID   
+    
+Begin  
+ if(Select Top 1 Cycle from SLA where TransactionType =  @TransactionType ) = 'O2C' AND @CustomerID > 0  
+ Begin  
+  Select @CustomerStateID = StateID,@CustomerCountryID = S.CountryID from Customer C inner join Addresses A on A.Partytype = 'Customer' AND A.PartyID = C.ID AND A.IsBilling = 1 AND A.IsDefault = 1 inner join State S on S.ID = A.StateID  
+  if @LocationCountryID <> @CustomerCountryID  
+  begin  
+   Set @Condition1 = 'If location country is not = to customer Country'  
+  end  
+  else if @LocationStateID = @CustomerStateID  
+  begin  
+   Set @Condition1 = 'if location state = customer state'  
+  end  
+  else  
+  begin  
+   Set @Condition1 = 'if location state is not = customer state'  
+  end  
+  ------------------------  
+  if(Select Count(*) from #TempSalesInvoice where Condition1 = @Condition1) > 0   
+  begin  
+   delete from #TempSalesInvoice where Condition1 <> @Condition1 and @Condition1 <> ''  
+  end  
+End  
+  --------------------------------------------------------------------------------------------------------  
+  
+if (select Count(*) from #TempSalesInvoice) > 1  
+Begin  
+ if  @Batch = @LocationHeadID  
+ Begin  
+  Set @Condition2 = 'if company suffix = batch prefix'  
+ End  
+ else  
+ begin  
+  Set @Condition2 = 'if company suffix is not= batch prefix'  
+ end  
+  ------------------------  
+ if(Select Count(*) from #TempSalesInvoice where Condition2 = @Condition2) > 0   
+ begin  
+  delete from #TempSalesInvoice where Condition2 <> @Condition2  
+ end  
+End  
+End  
+--------------------------------------------------------------------------------------------------------------------  
+if (select Count(*) from #TempSalesInvoice) = 1  
+begin  
+ print 'success'  
+ insert into AccountEntryPostingData   
+ select case when (DebitAccount = '' OR DebitAccount = '{select from UI}') then ISNULL((Select AccountCode from treasury where ID = @TreasuryID),0) else DebitAccount end ,  
+  case when (CreditAccount = '' OR  CreditAccount = '{select from UI}') then ISNULL((Select AccountCode from treasury where ID = @TreasuryID),0) else CreditAccount end,EntryInLocation,EntryInDepartment,EntryInEmployee,  
+  EntryInInterCompanyField,EntryInProjectField,ItemSubLedger,SupplierSubLedger,CustomerSubLedger,  
+  EmployeeSubLedger,AssetsSubLedger,PatientsSubLedger,BankCashSubLedger,@Amount,@ItemID ,@SupplierID,@SLAMappingItemID,0,NULL,0   
+  ,@CustomerID,@TreasuryID ,@EmployeeID ,@PatientID ,@AssetID ,@PaymentModeID from #TempSalesInvoice  
+   
+ --update SLAMappingItem set IsSLAMapped = 1,MappedTime = CURRENT_TIMESTAMP where ID = @SLAMappingItemID  
+end  
+if (select Count(*) from #TempSalesInvoice) > 1  
+begin  
+print 'error'  
+if (select Count(*) from AccountMappingErrorDetails where SLAMaapingID = @SLAMappingItemID) > 0  
+begin  
+ update AccountMappingErrorDetails set Description = 'No SLA Rules Mapped/More than one SLA Rule Mapped',Remarks ='TransactionType:'+@TransactionType+', KeyValue'+@KeyValue,  
+ CreatedDate = CURRENT_TIMESTAMP,FinYear = @FinYear,LocationID = @LocationID,ApplicationID =@ApplicationID   where SLAMaapingID = @SLAMappingItemID  
+end  
+else  
+begin  
+insert into AccountMappingErrorDetails(SLAMaapingID,Description,Remarks,CreatedDate,FinYear,LocationID,ApplicationID) Values(@SLAMappingItemID,'No SLA Rules Mapped/More than one SLA Rule Mapped','TransactionType:'+@TransactionType+',   
+KeyValue'+@KeyValue,CURRENT_TIMESTAMP,@FinYear,@LocationID,@ApplicationID)  
+end  
+--select * from #TempSalesInvoice  
+end  
+if (select Count(*) from #TempSalesInvoice) < 1  
+begin  
+ if (select Count(*) from AccountMappingErrorDetails where SLAMaapingID = @SLAMappingItemID) > 0  
+ begin  
+  update AccountMappingErrorDetails set Description = 'No SLA Rule Mapped',Remarks ='TransactionType:'+@TransactionType+', KeyValue'+@KeyValue,CreatedDate = CURRENT_TIMESTAMP,FinYear = @FinYear,LocationID = @LocationID,  
+  ApplicationID =@ApplicationID   where SLAMaapingID = @SLAMappingItemID  
+ end  
+ else  
+ begin  
+  insert into AccountMappingErrorDetails(SLAMaapingID,Description,Remarks,CreatedDate,FinYear,LocationID,ApplicationID) Values(@SLAMappingItemID,'No SLA Rules Mapped',  
+  'TransactionType:'+@TransactionType+', KeyValue'+@KeyValue,CURRENT_TIMESTAMP,@FinYear,@LocationID,@ApplicationID)  
+  print 'error2'  
+ end  
+end  
+  
+--select * from AccountMappingErrorDetails  
+  
+drop table #TempSalesInvoice  
+  
+End  
+  

@@ -1,0 +1,148 @@
+ALTER TABLE PurchaseInvoice
+ADD VATPercentage Numeric(18,4)
+
+ALTER TABLE PurchaseInvoice
+ADD CurrencyID int
+
+ALTER TABLE PurchaseInvoice
+ADD IsGST int DEFAULT 0;
+
+ALTER TABLE PurchaseInvoice
+ADD IsVat int DEFAULT 0;
+
+ALTER TABLE PurchaseInvoice
+ADD CurrencyExchangeRate Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE PurchaseInvoice
+ADD DocumentCharges Numeric(18,4)
+
+ALTER TABLE PurchaseInvoice
+ADD SupplierOtherCharges Numeric(18,4)
+
+
+ALTER TABLE PurchaseInvoiceTrans
+ADD VATPercentage Numeric(18,4)
+
+ALTER TABLE PurchaseInvoiceTrans
+ADD CurrencyID int
+
+ALTER TABLE PurchaseInvoiceTrans
+ADD IsGST int DEFAULT 0;
+
+ALTER TABLE PurchaseInvoiceTrans
+ADD IsVat int DEFAULT 0;
+
+ALTER TABLE PurchaseInvoiceTrans
+ADD Model NVARCHAR(200)
+
+ALTER TABLE PurchaseInvoiceTrans
+ADD PartsNumber NVARCHAR(200)
+
+ALTER TABLE PurchaseInvoiceTrans
+ADD ItemName NVARCHAR(200)
+
+ALTER TABLE PurchaseOrderTrans
+ADD ExchangeRate Numeric(18,4) NOT NULL DEFAULT 0;
+
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN GrossAmount NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN SGSTAmount NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN CGSTAmount NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN IGSTAmount NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN Discount NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN FreightAmount NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN PackingCharges NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN OtherCharges NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN TaxOnFreight NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN TaxOnPackingCharges NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN TaxOnOtherCharge NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN TDSOnFreightPercentage NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN LessTDS NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN AmountPayable NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN NetAmount NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN InvoiceTotal NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN TotalDifference NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN OtherDeductions NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoice
+ALTER  COLUMN RoundOff NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoiceTrans
+ALTER  COLUMN InvoiceRate NUMERIC(18,4)
+
+  ALTER TABLE PurchaseInvoiceTrans
+ALTER  COLUMN InvoiceValue NUMERIC(18,4)
+
+  ALTER TABLE PurchaseInvoiceTrans
+ALTER  COLUMN PORate NUMERIC(18,4)
+
+  ALTER TABLE PurchaseInvoiceTrans
+ALTER  COLUMN [Difference] NUMERIC(18,4)
+
+  ALTER TABLE PurchaseInvoiceTrans
+ALTER  COLUMN GrossAmount NUMERIC(18,4)
+
+  ALTER TABLE PurchaseInvoiceTrans
+ALTER  COLUMN NetAmount NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoiceTrans
+ALTER  COLUMN IGSTAmount NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoiceTrans
+ALTER  COLUMN CGSTAmount NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoiceTrans
+ALTER  COLUMN SGSTAmount NUMERIC(18,4)
+
+
+ALTER TABLE PurchaseInvoiceTrans
+ALTER  COLUMN BatchRate NUMERIC(18,4)
+
+ALTER TABLE PurchaseInvoiceTrans
+ALTER  COLUMN BatchNetProfitRatio NUMERIC(18,4)
+
+
+ALTER TABLE PurchaseInvoiceTrans
+ALTER  COLUMN SGSTAmount NUMERIC(18,4)
+
+
+
+
+
+
+

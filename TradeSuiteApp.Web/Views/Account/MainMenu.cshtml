@@ -1,0 +1,60 @@
+﻿@model IEnumerable<TradeSuiteApp.Web.Models.MenuItemModel>
+@{
+    Layout = null;
+}
+<ul>
+    @foreach (var menuItem in Model.Where(a => a.ParentID == 0).OrderBy(a => a.SortOrder).ToList())
+    {
+        var href = "/" + @menuItem.Area + "/" + @menuItem.Controller + "/" + @menuItem.Action;
+        <li>
+            @if ((menuItem.Area == "" && menuItem.Controller == "") || menuItem.ActionID == 0)
+            {
+                <a>
+                    <span class="menu_icon"><i class="@menuItem.IconClass"></i></span>
+                    <span class="menu_title">@menuItem.Name</span>
+                </a>
+            }
+            else if (menuItem.Area == "")
+            {
+                <a href="/@menuItem.Controller/@menuItem.Action" class="menu-item">
+                    <span class="menu_icon"><i class="@menuItem.IconClass"></i></span>
+                    <span class="menu_title">@menuItem.Name</span>
+                </a>
+            }
+            else
+            {
+                <a href="/@menuItem.Area/@menuItem.Controller/@menuItem.Action" class="menu-item">
+                    <span class="menu_icon"><i class="@menuItem.IconClass"></i></span>
+                    <span class="menu_title">@menuItem.Name</span>
+                </a>
+            }
+
+            @if (Model.Where(a => a.ParentID == menuItem.ID).Count() > 0)
+            {
+                <ul>
+                    @foreach (var subMenuItem in Model.Where(a => a.ParentID == menuItem.ID).OrderBy(a => a.SortOrder).ToList())
+                    {
+                        <li>
+                            @if (subMenuItem.ActionID != 0)
+                            {
+                                <a class="menu-item" href="/@subMenuItem.Area/@subMenuItem.Controller/@subMenuItem.Action">@subMenuItem.Name</a>
+                            }
+                            else
+                            {
+                                <a>@subMenuItem.Name</a>
+                                <ul>
+                                    @foreach (var item in Model.Where(a => a.ParentID == subMenuItem.ID).OrderBy(a => a.SortOrder).ToList())
+                                    {
+                                        <li>
+                                            <a class="menu-item" href="/@item.Area/@item.Controller/@item.Action">@item.Name</a>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+        </li>
+    }
+</ul>

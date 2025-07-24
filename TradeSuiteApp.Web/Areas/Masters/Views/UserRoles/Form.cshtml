@@ -1,0 +1,128 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.UserRolesModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-5">
+                            <div class="uk-autocomplete " id="employee-autocomplete">
+                                <div class="uk-input-group">
+                                    <label for="uk_dp_start">@Masters.UserName<span>*</span></label>
+                                    @Html.TextBoxFor(m => m.UserName, new { @class = "md-input label-fixed" })
+                                    <span class="uk-input-group-addon">
+                                        <a data-uk-modal="{target:'#select-employee',center:false}">
+                                            <i class="uk-input-group-icon uk-icon-search"></i>
+                                        </a>
+                                    </span>
+                                    <script type="text/autocomplete">
+                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                            {{~items}}
+                                            <li data-value="{{ $item.Name}}"
+                                                data-id="{{$item.UserID}}"
+                                                data-EmployeeCode="{{$item.Code}}"
+                                                data-placement="{{$item.Location}}">
+                                                <a>
+                                                    {{ $item.Name }}
+                                                    <div>{{ $item.Code }}</div>
+                                                </a>
+                                            </li>
+                                            {{/items}}
+                                        </ul>
+                                    </script>
+                                </div>
+                            </div>
+                            @Html.HiddenFor(m => m.UserID)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-5">
+                            <div class="uk-autocomplete " id="role-autocomplete">
+                                <div class="uk-input-group">
+                                    <label for="uk_dp_start">@Masters.UserRoles</label>
+                                    @Html.TextBoxFor(m => m.RoleName, new { @class = "md-input label-fixed" })
+                                    <span class="uk-input-group-addon">
+                                        <a data-uk-modal="{target:'#select-role',center:false}">
+                                            <i class="uk-input-group-icon uk-icon-search"></i>
+                                        </a>
+                                    </span>
+                                    <script type="text/autocomplete">
+                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                            {{~items}}
+                                            <li data-value="{{ $item.Name}}"
+                                                data-id="{{$item.ID}}"
+                                                data-Code="{{$item.Code}}">
+                                                <a>
+                                                    {{ $item.Name }}
+                                                    <div>{{ $item.Code }}</div>
+                                                </a>
+                                            </li>
+                                            {{/items}}
+                                        </ul>
+                                    </script>
+                                </div>
+                            </div>
+                            @Html.HiddenFor(m => m.RoleID)
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.Location</label>
+                            @Html.DropDownListFor(Model => Model.LocationID, new SelectList(Model.LocationList, "Value", "Text"), "Select", new { @class = "md-input label-fixed Location" })
+                        </div>
+
+                        <div class="uk-width-medium-1-10">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label>&nbsp;</label>
+                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddItem">@Common.Add</button>
+                            </div>
+                            @Html.Hidden("item-count")
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+<div class="section-group">
+    <table id="user-role-list" class="uk-table" cellspacing="0" style="width:100%;">
+        <thead>
+            <tr>
+                <th class="width-10">@Common.SerialNo</th>
+                <th class="width-80">@Masters.UserName</th>
+                <th class="width-80">@Masters.Role</th>
+                <th class="width-80">@Masters.Location</th>
+                <th class="width-10"></th>
+            </tr>
+        </thead>
+        <tbody>
+           @if (Model.UserRoles != null)
+           {
+
+               foreach (var item in Model.UserRoles.Select((value, i) => new { i = (i + 1), value }))
+               {
+                   <tr>
+                       <td>@Html.DisplayFor(modelItem => (item.i))</td>
+                       <td class="UserName"> @item.value.UserName
+                        <input type="hidden" class="UserID" value="@item.value.UserID" />
+                        <input type="hidden" class="RoleID" value= "@item.value.RoleID"/>
+                        <input type="hidden" class="LocationID" value="@item.value.LocationID"/>
+                       </td>
+                       <td class="RoleName">@item.value.RoleName </td>
+                       <td class="Location">@item.value.Location </td>
+                       <td><a class="remove-item"><i class="uk-icon-remove"></i></a>
+                       </td> 
+                   </tr>
+               }
+           }
+        </tbody>
+    </table>
+</div>

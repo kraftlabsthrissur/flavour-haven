@@ -1,0 +1,16 @@
+ALTER PROCEDURE [Master].[SpUpdateCurrency]          
+ (@CurrencyID INT, 
+ @Code CHAR(3),
+ @Name NVARCHAR(100),
+ @Description  NVARCHAR(200),
+ @CountryID int,  
+ @DecimalPlaces int,
+ @ModifiedUserID int, 
+ @LocationID int,
+ @ApplicationID int )           
+AS          
+BEGIN          
+ SET NOCOUNT ON;          
+ EXEC SpLogChange 'Currency','ID',@CurrencyID,@ModifiedUserID,@LocationID,@ApplicationID          
+ UPDATE Currency SET Name = @Name, Code = @Code,ModifiedUserID=@ModifiedUserID,ModifiedDate=GETDATE(), Description=@Description, CountryID=@CountryID,DecimalPlaces=@DecimalPlaces WHERE ID = @CurrencyID;           
+END 

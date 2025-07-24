@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="PayrollModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <Function Name="SpCancelTransaction" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="TableName" Type="varchar" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpCreateBatch" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ItemType" Type="char" Mode="In" />
+          <Parameter Name="ItemID" Type="int" Mode="In" />
+          <Parameter Name="BatchNo" Type="varchar" Mode="In" />
+          <Parameter Name="CustomBatchNo" Type="varchar" Mode="In" />
+          <Parameter Name="ManufacturingDate" Type="datetime" Mode="In" />
+          <Parameter Name="ExpiryDate" Type="datetime" Mode="In" />
+          <Parameter Name="BatchTypeID" Type="int" Mode="In" />
+          <Parameter Name="CreatedUserID" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <Parameter Name="BatchID" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="SpGetConfigByUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ConfigName" Type="varchar" Mode="In" />
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetCurrentFinYear" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpIsCodeAlreadyExists" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="tableName" Type="varchar" Mode="In" />
+          <Parameter Name="FieldName" Type="varchar" Mode="In" />
+          <Parameter Name="Code" Type="varchar" Mode="In" />
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="IsExists" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="SpSuspendTransaction" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="TableName" Type="varchar" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <Parameter Name="RetValue" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="SpUpdateSerialNo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="FormName" Type="varchar" Mode="In" />
+          <Parameter Name="FieldName" Type="varchar" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <Parameter Name="SerialNo" Type="varchar" Mode="InOut" />
+        </Function>
+        <Function Name="SpGetMonthList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Payroll" />
+        <Function Name="SpGetPayrollCategoryList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Payroll" />
+        <EntityContainer Name="PayrollModelStoreContainer" />
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="PayrollModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="PayrollEntities" annotation:LazyLoadingEnabled="true" >
+          <FunctionImport Name="SpCancelTransaction">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="TableName" Mode="In" Type="String" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpCreateBatch">
+            <Parameter Name="ItemType" Mode="In" Type="String" />
+            <Parameter Name="ItemID" Mode="In" Type="Int32" />
+            <Parameter Name="BatchNo" Mode="In" Type="String" />
+            <Parameter Name="CustomBatchNo" Mode="In" Type="String" />
+            <Parameter Name="ManufacturingDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ExpiryDate" Mode="In" Type="DateTime" />
+            <Parameter Name="BatchTypeID" Mode="In" Type="Int32" />
+            <Parameter Name="CreatedUserID" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+            <Parameter Name="BatchID" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetConfigByUser" ReturnType="Collection(PayrollModel.SpGetConfigByUser_Result)">
+            <Parameter Name="ConfigName" Mode="In" Type="String" />
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetCurrentFinYear" ReturnType="Collection(PayrollModel.SpGetCurrentFinYear_Result)">
+          <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpIsCodeAlreadyExists">
+            <Parameter Name="tableName" Mode="In" Type="String" />
+            <Parameter Name="FieldName" Mode="In" Type="String" />
+            <Parameter Name="Code" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="IsExists" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpSuspendTransaction">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="TableName" Mode="In" Type="String" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+            <Parameter Name="RetValue" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpUpdateSerialNo">
+            <Parameter Name="FormName" Mode="In" Type="String" />
+            <Parameter Name="FieldName" Mode="In" Type="String" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+            <Parameter Name="SerialNo" Mode="InOut" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetPayrollCategoryList" ReturnType="Collection(PayrollModel.SpGetPayrollCategoryList_Result)" />
+          <FunctionImport Name="SpGetMonthList" ReturnType="Collection(PayrollModel.SpGetMonthList_Result)" />
+        </EntityContainer>
+        <ComplexType Name="SpGetConfigByUser_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="ConfigValue" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Description" Nullable="true" MaxLength="255" />
+          <Property Type="Boolean" Name="IsBoolean" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SpGetCurrentFinYear_Result">
+          <Property Type="Int32" Name="FinancialYearID" Nullable="false" />
+          <Property Type="DateTime" Name="StartDate" Nullable="false" Precision="23" />
+          <Property Type="DateTime" Name="EndDate" Nullable="false" Precision="23" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="100" />
+          <Property Type="Int32" Name="Year" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="SpGetPayrollCategoryList_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="SpGetMonthList_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="true" MaxLength="10" />
+          <Property Type="Int32" Name="Number" Nullable="true" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="PayrollModelStoreContainer" CdmEntityContainer="PayrollEntities" >
+          <FunctionImportMapping FunctionImportName="SpCancelTransaction" FunctionName="PayrollModel.Store.SpCancelTransaction" />
+          <FunctionImportMapping FunctionImportName="SpCreateBatch" FunctionName="PayrollModel.Store.SpCreateBatch" />
+          <FunctionImportMapping FunctionImportName="SpGetConfigByUser" FunctionName="PayrollModel.Store.SpGetConfigByUser">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PayrollModel.SpGetConfigByUser_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ConfigValue" ColumnName="ConfigValue" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsBoolean" ColumnName="IsBoolean" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetCurrentFinYear" FunctionName="PayrollModel.Store.SpGetCurrentFinYear">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PayrollModel.SpGetCurrentFinYear_Result">
+                <ScalarProperty Name="FinancialYearID" ColumnName="FinancialYearID" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Year" ColumnName="Year" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpIsCodeAlreadyExists" FunctionName="PayrollModel.Store.SpIsCodeAlreadyExists" />
+          <FunctionImportMapping FunctionImportName="SpSuspendTransaction" FunctionName="PayrollModel.Store.SpSuspendTransaction" />
+          <FunctionImportMapping FunctionImportName="SpUpdateSerialNo" FunctionName="PayrollModel.Store.SpUpdateSerialNo" />
+          <FunctionImportMapping FunctionImportName="SpGetPayrollCategoryList" FunctionName="PayrollModel.Store.SpGetPayrollCategoryList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PayrollModel.SpGetPayrollCategoryList_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetMonthList" FunctionName="PayrollModel.Store.SpGetMonthList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PayrollModel.SpGetMonthList_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Number" ColumnName="Number" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

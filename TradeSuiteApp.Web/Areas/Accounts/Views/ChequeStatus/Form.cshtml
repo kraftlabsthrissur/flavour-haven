@@ -1,0 +1,116 @@
+﻿ @model TradeSuiteApp.Web.Areas.Accounts.Models.ChequeStatusModel
+@{
+    ViewBag.Title = Accounts.ChequeStatus;
+}
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-1-8 cheque-status-wrapper">
+                                <label>@Accounts.TransactionNumber</label>
+                                @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label for="uk_dp_start">@Accounts.Date</label>
+                                <input class="md-input label-fixed current-date date" type="text" disabled="disabled" id="Date" value="@DateTime.Now.ToString("dd-MM-yyyy")">
+                            </div>
+                            <div class="uk-width-medium-2-8">
+                                <label>@Accounts.InstrumentStatus</label>
+                                @Html.DropDownListFor(Model => Model.InstrumentStatus, Model.InstrumentStatusList, "Select", new { @class = "md-input label-fixed include", @id="InstrumentStatusID"})
+                                
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <div class="uk-input-group">
+                                    <label for="uk_dp_start">@Accounts.ReceiptDateFrom</label>
+                                    @Html.TextBoxFor(model => model.ReceiptDateFrom, new { @class = "md-input label-fixed  past-date date" })
+                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date "></i></span>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <div class="uk-input-group">
+                                    <label for="uk_dp_start">@Accounts.ReceiptDateTo</label>
+                                    @Html.TextBoxFor(model => model.ReceiptDateTo, new { @class = "md-input label-fixed  past-date date" })
+                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date "></i></span>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <div class="md-input-wrapper md-input-filled">
+                                    <label>&nbsp;</label>                         
+                                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnShowStatus">@Common.Show</button>                                                   
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <table id="cheque-status-item-list" class="uk-table scroll-table" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-20"></th>
+                    <th class="width-80">@Accounts.InstrumentNumber</th>
+                    <th class="width-80">@Accounts.InstrumentDate</th>
+                    <th class="width-100">@Accounts.InstrumentStatus</th>
+                    <th class="width-80">@Accounts.StatusChangeDate</th>
+                    <th>@Accounts.Customer</th>
+                    <th class="width-80">@Accounts.InstrumentAmount</th>
+                    <th class="width-80">@Accounts.CustomerCharges</th>
+                    <th class="width-60">@Accounts.CGST</th>
+                    <th class="width-60">@Accounts.SGST</th>
+                    <th class="width-60">@Accounts.IGST</th>
+                    <th class="width-120">@Accounts.Remarks</th>
+                </tr>
+            </thead>
+            <tbody> 
+                @if (Model.Items != null)
+                {
+                    foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                       
+                            var date = Convert.ToDateTime(item.value.ChequeReceivedDate.ToDateTime());
+                            var datarelaxation =Math.Truncate((date - @DateTime.Now).TotalDays);
+                            var Disable = item.value.ChequeStatus == "Bounced" ? "" : "disabled";
+                        <tr class="included">
+                            <td class="uk-text-center width-10">
+                                @item.i
+                                <input type="hidden" class="md-input VoucherNo" value="@item.value.VoucherNo" />
+                                <input type="hidden" class="md-input VoucherID" value="@item.value.VoucherID" />
+                                <input type="hidden" class="ItemID" readonly="readonly" value="@item.value.ID" />
+                                <input type="hidden" class="ChequeReceivedDate" readonly="readonly" value="@item.value.ChequeReceivedDate" />
+                            </td>
+                            <td class="uk-text-center checked width-20" data-md-icheck><input type="checkbox" class="chkCheck" checked /></td>
+                            <td class="InstrumentNumber width-80">@item.value.InstrumentNumber</td>
+                            <td class="width-80"><input type="text" class="md-input InstrumentDate" readonly value="@item.value.InstrumentDate" /></td>
+                            <td class="width-100">@Html.DropDownListFor(model => item.value.ChequeStatus, new SelectList(item.value.ChequeStatusList, "Value", "Text", item.value.ChequeStatus), new { @class = "md-input label-fixed ChequeStatus included" })
+                            <td><input type="text" class="md-input uk-icon-calendar past-date StatusChangeDate" data-relaxation=@datarelaxation value="@DateTime.Now.ToString("dd-MM-yyyy")"  /></td>
+                            <td class="Customer">
+                                @item.value.CustomerName
+                            <input type="hidden" class="CustomerID" value="@item.value.CustomerID" />
+                            <input type="hidden" class="StateID" value="@item.value.StateID" />
+                        </td>
+                        <td class="InstrumentAmount mask-currency width-60">@item.value.InstrumentAmount</td>
+                        <td class="width-80"><input type="text" class="md-input ChargesToCustomer mask-currency included" @Disable value="@item.value.ChargesToCustomer" /> </td>
+                        <td class="width-60 CGST mask-currency">@item.value.CGST"</td>
+                        <td class="width-60 SGST mask-currency">@item.value.SGST"</td>
+                        <td class="width-60 IGST mask-currency">@item.value.IGST"</td>
+                        <td class="width-120"><input type="text" class="md-input Remarks included" value="@item.value.Remarks" /></td>
+                    </tr>;
+
+                    }
+                }
+
+            </tbody>
+        </table>
+        <input type="hidden" id="item-count" value="@Model.Items.Count" />
+        <input type="hidden" id="changed-count" value="@Model.Items.Count" />
+    </div>
+</div>

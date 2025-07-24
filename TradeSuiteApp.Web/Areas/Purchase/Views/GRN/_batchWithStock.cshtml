@@ -1,0 +1,48 @@
+﻿<input type="button" id="show-batch-edit" data-uk-modal="{target:'#batch-edit', center:false}" />
+<div class="uk-modal" id="batch-edit" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">View Batches<i class="material-icons"></i></h3>
+        </div>
+        @Html.Hidden("ItemID")
+        @Html.Hidden("POTransID")
+        @Html.Hidden("UnitID")
+        @Html.Hidden("Unit")
+        @Html.Hidden("PackSize")
+
+        <div class="uk-modal-content">
+            <div class="uk-form-row">
+                <div class="uk-width-medium-4-8">
+                    <input type="text" disabled="disabled" class="md-input" id="ItemName">
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <table id="batch-list" class="uk-table">
+                    <thead>
+                        <tr>
+                            <th class="width-10">@Common.SerialNo</th>
+                            <th class="width-10"></th>
+                            <th class="width-30">@Purchase.Batch</th>
+                            <th class="width-30">@Purchase.ExpDate</th>
+                            <th class="width-30">@Purchase.Price</th>
+                        </tr>
+                    </thead>
+                    <thead class="search">
+                        <tr>
+                            <th class="width-10">@Common.SerialNo</th>
+                            <th class="width-10"></th>
+                            <th class="width-30">@Purchase.Batch</th>
+                            <th class="width-30">@Purchase.ExpDate</th>
+                            <th class="width-30">@Purchase.Price</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn uk-modal-close">Close</button>
+            <button type="button" class="md-btn md-btn-primary" id="btnOkBatches">Ok</button>
+        </div>
+    </div>
+</div>

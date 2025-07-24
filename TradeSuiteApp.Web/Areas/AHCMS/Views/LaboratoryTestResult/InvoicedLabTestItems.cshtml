@@ -1,0 +1,110 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.LaboratoryTestResultModel
+
+@if (Model.Items != null)
+{
+    foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+            </td>
+            @if ((item.value.Status == "Completed"))
+            {
+                <td class="uk-text-center"><input type="checkbox" name="items" data-md-icheck class="md-input check-box" disabled="disabled" /></td>
+            }
+            else
+            {
+                <td class="uk-text-center"><input type="checkbox" name="items" data-md-icheck class="md-input check-box" /></td>
+            }
+            <td>
+                <input type="hidden" class="ItemID" value="@item.value.ItemID" />
+                <input type="hidden" class="PatientLabTestsID" value="@item.value.PatientLabTestsID" />
+                <input type="hidden" class="BillablesID" value="@item.value.BillablesID" />
+                <input type="hidden" class="IsProcessed" value="@item.value.IsProcessed" />
+                <input type="hidden" class="PatientLabTestTransID" value="@item.value.PatientLabTestTransID" />
+                @item.value.Item.
+            </td>
+
+            <td>
+                <input type="text" class="md-input  ObservedValue" value="@item.value.ObservedValue" disabled="disabled" />
+            </td>
+            <td>@item.value.Unit</td>
+            <td><input type="text" class="md-input " value="@item.value.BiologicalReference" disabled="disabled" /></td>
+
+
+            <td>
+                @if (@item.value.DocumentID == 0)
+                {
+                    <div class="uk-form-file v1">
+                        <label class="selected-labItem" id="selected-labItem-@item.i">
+                        </label>
+                        <label for="select-labItem" class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                            <i class="uk-icon-upload"></i>
+                        </label>
+                        <input class="select-labItem" id="select-labItem-@item.i" type="file" tabindex="-1">
+                    </div>
+                }
+                else
+                {
+                    if (@item.value.Status == "Completed")
+                    {
+                        <div class="uk-form-file v1">
+                            <label id="selected-quotation" class="width-100">
+                                @foreach (var items in @item.value.SelectedQuotation)
+                                {
+                                    <span class='view-file' data-id='@items.ID' data-url='@items.URL' data-path='@items.Path'>@items.Name</span>
+                                }
+                            </label>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="uk-form-file v1">
+                            <label class="selected-labItem width-100" id="selected-labItem-@item.i">
+                                @foreach (var items in @item.value.SelectedQuotation)
+                                {
+                                    <span>
+                                        <span class='view-file width-100' style='width:50px;' data-id='@items.ID' data-url='@items.URL' data-path='@items.Path'>@items.Name</span>
+                                        @*<a class='remove remove-quotation-@item.i'>X</a>*@
+                                    </span>
+                                }
+                            </label>
+                            <label for="select-labItem" class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                                <i class="uk-icon-upload"></i>
+                            </label>
+                            <input class="select-labItem width-100" id="select-labItem-@item.i" type="file" tabindex="-1">
+                        </div>
+                    }
+                }
+            </td>
+            @if ((item.value.Status == "Completed"))
+            {
+                <td>
+                    <input type="text" class="md-input datet label-fixed CollectedTime time15" value="@item.value.CollectedTime" disabled />
+
+                </td>
+                <td>
+                    <input type="text" class="md-input Time label-fixed ReportedTime time15" value="@item.value.ReportedTime" disabled />
+                </td>
+            }
+            else
+            {
+                <td>
+                    <input type="text" class="md-input datet label-fixed CollectedTime time15" value="@item.value.CollectedTime" />
+
+                </td>
+                <td>
+                    <input type="text" class="md-input Time label-fixed ReportedTime time15" value="@item.value.ReportedTime" />
+                </td>
+            }
+            @Html.Hidden("ReportID")
+            @Html.Hidden("URL")
+            <td class="uk-hidden">
+                @Html.DropDownListFor(m => item.value.Status, new SelectList(item.value.StatusList, "value", "text", item.value.Status), new { @class = "md-input label-fixed Status", @disabled = "disabled" })
+            </td>
+        </tr>
+    }
+}
+
+
+

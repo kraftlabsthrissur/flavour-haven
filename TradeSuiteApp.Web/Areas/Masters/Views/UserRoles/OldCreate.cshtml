@@ -1,0 +1,71 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.UserRolesModel
+@{
+    ViewBag.Title = "Create UserRoles";
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.UserRoles</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.CreateUserRoles</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSave'>" + Common.Save + "</a>")
+            @Html.ActionLink(Common.Close, "Index", "UserRoles", new { Area = "Masters" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-1-1">
+                                <div class="uk-width-medium-2-10">
+                                    <label>@Masters.UserName<span>*</span></label>
+                                    @Html.DropDownListFor(Model => Model.UserID, new SelectList(Model.UserList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                    @Html.HiddenFor(m => m.UserID)
+                                </div>
+                                <br />
+
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+
+                                        @foreach (var Role in Model.RoleList.Select((value, i) => new { i = (i + 1), value }))
+                                        {
+                                            <div class="uk-width-medium-3-10">
+                                                <h5>
+                                                    <input type="checkbox" class="icheckbox check-box" data-md-icheck value=@Role.value.RoleID />
+                                                    @Role.value.RoleName
+                                                </h5>
+                                            </div>
+                                            if (Role.i % 12 == 0)
+                                            {
+                                                <div class="uk-width-medium-1-1">
+                                                    <br />
+                                                </div>
+                                               
+                                                
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@Scripts.Render("~/Js/Page/UserRole")
+

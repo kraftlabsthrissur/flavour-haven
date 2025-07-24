@@ -1,0 +1,136 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Masters.Models.EmployeeFreeMedicineCreditLimitModel
+@{
+    ViewBag.Title = "_form";
+}
+
+<div class="uk-form-row">
+    <div class="uk-grid" data-uk-grid-margin>
+        <div class="uk-width-medium-1-1">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-10">
+                        <label for="uk_dp_start">@Stock.Date</label>
+                        @Html.TextBoxFor(m => m.Date, new { @class = "md-input", @id = "txtDate", @disabled = "disabled" })
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="uk-grid" data-uk-grid-margin>
+    <div class="uk-width-medium-1-1">
+        <div class="uk-form-row">
+            <div class="uk-grid" data-uk-grid-margin>
+
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.EmployeeCategory<span>*</span></label>
+                    @Html.DropDownListFor(Model => Model.EmployeeCategoryID, Model.EmpCategoryList, "Select", new { @class = "md-input label-fixed" })
+                </div>
+
+
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.Location<span>*</span></label>
+                    @Html.DropDownListFor(Model => Model.LocationID, Model.LocationList, "Select", new { @class = "md-input label-fixed" })
+                </div>
+
+                <div class="uk-width-medium-2-10">
+                    <div class="uk-autocomplete " id="employee-autocomplete">
+                        <div class="uk-input-group">
+                            <label for="uk_dp_start">@Masters.EmployeeName</label>
+                           @Html.TextBoxFor(m => m.EmployeeName, new { @class = "md-input label-fixed" })
+                            <span class="uk-input-group-addon">
+                                <a data-uk-modal="{target:'#select-employee',center:false}">
+                                    <i class="uk-input-group-icon uk-icon-search"></i>
+                                </a>
+                            </span>
+                            <script type="text/autocomplete">
+                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                    {{~items}}
+                                    <li data-value="{{ $item.Name}}"
+                                        data-id="{{$item.EmployeeID}}"
+                                        data-BalAmount="{{$item.BalAmount}}"
+                                        data-EmployeeCode="{{$item.Code}}"
+                                        data-placement="{{$item.Location}}">
+                                        <a>
+                                            {{ $item.Name }}
+                                            <div>{{ $item.Code }}</div>
+                                        </a>
+                                    </li>
+                                    {{/items}}
+                                </ul>
+                            </script>
+                        </div>
+                    </div>
+                    @Html.Hidden("EmployeeID")
+                    @Html.Hidden("EmployeeCode")
+                </div>
+
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.Amount<span>*</span></label>
+                    <input type="text" id="Amount" min="0" class="md-input label-fixed mask-production-qty " />
+                </div>
+
+                <div class="uk-width-medium-1-10">
+                    <div class="uk-input-group">
+                        <label>@Masters.StartDate <span>*</span></label>
+                        @Html.TextBox("StartDate", null, new { @class = "md-input label-fixed date future-date" })
+                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                    </div>
+                </div>
+
+                <div class="uk-width-medium-1-10">
+                    <div class="uk-input-group">
+                        <label>@Masters.EndDate <span>*</span></label>
+                        @Html.TextBox("EndDate", null, new { @class = "md-input label-fixed date future-date" })
+                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                    </div>
+                </div>
+
+
+
+                <div class="uk-width-medium-1-10">
+                    <div class="md-input-wrapper md-input-filled">
+                        <label>&nbsp;</label>
+                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddItem">@Common.Add</button>
+                    </div>
+                    @Html.Hidden("item-count")
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<br />
+
+<div class="section-group">
+    <table id="tbl-Free-medicine" class="uk-table" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th class="width-10">@Common.SerialNo</th>
+                <th class="width-10"><input type="checkbox" class="icheckbox select-all" data-md-icheck/></th>
+                <th class="width-50">@Masters.EmployeeCode</th>
+                <th class="width-150">@Masters.Employee</th>
+                <th class="width-50">@Masters.Amount</th>
+                <th class="width-50">@Masters.CreditLimit</th>
+                <th class="width-50">@Masters.BalAmount</th>
+                <th class="width-50">@Masters.UsedAmount</th>
+                <th class="width-50">@Masters.StartDate</th>
+                <th class="width-50">@Masters.EndDate</th>
+            </tr>
+        </thead>
+        <tbody>
+          
+        </tbody>
+    </table>
+</div>
+@Html.Partial("~/Areas/Masters/Views/Employee/PartialList.cshtml")
+@Scripts.Render("~/Js/Page/Employee")
+@Scripts.Render("~/Js/Page/EmployeeFreeMedicineCreditLimit")
+<script type="text/javascript">
+    EmployeeFreeMedicineCreditLimit.init();
+</script>

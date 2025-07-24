@@ -1,0 +1,115 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.DACalculationsModel
+<div class="uk-width-medium-8-10">
+    <div class="md-card">
+        <div class="md-card-content master-card-padding">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-1">
+                        <div class="uk-grid" data-uk-grid-margin>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Masters.Code</label>
+                                @Html.TextBoxFor(Model => Model.Code, new { @class = "md-input" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Masters.Location *</label>
+                                @Html.DropDownListFor(Model => Model.LocationID, new SelectList(Model.LocationList, "Value", "Text"),@*"Select",*@ new { maxlength = 100, @class = "md-input label-fixed" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Masters.EmployeeCategory</label>
+                                @Html.DropDownListFor(Model => Model.EmployeeCategoryID, new SelectList(Model.EmployeeCategoryList, "Value", "Text"), new { maxlength = 100, @class = "md-input label-fixed" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Masters.EmploymentStatus</label>
+                                @Html.DropDownListFor(Model => Model.EmployeeStatusID, new SelectList(Model.EmployeeStatusList, "Value", "Text"), new { maxlength = 100, @class = "md-input label-fixed" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Masters.PayrollCategory *</label>
+                                @Html.DropDownListFor(Model => Model.PayrollCategoryID, new SelectList(Model.PayrollCategoryList, "Value", "Text"), new { maxlength = 100, @class = "md-input label-fixed" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Masters.Department *</label>
+                                @Html.DropDownListFor(Model => Model.DepartmentID, new SelectList(Model.DepartmentList, "Value", "Text"), new { maxlength = 100, @class = "md-input label-fixed" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Masters.Month *</label>
+                                @*@Html.TextBoxFor(model => model.Month, new { @class = "md-input label-fixed  past-date date" })*@
+                                <input type="month" id="Month" class="md-input label-fixed" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-1">
+                        <div class="uk-grid" data-uk-grid-margin>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Masters.BasicPoints *</label>
+                                @Html.TextBoxFor(model => model.BasicPoints, new { @class = "md-input" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Masters.AdditionalPoints *</label>
+                                @Html.TextBoxFor(model => model.AdditionalPoints, new { @class = "md-input" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Masters.BasicValue *</label>
+                                @Html.TextBoxFor(model => model.BasicValue, new { @class = "md-input" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Masters.AdditionalValue *</label>
+                                @Html.TextBoxFor(model => model.AdditionalValue, new { @class = "md-input" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <div class="uk-input-group">
+                                    <label>@Masters.StartDate *</label>
+                                    <input type="text" class="md-input label-fixed past-date date" id="txtStartDate" value="@Model.StartDate" />
+                                    @*@Html.TextBoxFor(model => model.StartDate, new { @class = "md-input label-fixed  past-date date" })*@
+                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <div class="uk-input-group">
+                                    <label>@Masters.EndDate *</label>
+                                    <input type="text" class="md-input label-fixed past-date date" id="txtEndDate" value="@Model.EndDate" />
+                                    @*@Html.TextBoxFor(model => model.EndDate, new { @class = "md-input label-fixed  past-date date" })*@
+                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <div class="md-input-wrapper md-input-filled">
+                                    <label>&nbsp;</label>
+                                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddProduct">Add</button>
+                                </div>
+                            </div>
+                            <div class="section-group">
+                                <div class="uk-form-row">
+                                    <table id="da-calculation-list" class="uk-table" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th class="width-10">@Common.SerialNo</th>
+                                                <th class="width-60">@Masters.EmployeeCategory</th>
+                                                <th class="width-40">@Masters.EmploymentStatus</th>
+                                                <th class="width-60">@Masters.PayrollCategory</th>
+                                                <th class="width-50">@Masters.Department</th>
+                                                <th class="width-50">@Masters.Location</th>
+                                                <th class="width-40">@Masters.Month</th>
+                                                <th class="width-40">@Masters.BasicPoints</th>
+                                                <th class="width-40">@Masters.AdditionalPoints</th>
+                                                <th class="width-40">@Masters.BasicValue</th>
+                                                <th class="width-40">@Masters.AdditionalValue</th>
+                                                <th class="width-60">@Masters.StartDate</th>
+                                                <th class="width-60">@Masters.EndDate</th>
+                                                <th class="width-10"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

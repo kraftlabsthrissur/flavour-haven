@@ -1,0 +1,179 @@
+  
+ALTER PROCEDURE [Stock].[SpCreateStockIssueTrans](      
+ @StockIssueID int,      
+ @StockRequestTransID int,      
+ @StockRequestID int,      
+ @ItemID int,      
+ @BatchID Int,      
+ @BatchTypeID int,      
+ @IssueQty numeric(18,4),      
+ @RequestedQty numeric(18,4),   
+ @SecondaryIssueQty numeric(18,4),   
+ @SecondaryQty numeric(18,4),
+ @SecondaryUnit VARCHAR(100), 
+ @SecondaryUnitSize numeric(18,4),   
+ @Rate numeric(18,4),      
+ @BasicPrice numeric(18,4),      
+ @GrossAmount numeric(18,4),      
+ @TradeDiscountPercentage numeric(18,4),      
+ @TradeDiscount numeric(18,4),      
+ @TaxableAmount numeric(18,4),      
+ @SGSTPercentage numeric(18,4),      
+ @CGSTPercentage numeric(18,4),      
+ @IGSTPercentage numeric(18,4),      
+ @SGSTAmount numeric(18,4),      
+ @CGSTAmount numeric(18,4),      
+ @IGSTAmount numeric(18,4),      
+ @NetAmount numeric(18,4),      
+ @UnitID int,  
+ @Remark VARCHAR(100),      
+ @FinYear Int,      
+ @LocationID Int,      
+ @ApplicationID Int,      
+ @RetValue int out      
+) AS      
+Begin      
+ SET NOCOUNT ON      
+ SET @RetValue = 1;      
+ Declare @IssueDate DateTime, @IssuePremisesID int, @HoldOnStoreID int, @IssueLocationID int,@ReceiptLocationID int, @IsDraft bit, @Stock Numeric(18,4),@StockIssueTransID int,      
+ @IssueStateID int,@ReceiptStateID int,@IssueNo varchar(20)  ,@FullyProcessed int,@RequiredQty numeric(18,4)    
+      
+ Select @IssuePremisesID = IssuePremiseID, @IssueLocationID = IssueLocationID, @IssueDate =IssueDate, @IsDraft = IsDraft,      
+ @ReceiptLocationID = ReceiptLocationID ,@IssueNo = IssueNo      
+ from StockIssue where ID = @StockIssueID      
+      
+ Select @IssueStateID=StateID from Location where ID = @IssueLocationID      
+ Select @ReceiptStateID=StateID from Location where ID = @ReceiptLocationID      
+       
+ Insert Into StockIssueTrans(StockIssueID,StockRequestTransID,ItemID,BatchID,BatchTypeID,IssueQty,RequestedQty,ReceiptedQty,      
+   Rate, BasicPrice, GrossAmount, TradeDiscountPercentage, TradeDiscount, TaxableAmount, SGSTPercentage, CGSTPercentage,      
+   IGSTPercentage, SGSTAmount, CGSTAmount, IGSTAmount, NetAmount, FinYear,LocationID,ApplicationID,UnitID,Remark,
+   SecondaryIssueQty,SecondaryQty,SecondaryUnit,SecondaryUnitSize )      
+   Values(@StockIssueID,@StockRequestTransID,@ItemID,@BatchID,@BatchTypeID,@IssueQty,@RequestedQty,0,      
+   @Rate, @BasicPrice, @GrossAmount, @TradeDiscountPercentage, @TradeDiscount, @TaxableAmount, @SGSTPercentage, @CGSTPercentage,      
+   @IGSTPercentage, @SGSTAmount, @CGSTAmount, @IGSTAmount, @NetAmount, @FinYear, @LocationID, @ApplicationID,@UnitID,ISNULL(@Remark,''),
+   @SecondaryIssueQty,@SecondaryQty,@SecondaryUnit,@SecondaryUnitSize)       
+           
+ SELECT @StockIssueTransID = SCOPE_IDENTITY();      
+      
+ SELECT @Stock = dbo.FnGetAvailableStock(@ItemID, @BatchID, @BatchTypeID, @IssuePremisesID, @FinYear, @LocationID, @ApplicationID)       
+          
+ SELECT @IssueQty=dbo.FnConvertStockToInventoryUnit(@ItemID,@IssueQty,@UnitID);      
+      
+ SELECT @HoldOnStoreID = ConfigValue FROM configuration WHERE ConfigName LIKE 'DefaultHoldonStore' AND LocationID = @LocationID AND ApplicationID = @ApplicationID        
+          
+ Set @RetValue = 1    
+ Select   @FullyProcessed=IsProcessed,@RequiredQty=(SRT.RequiredQty-SRT.IssuedQty)    
+  FROM StockIssueTrans SIT     
+  INNER JOIN StockRequisitionTrans SRT ON SRT.ID = SIT.StockRequestTransID     
+  INNER JOIN StockRequisition SR ON SR.ID = SRT.StockRequisitionID    
+  WHERE SIT.StockIssueID = @StockIssueID and SRT.ItemID=@ItemID     
+    
+ IF @FullyProcessed = 1    
+ BEGIN    
+  SET @RetValue = -1    
+ END      
+    IF @IssueQty>@RequiredQty    
+ BEGIN    
+ SET @RetValue = -3    
+ END    
+    
+ IF @IsDraft = 0  --And @FullyProcessed<=0    
+ BEGIN      
+ Declare @SLARemarks varchar(100) = 'Stock Issue-'+CAST(@StockIssueID AS varchar(5))  
+  Declare @BatchPref varchar(100) = '',@Supplier int  
+  select @BatchPref = case when @BatchTypeID > 0 then case when (select LocationID from Batch where ID = @BatchID) = 1 then 1 else 2 end else -2 end  
+  Select @Supplier = @Supplier     
+  IF @Stock >= @IssueQty      
+  BEGIN       
+   exec SpStockUpdate @IssueDate ,'F',@ItemID,@BatchID,@IssuePremisesID ,0,@IssueQty,'StockIssue',@IssueLocationID,@FinYear,5,@ApplicationID,'Issues',1,@BatchTypeID,@IssueNo   
+   IF @FullyProcessed<=0   
+   BEGIN   
+   if @StockRequestTransID > 0 AND @StockRequestTransID is not null      
+   begin      
+    update StockRequisitionTrans set IssuedQty=IssuedQty + @IssueQty where ID=@StockRequestTransID      
+   end      
+   if(Select Count(*) from StockRequisitionTrans where StockRequisitionID = @StockRequestID and IssuedQty<RequiredQty ) = 0      
+   begin      
+    update StockRequisition set IsProcessed = 1 where ID = @StockRequestID        
+   end    
+   END    
+   if @IssueStateID  = @ReceiptStateID      
+   begin      
+    if(@TaxableAmount > 0)      
+    begin      
+  --   Insert into SLAMappingItem (TrnType,KeyValue,Remarks,Amount,TableName,MasterTableName,TransNo,TransID,CreatedDate,FinYear,LocationID,
+  --ApplicationID,SupplierID,CustomerID,Batch,DepartmentCategoryID,ItemID,IsApprovalPending,Quantity,Rate,TransLocationID  
+  --,     DepartmentID,EmployeeID,InterCompanyID,ProjectID)        
+  --   Select 'SIW_Approve','TaxableAmount','Stock Issue-'+CAST(@StockIssueID AS varchar(5)),@TaxableAmount,'StockIssueTrans','StockIssue',  
+  --@IssueNo,@StockIssueTransID      
+  --    ,CURRENT_TIMESTAMP,@FinYear, @LocationID, @ApplicationID,      
+  --    @Supplier      
+  --    ,-2,case when @BatchTypeID > 0 then case when (select LocationID from Batch where ID = @BatchID) = 1 then 1 else 2 end else -2 end,-2,  
+  -- @ItemID,0,@IssueQty,@Rate,@IssueLocationID,0,0,0,0      
+  --   from  Location L           
+  --   where L.ID = @IssueLocationID  
+  exec SpInsertSLAMappingItem 'SIW_Approve','TaxableAmount'  
+  ,@SLARemarks,@TaxableAmount,'StockIssueTrans','StockIssueTrans',  
+  @IssueNo,@StockIssueTransID,@FinYear ,@LocationID ,@ApplicationID ,@Supplier      
+  ,-2,@BatchPref,  
+  -2,@ItemID,0,@IssueQty,@Rate,0,0,0,0,0,0,0,0,0,0,0,@IssueDate,1  
+    end      
+          
+   end      
+   else      
+   begin      
+    if(@TaxableAmount > 0)      
+    begin      
+      --Insert into SLAMappingItem (TrnType,KeyValue,Remarks,Amount,TableName,MasterTableName,TransNo,TransID,CreatedDate,FinYear,LocationID,ApplicationID,SupplierID,CustomerID,Batch,DepartmentCategoryID,ItemID,IsApprovalPending,Quantity,Rate,  
+      --TransLocationID,      
+      --DepartmentID,EmployeeID,InterCompanyID,ProjectID)        
+      --Select 'SIO_Approve','TaxableAmount','Stock Issue-'+CAST(@StockIssueID AS varchar(5)),@TaxableAmount,'StockIssueTrans','StockIssue',@IssueNo,@StockIssueTransID      
+      -- ,CURRENT_TIMESTAMP,@FinYear, @LocationID, @ApplicationID,      
+      -- @Supplier,-2,      
+      -- case when @BatchTypeID > 0 then case when (select LocationID from Batch where ID = @BatchID) = 1 then 1 else 2 end else -2 end,-2,@ItemID,0,@IssueQty,@Rate,@IssueLocationID,0,0,0,0      
+      --from  Location L       
+      --where L.ID = @IssueLocationID       
+  
+   exec SpInsertSLAMappingItem 'SIO_Approve','TaxableAmount'  
+  ,@SLARemarks,@TaxableAmount,'StockIssueTrans','StockIssueTrans',  
+  @IssueNo,@StockIssueTransID,@FinYear ,@LocationID ,@ApplicationID ,@Supplier      
+  ,-2,@BatchPref,  
+  -2,@ItemID,0,@IssueQty,@Rate,0,0,0,0,0,0,0,0,0,0,0,@IssueDate,1  
+    end      
+    if @IGSTAmount > 0       
+    Begin      
+--     Insert into SLAMappingItem (TrnType,KeyValue,Remarks,Amount,TableName,MasterTableName,TransNo,TransID,CreatedDate,
+---    FinYear,LocationID,ApplicationID,SupplierID,CustomerID,Batch,DepartmentCategoryID,ItemID,IsApprovalPending,Quantity,Rate,TransLocationID  
+    
+--,      
+--     DepartmentID,EmployeeID,InterCompanyID,ProjectID)        
+--     Select 'SIO_Approve','GSTAmount','Stock Issue GST For-'+CAST(@StockIssueID AS varchar(5)),@IGSTAmount,'StockIssueTrans','StockIssue',@IssueNo,@StockIssueTransID      
+--       ,CURRENT_TIMESTAMP,@FinYear, @LocationID, @ApplicationID,-2,-2,-2,-2,@ItemID,0,0,0,@IssueLocationID,0,0,0,0      
+set @SLARemarks  = 'Stock Issue GST For-'+CAST(@StockIssueID AS varchar(5))  
+exec SpInsertSLAMappingItem 'SIO_Approve','GSTAmount'  
+  ,@SLARemarks,@IGSTAmount,'StockIssueTrans','StockIssueTrans',  
+  @IssueNo,@StockIssueTransID,@FinYear ,@LocationID ,@ApplicationID ,-2,-2,-2,  
+  -2,@ItemID,0,0,0,@IssueLocationID,0,0,0,0,0,0,0,0,0,0,@IssueDate,1  
+    End      
+   End      
+  END      
+  ELSE      
+  BEGIN      
+   SET @RetValue = -2;      
+  END      
+ END       
+ ELSE      
+ BEGIN      
+  IF @Stock >= @IssueQty      
+  BEGIN         
+   exec SpStockUpdate @IssueDate ,'F',@ItemID,@BatchID,@IssuePremisesID, 0, @IssueQty, 'StockIssueHold',@IssueLocationID,@FinYear,5,@ApplicationID,'Issues',1,@BatchTypeID,@IssueNo        
+   exec SpStockUpdate @IssueDate ,'F',@ItemID,@BatchID,@HoldOnStoreID, @IssueQty, 0, 'StockIssueHold',@IssueLocationID,@FinYear,5,@ApplicationID,'Receipts',1,@BatchTypeID,@IssueNo        
+  END      
+  ELSE      
+  BEGIN      
+   SET @RetValue = -2;      
+  END      
+ END      
+END      
+      

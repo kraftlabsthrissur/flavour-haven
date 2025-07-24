@@ -1,0 +1,33 @@
+ALTER PROCEDURE [Purchase].[SpCreatePurchaseRequisitionTrans]      
+(@PurchaseRequisitionID INT,      
+@ItemID INT,   
+@ItemCode VARCHAR(200),   
+@ItemName VARCHAR(200),   
+@PartsNumber VARCHAR(200), 
+@UnitName VARCHAR(100),  
+@SalesInquiryItemID INT,    
+@ItemTypeID INT,      
+@Quantity NUMERIC(18,2),      
+@OrderedQty NUMERIC(18,2),      
+@Stock NUMERIC(18,2),      
+@QtyUnderQC NUMERIC(18,2),      
+@Remarks VARCHAR(200),      
+@RequiredStatus VARCHAR(50),      
+@RequiredDate DATETIME,      
+@UnitID int,      
+@FinYear INT,      
+@LocationID INT,      
+@ApplicationID INT)      
+AS      
+BEGIN      
+SET NOCOUNT ON      
+ INSERT INTO PurchaseRequisitionTrans(PurchaseRequisitionID,ItemID,ItemCode,ItemName,PartsNumber,UnitName,ItemTypeID,Quantity,OrderedQty,Stock,QtyUnderQC,Remarks,      
+ RequiredStatus,RequiredDate,FinYear,LocationID,ApplicationID,UnitID,SalesInquiryItemID)      
+ VALUES (@PurchaseRequisitionID,@ItemID,@ItemCode,@ItemName,@PartsNumber,@UnitName,@ItemTypeID,@Quantity,@OrderedQty,@Stock,@QtyUnderQC,@Remarks,      
+ @RequiredStatus,@RequiredDate,@FinYear,@LocationID,@ApplicationID,@UnitID,@SalesInquiryItemID)      
+END      
+      
+  
+      
+      
+      

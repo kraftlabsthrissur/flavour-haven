@@ -1,0 +1,210 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Asset.Models.AssetCorrectionModel
+@{
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 48, media: 960 }">
+        <div class="heading_title">
+            <h1>@Asset.AssetCorrection</h1>
+            <span class="uk-text-upper uk-text-small">@Asset.CreateAssetCorrection</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSave'>" + Asset.Save + "</a>")
+            
+            @Html.ActionLink(Common.Close, "Index", "AssetCorrection", new { Area = "Asset" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a >@Common.Action</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                @Html.HiddenFor(m => m.ID)
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="left-block">
+                                    <div class="uk-form-row">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.CorrectionNumber</label>
+                                                @Html.TextBoxFor(m => m.CorrectionTransNumber, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.CorrectionDate</label>
+                                                @Html.TextBoxFor(m => m.CorrectionDateStr, new { @class = "md-input", @disabled = "disabled", @id = "CorrectionDate" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.AssetCode</label>
+                                                @Html.TextBoxFor(m => m.AssetCode, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.AssetUniqueNo</label>
+                                                @Html.TextBoxFor(m => m.AssetUniqueNo, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Asset.ItemName</label>
+                                                @Html.TextBoxFor(m => m.ItemName, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Asset.AssetName</label>
+                                                @Html.TextBoxFor(m => m.AssetName, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <div class="uk-autocomplete " id="debitaccountname-autocomplete">
+                                                    <label>@Asset.DebitACName </label>
+                                                    @Html.TextBoxFor(m => m.DebitACName, new { @class = "md-input " })
+                                                    <script type="text/autocomplete">
+                                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                            {{~items}}
+                                                            <li data-value="{{$item.DebitAccountName}}"
+                                                                data-id="{{$item.DebitAccountHeadID}}"
+                                                                data-number="{{$item.DebitAccountCode}}"
+                                                                data-name="{{ $item.DebitAccountName}}">
+                                                                <a>
+                                                                    {{$item.DebitAccountName}}
+                                                                </a>
+                                                            </li>
+                                                            {{/items}}
+                                                        </ul>
+                                                    </script>
+                                                </div>
+                                                @Html.HiddenFor(m=>m.DebitACID)
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Asset.DebitACCode</label>
+                                                <div class="uk-autocomplete " id="debitaccountnumber-autocomplete">
+                                                    @Html.TextBoxFor(m => m.DebitACCode, new { @class = "md-input"})
+                                                    <script type="text/autocomplete">
+                                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                            {{~items}}
+                                                            <li data-value="{{ $item.DebitAccountCode}}"
+                                                                data-id="{{$item.DebitAccountHeadID}}"
+                                                                data-number="{{$item.DebitAccountCode}}"
+                                                                data-name="{{$item.DebitAccountName}}">
+                                                                <a>
+                                                                    {{$item.DebitAccountCode}}
+                                                                </a>
+                                                            </li>
+                                                            {{/items}}
+                                                        </ul>
+                                                    </script>
+                                                </div>
+
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <div class="uk-autocomplete " id="creditaccountname-autocomplete">
+                                                    <label>@Asset.CreditACName</label>
+                                                    @Html.TextBoxFor(m => m.CreditACName, new { @class = "md-input" })
+                                                    <script type="text/autocomplete">
+                                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                            {{~items}}
+                                                            <li data-value="{{$item.CreditAccountName}}"
+                                                                data-id="{{$item.CreditAccountHeadID}}"
+                                                                data-number="{{$item.CreditAccountCode}}"
+                                                                data-name="{{ $item.CreditAccountName}}">
+                                                                <a>
+                                                                    {{$item.CreditAccountName}}
+                                                                </a>
+                                                            </li>
+                                                            {{/items}}
+                                                        </ul>
+                                                    </script>
+                                                </div>
+                                            </div>
+                                            @Html.HiddenFor(m=>m.CreditACID)
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Asset.CreditACCode</label>
+                                                <div class="uk-autocomplete " id="creditaccountnumber-autocomplete">
+                                                    @Html.TextBoxFor(m => m.CreditACCode, new { @class = "md-input" })
+                                                    <script type="text/autocomplete">
+                                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                            {{~items}}
+                                                            <li data-value="{{ $item.CreditAccountCode}}"
+                                                                data-id="{{$item.CreditAccountHeadID}}"
+                                                                data-number="{{$item.CreditAccountCode}}"
+                                                                data-name="{{$item.CreditAccountName}}">
+                                                                <a>
+                                                                    {{$item.CreditAccountCode}}
+                                                                </a>
+                                                            </li>
+                                                            {{/items}}
+                                                        </ul>
+                                                    </script>
+                                                </div>
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Asset.Remark</label>
+                                                @Html.TextBoxFor(m => m.Remark, new { @class = "md-input" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.AccountCategory</label>
+                                                @Html.TextBoxFor(m => m.ItemAccountCategory, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.AssetValue</label>
+                                                @Html.TextBoxFor(m => m.AssetValue, new { @class = "md-input mask-qty", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.AmountValue</label>
+                                                @Html.TextBoxFor(m => m.AmountValue, new { @class = "md-input mask-qty" })
+                                            </div>
+
+                                            @*@Html.HiddenFor(M => M.AssetValue)*@
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.AdditionDuringYear</label>
+                                                <div>
+                                                    <div class="uk-grid" data-uk-grid-margin>
+
+                                                        <div class="uk-width-medium-2-4">
+                                                            <input type="radio" name="IsAdditionDuringYear" class="IsAdditionDuringYear" data-md-icheck checked="" value="1" /> @Html.Label("Yes")
+                                                        </div>
+                                                        <div class="uk-width-medium-2-4">
+                                                            <input type="radio" name="IsAdditionDuringYear" class="IsAdditionDuringYear" data-md-icheck value="0" /> @Html.Label("No")
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.DepreciationForYear</label>
+                                                <div>
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-2-4">
+                                                            <input type="radio" name="IsDepreciation" class="IsDepreciation" data-md-icheck checked="" value="1" /> @Html.Label("Yes")
+                                                        </div>
+                                                        <div class="uk-width-medium-2-4">
+                                                            <input type="radio" name="IsDepreciation" class="IsDepreciation" data-md-icheck value="0" /> @Html.Label("No")
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @*<div class="uk-width-medium-1-8">
+                                                    <label>@Asset.AssetSubLedger</label>
+                                                    @Html.TextBoxFor(m => m.AssetSubLedger, new { @class = "md-input", @disabled = "disabled" })
+                                                </div>*@
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/Correction")
+<script type="text/javascript">
+    correction.init();
+</script>
+
+
+

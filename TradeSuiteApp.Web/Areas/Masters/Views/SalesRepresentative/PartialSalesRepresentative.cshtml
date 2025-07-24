@@ -1,0 +1,81 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.SalesRepresentativeModel
+@{
+    ViewBag.Title = "AddSalesRepresentative";
+}
+<div class="uk-modal" id="add-sales-representative" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">@Masters.CreateSalesRepresentatives<i class="material-icons"></i></h3>
+        </div>
+        <br />
+        <div class="uk-modal-content">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-1-2">
+                        <div class="uk-autocomplete " id="employee-autocomplete">
+                            <div class="uk-input-group">
+                                <label for="uk_dp_start">@Masters.FSOName</label>
+                            @Html.TextBoxFor(m => m.FSOName, new { @class = "md-input label-fixed" })
+                            <span class="uk-input-group-addon">
+                                <a data-uk-modal="{target:'#select-employee',center:false}">
+                                    <i class="uk-input-group-icon uk-icon-search"></i>
+                                </a>
+                            </span>
+                            <script type="text/autocomplete">
+                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                    {{~items}}
+                                    <li data-value="{{ $item.Name}}"
+                                        data-id="{{$item.ID}}"
+                                        data-EmployeeCode="{{$item.Code}}"
+                                        data-DesignationID="{{$item.DesignationID}}"
+                                        data-Designation="{{$item.Designation}}"
+                                        data-placement="{{$item.Location}}">
+                                        <a>
+                                            {{ $item.Name }}
+                                            <div>{{ $item.Code }}</div>
+                                        </a>
+                                    </li>
+                                    {{/items}}
+                                </ul>
+                            </script>
+                        </div>
+                    </div>
+                        </div>
+                    <div class="uk-width-medium-1-4">
+                        <label>@Masters.Designation</label>
+                        @Html.TextBoxFor(m => m.Designation, new { @class = "md-input label-fixed" })
+                        @Html.HiddenFor(m => m.DesignationID)
+                    </div>
+                    <div class="uk-width-medium-1-4">
+                        <label for="uk_dp_start">@Masters.SalesIncentiveCategory</label>
+                        @Html.DropDownListFor(Model => Model.SalesIncentiveCategoryID, Model.SalesCategoryList, "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-1-4 uk-hidden area-dropdown">
+                        <label for="uk_dp_start">@Masters.Area</label>
+                        @Html.DropDownListFor(Model => Model.AreaID, Model.AreaList, "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-1-4 uk-hidden area-textbox">
+                        <label for="uk_dp_start">@Masters.Area</label>
+                        @Html.TextBoxFor(m => m.Area, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                    </div>
+                    <div class="uk-width-medium-1-5 item-align-icheck uk-hidden IsSubLevel-checkbox"> 
+                        <div class="uk-grid" data-uk-grid-margin>
+                            <label>&nbsp;</label>
+                        </div>
+                        <input type="checkbox" class="icheckbox IsSubLevel"  @(Convert.ToBoolean(Model.IsSubLevel) == true ? "checked='checked'" : string.Empty) data-md-icheck />&nbsp;@Html.Label("Is SubLevel")
+                    </div>
+                    @Html.HiddenFor(Model => Model.ParentID)
+                    @Html.HiddenFor(Model => Model.ID)
+                    @Html.HiddenFor(Model => Model.EmployeeID)
+                </div>
+            </div>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <input type="hidden" id="ID" />
+            <input type="hidden" id="ParentID" />
+            <input type="hidden" id="Level" />
+            <button type="button" class="md-btn md-btn-primary" id="btnAdd">@Common.Save</button>
+            <button type="button" class="md-btn  uk-modal-close">@Common.Close</button>
+        </div>
+    </div>
+</div>

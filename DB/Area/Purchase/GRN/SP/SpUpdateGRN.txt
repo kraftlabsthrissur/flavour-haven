@@ -1,0 +1,58 @@
+    
+ALTER procedure [Purchase].[SpUpdateGRN]        
+(    
+@GRNID int,      
+@GrnDate DATETIME,        
+@SupplierID INT,        
+@ReceiptDate DATETIME,        
+@DeliveryChallanNo VARCHAR(20),        
+@DeliveryChallanDate DATETIME,        
+@WarehouseID INT,        
+@PurchaseCompleted BIT,         
+@CreatedUserID INT,   
+@IGSTAmt numeric(18,2),  
+@SGSTAmt numeric(18,2),  
+@CGSTAmt numeric(18,2),  
+@RoundOff numeric(18,2),  
+@DiscountAmt numeric(18,2),  
+@GrossAmt numeric(18,2),  
+@VATAmount numeric(18,2),
+@SuppDocAmount numeric(18,2),
+@SuppOtherCharge numeric(18,2),
+@SuppShipAmount numeric(18,2),  
+@NetAmount numeric(18,2),  
+@FinYear INT,        
+@LocationID INT,        
+@ApplicationID INT,        
+@IsDraft BIT    
+)        
+AS        
+BEGIN     
+DECLARE @SerialNo Varchar(20)  
+SELECT @SerialNo = Code FROM GoodsReceiptNote WHERE ID = @GRNID  
+IF (@IsDraft = 0)    
+ BEGIN  
+  exec Common.SpUpdateSerialNo 'GRN','Code',@FinYear,@LocationID ,@ApplicationID,@SerialNo = @SerialNo OUT  
+  
+  SET @GrnDate = (select DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0))  
+    
+ END   
+  EXEC SpLogChange 'GoodsReceiptNote','ID',@GRNID,@CreatedUserID,@LocationID,@ApplicationID  
+  
+  EXEC SpLogChange 'GoodsReceiptNoteTrans','GoodsReceiptNoteID',@GRNID,@CreatedUserID,@LocationID,@ApplicationID  
+  
+  UPDATE GoodsReceiptNote SET Code= @SerialNo,Date = @GrnDate,SupplierID = @SupplierID,ReceiptDate = @ReceiptDate,    
+        DeliveryChallanNo = @DeliveryChallanNo,DeliveryChallanDate = @DeliveryChallanDate,WarehouseID = @WarehouseID,    
+        PurchaseCompleted = @PurchaseCompleted,CreatedUserID = @CreatedUserID,CreatedDate = current_timestamp,  
+        FinYear = @FinYear,LocationID = @LocationID,ApplicationID =@ApplicationID,IsDraft = @IsDraft    ,  
+  IGSTAmt=@IGSTAmt,SGSTAmt=@SGSTAmt,CGSTAmt=@CGSTAmt,RoundOff=@RoundOff,DiscountAmount=@DiscountAmt,GrossAmount=@GrossAmt,
+  VATAmount=@VATAmount,SuppDocAmount=@SuppDocAmount,SuppOtherCharge=@SuppOtherCharge,SuppShipAmount=@SuppShipAmount,@NetAmount=NetAmount   
+  WHERE ID = @GRNID and FinYear = @FinYear and LocationID = @LocationID and ApplicationID = @ApplicationID    
+   
+  update PT set PT.QtyMet=(PT.QtyMet-GRNT.ReceivedQty) from PurchaseOrderTrans Pt  
+  Inner join GoodsReceiptNoteTrans GRNT on GRNT.POTransID=PT.ID   
+  where GRNT.GoodsReceiptNoteID=@GRNID  
+      
+ DELETE FROM GoodsReceiptNoteTrans where GoodsReceiptNoteID = @GRNID      
+     
+END 

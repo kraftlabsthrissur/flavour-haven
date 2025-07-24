@@ -1,0 +1,36 @@
+                      
+                      
+ALTER PROCEDURE [Master].[SpGetItemDetail]                      
+(@ID INT)                      
+AS                      
+BEGIN                      
+ SET NOCOUNT ON;                      
+SELECT I.ID,I.Code,I.Name,ISNULL(C.Name,'')CategoryName,ISNULL(I.CategoryID,0)CategoryID,ISNULL(I.SanskritName,'') SanskritName,ISNULL(I.MalayalamName,'') MalayalamName,ISNULL(I.Description,'') Description,ISNULL(PC.Name,'') PartsClass,                
+ISNULL(I.PurchaseCategoryID,0)PurchaseCategoryID,ISNULL(BC.Name,'') PartsGroup,ISNULL(I.businessCategoryID,0)businessCategoryID,ISNULL(UG.Name,'')UOMGroup,ISNULL(I.UnitGroupID,0)UnitGroupID,ISNULL(IU.Name,'') InventoryUOM,                
+ISNULL(I.InventoryUnitID,0)InventoryUnitID,ISNULL(PU.Name,'')PurchaseUOM,ISNULL(I.PurchaseUnitID,0)PurchaseUnitID,ISNULL(SU.Name,'') SalesUOM,ISNULL(I.SalesUnitID,0)SalesUnitID,ISNULL(LU.Name,'') LooseUnit,                
+ISNULL(I.LooseUnitID,0)LooseUnitID,ISNULL(I.ConversionFactorPurchaseToInventory,0)ConversionFactorPurchaseToInventory,ISNULL(I.ConversionFactorPurchaseToLoose,0) ConversionFactorPurchaseToLoose,                
+ISNULL(I.ConversionFactorSalesToInventory,0) ConversionFactorSalesToInventory,ISNULL(I.ConversionFactorLooseToSales,0) ConversionFactorLooseToSales    
+,ISNULL(I.IsDisContinued,0)IsDisContinued,ISNULL(I.IsActive,0)IsActive,ISNULL(I.IsStockValue,0)IsStockValue,ISNULL(I.IsSaleable,0)IsSaleable,    
+(select TOP 1 b.CostPrice from Batch b WHERE b.ItemID=I.ID ORDER BY CreatedDate DESC)CostPrice,(select TOP 1 b.PurchaseMRP from Batch b WHERE b.ItemID=I.ID ORDER BY CreatedDate DESC)PurchasePrice,                
+(select TOP 1 b.RetailMRP from Batch b WHERE b.ItemID=I.ID ORDER BY CreatedDate DESC)SalesPrice,(select TOP 1 b.RetailLooseRate from Batch b WHERE b.ItemID=I.ID ORDER BY CreatedDate DESC)LoosePrice,                
+(select TOP 1 b.LandedCost from Batch b WHERE b.ItemID=I.ID ORDER BY CreatedDate DESC)LandedCost,ISNULL(I.ReOrderLevelName,'') ReOrderLevelName,ISNULL(I.ReOrderLevel,0) ReOrderLevelQty,
+ISNULL(I.ReOrderQty,0) ReOrderQty,ISNULL(I.ItemLength,0) ItemLength,ISNULL(LenU.Name,'')LengthUOM,ISNULL(I.LengthUOMID,0)LengthUOMID,ISNULL(I.ItemWidth,0)ItemWidth,                
+ISNULL(WidU.Name,'')WidthUOM,ISNULL(I.WidthUOMID,0)WidthUOMID,ISNULL(I.ItemHight,0) ItemHight,ISNULL(HtU.Name,'') HightUOM,ISNULL(I.HightUOMID,0)HightUOMID,ISNULL(I.NetWeight,0) NetWeight,                
+ISNULL(WtU.Name,'') NetWeightUOM,ISNULL(I.NetWeightUOMID,0)NetWeightUOMID,ISNULL(I.InnerDiameter,0) InnerDiameter,ISNULL(I.OuterDiameter,0) OuterDiameter,ISNULL(B.Name,'') BuyerName,                
+ISNULL(I.BuyerID,0)BuyerID,ISNULL(I.SupplierPartCode,'') SupplierPartCode,ISNULL(I.OEMCode,'') OEMCode,ISNULL(OeMC.Name,'') OEMCountryName,I.OEMCountryID,ISNULL(I.ABCCode,'') ABCCode,                
+(Select TOP 1 AB.ID from ABCCode AB WHERE AB.Code=I.ABCCode)ABCCodeID,ISNULL(I.HSNCode,'') HSNCode,ISNULL(I.EANCode,'') EANCode,ISNULL(I.BarCode,'') BarCode,ISNULL(CM.Name,'')CostingMethod,                
+ISNULL(I.CostingMethodID,0)CostingMethodID,ISNULL(SUPP.Name,'') SupplierName,I.SupplierID,ISNULL(I.BudgetQuantity,0) BudgetQuantity,ISNULL(I.Make,'') Make,ISNULL(I.Model,'') Model,  
+ISNULL(I.ItemImagePath1,'') ItemImagePath1,ISNULL(I.ItemImagePath2,'') ItemImagePath2,ISNULL(I.ItemImagePath3,'') ItemImagePath3,ISNULL(I.ItemImagePath4,'') ItemImagePath4,  
+ISNULL(I.ItemImagePath5,'') ItemImagePath5,ISNULL(I.ItemImagePath6,'') ItemImagePath6,ISNULL(I.ItemImagePath7,'') ItemImagePath7,ISNULL(I.ItemImagePath8,'') ItemImagePath8,
+ISNULL(I.DiscountPercentage ,0) DiscountPercentage,ISNULL(I.DisplayPercentage ,0) DisplayPercentage,ISNULL(I.cross_reference ,'') cross_reference,ISNULL(I.BrandID ,0) BrandID
+from Item I    
+inner join Category C on C.ID=I.CategoryID  left join Category PC on PC.ID=I.PurchaseCategoryID                      
+left join Category BC on BC.ID=I.businessCategoryID left join UnitGroup UG on UG.ID=I.UnitGroupID                      
+left join Unit IU on IU.ID=I.InventoryUnitID  left join Unit SU on SU.ID=I.SalesUnitID                      
+left join Unit PU on PU.ID=I.PurchaseUnitID  left join Unit LU on LU.ID=I.LooseUnitID                      
+left join CostingMethod CM on CM.ID=I.costingMethodID  left join Unit LenU on LenU.ID=I.LengthUOMID                      
+left join Unit WidU on WidU.ID=I.WidthUOMID  left join Unit HtU on HtU.ID=I.HightUOMID                      
+left join Unit WtU on WtU.ID=I.NetWeightUOMID  Left join Buyer B on B.ID=I.BuyerID                    
+Left join Country OeMC on OeMC.ID=I.OEMCountryID Left join Supplier SUPP on SUPP.ID=I.SupplierID                 
+WHERE I.ID =@ID                      
+END 

@@ -1,0 +1,154 @@
+﻿@model IEnumerable<TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel>
+@{
+    ViewBag.Title = "Index";
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.Patient</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.PatientList</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Create", Html.ActionLink(Common.Create, "Create", "InternationalPatient", new { Area = "Masters" }, new { @class = "md-btn" }))
+
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="list-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <ul class="uk-tab patient" data-uk-tab="{connect:'#tabs-patientlist-content',animation:'slide-horizontal'}" id="tabs-patientlist">
+                    <li class="patients uk-active" data-tab="Patient"><a>@AHCMS.Patient</a></li>
+                    <li class="history uk-hidden" data-tab="History"><a class="history uk-hidden">@AHCMS.History</a></li>
+                </ul>
+                <ul id="tabs-patientlist-content" class="uk-switcher uk-margin">
+                    <li class="patients">
+                        <table class="uk-table" id="patient-list" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th class="width-30">
+                                        @Masters.HIN
+                                    </th>
+                                    <th>
+                                        @Masters.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @Masters.Phone
+                                    </th>
+                                    <th class="width-20"></th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-30">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th class="width-30">
+                                        @Masters.HIN
+                                    </th>
+                                    <th>
+                                        @Masters.Patient
+                                    </th>
+                                    <th class="width-60">
+                                        @Masters.Phone
+                                    </th>
+                                    <th class="width-20"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    <li class="history">
+                        <div class="section-group">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="">
+                                    <div class="uk-grid uk-grid-collapse" data-uk-grid-margin data-uk-grid-match="{target:'.md-card'}">
+                                        <div class="container md-bg-grey-50" style="margin:10px; padding:10px;border-radius:4px; height:400px; width:230px">
+                                            <table id="tblhistorylist">
+                                                <thead>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                        <div class="uk-width-medium-8-10">
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin="">
+                                                    <div id="history-list" class="uk-form-row">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+    @*<div id="page_content_inner" class="list-view">
+            <div class="md-card uk-margin-medium-bottom">
+                <div class="md-card-content">
+
+                    <table id="patient-list" class="uk-table" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="width-30">
+                                    @Common.SerialNo
+                                </th>
+                                <th class="uk-width-medium-1-8">
+                                    @Masters.HIN
+                                </th>
+                                <th>
+                                    @Masters.Patient
+                                </th>
+                                <th class="uk-width-medium-1-8">
+                                    @Masters.Phone
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <thead class="search">
+                            <tr>
+                                <th>
+                                    @Common.SerialNo
+                                </th>
+                                <th>
+                                    @Masters.HIN
+                                </th>
+                                <th>
+                                    @Masters.Patient
+                                </th>
+                                <th>
+                                    @Masters.Phone
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>*@
+</div>
+@Scripts.Render("~/Js/Page/InternationalPatient")
+<script type="text/javascript">
+    InternationalPatient.list();
+</script>
+
+
+
+

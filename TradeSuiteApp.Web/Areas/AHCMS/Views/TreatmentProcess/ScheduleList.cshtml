@@ -1,0 +1,67 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.TreatmentScheduleModel
+
+@if (Model.Items != null)
+{
+    foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+            </td>
+            @if ((item.value.Status == "Completed") || (item.value.Status == "Paused") || (item.value.Status == "Cancelled"))
+            {
+                <td class="uk-text-center"><input type="checkbox" name="items" data-md-icheck class="md-input check-box" disabled="disabled" /></td>
+            }
+            else
+            {
+                <td class="uk-text-center"><input type="checkbox" name="items" data-md-icheck class="md-input check-box " /></td>
+            }
+            
+            <td>
+                <input type="hidden" class="PatientID" value="@item.value.PatientID" />
+                <input type="hidden" class="TreatmentScheduleItemID" value="@item.value.TreatmentScheduleItemID" />
+                <input type="hidden" class="AppointmentProcessID" value="@item.value.AppointmentProcessID" />
+                <input type="hidden" class="TreatmentNo" value="@item.value.NoOfTreatment" />
+                <input type="hidden" class="TreatmentProcessID" value="@item.value.TreatmentProcessID" />
+                @item.value.PatientName
+            </td>
+            <td>
+                <input type="hidden" class="DoctorID" value="@item.value.DoctorID" />
+                @item.value.DoctorName
+            </td>
+            <td>
+                <input type="hidden" class="TreatmentID" value="@item.value.TreatmentID" />
+                @item.value.TreatmentName
+            </td>
+            <td class="NoOfTreatment">
+                @item.value.TotalTreatmentNo
+            </td>
+            <td>
+               @item.value.NoOfTreatment/@item.value.TotalTreatmentNo
+            </td>
+            <td>
+                <input type="hidden" class="TreatmentRoomID" value="@item.value.TreatmentRoomID" />
+                @item.value.TreatmentRoom
+            </td>
+            <td class="action">
+                <input type="text" value="@item.value.StartTime" class="md-input StartTime label-fixed  time15" disabled />
+            </td>
+            <td class="EndTime">
+                @item.value.EndTime
+            </td>
+            <td class="action">
+                @Html.DropDownListFor(m => item.value.DurationID, new SelectList(item.value.DurationList, "value", "text", item.value.DurationID), "Select", new { @class = "md-input label-fixed DurationID", @disabled = "disabled" })
+            </td>
+            <td class="action">
+                <input type="hidden" class="TherapistID" value="@item.value.TherapistID" />
+                @item.value.TherapistName
+            </td>
+            <td class="action">
+                 @Html.DropDownListFor(m => item.value.StatusID, new SelectList(item.value.TreatmentStatusList,"value","text", item.value.StatusID), "Select", new { @class = "md-input label-fixed TreatmentStatus", @disabled = "disabled" })
+            </td>
+            <td>
+                <input type="text" class="md-input label-fixed remarks" disabled/>
+            </td>
+        </tr>
+    }
+}

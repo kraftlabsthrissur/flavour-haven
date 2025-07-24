@@ -1,0 +1,38 @@
+﻿@model IEnumerable<TradeSuiteApp.Web.Areas.Manufacturing.Models.ProductionScheduleViewModel>
+@{
+    Layout = null;
+}
+@if (Model != null && Model.Count() > 0)
+{
+    foreach (var item in Model.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => (item.i))
+                @Html.HiddenFor(a => item.value.ID, new { @class = "ID" })
+            </td>
+            <td >
+                <input type="radio" class="md-input" value="@item.value.ID" name="ProductionScheduleID" data-md-icheck  />
+                <input type="hidden" class="BatchID" value="@item.value.BatchID" name="BatchID"  />
+            </td>
+            <td class="Name">
+                @Html.DisplayFor(modelItem => item.value.TransNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.value.TransDateStr)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.value.ProductionGroupName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.value.ProductionStartDateStr)
+            </td>
+            <td class="BatchNo">
+                @Html.DisplayFor(modelItem => item.value.BatchNo)
+            </td>
+            <td class="ActualBatchSize mask-production-qty">
+                @Html.DisplayFor(modelItem => item.value.ActualBatchSize)
+            </td>
+        </tr>
+    }
+}

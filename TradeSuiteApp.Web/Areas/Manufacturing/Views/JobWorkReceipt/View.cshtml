@@ -1,0 +1,111 @@
+﻿@model TradeSuiteApp.Web.Areas.Manufacturing.Models.JobWorkReceiptViewModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Manufacturing.TransNo</label>
+                            @Html.TextBoxFor(model => model.TransNo, new { @class = "md-input label-fixed", @readonly = "readonly", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Manufacturing.TransDate</label>
+                            @Html.TextBoxFor(model => model.TransDate, new { @class = "md-input label-fixed", @readonly = "readonly", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                                    <label>@Manufacturing.Supplier<span>*</span></label>
+                                    @Html.TextBoxFor(model => model.Supplier, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                </div>
+                        <div class="uk-width-medium-2-8">
+                                    <label>@Manufacturing.Issued<span>*</span></label>
+                            @Html.TextBoxFor(model => model.IssueNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-5-10">
+                <h3>Issued Items</h3>
+                <table id="JobWork-Issue-item-list" class="uk-table" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="width-10">@Common.SerialNo</th>
+                            <th>@Manufacturing.IssuedItem</th>
+                            <th class="width-30">@Manufacturing.UOM</th>
+                            <th class="width-80">@Manufacturing.IssuedQty</th>
+                            <th class="width-80">@Manufacturing.IssueDate</th>
+                            <th class="width-80">@Manufacturing.PendingQuantity</th>
+                            <th class="width-30">@Manufacturing.IsCompleted</th>
+
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.IssuedItems)
+                        {
+                            <tr>
+                                <td class="uk-text-center">@(1 + @Model.IssuedItems.IndexOf(item))</td>
+                                <td>@item.IssuedItem</td>
+                                <td class="width-30">@item.IssuedUnit</td>
+                                <td class="width-80"><input type="text" class="md-input mask-production-qty issue-qty" value= @item.IssuedQty readonly  disabled = "disabled" /></td>
+                                <td class="width-80">@Model.IssueDate</td>
+                                <td class="width-80"><input type="text" class="md-input mask-production-qty pending-qty" value= @item.PendingQuantity  disabled = "disabled"/></td>
+                                @if (@item.IsCompleted == true)
+                                {
+                                    <td class="width-30 uk-text-center"><input type="checkbox" name="items" data-md-icheck  checked  class="md-input check-box" disabled = "disabled"/></td>
+                                }
+                                else
+                                {
+                                    <td class="width-30 uk-text-center"><input type="checkbox" name="items" data-md-icheck  class="md-input check-box" disabled = "disabled" /></td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @Html.Hidden("IssueTableLength")
+            </div>
+            <div class="uk-width-medium-5-10">
+                <h3>Receipt Items</h3>
+                <table id="JobWork-receipt-items-list" class="uk-table" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="width-10">@Common.SerialNo</th>
+                            <th>@Manufacturing.ReceiptItem</th>
+                            <th class="width-60">@Manufacturing.UOM</th>
+                            <th class="width-80">@Manufacturing.ReceiptQty</th>
+                            <th class="width-100">@Manufacturing.RecieptDate</th>
+                          
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ReceiptItems)
+                        {
+                            <tr>
+                                <td class="uk-text-center">@(1 + @Model.ReceiptItems.IndexOf(item))</td>
+                                <td>@item.ReceiptItemName</td>
+                                <td class="width-30">@item.ReceiptUnit</td>
+                                <td class="width-80"><input type="text" class="md-input mask-production-qty receipt-qty" value=@item.ReceiptQty readonly disabled="disabled" /></td>
+                                <td class="width-80">@item.ReceiptDate</td>
+                               
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @Html.Hidden("ReceiptTableLength")
+            </div>
+        </div>
+    </div>
+</div>

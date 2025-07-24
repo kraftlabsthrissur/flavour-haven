@@ -1,0 +1,49 @@
+﻿@model List<BusinessObject.UnSettledPurchaseInoviceBO>
+@{
+    double totalInvoiceAmount = double.Parse(Model != null ? Model.Sum(x => x.InvoiceAmount).ToString() : "0");
+    double totalBalance = double.Parse(Model != null ? Model.Sum(x => x.AmountToBePaid).ToString() : "0");
+
+}
+<table id="tblUnSettledPurchaseInvoice" class="uk-table" cellspacing="0">
+    <thead>
+        <tr>
+            <th class="width-10">@Common.SerialNo</th>
+            <th class="width-40">@Accounts.InvoiceNo</th>
+            <th class="width-40">@Accounts.InvoiceDate</th>
+            <th class="width-40">@Accounts.Amount</th>
+            <th class="width-40">@Accounts.InvoicePending</th>
+            <th class="width-40">@Accounts.AmountToBePaid</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count > 0)
+        {
+            int dynVal = 1;
+            foreach (var item in Model.Select((value, i) => new { i = i + 1, value }))
+            {
+                     dynVal = 1;
+                <tr>                    
+                    <td class="uk-text-center">@item.i
+                        <input type="hidden" class="hdnPayableID" value="@item.value.PayableID" />       <!--Currently ID not given. Instead of 0, need to get the actual ID-->
+                        <input type="hidden" class="hdnType" value="@item.value.Description" />
+                    </td>
+                    <td>@item.value.Description</td>
+                    <td>@item.value.SupplierName</td>
+                    <td class="date">@item.value.CreatedDate.ToString("dd-MM-yyyy")</td>
+                    <td class="uk-text-right invoiceAmt">@item.value.InvoiceAmount </td>
+                    <td class="uk-text-right balance">@item.value.AmountToBePaid</td>
+                    <td class="uk-text-right"><input type="text" class="md-input label-fixed uk-text-right txtAmtToPaid decimalnum" processvalue="@dynVal" /></td>
+                </tr>
+            }
+
+        }
+        <tr>
+            <td><b>TOTAL</b></td>
+            <td class="uk-text-right"></td>
+            <td class="uk-text-right"></td>
+            <td class="uk-text-right" id="TotalInvoiceAmt">@totalInvoiceAmount</td>
+            <td class="uk-text-right" id="TotBalance">@totalBalance</td>
+            <td class="uk-text-right" id="TotAmtToPaid">0</td>
+        </tr>
+    </tbody>
+</table>

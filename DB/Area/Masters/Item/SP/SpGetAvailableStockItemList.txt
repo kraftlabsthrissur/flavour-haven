@@ -1,0 +1,89 @@
+ALTER PROCEDURE [Master].[SpGetAvailableStockItemList](    
+ @ItemCategoryID int,    
+ @WareHouseID int,    
+ @BatchTypeID int,    
+ @CodeHint varchar(100),    
+ @NameHint varchar(100),    
+ @ItemCategoryHint varchar(100),    
+ @PartsNoHint varchar(100),    
+ @MakeHint varchar(100),    
+ @ModelHint varchar(100),    
+ @SortField varchar(100),    
+ @SortOrder varchar(10),    
+ @Offset int = 0,    
+ @Limit int = 20,    
+ @FinYear int,    
+ @LocationID int,    
+ @ApplicationID int)    
+AS    
+    
+BEGIN    
+     
+ DECLARE @LocationHeadID int, @BatchTypeName varchar(10) = '' , @BasePriceListID int    
+ SELECT @LocationHeadID = LocationHeadID FROM Location WHERE ID = @LocationID      
+ SELECT @BasePriceListID = ID FROM BasePriceList WHERE IsActive = 1     
+    
+ IF @ItemCategoryID = 0    
+ BEGIN     
+  SET @ItemCategoryID = NULL    
+ END    
+    
+ IF @BatchTypeID = 0    
+ BEGIN     
+  SET @BatchTypeID = NULL    
+ END    
+    
+ Set @Offset = @Offset + 1    
+ Declare @totalRecords int = 0;    
+     
+ SELECT @totalRecords = COUNT(*) FROM (SELECT count(*) C FROM item  I    
+  INNER JOIN Stock S ON S.ItemID = I.ID AND ExpiryDate > CURRENT_TIMESTAMP    
+  WHERE I.IsStockvalue = 1     
+  AND CategoryID = ISNULL(@ItemCategoryID,CategoryID)    
+  AND WareHouseID = ISNULL(@WareHouseID,WareHouseID)    
+  AND S.BatchTypeID = case when I.CategoryID = 222 then  ISNULL(@BatchTypeID,S.BatchTypeID) else S.BatchTypeID end    
+  GROUP BY i.Id, S.BatchTypeID    
+  HAVING SUM(Value) > 0 ) A    
+    
+ ;WITH Item_CTE AS    
+ (    
+  SELECT top 10000  Count(*) OVER (Partition by 1) AS recordsFiltered,    
+   I.ID, I.Code, LTRIM(RTRIM(I.Name)) as Name,I.Description PartsNo,I.Make,I.Model, I.Category, SalesCategory, UnitID as PrimaryUnitID,  
+   Unit as PrimaryUnit,CGSTPercent, IGSTPercent, SGSTPercent,@BatchTypeID b, S.BatchTypeID, ISNULL(BT.Name,'') BatchTypeName,    
+   SUM(Value) Stock, I.InventoryUnit,I.InventoryUnitID, ISNULL(PD.MRP, ISNULL(IC.TransferPrice,0)) as Rate,    
+   ROW_NUMBER() OVER ( ORDER BY case when @SortField+@SortOrder = 'NameASC' then I.Name End ASC,    
+   case when @SortField+@SortOrder = 'NameDESC' then I.Name End DESC,    
+   case when @SortField+@SortOrder = 'ItemCategoryASC' then I.Category End ASC,    
+   case when @SortField+@SortOrder = 'ItemCategoryDESC' then I.Category End DESC,    
+   case when @SortField+@SortOrder = 'SalesCategoryASC' then I.SalesCategory End ASC,    
+   case when @SortField+@SortOrder = 'SalesCategoryDESC' then I.SalesCategory End DESC,    
+   case when @SortField+@SortOrder = 'CodeASC' then I.Code End ASC,    
+   case when @SortField+@SortOrder = 'CodeDESC' then I.Code End DESC) AS RowNum    
+  FROM viItem I    
+  INNER JOIN Stock S ON S.ItemID = I.ID AND ExpiryDate > CURRENT_TIMESTAMP    
+  LEFT JOIN BatchType BT ON BT.ID = S.BatchTypeID     
+  LEFT JOIN PriceListDetails PD ON  PD.BasePriceListID = @BasePriceListID AND PD.PriceListID = S.BatchTypeID AND PD.ItemID = I.ID    
+  LEFT join ItemwiseCostHistory IC on IC.ItemID= I.ID AND IC.IsActive = 1 AND IC.LocationHeadID = @LocationHeadID    
+  WHERE  IsStockvalue = 1     
+  AND (@ItemCategoryID is NULL OR I.CategoryID = @ItemCategoryID)  
+  AND (@WareHouseID IS NULL OR S.WareHouseID = @WareHouseID )   
+  AND (@BatchTypeID IS NULL OR S.BatchTypeID = case when I.CategoryID = 222 then  @BatchTypeID else S.BatchTypeID end )   
+  AND (@NameHint IS NULL OR I.Name Like '%' + @NameHint+'%')     
+  AND (@CodeHint IS NULL OR I.Code Like '%' + @CodeHint+'%')     
+  AND (@ItemCategoryHint IS NULL OR I.Category Like '%' + @ItemCategoryHint+'%')     
+  AND (@PartsNoHint IS NULL OR I.Description Like '%' + @PartsNoHint+'%')     
+  AND (@MakeHint IS NULL OR I.Make Like '%' + @MakeHint+'%')     
+  AND (@ModelHint IS NULL OR I.Model Like '%' + @ModelHint+'%')     
+  GROUP BY I.ID,S.BatchTypeID, I.Code, I.Name,I.Description,I.Make,I.Model, I.Category, SalesCategory, UnitID, Unit, CGSTPercent, IGSTPercent, SGSTPercent,    
+  BT.Name, I.InventoryUnit,I.InventoryUnitID, PD.MRP, IC.TransferPrice    
+  HAVING SUM(Value) > 0    
+ )    
+ SELECT ID, Code, Name,PartsNo,Make,Model, BatchTypeID, BatchTypeName, Category, SalesCategory,PrimaryUnitID,   
+ PrimaryUnit,ISNULL((SELECT STRING_AGG(Name+'|'+CAST(PackSize AS varchar(10)), ',') FROM SecondaryUnit su where su.UnitID=PrimaryUnitID),'')SecondaryUnits,
+ CGSTPercent, IGSTPercent, SGSTPercent,Stock,Rate,InventoryUnit,InventoryUnitID,recordsFiltered, @totalRecords AS totalRecords    
+ FROM Item_CTE    
+ WHERE RowNum >= @Offset    
+ AND RowNum < @Offset + @Limit    
+    
+End    
+    

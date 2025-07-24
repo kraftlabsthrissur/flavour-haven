@@ -1,0 +1,49 @@
+﻿@model List<BusinessObject.SalesOrderBO>
+
+
+@if (Model != null && Model.Count() > 0)
+{
+    foreach (var soItem in Model.Select((value, i) => new { i = i + 1, value }))
+    {
+        <tr>
+            <td class="uk-text-center">@soItem.i </td>
+            <td class="transNo">
+                @soItem.value.SONo <input type="hidden" class="hdnSOID" value="@soItem.value.ID" />
+                <input type="hidden" class="@String.Format(" hdnItemID{0}", soItem.i)" id="hdnItemID" value="@soItem.value.ItemID" />
+            </td>
+            <td class="sodate">@soItem.value.SODate.ToString("dd-MM-yyyy")</td>
+            <td>
+                <div class="uk-autocomplete" id="item-autocomplete@(soItem.i)">
+                    <div class="uk-input-group">
+                        @Html.TextBox("txtItemName", "", new { @class = "md-input label-fixed", @id = @String.Format("txtItemName{0}", soItem.i) })
+                        <script type="text/autocomplete">
+                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                {{~items}}
+                                <li data-value="{{ $item.ItemName }}"
+                                    data-id="{{$item.ItemID}}">
+                                    <a>
+                                        {{ $item.ItemName }}
+
+                                    </a>
+                                </li>
+                                {{/items}}
+                            </ul>
+                        </script>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <input type="text" class="md-input uk-text-right txtAmount mask-qty" value="" />
+                <input type="hidden" class="balance-amount mask-qty" value="@soItem.value.GrossAmount" />
+            </td>
+            <td>
+                @Html.DropDownList("ddlTDSCode", new SelectList(ViewBag.TDSCodes, "Text", "Value"), "Select", new { @class = "md-input label-fixed ddlTDSCode" })
+            </td>
+            <td><input type="text" class="md-input  txtTDSAmount mask-qty " readonly value="0" /></td>
+            <td><input type="text" class="md-input  txtNetAmount mask-qty " readonly value="0" /></td>
+
+            <td><input type="text" class="md-input txtRemarks" /></td>
+        </tr>
+    }
+}
+

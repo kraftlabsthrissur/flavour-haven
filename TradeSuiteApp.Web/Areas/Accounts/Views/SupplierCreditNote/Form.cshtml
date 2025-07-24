@@ -1,0 +1,296 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.SupplierCreditNoteModel
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.TransactionNumber</label>
+                            @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label for="uk_dp_start">@Accounts.Date</label>
+
+                                    @{
+                                        var date = Convert.ToDateTime(Model.FirstOpenDate);
+                                        var datarelaxation = (date - @DateTime.Now).TotalDays;
+                                    }
+
+                                    <input class="md-input label-fixed past-date date" type="text" id="Date" data-relaxation=@datarelaxation value="@Model.Date">
+                                    <span class="uk-input-group-addon"><i data-relaxation=@datarelaxation class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <div class="uk-autocomplete " id="supplier-autocomplete">
+                                <div class="uk-input-group">
+                                    <label>@Purchase.Supplier<span>*</span></label>
+                                    @if (Model.ID > 0)
+                                    {
+                                        @Html.TextBoxFor(m => m.SupplierName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        @Html.HiddenFor(model => model.StateID)
+                                        @Html.HiddenFor(model => model.LocationStateID)
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBoxFor(m => m.SupplierName, new { @class = "md-input  label-fixed" })
+                                        <span class="uk-input-group-addon">
+                                            <a data-uk-modal="{target:'#select-supplier',center:false }">
+                                                <i class="uk-input-group-icon uk-icon-search"></i>
+                                            </a>
+                                        </span>
+                                        <script type="text/autocomplete">
+                                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                {{~items}}
+                                                <li data-value="{{ $item.Name }}"
+                                                    data-name="{{ $item.Name }}"
+                                                    data-id="{{$item.ID}}"
+                                                    data-location="{{$item.Location}}"
+                                                    data-state-id="{{$item.StateID}}"
+                                                    data-Item-Category="{{$item.ItemCategory}}"
+                                                    data-Item-Type="{{$item.Type}}"
+                                                    data-is-gst-registered="{{$item.IsGSTRegistered}}">
+                                                    <a>
+                                                        {{ $item.Name }} ({{ $item.Code }})
+                                                        <div>{{{ $item.Location }}}</div>
+
+                                                    </a>
+                                                </li>
+                                                {{/items}}
+                                            </ul>
+                                        </script>
+                                    }
+                                </div>
+                                @Html.HiddenFor(model => model.SupplierID, new { @class = "md-input label-fixed" })
+                                @Html.HiddenFor(model => model.StateID)
+                                @Html.HiddenFor(model => model.IsGSTRegistred)
+                                @Html.HiddenFor(model => model.LocationStateID)
+                                <input type="hidden" value="Supplier Credit Note" id="ItemType" />
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.SGSTAmount</label>
+                            @Html.TextBoxFor(m => m.CGSTAmt, new { @class = "md-input label-fixed mask-currency", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.CGSTAmount</label>
+                            @Html.TextBoxFor(m => m.SGSTAmt, new { @class = "md-input label-fixed mask-currency", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.IGSTAmount</label>
+                            @Html.TextBoxFor(m => m.IGSTAmt, new { @class = "md-input label-fixed mask-currency", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.TaxableAmount</label>
+                            @Html.TextBoxFor(m => m.TaxableAmount, new { @class = "md-input label-fixed mask-currency", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.RoundOff</label>
+                            @Html.TextBoxFor(m => m.RoundOff, new { @class = "md-input mask-sales-currency label-fixed", @tabindex = "-1" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.ReferenceInvoiceNumber<span>*</span></label>
+                            @Html.TextBoxFor(m => m.ReferenceInvoiceNumber, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label>@Accounts.ReferenceDocumentDate<span>*</span></label>
+                                <input class="md-input label-fixed past-date date" type="text" id="ReferenceDocumentDate" value="@Model.ReferenceDocumentDate">
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <div class="uk-autocomplete " id="item-autocomplete">
+                                <label>@Purchase.Item <span>*</span></label>
+                                <input type="text" id="ItemName" class="md-input label-fixed" />
+                                <span class="uk-input-group-addon">
+                                    <a class="select-item" data-uk-modal="{target:'#select-item',center:false}">
+                                        <i class="uk-input-group-icon uk-icon-search"></i>
+                                    </a>
+                                </span>
+                                <script type="text/autocomplete">
+                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                        {{~items}}
+                                        <li data-value="{{ $item.Name }}"
+                                            data-id="{{$item.ItemID}}"
+                                            data-name="{{ $item.Name }}"
+                                            data-itemType="{{ $item.Type }}"
+                                            data-CGSTPercentage="{{ $item.CGSTPercentage }}"
+                                            data-SGSTPercentage="{{ $item.SGSTPercentage }}"
+                                            data-IGSTPercentage="{{ $item.IGSTPercentage }}"
+                                            data-unit="{{$item.Unit}}">
+                                            <a>
+                                                {{ $item.Name }}
+                                                <div>{{$item.Code}}</div>
+                                            </a>
+                                        </li>
+                                        {{/items}}
+                                    </ul>
+                                </script>
+                            </div>
+                            @Html.Hidden("ItemID")
+                            @Html.Hidden("Unit")
+                            @Html.Hidden("Type")
+                            @Html.Hidden("CategoryID")
+                            @Html.Hidden("CGSTPercentage")
+                            @Html.Hidden("SGSTPercentage")
+                            @Html.Hidden("IGSTPercentage")
+
+                        </div>
+
+
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.Quantity<span>*</span></label>
+                            <input type="text" id="Qty" class="md-input label-fixed uk-text-right mask-qty " />
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.Rate<span>*</span></label>
+                            @Html.TextBoxFor(m => m.Rate, new { @class = "md-input label-fixed mask-currency" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.Amount<span>*</span></label>
+                            @Html.TextBoxFor(m => m.Amount, new { @class = "md-input label-fixed mask-currency", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Common.Location<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.LocationID, Model.LocationList, "Select", new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Common.Department<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.DepartmentID, Model.DepartmentList, "Select", new { @class = "md-input label-fixed", })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Common.Employee</label>
+                            @Html.DropDownListFor(Model => Model.EmployeeID, Model.EmployeeList, "Select", new { @class = "md-input label-fixed", })
+
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Common.InterCompany</label>
+                            @Html.DropDownListFor(Model => Model.InterCompanyID, Model.InterCompanyList, "Select", new { @class = "md-input label-fixed", })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Common.Project</label>
+                            @Html.DropDownListFor(Model => Model.ProjectID, Model.ProjectList, "Select", new { @class = "md-input label-fixed", })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Accounts.Remarks</label>
+                            <input type="text" id="Remarks" class="md-input label-fixed " />
+                        </div>
+                        <div class="uk-width-medium-1-10">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label>&nbsp;</label>
+                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddItem">@Common.Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-1">
+                            <label>@Accounts.TotalAmount</label>
+                            @Html.TextBoxFor(m => m.TotalAmount, new { @class = "md-input label-fixed x-large mask-currency", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <table id="suppliercreditnote-item-list" class="uk-table" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-60">@Accounts.ReferenceInvoiceNumber</th>
+                    <th class="width-60">@Accounts.ReferenceDocumentDate</th>
+                    <th class="width-200">@Accounts.ItemName</th>
+                    <th class="width-40">@Accounts.Quantity</th>
+                    <th class="width-60">@Accounts.Rate</th>
+                    <th class="width-60">@Accounts.Amount</th>
+                    <th class="width-60">@Accounts.GSTPercentage</th>
+                    <th class="width-60">@Accounts.SGSTAmount</th>
+                    <th class="width-60">@Accounts.CGSTAmount</th>
+                    <th class="width-60">@Accounts.IGSTAmount</th>
+                    <th class="width-80">@Common.Location</th>
+                    <th class="width-80">@Common.Department</th>
+                    <th class="width-80">@Common.Employee</th>
+                    <th class="width-80">@Common.InterCompany</th>
+                    <th class="width-80">@Common.Project</th>
+                    <th class="width-120">@Accounts.Remarks </th>
+                    <th class="width-120">@Accounts.NetAmount </th>
+                    <th class="width-20"></th>
+                </tr>
+            </thead>
+            @{var IGSTreadonly = "";}
+            @{var GSTreadonly = "";}
+            @if (Model.StateID == Model.LocationStateID && Model.IsGSTRegistred == true)
+            {
+                IGSTreadonly = "readonly";
+            }
+            else if (Model.StateID != Model.LocationStateID && Model.IsGSTRegistred == true)
+            {
+                GSTreadonly = "readonly";
+            }
+            else
+            {
+                GSTreadonly = "readonly";
+                IGSTreadonly = "readonly";
+            }
+            <tbody>
+                @if (Model.Items != null)
+                {
+                    foreach (var itm in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                        <tr>
+                            <td class="uk-text-center">@itm.i</td>
+                            <td class="RNumber">@itm.value.ReferenceInvoiceNumber</td>
+                            <td class="RDate">@itm.value.ReferenceDocumentDate</td>
+                            <td class="Product">@itm.value.ItemName<input type="hidden" class="ItemID" value="@itm.value.ItemID"></td>
+                            <td class="Qty mask-qty">@itm.value.Qty</td>
+                            <td class="Rate mask-currency">@itm.value.Rate</td>
+                            <td><input type="text" class="md-input Amount mask-currency" value="@itm.value.Amount" /></td>
+                            <td><input type="text" class="md-input GSTPercentage mask-currency" value="@itm.value.GSTPercentage" /></td>
+                            <td><input type="text" class="md-input SGSTAmount mask-currency" value="@itm.value.SGSTAmt" @GSTreadonly /></td>
+                            <td><input type="text" class="md-input CGSTAmount mask-currency" value="@itm.value.CGSTAmt" @GSTreadonly /></td>
+                            <td><input type="text" class="md-input IGSTAmount mask-currency" value="@itm.value.IGSTAmt" @IGSTreadonly /></td>
+                            <td class="Location">@itm.value.Location<input type="hidden" class="LocationID" value="@itm.value.LocationID"></td>
+                            <td class="Department">@itm.value.Department<input type="hidden" class="DepartmentID" value="@itm.value.DepartmentID"></td>
+                            <td class="Employee">@itm.value.Employee<input type="hidden" class="EmployeeID" value="@itm.value.EmployeeID"></td>
+                            <td class="InterCompany">@itm.value.InterCompany<input type="hidden" class="InterCompanyID" value="@itm.value.InterCompanyID"></td>
+                            <td class="Project">@itm.value.Project<input type="hidden" class="ProjectID" value="@itm.value.ProjectID"></td>
+                            <td class="Remarks">@itm.value.Remarks</td>
+                            <td class="NetAmount mask-currency">@itm.value.NetAmount</td>
+                            <td>
+                                <a class="remove-item uk-text-center"><i class="uk-icon-remove"></i></a>
+                            </td>
+                        </tr>;
+                    }
+                }
+            </tbody>
+        </table>
+        <input type="hidden" id="item-count" value="0" />
+    </div>
+</div>

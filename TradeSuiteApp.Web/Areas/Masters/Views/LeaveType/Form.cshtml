@@ -1,0 +1,115 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.LeaveTypeModel
+<div class="uk-grid" data-uk-grid-margin>
+    <div class="uk-width-medium-8-10">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-1-8">
+                <label>@Masters.Code</label>
+                @Html.TextBoxFor(m => m.Code, new { @class = "md-input" })
+            </div>
+            <div class="uk-width-medium-2-8">
+                <label>@Masters.Name *</label>
+                @Html.TextBoxFor(m => m.Name, "", new { maxlength = 100, @class = "md-input label-fixed" })
+            </div>
+        </div>
+        <br/>
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-1-1">
+                <ul class="uk-tab" data-uk-tab="{connect:'#tabs_1_content'}">
+                    <li class="uk-active" aria-expanded="true"><a>Credit</a></li>
+                    <li><a> Encashment</a></li>
+                    <li><a> Rules</a></li>
+                </ul>
+                <ul id="tabs_1_content" class="uk-switcher uk-margin" style="width:100%">
+                    <li aria-hidden="false" class="uk-active" style="width:100%">
+                        <div class="uk-grid" data-uk-grid-margin>
+                            <div class="uk-width-medium-5-10">
+                                <div>
+                                    <div class="uk-grid" data-uk-grid-margin>
+
+                                        <div class="uk-width-medium-2-4">
+                                            <label>@Masters.CreditFrequency *</label>
+                                            @Html.DropDownListFor(Model => Model.CreditFrequecyID, new SelectList(Model.CreditFrequecyList, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @id = "ShippingState" })
+                                        </div>
+                                        <div class="uk-width-medium-2-4">
+                                            <label>@Masters.NoOfDays *</label>
+                                            @Html.TextBoxFor(Model => Model.NoOfDays, "", new { maxlength = 512, @class = "md-input label-fixed" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li aria-hidden="true" class="" style="width:100%">
+                        <div class="uk-width-medium-1-1">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-6">
+                                        <label>&nbsp;</label>
+                                        <input type="checkbox" class="icheckbox" id="CanCarryFroward" data-md-icheck />&nbsp;@Html.Label(" Can Carry Forward?")
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-6">
+                                        <label>&nbsp;</label>
+                                        <input type="checkbox" class="icheckbox" id="IsEncashable" data-md-icheck />&nbsp;@Html.Label(" Is Encashable?")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li aria-hidden="true" class="" style="width:100%">
+                        <div id="Item-Category-Container" class="supplier-itemCategory">
+                            <div class="uk-width-medium-1-1">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-4">
+                                            <label>Min. Service period before leave can be applied (days) </label>
+                                            @Html.TextBoxFor(Model => Model.MinServicePeriod, "", new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-4">
+                                            <label>Max. Leave balance</label>
+                                            @Html.TextBoxFor(Model => Model.MaxLeaveBalance, "", new { @class = "md-input label-fixed" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            &nbsp;&nbsp;
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-4">
+                                        <label>Min/Instance (days)</label>
+                                        @Html.TextBoxFor(Model => Model.MinInstanceDays, "", new { @class = "md-input label-fixed" })
+                                    </div>
+                                    <div class="uk-width-medium-1-4">
+                                        <label>Max/Instance (days)</label>
+                                        @Html.TextBoxFor(Model => Model.MaxInstanceDays, "", new { @class = "md-input label-fixed" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-4">
+                                        <label>&nbsp;</label>
+                                        <input type="checkbox" class="icheckbox" id="IsLeavePartOfWeeklyOff" data-md-icheck />&nbsp;@Html.Label(" Is Leave part of weekly off?")
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-4">
+                                        <label>&nbsp;</label>
+                                        <input type="checkbox" class="icheckbox" id="IsLeavePartOfHoliday" data-md-icheck />&nbsp;@Html.Label(" Is Leave part of Holiday?")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

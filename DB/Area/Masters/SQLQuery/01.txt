@@ -1,0 +1,88 @@
+CREATE TABLE SecondaryUnit    (
+    ID int PRIMARY KEY IDENTITY(1,1),
+    Name nvarchar(200) NOT NULL,
+    UnitID INT NOT NULL,
+	PackSize numeric(18,2) Not NULL,
+	UnitGroupID INT NOT NULL,
+    CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),
+    CreatedUserID INT NOT NULL,
+    ModifiedDate DATETIME NULL,
+    ModifiedUserID INT NULL,
+    IsActive BIT NOT NULL DEFAULT 1
+);
+
+
+ALTER TABLE SecondaryUnit 
+ADD CONSTRAINT FK_SecondaryUnit_Unit_UnitID 
+FOREIGN KEY (UnitID) REFERENCES Unit(ID)
+
+ALTER TABLE SecondaryUnit 
+ADD CONSTRAINT FK_SecondaryUnit_UnitGroup_UnitGroupID 
+FOREIGN KEY (UnitGroupID) REFERENCES UnitGroup(ID)
+
+CREATE TABLE ItemSecondaryUnit (
+    ID INT PRIMARY KEY IDENTITY(1,1),
+    ItemID INT NOT NULL,
+    SecondaryUnitID INT NOT NULL,
+    CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),
+    CreatedUserID INT NOT NULL,
+    CONSTRAINT FK_ItemSecondaryUnit_Item_ItemID FOREIGN KEY (ItemID) REFERENCES Item(ID),
+    CONSTRAINT FK_ItemSecondaryUnit_SecondaryUnit_SecondaryUnitID FOREIGN KEY (SecondaryUnitID) REFERENCES SecondaryUnit(ID),
+    CONSTRAINT FK_ItemSecondaryUnit_AspNetUsers_CreatedUserID FOREIGN KEY (CreatedUserID) REFERENCES AspNetUsers(Id)
+);
+
+
+ALTER TABLE ItemPartsNumber 
+ADD IsDefault BIT NOT NULL  DEFAULT 0 
+
+ALTER TABLE Item 
+ADD ItemImagePath1 VARCHAR(1000) NULL 
+
+ALTER TABLE Item 
+ADD ItemImagePath2 VARCHAR(1000) NULL 
+
+ALTER TABLE Item 
+ADD ItemImagePath3 VARCHAR(1000) NULL 
+
+ALTER TABLE Item 
+ADD ItemImagePath4 VARCHAR(1000) NULL 
+
+ALTER TABLE Item 
+ADD ItemImagePath5 VARCHAR(1000) NULL 
+
+ALTER TABLE Item 
+ADD ItemImagePath6 VARCHAR(1000) NULL 
+
+ALTER TABLE Item 
+ADD ItemImagePath7 VARCHAR(1000) NULL 
+
+ALTER TABLE Item 
+ADD ItemImagePath8 VARCHAR(1000) NULL 
+
+
+CREATE TABLE Brand (
+    ID INT PRIMARY KEY IDENTITY(1,1), 
+    BrandID INT NOT NULL, 
+    Code NVARCHAR(100) NULL,
+    BrandName NVARCHAR(255) NOT NULL,
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    IsActive BIT DEFAULT 1 
+);
+
+ALTER TABLE Item 
+ADD cross_reference VARCHAR(1000) NULL 
+
+ALTER TABLE Item 
+ADD BrandID  INT NULL 
+
+ALTER TABLE Item
+ADD CONSTRAINT UQ_Item_Code UNIQUE (Code);
+
+ALTER TABLE Item 
+ADD ModifiedDate  DateTime NULL 
+
+ALTER TABLE Location
+ADD logopath VARCHAR(MAX) NULL 
+
+ALTER TABLE Location
+ADD logopaths VARCHAR(MAX) NULL 

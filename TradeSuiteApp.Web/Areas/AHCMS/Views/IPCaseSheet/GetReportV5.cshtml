@@ -1,0 +1,36 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+
+
+@if (Model.ReportItems != null)
+{
+    foreach (var item in Model.ReportItems.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+                <input type="hidden" class="ID" value="@item.value.ID " />
+                <input type="hidden" class="ReportID" value="@item.value.DocumentID " />
+                @foreach (var items in @item.value.SelectedQuotation)
+                {
+                    <input type="hidden" class="SelectedQuotationID" value="@items.ID" />
+                    <input type="hidden" class="url" value="@items.URL" />
+                    <input type="hidden" class="Path" value="@items.Path" />
+                    <input type="hidden" class="DocumentName" value="@items.Name" />
+                }
+            </td>
+            <td class="ReportName">@item.value.Name</td>
+            <td class="Description">@item.value.Description</td>
+            <td class="Date">@item.value.Date</td>
+            <td class="uk-text-center"><button class="view_report"><i class="material-icons">remove_red_eye</i></button></td>
+            <td></td>
+            <td>
+                <input type="checkbox" name="IsBeforeAdmission" class="IsBeforeAdmission" data-md-icheck disabled value="@item.value.IsBeforeAdmission" @(item.value.IsBeforeAdmission == true ? "checked=\"checked\"" : "") />
+            </td>
+            <td></td>
+        </tr>
+    }
+}
+
+
+
+

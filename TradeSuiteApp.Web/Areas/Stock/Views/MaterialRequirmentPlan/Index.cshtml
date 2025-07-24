@@ -1,0 +1,91 @@
+﻿@model TradeSuiteApp.Web.Areas.Stock.Models.MaterialRequirementPlanModel
+@{
+    ViewBag.Title = @Stock.MaterialRequirementPlan;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Stock.MaterialRequirementPlan</h1>
+            <span class="uk-text-upper uk-text-small">@Stock.MaterialRequirementPlan</span>
+        </div>
+        <div class="heading_actions">
+
+            @ActionAuthorization.IsAuthorized("GenerateRequisition", "<a class = 'md-btn GenerateRequisition'>Generate Requisition</a>")
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-10">
+                            <div class="uk-input-group">
+                                <label for="uk_dp_start">@Stock.FromDate</label>
+                                @Html.TextBoxFor(model => model.FromDate, new { @class = "md-input label-fixed date past-date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-10">
+                            <div class="uk-input-group">
+                                <label for="uk_dp_start">@Stock.ToDate</label>
+                                @Html.TextBoxFor(model => model.ToDate, new { @class = "md-input label-fixed date past-date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-10">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label>&nbsp;</label>
+                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnFilter">@Common.Filter</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <table id="Requirement-plan-list" class="uk-table">
+                    <thead>
+                        <tr>
+                            <th width="30">
+                                @Common.SerialNo
+                            </th>
+                            <th width="150">
+                                @Stock.ItemName
+                            </th>
+                            <th width="50">
+                                @Stock.RequiredQty
+                            </th>
+                            <th width="50">
+                                @Stock.AvailableStock
+                            </th>
+                            <th width="50">
+                                @Stock.QtyInQC
+                            </th>
+                            <th width="50">
+                                @Stock.OrderedQty
+                            </th>
+                            <th width="50">
+                                @Stock.RequestedQty
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@Scripts.Render("~/Js/Page/MaterialRequirementPlan")
+<script type="text/javascript">
+    MaterialRequirementPlan.init();
+</script>
+
+
+

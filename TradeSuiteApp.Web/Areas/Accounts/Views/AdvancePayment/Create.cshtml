@@ -1,0 +1,50 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.AdvancePaymentModel
+@{
+    ViewBag.Title = "Create Advance Payment Voucher";
+
+}
+@Html.AntiForgeryToken()
+<input type="hidden" id="hdnNameID" />          <!--SupplierID or EmployeeID-->
+<input type="hidden" id="hdnName" /><!--SupplierName or EmployeeName-->
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Accounts.AdvancePaymentTitle</h1>
+            <span class="uk-text-upper uk-text-small">@Accounts.AdvancePaymentTitle</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSaveAndPost'>" + Common.Save + "</a>")
+            @ActionAuthorization.IsAuthorized("SaveAsDraft", "<a class='md-btn btnSaveASDraft'>" + Common.SaveAsDraft + "</a>")
+
+
+            @Html.HiddenFor(m => m.CashPaymentLimit)
+            @Html.ActionLink(Common.Close, "Index", "AdvancePayment", new { Area = "Accounts" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                @{Html.RenderPartial("/Areas/Accounts/Views/AdvancePayment/Form.cshtml", Model); }
+            </div>
+        </div>
+    </div>
+</div>
+@Html.Partial("~/Areas/Masters/Views/Employee/PartialList.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Supplier/PartialList.cshtml")
+@Scripts.Render("~/Js/Page/Supplier")
+@Scripts.Render("~/Js/Page/Employee")
+@Scripts.Render("~/Js/Page/AdvancePayment")
+
+
+<script type="text/javascript">
+    advance_payment.init();
+</script>

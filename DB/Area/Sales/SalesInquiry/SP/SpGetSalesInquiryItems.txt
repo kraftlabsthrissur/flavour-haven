@@ -1,0 +1,14 @@
+ALTER PROCEDURE [Sales].[SpGetSalesInquiryItems](                          
+ @SalesInquiryID int,                                               
+ @LocationID int,                          
+ @ApplicationID int                          
+)AS                            
+BEGIN                            
+ SELECT ST.SalesInquiryID,ST.ItemID ,ST.ItemCode,ST.ItemName,ST.UnitName,ST.Model,ST.Year,ST.SIOrVINNumber,ST.PartsNumber,ST.DeliveryTerm,ST.Remarks,  
+ ST.Rate,ST.Quantity,ST.GrossAmount,ST.VATPercentage,ST.VATAmount,ST.NetAmount                          
+ FROM Sales.SalesInquiryItems ST   
+ INNER JOIN Sales.SalesInquiry S on S.ID=ST.SalesInquiryID  
+ WHERE ST.SalesInquiryID = @SalesInquiryID                                                    
+ AND S.LocationID = @LocationID                                                   
+ ORDER BY ST.ID ASC                        
+END 

@@ -1,0 +1,74 @@
+﻿@model List<BusinessObject.PayableDetailsBO>
+@{
+    var totalInvoiceAmount = Model.Where(x => x.DocumentType == "INVOICE").Sum(x => x.DocumentAmount);
+    var totalBalance = Model.Where(x => x.DocumentType == "INVOICE").Sum(x => x.AmountToBePayed);
+
+}
+<table id="tblUnSettledPurchaseInvoice" class="uk-table" cellspacing="0">
+    <thead>
+        <tr>
+            <th class="width-10">@Common.SerialNo</th>
+            <th class="width-10"></th>
+            <th class="width-10">@Common.DocumentType</th>
+            <th class="width-10">@Accounts.Narration</th>
+            <th class="width-40">@Common.DocumentNo</th>
+            <th class="width-40">@Accounts.InvoiceDate</th>
+            <th class="width-40">@Accounts.OriginalAmount</th>
+            <th class="width-40">@Accounts.BalancePayable</th>
+            <th class="width-40">@Accounts.PayNow</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count > 0)
+        {
+            int dynVal = 1;
+            string mask;
+            foreach (var item in Model.Select((value, i) => new { i = i + 1, value }))
+            {
+                //  @if(item.value.DocumentNo.ToString()==)
+                dynVal = 1;        //Add or substract.
+                <tr>
+                    <td class="uk-text-center">
+                        @item.i
+                        <input type="hidden" class="hdnPayableID" value="@item.value.PayableID" />       <!--Currently ID not given. Instead of 0, need to get the actual ID-->
+                        @*<input type="hidden" class="hdnType" value="@item.value.Description" />*@
+                        <input type="hidden" class="hdnDocType" value="@item.value.DocumentType" />
+                        <input type="hidden" class="hdnDocNo" value="@item.value.DocumentNo" />
+                        <input type="hidden" class="hdnAdvanceID" value="@item.value.AdvanceID" />
+                        <input type="hidden" class="hdnDebitNoteID" value="@item.value.DebitNoteID" />
+                        <input type="hidden" class="hdnCreditNoteID" value="@item.value.CreditNoteID" />
+                        <input type="hidden" class="hdnIRGID" value="@item.value.IRGID" />
+                        <input type="hidden" class="hdnCreatedDate" value="@item.value.CreatedDate.ToString("dd-MM-yyyy")" />
+                        <input type="hidden" class="hdnDueDate" value="@item.value.DueDate.ToString("dd-MM-yyyy")" />
+                        <input type="hidden" class="hdnPaymentReturnVoucherTransID" value="@item.value.PaymentReturnVoucherTransID" />
+                    </td>
+                    <td><input type="checkbox" data-md-icheck class="include" /></td>
+                    <td class="documenttype">@item.value.DocumentType</td>
+                    <td class="Narration"><input type="text" class="md-input label-fixed Narrations" value="@item.value.Narration" /></td>
+                    <td>@item.value.DocumentNo</td>
+                    <td class="date">@item.value.CreatedDate.ToString("dd-MM-yyyy")</td>
+                    <td class="mask-sales3-currency invoiceAmt">@item.value.DocumentAmount </td>
+                    <td class="balance"><input type="text" class="md-input label-fixed mask-sales3-currency txtAmtToPaid decimalnum" value="@item.value.AmountToBePayed" processvalue="@dynVal" readonly /></td>
+                    @if ((item.value.DocumentType == "INVOICE") || (item.value.DocumentType == "CreditNote") || (item.value.DocumentType == "Payment Return") || (item.value.DocumentType == "DirectPayable"))
+                    {
+                        <td class="uk-text-right balance"><input type="text" class="md-input txtPayNow mask-sales3-currency " value="0" /></td>
+                    }
+                    else
+                    {
+
+                        <td class="uk-text-right balance"><input type="text" class="md-input txtPayNow mask-sales3-currency" value="0" /></td>
+                    }
+                    @*<td class="uk-text-right"><input type="text" class="md-input label-fixed uk-text-right txtOriginalAmt decimalnum" /></td>*@
+                </tr>
+            }
+
+        }
+        <tr id="total-row">
+            <td colspan="6" class="bold">TOTAL</td>
+            <td class="mask-sales3-currency bold" id="TotalInvoiceAmt">@totalInvoiceAmount</td>
+            <td class="mask-sales3-currency bold" id="TotBalance">@totalBalance</td>
+            <td class="mask-sales3-currency bold" id="TotPayNow">0</td>
+            @*<td class="uk-text-right" id="TotOriginalAmt">0</td>*@
+        </tr>
+    </tbody>
+</table>

@@ -1,0 +1,24 @@
+﻿@model List<BusinessObject.GRNBO>
+@if (Model != null)
+{
+    foreach (var item in Model.Select((value, i) => new { i = (i + 1), dynID = "chk_grn_" + value.ID, value }))
+    {
+
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+                <input type="hidden" class="Date" value="@(item.value.PurchaseOrderDate.HasValue? item.value.PurchaseOrderDate.Value.ToString("dd-MM-yyyy"):"")">
+                <input type="hidden" class="SupplierID" value="@item.value.SupplierID">
+                <input type="hidden" class="StateID" value="@item.value.StateID">
+                <input type="hidden" class="IsGSTRegistered" value="@item.value.IsGSTRegistered">
+            </td>
+            <td class="uk-text-center uk-radio" data-md-icheck><input type="checkbox" class="chkGRNBO" name="chkGRNBO" id="@item.dynID" value="@item.value.ID" /></td>
+            <td class="GrnCode">@item.value.Code</td>
+            <td>@item.value.Date.ToString("dd-MMM-yyyy")</td>
+            <td class="SupplierName">@item.value.SupplierName</td>
+            <td>@item.value.Location</td>
+            <td>@item.value.DeliveryChallanNo</td>
+            <td>@item.value.NetAmount</td>
+        </tr>
+    }
+}

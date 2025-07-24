@@ -1,0 +1,22 @@
+ALTER procedure [Purchase].[SpGetUnProcessedPurchaseOrderTrans]              
+(@ID int,@FinYear int,@LocationID int,@ApplicationID int)              
+AS              
+Begin              
+              
+ --declare @ShippingLocationID int              
+ --select @ShippingLocationID=ID from Addresses where PartyID=@LocationID and PartyType='Location'              
+              
+ select PT.ID,PurchaseOrderID,PO.PurchaseOrderNo,U.UOM as Unit,PT.UnitID as UnitID,ISNULL(PRTransID,0) AS PRTransID,I.ID AS ItemID,PT.ItemName,PT.ItemCode,         
+ PT.PartsNumber,PT.Model,PT.Remark,PT.DiscountPercent,PT.Discount,PT.IsGST,PT.IsVAT,PT.CurrencyID,CU.Name CurrencyName,I.Category,              
+ Quantity,Rate,Amount,PT.SGSTPercent, PT.CGSTPercent,PT.IGSTPercent,PT.VATPercent,PT.SGSTAmt,PT.CGSTAmt,PT.IGSTAmt,PT.VATAmount,PT.NetAmount,PT.LastPurchaseRate,              
+ Quantity - ISNULL(QtyMet,0) AS PendingPOQty,I.QtyTolerancePercent,I.IsQCRequired, BT.Name as BatchType,PT.BatchTypeID ,U.Packsize,    
+ PT.SecondaryUnit,PT.SecondaryRate,PT.SecondaryUnitSize ,ISNULL(PO.SuppDocAmount,0)SuppDocAmount,ISNULL(PO.SuppShipAmount,0)SuppShipAmount,  
+ ISNULL(PO.SuppOtherCharge,0)SuppOtherCharge from PurchaseOrderTrans PT  Inner Join viItem I on I.ID = PT.ItemID     
+ INNER JOIN PurchaseOrder PO ON PO.ID = PT.PurchaseOrderID              
+ left join BatchType BT on BT.ID=PT.BatchTypeID left join Currency CU on PT.CurrencyID=CU.ID         
+ inner join Unit U on U.ID=PT.UnitID              
+ where ISNULL(IsPurchased,0) = 0 and ISNULL(QtyMet,0) < Quantity  --and PO.FinYear = @FinYear           
+ and PO.ApplicationID = @ApplicationID --and PO.ShippingAddressID = @ShippingLocationID              
+ AND PurchaseOrderID = @ID and ISNULL(PT.IsSuspended,0)=0              
+End   
+  

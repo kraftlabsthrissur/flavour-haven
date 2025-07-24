@@ -1,0 +1,165 @@
+﻿@model TradeSuiteApp.Web.Areas.Reports.Models.AccountReportModel
+@{
+    ViewBag.ReportTitle = "Contra Report";
+    ViewBag.Title = "Contra ";
+}
+@Scripts.Render("~/Js/Page/AccountsReport")
+<div id="page_content_inner" class="purchase-report">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-2-10">
+                            <form action="/Reports/Accounts/FundTransfer" id="report-filter-form" method="POST">
+                                @Html.HiddenFor(m => m.LocationID)
+                                <div class="uk-form-row ">
+                                    <div class="uk-grid " data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2 summary">
+                                            <div class="uk-input-group">
+                                                <label class="req-datefrom">@Reports.TransDateFrom</label>
+                                                @Html.TextBoxFor(model => model.FromDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2 summary detail">
+                                            <div class="uk-input-group">
+                                                <label class="req-dateto">@Reports.TransDateTo</label>
+                                                @Html.TextBoxFor(model => model.ToDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-autocomplete " id="FundTransNoFromAutocomplete">
+                                                <label for="uk_dp_start">@Reports.TransNoFrom</label>
+                                                @Html.TextBoxFor(m => m.FromTransNo, "", new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Code }}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                                @*<div>{{{ $item.ID }}}</div>*@
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.FromTransNoID)
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-autocomplete " id="FundTransNoToAutocomplete">
+                                                <label for="uk_dp_start">@Reports.TransNoTo</label>
+                                                @Html.TextBoxFor(m => m.ToTransNo, "", new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Code }}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                                @*<div>{{{ $item.ID }}}</div>*@
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.ToTransNoID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <label>@Reports.FromBankName</label>
+                                            @Html.DropDownListFor(Model => Model.FromBankNameID, Model.FromBankNameList, "Select", new
+                                       {
+                                           @class = "md-input label-fixed", @*@id = "BatchTypeID"*@ })
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <label>@Reports.ToBankName</label>
+                                            @Html.DropDownListFor(Model => Model.ToBankNameID, Model.ToBankNameList, "Select", new
+                                       {
+                                           @class = "md-input label-fixed", @*@id = "BatchTypeID"*@ })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="filters uk-form-row ">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-autocomplete " id="accountcodefrom-autocomplete">
+                                                <label for="uk_dp_start">@Reports.FromBankAccountCode</label>
+                                                @Html.TextBoxFor(m => m.FromBankAccountNo, "", new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-id="{{$item.ID}}"
+                                                            data-value="{{ $item.Code }}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.FromBankAccountNoID)
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-autocomplete " id="accountcodeto-autocomplete">
+                                                <label for="uk_dp_start">@Reports.ToBankAccountCode</label>
+                                                @Html.TextBoxFor(m => m.ToBankAccountNo, "", new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-id="{{$item.ID}}"
+                                                            data-value="{{ $item.Code }}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.ToBankAccountNoID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="report-filter-submit">Show</button>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <a class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light " id="Refresh">Reset</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="uk-width-medium-8-10 ">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="" id="report-viewer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

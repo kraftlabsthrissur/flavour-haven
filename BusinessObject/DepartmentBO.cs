@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessObject
+{
+    public partial class DepartmentBO
+    {
+        public int ID { get; set; }
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public int DepartmentGroupID { get; set; }
+        public string DepartmentGroup { get; set; }
+        public string DepartmentGroupList { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+    }
+}

@@ -1,0 +1,30 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+
+@{
+    ViewBag.Title = "Error";
+}
+<div id="page_content">
+
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1 class="text-danger">Error.</h1>
+            <span class="uk-text-upper uk-text-small">Error Details</span>
+
+        </div>
+    </div>
+
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <h3 class="heading_a uk-margin-bottom">An error occurred while processing your request.</h3>
+                <div class="uk-accordion" data-uk-accordion="{showfirst: false}">
+                    <h3 class="uk-accordion-title">@ViewBag.Message</h3>
+                    <div class="uk-accordion-content">
+                        <p>@ViewBag.InnerException</p>
+                        <p><i>@ViewBag.StackTrace</i></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

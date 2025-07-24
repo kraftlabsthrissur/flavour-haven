@@ -1,0 +1,26 @@
+ALTER FUNCTION [dbo].[FnGetAvailableStock]    
+(    
+ @ItemID int,    
+ @BatchID int,    
+ @BatchTypeID int,    
+ @WareHouseID int,    
+ @FinYear int,    
+ @LocationID int,    
+ @ApplicationID int    
+)    
+RETURNS Numeric(18,4)    
+AS    
+BEGIN    
+ DECLARE @Stock Numeric(18,4) = 0.0    
+ SELECT @Stock = SUM(Value)     
+ FROM Stock S    
+ WHERE S.ItemID = @ItemID     
+ AND S.BatchID = ISNULL(@BatchID,S.BatchID)     
+ --AND(@BatchTypeID IS NULL OR @BatchTypeID=0 OR ISNULL(BatchTypeID,0) = ISNULL(@BatchTypeID,BatchTypeID))    
+ AND WareHouseID =ISNULL( @WareHouseID,S.WareHouseID)     
+ AND S.FinYear = @FinYear     
+ AND S.LocationID = @LocationID     
+ AND S.ApplicationID = @ApplicationID    
+ AND S.ExpiryDate >= CURRENT_TIMESTAMP    
+ RETURN ISNULL(@Stock,0)    
+END 

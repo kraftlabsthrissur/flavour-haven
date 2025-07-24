@@ -1,0 +1,569 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.EmployeeModel
+<div class="uk-width-medium-8-10">
+    <div class="md-card">
+        <div class="md-card-content master-card-padding">
+            <div class="uk-width-1-1">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid">
+
+                            <div class="uk-width-1-1" id="tabs">
+                                <ul class="uk-tab" data-uk-tab="{connect:'#tabs_1_content'}">
+                                    <li class="uk-active tab1"><a href="#">Personal</a></li>
+
+                                    <li class=" tab2"><a href=""> Offical</a></li>
+                                    <li class="tab3"><a href=""> Payment</a></li>
+                                    <li class="tab4"><a href=""> Languages Known</a></li>
+                                    <li class="tab5"><a href="">Ex. Employment</a></li>
+                                    <li class="tab6"><a href="">Salary Details</a></li>
+                                    <li class="tab7"><a> Free Medicine Loctaions</a></li>
+                                </ul>
+                                <ul id="tabs_1_content" class="uk-switcher uk-margin" style="width:100%">
+                                    <li aria-hidden="false" style="width:100%">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="section-group">
+                                                <div class="uk-form-row">
+                                                    <div class="uk-grid">
+                                                        <div class="uk-width-1-1">
+                                                            <div class="uk-form-row">
+                                                                <div class="uk-grid" data-uk-grid-margin>
+                                                                    <div class="uk-width-medium-1-8">
+                                                                        <label>@Masters.EmployeeCode </label>
+                                                                        @Html.TextBoxFor(m => m.Code, new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                                    </div>
+                                                                    <div class="uk-width-medium-1-8">
+                                                                        <label>Title </label>
+                                                                        @Html.TextBoxFor(m => m.Title, new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                                    </div>
+                                                                    <div class="uk-width-medium-1-8">
+                                                                        <label>@Masters.Name </label>
+                                                                        @Html.TextBoxFor(m => m.Name, new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                                    </div>
+                                                                    <div class="uk-width-medium-1-8">
+                                                                        <label>@Masters.Designation</label>
+                                                                        @Html.TextBoxFor(m => m.Designation, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                    </div>
+                                                                    <div class="uk-width-medium-1-8">
+                                                                        <label>@Masters.Gender </label>
+                                                                        @Html.TextBoxFor(m => m.Gender, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                    </div>
+                                                                    <div class="uk-width-medium-1-8">
+                                                                        <label>@Masters.MartialStatus </label>
+                                                                        @Html.TextBoxFor(m => m.MartialStatus, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                    </div>
+                                                                    <div class="uk-width-medium-1-10">
+                                                                        <div class="uk-input-group">
+                                                                            <label>@Masters.DOB</label>
+                                                                            @Html.TextBoxFor(m => m.DOB, new { @class = "md-input label-fixed  past-date date", @disabled = "disabled" })
+                                                                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="uk-form-row">
+                                                                <div class="uk-grid" data-uk-grid-margin>
+                                                                    <div class="uk-width-medium-1-8">
+                                                                        <label>Qualification1 </label>
+                                                                        @Html.TextBoxFor(m => m.Qualification1, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                    </div>
+                                                                    <div class="uk-width-medium-1-8">
+                                                                        <label>Qualification2 </label>
+                                                                        @Html.TextBoxFor(m => m.Qualification2, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                    </div>
+                                                                    <div class="uk-width-medium-1-8">
+                                                                        <label>Qualification3 </label>
+                                                                        @Html.TextBoxFor(m => m.Qualification3, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                    </div>
+                                                                    <div class="uk-width-medium-1-8">
+                                                                        <label>@Masters.BloodGroup</label>
+                                                                       @Html.TextBoxFor(m => m.BloodGroup, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                    </div>
+                                                                    <div class="uk-width-medium-1-8">
+                                                                        <label>@Masters.NoOfDependent </label>
+                                                                        @Html.TextBoxFor(m => m.NoOfDependent, new { @class = "md-input label-fixed mask-numeric", @disabled = "disabled" })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="uk-form-row">
+                                                                <div class="uk-grid" data-uk-grid-margin>
+                                                                    <div class="uk-width-medium-1-8">
+                                                                        <label>@Masters.NameOfSpouse</label>
+                                                                        @Html.TextBoxFor(m => m.NameOfSpouse, new { @class = "md-input label-fixed", @disabled = "disabled" })
+
+                                                                    </div>
+                                                                    <div class="uk-width-medium-1-8">
+                                                                        <label>@Masters.NameOfGuardian </label>
+                                                                        @Html.TextBoxFor(m => m.NameOfGuardian, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                                    </div>
+                                                                    <div class="uk-width-medium-2-8">
+                                                                        <label></label><br />
+                                                                        <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.IsExcludeFromPayroll) == true ? "checked='checked'" : string.Empty) data-md-icheck , disabled = "disabled" id="IsExcludeFromPayroll" /> @Html.Label("Exclude From Payroll ")
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-1-1">
+                                            <div class="section-group">
+                                                <div class="uk-form-row">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-1-1">
+                                                            <div class="panel master-heading-top">
+                                                                <label class="uk-text-uppercase uk-text-bold">@Masters.Address</label>
+                                                                <div class="uk-grid" data-uk-grid-margin>
+                                                                        <input type="hidden" id="FormIndex" />
+                                                                        <input type="hidden" id="AddressID" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-1-1">
+                                                                <div class="uk-grid" data-uk-grid-margin>
+                                                                    <div class="uk-width-medium-1-1">
+                                                                        <table id="tbl-address" class="uk-table address-list" cellspacing="0" width="100%">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th class="width-10">@Masters.PermanentPresent</th>
+                                                                                    <th class="width-10">@Masters.DefaultPresent</th>
+                                                                                    <th class="width-10">@Masters.DefaultPermanent</th>                                                                                 
+                                                                                    <th class="width-50">@Masters.ContactPerson</th>
+                                                                                    <th class="width-50">@Masters.Address</th>
+                                                                                    <th class="width-40">@Masters.Phone</th>
+                                                                                    <th class="width-40">@Masters.MobileNo</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody></tbody>
+                                                                        </table>
+                                                                        <input type="hidden" id="address-count" value="0">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="true" style="width:100%">
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <div class="uk-input-group">
+                                                            <label>@Masters.DateOfJoining </label>
+                                                            @Html.TextBoxFor(m => m.DateOfJoining, new { @class = "md-input label-fixed  future-date date", @disabled = "disabled" })
+                                                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <div class="uk-input-group">
+                                                            <label>@Masters.DateOfConfirmation </label>
+                                                            @Html.TextBoxFor(m => m.DateOfConfirmation, new { @class = "md-input label-fixed  future-date date", @disabled = "disabled" })
+                                                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.EmpCategory </label>
+                                                        @Html.TextBoxFor(m => m.EmplyeeCategory, new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.PayrollCategory </label>
+                                                        @Html.TextBoxFor(m => m.PayRollCategory, new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.PayGrade</label>
+                                                        @Html.TextBoxFor(m => m.PayGrade, new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.CompanyEmail</label>
+                                                        @Html.TextBoxFor(m => m.CompanyEmail, new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin>
+
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.ReportingToCode</label>
+                                                        @Html.TextBoxFor(m => m.ReportingCode, new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                    </div>
+
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.ReportingToName</label>
+                                                        @Html.TextBoxFor(m => m.ReportingName, new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                                                    </div>
+
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.TransactionRole</label>
+                                                        @Html.TextBoxFor(m => m.TranscationRole, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.D2DReportRole</label>
+                                                        @Html.TextBoxFor(m => m.D2DReportRole, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.MISReportRole</label>
+                                                        @Html.TextBoxFor(m => m.MISReportRole, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.Department </label>
+                                                        @Html.TextBoxFor(m => m.DepartmentName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.Location </label>
+                                                        @Html.TextBoxFor(m => m.Location, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.InterCompany </label>
+                                                        @Html.TextBoxFor(m => m.InterCompany, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <div class="uk-input-group">
+                                                            <label>@Masters.DateOfSeverance</label>
+                                                            @Html.TextBoxFor(m => m.DateOfSeverance, new { @class = "md-input label-fixed  past-date date", @disabled = "disabled" })
+                                                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <div class="uk-input-group">
+                                                            <label>@Masters.DateOfReJoining</label>
+                                                            @Html.TextBoxFor(m => m.DateOfReJoining, new { @class = "md-input label-fixed  past-date date", @disabled = "disabled" })
+                                                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.EmploymentStatus </label>
+                                                        @Html.TextBoxFor(m => m.EmploymentJobType, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.PrintPayroll </label>
+                                                        @Html.TextBoxFor(m => m.PrintPayroll, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="uk-form-row ">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    <div class="uk-width-medium-2-8 pfvoluntarycontribution uk-hidden">
+                                                        <label>@Masters.PFVoluntaryContribution</label>
+                                                        @Html.TextBoxFor(m => m.PFVoluntaryContribution, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8 pfaccountno uk-hidden">
+                                                        <label>@Masters.PFAccountNo</label>
+                                                        @Html.TextBoxFor(m => m.PFAccountNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8 pfuan uk-hidden">
+                                                        <label class="lblPFUAN">@Masters.PFUAN</label>
+                                                        @Html.TextBoxFor(m => m.PFUAN, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8 esino uk-hidden">
+                                                        <label>@Masters.ESINo</label>
+                                                        @Html.TextBoxFor(m => m.ESINo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8 probationduration uk-hidden">
+                                                        <label>@Masters.ProbationDuration</label>
+                                                        @Html.TextBoxFor(m => m.ProbationDuration, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>&nbsp;</label><br />
+                                                        <input type="checkbox" class="icheckbox pfstatus" @(Convert.ToBoolean(Model.PFStatus) == true ? "checked='checked'" : string.Empty) id="PFStatus" , disabled = "disabled" data-md-icheck />@Html.Label("  PF")&nbsp;
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>&nbsp;</label><br />
+                                                        <input type="checkbox" class="icheckbox esistatus" @(Convert.ToBoolean(Model.ESIStatus) == true ? "checked='checked'" : string.Empty) id="ESIStatus" , disabled = "disabled" data-md-icheck />@Html.Label("  ESI")&nbsp;
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>&nbsp;</label><br />
+                                                        <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.NPSStatus) == true ? "checked='checked'" : string.Empty) id="NPS" , disabled = "disabled" data-md-icheck />@Html.Label("  NPS")&nbsp;
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>&nbsp;</label><br />
+                                                        <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.MedicalInsuranceStatus) == true ? "checked='checked'" : string.Empty) id="MedicalInsurance" , disabled = "disabled" data-md-icheck />@Html.Label("  Medical Insurance")&nbsp;
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin>
+
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>&nbsp;</label><br />
+                                                        <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.AttandancePunchingStatus) == true ? "checked='checked'" : string.Empty) id="AttandancePunching" , disabled = "disabled" data-md-icheck />@Html.Label("  Attandance Punching")&nbsp;
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>&nbsp;</label><br />
+                                                        <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.MultiLocationPunchingStatus) == true ? "checked='checked'" : string.Empty) id="MultiLocationPunching" , disabled = "disabled" data-md-icheck />@Html.Label("  Multi-Location Punching")&nbsp;
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>&nbsp;</label><br />
+                                                        <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.SpecialLeaveStatus) == true ? "checked='checked'" : string.Empty) id="SpecialLeave" , disabled = "disabled" data-md-icheck />@Html.Label("  Special Leave")&nbsp;
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>&nbsp;</label><br />
+                                                        <input type="checkbox" class="icheckbox probation" @(Convert.ToBoolean(Model.ProbationStatus) == true ? "checked='checked'" : string.Empty) id="Probation" , disabled = "disabled" data-md-icheck />@Html.Label("  Probation")&nbsp;
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin>
+
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>&nbsp;</label><br />
+                                                        <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.ProductionIncentiveStatus) == true ? "checked='checked'" : string.Empty) id="ProductionIncentive"  , disabled = "disabled" data-md-icheck />@Html.Label("  Production Incentive")&nbsp;
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>&nbsp;</label><br />
+                                                        <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.SalesIncentiveStatus) == true ? "checked='checked'" : string.Empty) id="SalesIncentive" , disabled = "disabled" data-md-icheck />@Html.Label("  Sales Incentive")&nbsp;
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>&nbsp;</label><br />
+                                                        <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.FixedIncentiveStatus) == true ? "checked='checked'" : string.Empty) id="FixedIncentive" , disabled = "disabled" data-md-icheck />@Html.Label("  FixedIncentive")&nbsp;
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>&nbsp;</label><br />
+                                                        <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.MinimumWagesStatus) == true ? "checked='checked'" : string.Empty) id="minimumwages"  , disabled = "disabled" data-md-icheck />@Html.Label("  Minimum Wages")
+                                                    </div>
+                                                </div>
+                                                <div class="uk-form-row">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>&nbsp;</label><br />
+                                                            <input type="checkbox" class="icheckbox erpuser" @(Convert.ToBoolean(Model.IsERPUser) == true ? "checked='checked'" : string.Empty) id="IsERPUser" , disabled = "disabled" data-md-icheck />@Html.Label("  ERP User")&nbsp;
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>&nbsp;</label><br />
+                                                            <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.MedicalAidStatus) == true ? "checked='checked'" : string.Empty) id="MedicalAid"  , disabled = "disabled" data-md-icheck />@Html.Label("  Medical Aid")&nbsp;
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>&nbsp;</label><br />
+                                                            <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.BonusStatus) == true ? "checked='checked'" : string.Empty) id="Bonus" , disabled = "disabled" data-md-icheck />@Html.Label("  Bonus")&nbsp;
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>&nbsp;</label><br />
+                                                            <input type="checkbox" class="icheckbox" id="professionalTax" @(Convert.ToBoolean(Model.ProfessionalTaxStatus) == true ? "checked='checked'" : string.Empty) , disabled = "disabled" data-md-icheck />@Html.Label("  professional Tax")&nbsp;
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="uk-form-row">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>&nbsp;</label><br />
+                                                            <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.WelfareDeductionStatus) == true ? "checked='checked'" : string.Empty) id="WelfareDeduction" , disabled = "disabled" data-md-icheck />@Html.Label("  Welfare Deduction")&nbsp;
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="true" style="width:100%">
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.PANNo</label>
+                                                        @Html.TextBoxFor(m => m.PanNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.AADHAARNo</label>
+                                                        @Html.TextBoxFor(m => m.AadhaarNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.AccountNumber</label>
+                                                        @Html.TextBoxFor(m => m.AccountNumber, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.BankName</label>
+                                                        @Html.TextBoxFor(m => m.BankName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.BankBranchName</label>
+                                                        @Html.TextBoxFor(m => m.BankBranchName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.IFSC</label>
+                                                        @Html.TextBoxFor(m => m.IFSC, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="true" style="width:100%">
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>&nbsp;</label>
+                                                        <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.IsEnglish) == true ? "checked='checked'" : string.Empty) id="English" , disabled = "disabled" data-md-icheck />&nbsp;@Html.Label(" English")
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>&nbsp;</label>
+                                                        <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.IsHindi) == true ? "checked='checked'" : string.Empty) id="Hindi" , disabled = "disabled" data-md-icheck />&nbsp;@Html.Label("Hindi")
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>&nbsp;</label>
+                                                        <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.IsMalayalam) == true ? "checked='checked'" : string.Empty) , disabled = "disabled" id="Malayalam" data-md-icheck />&nbsp;@Html.Label("Malayalam")
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>&nbsp;</label>
+                                                        <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.IsTamil) == true ? "checked='checked'" : string.Empty) id="Tamil" , disabled = "disabled" data-md-icheck />&nbsp;@Html.Label("Tamil")
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>&nbsp;</label>
+                                                        <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.IsTelugu) == true ? "checked='checked'" : string.Empty) id="Telugu" , disabled = "disabled" data-md-icheck />&nbsp;@Html.Label("Telugu")
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>&nbsp;</label>
+                                                        <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.IsKannada) == true ? "checked='checked'" : string.Empty) id="Kannada" , disabled = "disabled" data-md-icheck />&nbsp;@Html.Label("Kannada")
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="true" style="width:100%">
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="panel master-heading-top">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    <div class="uk-width-medium-1-1">
+                                                        <table id="tbl-ExEmp-address" class="uk-table" cellspacing="0" width="100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="width-10"></th>
+                                                                    <th class="width-40">@Masters.EmployerName</th>
+                                                                    <th class="width-40">@Masters.Designation</th>
+                                                                    <th class="width-40">@Masters.Address</th>
+                                                                    <th class="width-40">@Masters.DateOfJoining</th>
+                                                                    <th class="width-40">@Masters.DateOfSeverance</th>
+                                                                    <th class="width-40">@Masters.ContactPerson</th>
+                                                                    <th class="width-40">@Masters.ContactNumber</th>
+                                                                    <th class="width-10"></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+
+                                                                @if (Model.ExEmployDetails != null)
+                                                                {
+                                                                    foreach (var item in Model.ExEmployDetails)
+                                                                    {
+                                                                        <tr>
+                                                                            <td class="uk-text-center serial-no">@(1 + @Model.ExEmployDetails.IndexOf(item))</td>
+                                                                            <td class="Employer-name">@item.EmployerName</td>
+                                                                            <td class="designation">@item.Designation </td>
+                                                                            <td class="address">
+                                                                                @item.ExEmployAddress1  <br /> @item.ExEmployAddress2  <br> @item.ExEmployAddress3  <br /> @item.ExEmployPlace  <br /> @item.ExEmployPin
+                                                                                <input type="hidden" class="address1" value="@item.ExEmployAddress1 " />
+                                                                                <input type="hidden" class="address2" value="@item.ExEmployAddress2 " />
+                                                                                <input type="hidden" class="address3" value="@item.ExEmployAddress3" />
+                                                                                <input type="hidden" class="place" value="@item.ExEmployPlace " />
+                                                                                <input type="hidden" class="pin" value="@item.ExEmployPin " />
+                                                                                <input type="hidden" class="state-ID" value="@item.State" />
+                                                                                <input type="hidden" class="district-ID" value="@item.District" />
+                                                                                <input type="hidden" class="country-ID" value="@item.Country" />
+                                                                            </td>
+                                                                            <td class="date-of-joinning">@item.DateOfJoinning</td>
+                                                                            <td class="date-of-severance">@item.DateOfSeverance</td>
+                                                                            <td class="contact-person">@item.ContactPerson</td>
+                                                                            <td class="contact-number">@item.ContactNumber</td>
+                                                                            <td>
+                                                                                <a class="remove-item"><i class="uk-icon-remove"></i></a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    }
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                        <input type="hidden" id="ExEmp-address-count" value="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="true" style="width:100%">
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    <div class="uk-width-medium-1-1">
+
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <div class="uk-width-medium-1-1">
+                                                                <table id="SalaryComponentList" class="uk-table" cellspacing="0" width="100%">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th class="width-10"><input type="checkbox" class="icheckbox select-all" data-md-icheck  disabled = "disabled"/></th>
+                                                                            <th class="width-40">@Masters.PayType</th>
+                                                                            <th class="width-40">@Masters.FinancePayRoll</th>
+                                                                            <th class="width-40">@Masters.ProductionIncentivePayroll</th>
+                                                                            <th class="width-40">@Masters.SalesIncentivePayroll</th>
+                                                                            <th class="width-40">@Masters.Monthly</th>
+                                                                            <th class="width-40">@Masters.Annual</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+
+                                                                        @foreach (var item in Model.SalaryDetails)
+                                                                        {
+                                                                            <tr>
+                                                                                <td class="uk-text-center"><input type="checkbox" class="salary-components" @(Convert.ToBoolean(item.PaytypeStatus) == true ? "checked='checked'" : string.Empty) icheckFinance data-md-icheck icheckAL  disabled = "disabled" /></td>
+                                                                                <td class="paytype">@item.PayType</td>
+                                                                                <td class="uk-text-center ">
+                                                                                <input type="checkbox" class="finance" @(Convert.ToBoolean(item.IsFinancePayRoll) == true ? "checked='checked'" : string.Empty) icheckFinance data-md-icheck disabled = "disabled" />
+                                                                                </td>
+                                                                                <td class="uk-text-center ">
+                                                                                <input type="checkbox" class="production"  @(Convert.ToBoolean(item.IsProductionIncentivePayRoll) == true ? "checked='checked'" : string.Empty) IcheckProduction data-md-icheck disabled = "disabled"/>
+                                                                                </td>
+                                                                                <td class="uk-text-center ">
+                                                                                <input type="checkbox" class="sales"  @(Convert.ToBoolean(item.IsSalesIncentivePayRoll) == true ? "checked='checked'" : string.Empty) icheckSales data-md-icheck disabled = "disabled" />
+                                                                                </td>
+                                                                                <td><input type="text" class="md-input mask-currency salarymonthly" disabled value=@item.SalaryMonthly /></td>
+                                                                                <td><input type="text" class="md-input mask-currency salaryannual" disabled value=@item.SalaryAnnual /></td>
+                                                                            </tr>
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="true" class="" style="width:100%">
+                                        <div id="location-Container" class="employee-as-customer-location">
+                                            <div class="uk-width-medium-1-1">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    @foreach (var location in Model.LocationList)
+                                                    {
+                                                        <div class="uk-width-medium-2-8 Locationdiv">
+                                                            <input type="checkbox" class="icheckbox CustomerLocation" value="@location.Value" data-md-icheck  disabled = "disabled"/>&nbsp; <label id="locationLabel">@location.Text</label>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <input type="hidden" id="Employee-As-Customer-Location-Mapping" value="0">
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

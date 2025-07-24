@@ -1,0 +1,233 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.AdvanceReturnModel
+@{
+    ViewBag.Title = "Form";
+}
+
+<div id="page_content_inner" class="form-view">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-8-10">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="">
+                                    <div class="uk-width-medium-1-8">
+                                        <label>@Accounts.AdvanceReturnNo</label>
+                                        @Html.TextBoxFor(m => m.ReturnNo, new { @class = "md-input label-fixed", @id = "txtAdvancePaymentNo", disabled = "disabled" })
+                                    </div>
+                                    <div class="uk-width-medium-1-8">
+                                        <label>@Accounts.AdvanceReturnDate</label>
+                                        @Html.TextBoxFor(m => m.Date, new { @class = "md-input label-fixed", disabled = "disabled" })
+                                    </div>
+                                    <div class="uk-width-medium-1-8">
+                                        <label>@Accounts.Category</label>
+                                        @Html.DropDownListFor(Model => Model.Category, Model.Categories, new { @class = "md-input label-fixed", @id = "ddlCategory" })
+                                    
+                                    </div>
+                                    @if (Model.ID == 0)
+                                    {
+                                       
+                                        <div class="uk-width-medium-2-8 uk-hidden" id="EmployeeWrapper">
+                                            <div class="uk-autocomplete " id="employee-autocomplete">
+                                                <div class="uk-input-group">
+                                                    <label for="uk_dp_start">@Accounts.Employee<span>*</span></label>
+                                                    @Html.TextBoxFor(m => m.EmployeeName, new { @class = "md-input label-fixed" })
+                                                    <span class="uk-input-group-addon">
+                                                        <a data-uk-modal="{target:'#select-employee',center:false}">
+                                                            <i class="uk-input-group-icon uk-icon-search"></i>
+                                                        </a>
+                                                    </span>
+                                                    <script type="text/autocomplete">
+                                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                            {{~items}}
+                                                            <li data-value="{{ $item.Name}}"
+                                                                data-id="{{$item.ID}}"
+                                                                data-EmployeeCode="{{$item.Code}}"
+                                                                data-placement="{{$item.Location}}">
+                                                                <a>
+                                                                    {{ $item.Name }}
+                                                                    <div>{{{ $item.Code }}}</div>
+                                                                </a>
+                                                            </li>
+                                                            {{/items}}
+                                                        </ul>
+                                                    </script>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    }
+
+                                    else if (Model.EmployeeID != 0)
+                                    {
+                                        {
+                                        <div class="uk-width-medium-2-10">
+                                            <label for="uk_dp_start">@Accounts.Employee</label>
+                                            @Html.TextBoxFor(model => model.EmployeeName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                    }
+                                    }
+                                    @Html.Hidden("EmployeeID")
+                                    @Html.HiddenFor(Model => Model.ID)
+                                    @if (Model.ID == 0)
+                                    {
+                                        
+                                        <div class="uk-width-medium-2-8 selected" id="SupplierWrapper">
+                                            <div class="uk-autocomplete " id="supplier-autocomplete">
+                                                <div class="uk-input-group">
+                                                    <label>@Accounts.SupplierName<span>*</span></label>
+                                                    @Html.TextBoxFor(m => m.SupplierName, new { @class = "md-input label-fixed" })
+                                                    <span class="uk-input-group-addon" data-uk-modal="{target:'#select-supplier',center:false}">
+                                                        <i class="uk-input-group-icon uk-icon-search"></i>
+                                                    </span>
+                                                    <script type="text/autocomplete">
+                                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                            {{~items}}
+                                                            <li data-value="{{ $item.Name }}"
+                                                                data-id="{{$item.ID}}"
+                                                                data-location="{{$item.Location}}"
+                                                                data-state-id="{{$item.StateID}}"
+                                                                data-is-gst-registered="{{$item.IsGSTRegistered}}">
+                                                                <a>
+                                                                    {{ $item.Name }} ({{{ $item.Code }}})
+                                                                    <div>{{{ $item.Location }}}</div>
+                                                                </a>
+                                                            </li>
+                                                            {{/items}}
+                                                        </ul>
+                                                    </script>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    else if (Model.SupplierID != 0)
+                                    {
+                                      
+                                        <div class="uk-width-medium-2-10">
+                                            <label for="uk_dp_start">@Accounts.SupplierName</label>
+                                            @Html.TextBoxFor(model => model.SupplierName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                    }
+                                    @*<div class="uk-width-medium-2-8 uk-hidden" id="select_purpose">
+                                            <br />
+                                            <label>@Accounts.Purpose</label>
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <input type="radio" name="radPurpose" class="radPurpose" data-md-icheck value="@Accounts.Official" checked="checked" /> @Accounts.Official
+                                                <input type="radio" name="radPurpose" class="radPurpose" data-md-icheck value="@Accounts.Personal" /> @Accounts.Personal
+                                            </div>
+                                        </div>*@
+                                    <div class="uk-width-medium-2-10">
+                                        <div class="uk-autocomplete " id="party-autocomplete">
+                                            <div class="uk-input-group">
+                                                <label>@Accounts.SelectPayment<span>*</span></label>
+                                                @Html.TextBox("RequestNo", "", new { @class = "md-input label-fixed" })
+                                                <span class="uk-input-group-addon">
+                                                    <a class="selectpayment" data-uk-modal="{target:'#add-payment'}">
+                                                        <i class="uk-input-group-icon uk-icon-search"></i>
+                                                    </a>
+                                                </span>
+
+                                            </div>
+                                        </div>
+                                        @Html.HiddenFor(m => m.ID, new { @class = "md-input label-fixed" })
+                                        @Html.HiddenFor(m => m.SupplierID, new { @class = "md-input label-fixed" })
+
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-8">
+                                        <label>@Accounts.ModeOfPayment<span>*</span></label>
+                                        @Html.DropDownListFor(Model => Model.PaymentTypeID, Model.PaymentTypeList, "Select", new { @class = "md-input label-fixed", @id = "dropPayment" })
+                                    </div>
+                                    <div class="uk-width-medium-1-8">
+                                        <label for="uk_dp_start">@Accounts.BankName<span>*</span></label>
+                                        @Html.DropDownListFor(Model => Model.BankID, Model.BankList, "Select", new { @class = "md-input label-fixed" })
+                                    </div>
+                                    <div class="uk-width-medium-2-8">
+                                        <label>@Accounts.ReferenceNumber</label>
+                                        @Html.TextBoxFor(m => m.ReferenceNumber, new { @class = "md-input" })
+                                    </div>
+                                    <div class="uk-width-medium-2-8">
+                                        <label>@Accounts.Remarks</label>
+                                        @Html.TextBoxFor(m => m.Remarks, new { @class = "md-input" })
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="uk-width-medium-2-10">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="">
+                                    <div class="uk-width-medium-1-1">
+                                        <label>@Purchase.GrossAmount</label>
+                                        @Html.TextBoxFor(model => model.NetAmount, new { @class = "md-input mask-sales-currency label-fixed x-large", @tabindex = "-1", @readonly = "readonly" })
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section-group">
+                <div class="tablescroll" id="unProcessedItemsTblContainer">
+                    <table id="Advance-Details" class="uk-table" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="width-40">@Common.SerialNo</th>
+                                <th class="width-120">@Accounts.AdvancePaymentNo</th>
+                                <th class="width-40">@Accounts.APPODate</th>
+                                <th class="width-200">@Accounts.APItemName</th>
+                                <th class="width-40">@Accounts.APAmount</th>
+                                <th class="width-200">@Accounts.AmountReturned</th>
+                                <th class="width-20"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                if (Model.Items != null)
+                                {
+                                    foreach (var itm in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                                    {
+                                        <tr>
+                                            <td class="uk-text-center">
+                                                @itm.i
+                                                <input type="hidden" class="itemid" value="@itm.value.ItemID" />
+                                                <input type="hidden" class="payment-trans-id" value="@itm.value.AdvanceID">
+                                            </td>
+                                            <td>@itm.value.TransNo</td>
+                                            <td>@itm.value.PODate</td>
+                                            <td class="ItemName">@itm.value.ItemName</td>
+                                            <td class="mask-currency paidamount">@itm.value.Amount</td>
+                                            <td><input type="text" class="md-input returnamount mask-currency" value="@itm.value.ReturnAmount"></td>
+                                            <td>
+                                                <a class="remove-item uk-text-center"><i class="uk-icon-remove"></i></a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+
+
+                    </table>
+                    <input type="hidden" id="item-count" value="0" />
+
+                </div>
+                <div class="tablescroll" id="advanceRequestDetailsTblContainer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Html.Partial("~/Areas/Accounts/Views/AdvanceReturn/AddAdavancePayment.cshtml", Model.UnProcessedAPList)
+@Html.Partial("~/Areas/Masters/Views/Supplier/PartialList.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Employee/PartialList.cshtml")
+

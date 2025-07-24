@@ -1,0 +1,248 @@
+﻿@model TradeSuiteApp.Web.Areas.Manufacturing.Models.ProductionScheduleViewModel
+
+
+<input type="hidden" id="hdnProductionScheduleCreateEdit" value="true" />
+<input type="hidden" id="hdnProductionScheduleID" value="@Model.ID" />
+
+<input type="hidden" id="hdnProductionGroupID" value="@Model.ProductionGroupID" />
+<input type="hidden" id="hdnProductionGroupName" value="@Model.ProductionGroupName" />
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Manufacturing.ProductionSchedule</h1>
+            <span class="uk-text-upper uk-text-small">@Manufacturing.CreateProductionSchedule</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnCompleted'>" + Common.Save + "</a>")
+            @ActionAuthorization.IsAuthorized("SaveAsDraft", "<a class='md-btn btnSaveASDraft'>" + Common.SaveAsDraft + "</a>")
+            
+            @Html.ActionLink(Common.Close, "Index", "ProductionSchedule", new { Area = "Manufacturing" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.TransNo</label>
+                                            @Html.TextBoxFor(model => model.TransNo, new { @class = "md-input label-fixed", @id = "txtTransNo", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label for="uk_dp_start">@Manufacturing.TransDate</label>
+                                            @Html.TextBoxFor(m => m.TransDateStr, new { @class = "md-input label-fixed current-date date", @id = "txtTransDate", @disabled = "disabled" })
+                                            @*<input  type="text"  id="Date" value="@DateTime.Now.ToString("dd-MM-yyyy")">*@
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label for="uk_dp_start">@Manufacturing.BatchNo</label>
+                                            @Html.TextBoxFor(model => model.BatchNo, new { @class = "md-input label-fixed", @id = "txtBatchNo", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-4">
+                                            <label for="uk_dp_start">@Manufacturing.Remarks</label>
+                                            @Html.TextBoxFor(model => model.Remarks, new { @class = "md-input label-fixed"})
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                      
+                                        <div class="uk-width-medium-2-8">
+                                            @*<label for="uk_dp_start">@Manufacturing.ProductionGroup</label>
+                                                @Html.TextBoxFor(model => model.ProductGroupName, new { @class = "md-input label-fixed", @id = "txtProGroup" })*@
+
+                                            <div class="uk-autocomplete " id="productionschedule-autocomplete">
+                                                <div class="uk-input-group">
+                                                    <label>@Manufacturing.ProductionGroup<span>*</span></label>
+                                                   
+                                                    @if (Model.ID <= 0)
+                                                    {
+                                                        @Html.TextBox("ProductGroupName", Model.ProductionGroupName, new { @class = "md-input label-fixed", @id = "txtProductGroupName" })
+                                                        <span class="uk-input-group-addon">
+                                                            <a data-uk-modal="{target:'#select-production-group', center:false}">
+                                                                <i class="uk-input-group-icon uk-icon-search"></i>
+                                                            </a>
+                                                        </span>
+                                                        @*<span class="uk-input-group-addon"><a  data-uk-modal="{target:'#select_party'}"><i class="material-icons md-24"><b></b></i></a></span>*@
+                                                        <script type="text/autocomplete">
+                                                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                                {{~items}}
+                                                                <li data-name="{{ $item.Name }} "
+                                                                    data-id="{{$item.ID}}"
+                                                                    data-std-batch-size="{{$item.StdBatchSize}}" 
+                                                                    data-is-kalkan="{{$item.IsKalkan}}">
+                                                                    <a>
+                                                                        {{ $item.Name }} ({{{$item.Code}}})
+                                                                    </a>
+                                                                </li>
+                                                                {{/items}}
+                                                            </ul>
+                                                        </script>
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.TextBox("ProductGroupName", Model.ProductionGroupName, new { @class = "md-input label-fixed", @id = "txtProductGroupName", @disabled="disabled" })
+                                                    }
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        @Html.HiddenFor(model => Model.ProductionGroupID)
+                                        @Html.HiddenFor(model => Model.IsKalkan)
+                                        <div class="uk-width-medium-1-8">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Manufacturing.StartDate</label>
+                                                <input type="text" class="md-input label-fixed future-date mask-date" id="txtStartDate" value="@Model.ProductionStartDateStr" />
+                                                @if (Model.ID >= 0)
+                                                {
+                                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar  future-date"></i></span>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label for="uk_dp_start">@Manufacturing.StandardBatchSize</label>
+                                            @Html.TextBoxFor(model => model.StandardBatchSize, new { @class = "md-input label-fixed mask-production-qty", @id = "StandardBatchSize",@disabled="disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label for="uk_dp_start">@Manufacturing.Batchsize</label>
+                                            @Html.TextBoxFor(model => model.ActualBatchSize, new { @class = "md-input label-fixed mask-production-qty", @id = "txtBatchSize" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label for="uk_dp_start">@Manufacturing.Store</label>
+                                            @Html.DropDownListFor(model => model.StoreID, Model.StoreList, "Select", new { @class = "md-input label-fixed", @id = "ddlProductionStore", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label for="uk_dp_start">@Manufacturing.ProductionLocation</label>
+                                            @Html.DropDownListFor(model => model.ProductionLocationID, Model.ProductionLocationList, "Select", new { @class = "md-input label-fixed", @id = "ddlProductionLocation", @Disabled = "disabled" })
+                                        </div>
+                                        @if (Model.ID <= 0)
+                                        {
+                                            <div class="uk-width-medium-1-10">
+                                                <div class="md-input-wrapper md-input-filled">
+                                                    <label>&nbsp;</label>
+                                                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddItems">@Common.Add</button>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <table id="production-schedule-item-list" class="uk-table" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th class="width-10">@Common.SerialNo</th>
+                                    <th class="width-250">@Manufacturing.ItemName</th>
+                                    <th class="width-40">@Manufacturing.Unit</th>
+                                    <th class="width-100">@Manufacturing.StandardQtyForStdBatch</th>
+                                    <th class="width-80">@Manufacturing.RequiredQuantity</th>
+                                    <th class="width-80">@Manufacturing.RequiredDate</th>
+                                    <th class="width-200">@Manufacturing.Remarks</th>
+                                    <th class="width-10"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ Html.RenderPartial("_items", Model.Items);}
+                            </tbody>
+                        </table>
+                    </div>
+                    <br />
+                    <div class="uk-form-row">
+                        <div class="panel">
+                            <label class="large">Additional Issue</label>
+                            <div class="uk-grid">
+                                <div class="uk-width-medium-2-10">
+                                    <div class="uk-autocomplete " id="additionalIssueItem-autocomplete">
+                                        <div class="uk-input-group">
+                                            <label>@Manufacturing.ItemName<span>*</span></label>
+                                            @Html.TextBox("txtAddnitionalIssue", "", new { @class = "md-input label-fixed txtAddnitionalIssue", @id = "txtAddnitionalIssue" })
+                                            <span class="uk-input-group-addon">
+                                                <a data-uk-modal="{target:'#select-item',center:false}">
+                                                    <i class="uk-input-group-icon uk-icon-search"></i>
+                                                </a>
+                                            </span>
+                                            <script type="text/autocomplete">
+                                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                    {{~items}}
+                                                    <li data-value="{{ $item.Name }}"
+                                                        data-id="{{$item.ID}}"
+                                                        data-unit="{{$item.Unit}}"
+                                                        data-unitid="{{$item.UnitID}}">
+                                                        <a>
+                                                            {{ $item.Name }} ({{{ $item.Code }}})
+                                                        </a>
+                                                    </li>
+                                                    {{/items}}
+                                                </ul>
+                                            </script>
+                                        </div>
+                                    </div>
+                                </div>
+                                @Html.Hidden("ItemID")
+                                @Html.Hidden("Code")
+                                @Html.Hidden("Unit")
+                                @Html.Hidden("UnitID")
+                                @Html.Hidden("PrimaryUnit")
+                                @Html.Hidden("PrimaryUnitID")
+                                @Html.Hidden("ProductionUnit")
+                                @Html.Hidden("SalesUnitID")
+                                @*<div class="uk-width-medium-1-10">
+                                    <label>@Sales.Unit </label>
+                                    @Html.DropDownListFor(Model => Model.UnitID, Model.UnitList, "Select", new { @class = "md-input label-fixed" })
+                                </div>*@
+                                <div class="uk-width-medium-1-10">
+                                    <label for="uk_dp_start">@Manufacturing.UOM</label>
+                                    @Html.TextBox("txtAdditionalIssueUOM", "", new { @class = "md-input label-fixed txtAdditionalIssueUOM", @id = "txtAdditionalIssueUOM" })
+                                </div>
+                                <div class="uk-width-medium-1-10">
+                                    <label for="uk_dp_start">@Manufacturing.Qty</label>
+                                    @Html.TextBox("txtAdditionalIssueQty", "", new { @class = "md-input label-fixed  mask-production-qty txtAdditionalIssueQty", @id = "txtAdditionalIssueQty" })
+                                </div>
+                                <div class="uk-width-medium-1-10">
+                                    <div class="uk-input-group">
+                                        <label for="uk_dp_start">@Manufacturing.StartDate</label>
+                                        <input type="text" class="md-input label-fixed future-date date" id="txtReqDate" value="@Model.ProductionStartDateStr" />
+
+                                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+
+                                    </div>
+                                </div>
+                                <div class="uk-width-medium-1-10">
+                                    <div class="md-input-wrapper md-input-filled">
+                                        <label>&nbsp;</label>
+                                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddAdditionalIssue">@Common.Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Html.Partial("~/Areas/Masters/Views/Item/ProductionItemList.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Item/StockRequestItemList.cshtml")

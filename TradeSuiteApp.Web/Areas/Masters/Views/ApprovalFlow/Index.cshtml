@@ -1,0 +1,97 @@
+﻿@{
+    ViewBag.Title = @Approvals.ApprovalFlow;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 48, media: 960 }">
+        <div class="heading_title">
+            <h1>@Approvals.ApprovalFlow</h1>
+            <span class="uk-text-upper uk-text-small">@Approvals.ApprovalFlowList</span>
+        </div>
+        <div class="heading_actions">
+            @Html.ActionLink(Common.Create, "Create", "ApprovalFlow", new { Area = "Masters" }, new { @class = "md-btn" })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a href="#">@Common.Action</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="list-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <table id="approval-flow-list" class="uk-table" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="width-20">
+                                @Common.SerialNo
+                            </th>
+                            <th class="width-80">
+                                @Approvals.ApprovalFlow
+                            </th>
+                            <th class="width-80">
+                                @Approvals.ForDepartment
+                            </th>
+                            <th class="width-80">
+                                @Approvals.AmountAbove
+                            </th>
+                            <th class="width-80">
+                                @Approvals.AmountBelow
+                            </th>
+                            <th class="width-80">
+                                @Approvals.ItemCategory
+                            </th>
+                            <th class="width-80">
+                                @Approvals.ItemAccountsCategory
+                            </th>
+                            <th class="width-80">
+                                @Approvals.SupplierCategory
+                            </th>
+                            <th class="width-80">
+                                @Approvals.SupplierAccountsCategory
+                            </th>
+                        </tr>
+                    </thead>
+                    <thead class="search">
+                        <tr>
+                            <th>
+                                @Common.SerialNo
+                            </th>
+                            <th>
+                                @Approvals.ApprovalFlow
+                            </th>
+                            <th>
+                                @Approvals.ForDepartment
+                            </th>
+                            <th>
+                                @Approvals.AmountAbove
+                            </th>
+                            <th>
+                                @Approvals.AmountBelow
+                            </th>
+                            <th>
+                                @Approvals.ItemCategory
+                            </th>
+                            <th>
+                                @Approvals.ItemAccountsCategory
+                            </th>
+                            <th>
+                                @Approvals.SupplierCategory
+                            </th>
+                            <th>
+                                @Approvals.SupplierAccountsCategory
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/ApprovalFlow")
+<script type="text/javascript">
+    ApprovalFlow.list();
+</script>

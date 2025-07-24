@@ -1,0 +1,16 @@
+  
+ALTER VIEW [dbo].[viShippingAddresses]      
+AS  
+SELECT L.ID AS LocationID, L.Code AS LocationCode, L.Name AS Location,SU.ID AS SupplierID, SU.Code AS SupplierCode, SU.Name AS Supplier,      
+ A.ID AS AddressID, A.Place, A.IsDefault, A.PartyType, A.PartyID, A.AddressLine1, A.AddressLine2, ISNULL(A.AddressLine3,'') AS AddressLine3      
+, A.DistrictID, A.PIN, A.LandLine1, A.LandLine2, A.MobileNo, A.Email,ISNULL( S.ID,0) AS StateID,S.Name AS State, A.IsDefaultShipping,L.LocationGroupID,L.LocationHeadID,ISNULL(D.Name,'') AS District      
+ FROM dbo.Addresses A       
+ LEFT JOIN  dbo.State AS S ON S.ID = A.StateID    
+ LEFT JOIN dbo.District D ON D.ID = A.DistrictID       
+ LEFT OUTER JOIN dbo.Location L  ON A.LocationID = L.ID  --AND A.PartyType = 'Location'      
+ LEFT OUTER JOIN dbo.Supplier SU ON SU.ID = A.PartyID AND A.PartyType = 'Supplier'      
+WHERE (A.IsShipping = 1)  
+  
+  
+  
+  

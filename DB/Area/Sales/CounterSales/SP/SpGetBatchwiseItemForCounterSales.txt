@@ -1,0 +1,123 @@
+--exec Sales.SpGetBatchwiseItemForCounterSales 803,1,1,32,1,'cash sales',2022,1,1                        
+ALTER PROCEDURE [Sales].[SpGetBatchwiseItemForCounterSales](                           
+@ItemID int,                            
+@WarehouseID int,                            
+@BatchTypeID int,                            
+@UnitID int,                            
+@Qty numeric(18,4),                            
+@CustomerType varchar(25),                          
+@FinYear int,                            
+@LocationID int,                            
+@ApplicationID int,                
+@TaxTypeID Int                
+)AS                            
+Begin                            
+ IF 1 = 2                             
+ Begin                            
+  SELECT cast(null as int) BatchID, '' BatchNo, cast(null as numeric(18,4)) Stock,cast(null as int) BasePriceListID,                            
+   cast(null as numeric(18,4)) FullPrice,cast(null as numeric(18,4)) LoosePrice, '' ItemName, cast(null as datetime) ExpiryDate,                            
+   cast(null as int) ItemID, '' Unit,  cast(null as int) UnitID, cast(null as numeric(18,4)) IGSTPercent, cast(null as numeric(18,4)) CessPercentage,                             
+   cast(null as numeric(18,4)) CGSTPercent,  cast(null as numeric(18,4)) SGSTPercent, cast(null as int) BatchTypeID,                             
+   '' BatchType, '' ItemCode,cast(null as int)UnitID,cast(null as numeric(18,4)) Quantity,cast(null as int)SalesUnitID,cast(null as bit)IsGSTRegisteredLocation --,@LocationID as LocationID                           
+ End                             
+ IF (OBJECT_ID('tempdb..#temp') IS NOT NULL)                            
+ BEGIN                            
+  DROP TABLE #temp                            
+ END                            
+                            
+ If @BatchTypeID=0                            
+ Begin                            
+  set @BatchTypeID=null                            
+ End                            
+ CREATE TABLE #temp (                            
+  ID int PRIMARY KEY IDENTITY(1,1),                            
+  ItemID int,                               
+  BatchID int,                            
+  BatchNo varchar(30),                            
+  ExpiryDate DateTime,                            
+  BasePriceListID int,                             
+  Stock Numeric(18,4),                             
+  IssueQty Numeric(18,4),                            
+  UnitID int,                          
+  RetailMRP numeric(18,2),                          
+  RetailLooseRate numeric(18,2),                          
+  PurchaseMRP numeric(18,2),                          
+  PurchaseLooseRate  numeric(18,2),                
+  LocationID int,                
+  CurrencyID int                 
+ )                            
+                            
+                            
+ DECLARE @Stock Numeric(18,4) = 10,  @BatchID int, @BatchNo VARCHAR(30), @CumulativeStock Numeric(18,4) = 0,                          
+ @BasePriceListID int, @DefaultBasePriceListID int, @PriceListID int, @IssueQty numeric(18,4), @ExpiryDate DateTime ,                        
+ @RetailMRP numeric(18,2),@RetailLooseRate numeric(18,2),@PurchaseMRP numeric(18,2),@PurchaseLooseRate  numeric(18,2)  ,@Category VARCHAR(25),@IsGSTRegisteredLocation bit, @CurrencyID INT                         
+ SELECT @Category=C.Name FROM Item I INNER JOIN Category C ON I.SalesCategoryID=C.ID where I.ID=@ItemID                          
+ Select @IsGSTRegisteredLocation = IsGSTRegisteredLocation from Location where ID=@LocationID                        
+                            
+ WHILE (@CumulativeStock < @Qty AND @Stock <> 0 )                            
+ BEGIN                            
+  SET @Stock = 0                            
+                          
+                          
+  SELECT TOP 1 @BatchID = B.BatchID, @BatchNo = CustomBatchNo,  @BasePriceListID = B.BasePriceListID, @ExpiryDate = B.ExpiryDate,                           
+   
+   @Stock=FLOOR(SUM(dbo.FnConvertUnit(I.ID,S.Value,I.SalesUnitID, @UnitID))),                          
+   @RetailMRP=B.RetailMRP,@RetailLooseRate=B.RetailLooseRate,@PurchaseMRP=B.PurchaseMRP,@PurchaseLooseRate=B.PurchaseLooseRate, @CurrencyID=B.CurrencyID                        
+  FROM viActiveBatches B                             
+  INNER JOIN Stock S ON B.ItemID = S.ItemID AND B.BatchID = S.BatchID                             
+  INNER JOIN Item I ON B.ItemID = I.ID                          
+  WHERE S.WareHouseID = @WareHouseID                   
+  AND B.BatchID NOT IN (SELECT BatchID FROM #temp)                            
+  AND B.ItemID = @ItemID                               
+  AND ISNULL(S.BatchTypeID,0) = ISNULL(@BatchTypeID,0)                            
+  AND S.FinYear = @FinYear                            
+  AND S.LocationID = @LocationID                            
+  AND S.ApplicationID = @ApplicationID                 
+  AND B.LocationID=@LocationID                
+  GROUP BY B.BatchID, CustomBatchNo, B.BasePriceListID, B.ExpiryDate,B.RetailMRP,B.RetailLooseRate,B.PurchaseMRP,B.PurchaseLooseRate,B.CurrencyID                             
+  HAVING FLOOR(SUM(dbo.FnConvertUnit(I.ID, Value,I.SalesUnitID, @UnitID))) > 0 ORDER BY B.ExpiryDate ASC                            
+                               
+  IF @Stock <> 0                             
+  BEGIN                            
+   IF @Stock >= @Qty - @CumulativeStock                             
+   BEGIN                            
+    SET @IssueQty = @Qty - @CumulativeStock                            
+   END                            
+   ELSE                            
+   BEGIN                            
+    SET @IssueQty = @Stock                            
+   END                            
+   SET @CumulativeStock = @CumulativeStock + @Stock                            
+   INSERT INTO #temp SELECT @ItemID, @BatchID, @BatchNo, @ExpiryDate, @BasePriceListID, @Stock,  @IssueQty, @UnitID,                          
+   @RetailMRP,@RetailLooseRate,@PurchaseMRP,@PurchaseLooseRate,@LocationID,@CurrencyID                              
+  END                            
+ END                             
+             
+ SET @PriceListID = @BatchTypeID                           
+ SELECT @DefaultBasePriceListID = dbo.FnGetBasePriceListID(@LocationID, @ApplicationID);                          
+WITH CTE_table AS(                      
+ SELECT  ISNULL(T.BatchID,0) BatchID, isnull(T.BatchNo,'') as BatchNo, ISNULL(T.Stock, 0.0) as Stock, ISNULL(T.BasePriceListID,@DefaultBasePriceListID) BasePriceListID,                          
+  (CASE WHEN @Category='Arishtams' OR @Category='Asavams' OR @Category='Kashayams' OR @Category='Kuzhambu' OR @Category='Thailam (Enna)' OR @Category='Thailam (Keram)' OR  @Category='Dravakam' OR @Category='Oil'                          
+   THEN T.RetailMRP ELSE RetailLooseRate END) AS FullPrice,--T.RetailMRP as FullPrice,                           
+  T.RetailLooseRate as LoosePrice,I.Name as ItemName,T.ExpiryDate, I.ID as ItemID, U.UOM Unit,                
+  ISNULL(G.IGSTPercent,0)IGSTPercent,ISNULL(G.CGSTPercent,0)CGSTPercent,ISNULL(G.SGSTPercent,0)SGSTPercent,ISNULL(GS.Percentage,0) CessPercentage,ISNULL(G.VATPercentage,0)VATPercentage,                          
+  BT.ID as BatchTypeID, BT.Name as BatchType,I.code as ItemCode,ISNULL(PN.PartsNumber+(CASE WHEN pn.IsDefault=1 THEN ' (Default)' ELSE '' END),'') PartsNumber,
+  ISNULL(I.SanskritName,'')Remark,ISNULL(I.Model,'')Model, @UnitID as UnitID, ISNULL(T.IssueQty,0.0) as Quantity,I.SalesUnitID,@IsGSTRegisteredLocation as   
+    
+IsGSTRegisteredLocation,                
+  Cu.Name CurrencyName,T.CurrencyID,TT.Name TaxType,(CASE WHEN TT.Name like '%gst%' THEN 1 ELSE 0 END)IsGST,(CASE WHEN TT.Name like '%vat%' THEN 1 ELSE 0 END)IsVAT                
+ FROM Item I                            
+ INNER JOIN ItemTax IT on I.ID=IT.ItemID        
+ INNER JOIN GSTCategory G ON G.ID = IT.GSTCategoryID                  
+ INNER JOIN TaxType TT ON TT.ID = IT.TaxTypeID                   
+ INNER JOIN Unit U On U.ID = @UnitID                          
+ INNER JOIN BatchType BT ON BT.ID = @BatchTypeID      
+ LEFT JOIN #temp T ON T.ItemID = I.ID          
+ LEFT JOIN ItemPartsNumber PN on PN.ItemID=I.ID      
+ LEFT JOIN GSTSubCategory GS ON Gs.ID = I.GSTSubCategoryID                       
+ LEFT JOIN Currency cu ON T.CurrencyID=Cu.ID                
+ WHERE I.ID = @ItemID AND TT.ID=@TaxTypeID)        
+ SELECT BatchID,BatchNo,Stock,BasePriceListID,FullPrice,LoosePrice,ItemName,ExpiryDate,ItemID, Unit,IGSTPercent,CGSTPercent,SGSTPercent,CessPercentage,VATPercentage,    
+ ISNULL((SELECT STRING_AGG(Name+'|'+CAST(PackSize AS varchar(10)), ',') FROM SecondaryUnit su  join ItemSecondaryUnit iu on iu.SecondaryUnitID=su.ID WHERE iu.ItemID=CTE_table.ItemID  AND su.UnitID=CTE_table.UnitID),'')SecondaryUnits,      
+ BatchTypeID,BatchType,ItemCode,PartsNumber,Remark,Model,UnitID,Quantity,SalesUnitID,IsGSTRegisteredLocation,CurrencyName,ISNULL(CurrencyID,0)CurrencyID,TaxType,IsGST,IsVAT  FROM CTE_table  ORDER BY ExpiryDate ASC        
+End 

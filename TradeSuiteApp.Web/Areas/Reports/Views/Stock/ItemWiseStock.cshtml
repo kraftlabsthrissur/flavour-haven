@@ -1,0 +1,530 @@
+﻿@model TradeSuiteApp.Web.Areas.Reports.Models.ItemMovementModel
+@{
+    ViewBag.Title = "ItemWiseStock";
+    ViewBag.ReportTitle = "Item Wise Stock";
+}
+@Scripts.Render("~/Js/Page/Stock")
+<div id="page_content_inner" class="purchase-report">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-2-10 ">
+                            <form action="/Reports/Stock/ItemWiseStock" id="report-filter-form" method="POST">
+                                @Html.HiddenFor(m => m.LocationID)
+                                @Html.HiddenFor(m => m.UserID)
+                                <!--Report Type-->
+                                <div class="uk-form-row">
+                                    <div class="panel">
+                                        <label>Report Type</label>
+                                        <div class="uk-form-row">
+                                            <div class="uk-width-medium-1-1">
+                                                <input type="radio" id="ItemMovement" name="ReportType" class="reportType" data-md-icheck checked="" value="Item Movement" /> @Html.Label("Item Movement")
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="uk-form-row">
+                                            <div class="uk-width-medium-1-1">
+                                                <input type="radio" id="ItemStatus" name="ReportType" class="reportType" data-md-icheck value="Item Status" /> @Html.Label("Item Status")
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="uk-form-row">
+                                            <div class="uk-width-medium-1-1">
+                                                <input type="radio" name="ReportType" class="reportType" data-md-icheck value="ItemwiseInput" /> @Html.Label("Itemwise Production Input Report")
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="uk-form-row">
+                                            <div class="uk-width-medium-1-1">
+                                                <input type="radio" name="ReportType" class="reportType" data-md-icheck value="ItemwiseOutput" /> @Html.Label("Itemwise Production Output Report")
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="uk-form-row">
+                                            <div class="uk-width-medium-1-1">
+                                                <input type="radio" name="ReportType" class="reportType" data-md-icheck value="ItemwisePurchase" /> @Html.Label("Itemwise purchase Report")
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row ratevalue">
+                                    <div class="panel">
+                                        <label>Rate & Value</label>
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-1-2">
+                                                <input type="radio" name="RateValue" class="rateValue" data-md-icheck checked="" value="Yes" /> @Html.Label("Yes")
+                                            </div>
+                                            <div class="uk-width-medium-1-2">
+                                                <input type="radio" name="RateValue" class="rateValue" data-md-icheck value="No" /> @Html.Label("No")
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Request Number-->
+                                <div class="uk-form-row request-no uk-hidden">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2  ">
+                                            @*<div class="uk-input-group">*@
+                                            <div class="uk-autocomplete " id="stock-requestno-autocomplete">
+                                                <label for="uk_dp_start" class="RequestNo">@Reports.RequestNoFrom</label>
+                                                @Html.TextBoxFor(model => model.RequestNoFrom, new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Code }}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                                @*<div>{{{ $item.ID }}}</div>*@
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2 ">
+                                            <div class="uk-input-group">
+                                                <div class="uk-autocomplete " id="stock-requestnoTo-autocomplete">
+                                                    <label for="uk_dp_start" class="RequestNoTo">@Reports.RequestNoTo</label>
+                                                    @Html.TextBoxFor(model => model.RequestNoTo, new { @class = "md-input label-fixed" })
+                                                    <script type="text/autocomplete">
+                                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                            {{~items}}
+                                                            <li data-value="{{ $item.Code }}"
+                                                                data-id="{{$item.ID}}">
+                                                                <a>
+                                                                    {{ $item.Code }}
+                                                                    @*<div>{{{ $item.ID }}}</div>*@
+                                                                </a>
+                                                            </li>
+                                                            {{/items}}
+                                                        </ul>
+                                                    </script>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @Html.HiddenFor(m => m.RequestNoFromID)
+                                    @Html.HiddenFor(m => m.RequestNoToID)
+                                </div>
+
+
+                                <!--Purchase Order Number-->
+
+                                <div class="uk-form-row itemwise-purchase uk-hidden">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2  ">
+                                            <div class="uk-input-group">
+                                                <div class="uk-autocomplete " id="purchase-order-no-autocomplete">
+                                                    <label for="uk_dp_start" class="RequestNo">@Reports.PurchaseOrderFrom</label>
+                                                    @Html.TextBoxFor(model => model.purchaseOrderNoFrom, new { @class = "md-input label-fixed" })
+                                                    <script type="text/autocomplete">
+                                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                            {{~items}}
+                                                            <li data-value="{{ $item.Code }}"
+                                                                data-id="{{$item.ID}}">
+                                                                <a>
+                                                                    {{ $item.Code }}
+                                                                    @*<div>{{{ $item.ID }}}</div>*@
+                                                                </a>
+                                                            </li>
+                                                            {{/items}}
+                                                        </ul>
+                                                    </script>
+                                                </div>
+                                            </div>
+                                            @Html.HiddenFor(m => m.purchaseOrderNOFromID)
+                                        </div>
+                                        <div class="uk-width-medium-1-2 ">
+                                            <div class="uk-input-group">
+                                                <div class="uk-autocomplete " id="purchase-order-no-to-autocomplete">
+                                                    <label for="uk_dp_start" class="RequestNoTo">@Reports.PurcahseOrderTo</label>
+                                                    @Html.TextBoxFor(model => model.PurchaseOrderNoTo, new { @class = "md-input label-fixed" })
+                                                    <script type="text/autocomplete">
+                                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                            {{~items}}
+                                                            <li data-value="{{$item.Code }}"
+                                                                data-id="{{$item.ID}}">
+                                                                <a>
+                                                                    {{$item.Code }}
+                                                                    @*<div>{{{ $item.ID }}}</div>*@
+                                                                </a>
+                                                            </li>
+                                                            {{/items}}
+                                                        </ul>
+                                                    </script>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @Html.HiddenFor(m => m.PurchaseOrderNoToID)
+                                </div>
+                                <!--GRN NO -->
+                                <div class="uk-form-row itemwise-purchase uk-hidden">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2  ">
+                                            <div class="uk-input-group">
+                                                <div class="uk-autocomplete " id="GRNNOFrom-autocomplete">
+                                                    <label for="uk_dp_start" class="RequestNo">@Reports.GRNNOFrom</label>
+                                                    @Html.TextBoxFor(model => model.GRNNoFrom, new { @class = "md-input label-fixed" })
+                                                    <script type="text/autocomplete">
+                                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                            {{~items}}
+                                                            <li data-value="{{$item.Code }}"
+                                                                data-id="{{$item.ID}}">
+                                                                <a>
+                                                                    {{$item.Code }}
+                                                                    @*<div>{{{ $item.ID }}}</div>*@
+                                                                </a>
+                                                            </li>
+                                                            {{/items}}
+                                                        </ul>
+                                                    </script>
+                                                </div>
+                                            </div>
+                                            @Html.HiddenFor(m => m.GRNNoFromID)
+                                        </div>
+                                        <div class="uk-width-medium-1-2 ">
+                                            <div class="uk-input-group">
+                                                <div class="uk-autocomplete " id="GRNNoTo-autocomplete">
+                                                    <label for="uk_dp_start" class="RequestNoTo">@Reports.GRNNOTo</label>
+                                                    @Html.TextBoxFor(model => model.GRNNoTo, new { @class = "md-input label-fixed" })
+                                                    <script type="text/autocomplete">
+                                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                            {{~items}}
+                                                            <li data-value="{{$item.Code }}"
+                                                                data-id="{{$item.ID}}">
+                                                                <a>
+                                                                    {{$item.Code }}
+                                                                    @*<div>{{{ $item.ID }}}</div>*@
+                                                                </a>
+                                                            </li>
+                                                            {{/items}}
+                                                        </ul>
+                                                    </script>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @Html.HiddenFor(m => m.GRNNoToID)
+                                </div>
+                                <!--GRN Date-->
+                                <div class="uk-form-row itemwise-purchase uk-hidden">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label class="prdate">@Reports.GRNFromDate</label>
+                                                @Html.TextBoxFor(model => model.GRNDateFrom, new { @class = "md-input label-fixed  past-date date", @id = "GRNDateFrom" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label class="prdateto">@Reports.GRNToDate</label>
+                                                @Html.TextBoxFor(model => model.GRNDateTo, new { @class = "md-input label-fixed  past-date date", @id = "GRNDateTo" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Request Date-->
+                                <div class="uk-form-row summary">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label class="prdate">@Reports.RequestDateFrom</label>
+                                                @Html.TextBoxFor(model => model.RequestDateFrom, new { @class = "md-input label-fixed  past-date date", @id = "RequestDateFrom" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label class="prdateto">@Reports.RequestDateTo</label>
+                                                @Html.TextBoxFor(model => model.RequestDateTo, new { @class = "md-input label-fixed  past-date date", @id = "RequestDateTo" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--Delivered Date-->
+                                <div class="uk-form-row summary">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label class="DeliveredDateFrom">@Reports.DeliveredDateFrom</label>
+                                                @Html.TextBoxFor(model => model.DeliveredDateFrom, new { @class = "md-input label-fixed  past-date date", @id = "DeliveredDateFrom" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label class="DeliveredDateTo">@Reports.DeliveredDateTo</label>
+                                                @Html.TextBoxFor(model => model.DeliveredDateTo, new { @class = "md-input label-fixed  past-date date", @id = "DeliveredDateTo" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Location-->
+                                <div class="uk-form-row ">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2  ">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start" class="LocationFrom">@Reports.LocationFrom</label>
+                                                <select id="LocationFromID" name="LocationFromID" class="md-input label-fixed">
+                                                    <option value="0">Select</option>
+                                                    @foreach (var location in Model.LocationHeadList)
+                                        {
+                                        <option @(Model.LocationFromID == location.ID ? "selected='selected'" : "") value="@location.ID" data-type="@location.LocationType" data-code="@location.Code" data-headid="@location.LocationHeadID">@location.Name</option>
+                                        }
+                                                </select>
+                                                @*@Html.DropDownListFor(Model => Model.LocationFromID, Model.LocationList, "Select", new { @class = "md-input label-fixed", @id = "LocationFromID" })*@
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2 location">
+                                            <label for="uk_dp_start" class="LocationTo">@Reports.LocationTo</label>
+                                            <select id="LocationToID" name="LocationToID" class="md-input label-fixed">
+                                                <option value="0">Select</option>
+                                                @foreach (var location in Model.LocationHeadList)
+                                    {
+                                    <option @(Model.LocationToID == location.ID ? "selected='selected'" : "") value="@location.ID" data-type="@location.LocationType" data-code="@location.Code" data-headid="@location.LocationHeadID">@location.Name</option>
+                                    }
+                                            </select>
+
+                                            @*@Html.DropDownListFor(Model => Model.LocationToID, Model.LocationList, "Select", new { @class = "md-input label-fixed", @id = "LocationToID" })*@
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Premises -->
+                                <div class="uk-form-row premises">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2  ">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start" class="PremisesFrom">@Reports.PremisesFrom</label>
+                                                @Html.DropDownListFor(Model => Model.PremisesFromID, Model.PremiseList, "Select", new { @class = "md-input label-fixed", @id = "PremisesFromID" })
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2 ">
+                                            <label for="uk_dp_start" class="PremisesTo">@Reports.PremisesTo</label>
+                                            @Html.DropDownListFor(Model => Model.PremisesToID, Model.PremiseList, "Select", new { @class = "md-input label-fixed", @id = "PremisesToID" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Item Category -->
+                                @*<div class="uk-form-row">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-1-3">
+                                                <label>@Reports.ItemCategoryFrom</label>
+                                                @Html.DropDownListFor(Model => Model.FromItemCategoryRange, Model.FromItemCategoryRangeList, "Select", new { @class = "md-input label-fixed", @id = "ItemCategoryFromRange" })
+                                            </div>
+                                            <div class="uk-width-medium-1-3">
+                                                <label>@Reports.ItemCategoryTo</label>
+                                                @Html.DropDownListFor(Model => Model.ToItemCategoryRange, Model.ToItemCategoryRangeList, "Select", new { @class = "md-input label-fixed", @id = "ItemCategoryToRange" })
+                                            </div>
+                                        </div>
+                                    </div>*@
+                                <!--Item Category -->
+                                <div class="uk-form-row ">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1  ">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start" class="RequestNo">@Reports.Itemcategory</label>
+                                                @Html.DropDownListFor(Model => Model.ItemCategoryID, Model.ItemCategoryList, "Select", new { @class = "md-input label-fixed", @id = "ItemCategoryID" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Item Code -->
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-autocomplete " id="itemcode-from-autocomplete">
+                                                <label for="uk_dp_start">@Reports.ItemCodeFrom</label>
+                                                @Html.TextBox("ItemCodeFrom", "", new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Code }}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                                @*<div>{{{ $item.ID }}}</div>*@
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.ItemCodeFromID)
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-autocomplete " id="itemcode-to-autocomplete">
+                                                <label for="uk_dp_start">@Reports.ItemCodeTo</label>
+                                                @Html.TextBox("ItemCodeTo", "", new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Code }}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                                @*<div>{{{ $item.ID }}}</div>*@
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.ItemCodeToID)
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--Item Name -->
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <label>@Reports.ItemNameRangeFrom</label>
+                                            @Html.DropDownListFor(Model => Model.FromItemNameRange, Model.FromItemNameRangeList, "Select", new { @class = "md-input label-fixed", @id = "ItemNameFromRange" })
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <label>@Reports.ItemNameRangeTo</label>
+                                            @Html.DropDownListFor(Model => Model.ToItemNameRange, Model.ToItemNameRangeList, "Select", new { @class = "md-input label-fixed", @id = "ItemNameToRange" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-autocomplete " id="itemname-autocomplete">
+                                                <label for="uk_dp_start">@Reports.ItemName</label>
+                                                @Html.TextBox("ItemName", "", new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Code }}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                                @*<div>{{{ $item.ID }}}</div>*@
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @Html.HiddenFor(m => m.ItemNameID)
+                                </div>
+                                <div class="uk-form-row Batch">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-autocomplete " id="batchNo-autocomplete">
+                                                <label for="uk_dp_start">@Reports.BatchNo</label>
+                                                @Html.TextBoxFor(m => m.BatchNo, new { @class = "md-input label-fixed" })
+                                                @*@Html.TextBox("PSBatchNoFrom", "", new { @class = "md-input label-fixed" })*@
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Code }}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Code }}
+
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.BatchID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Batch Type -->
+                                <div class="uk-form-row ">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2 BatchType">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.BatchType</label>
+                                                @Html.DropDownListFor(Model => Model.BatchTypeID, Model.BatchTypeList, "Select", new { @class = "md-input label-fixed", @id = "BatchTypeID" })
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2 trans ">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.TransactionType</label>
+                                                @Html.DropDownListFor(Model => Model.ItemMovementTransactionType, Model.ItemMovementTransactionTypeList, new { @class = "md-input label-fixed", @id = "ItemMovementTransactionType" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row ">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1 ValueType">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.ValueOn</label>
+                                                @Html.DropDownListFor(Model => Model.ValueType, Model.ValueList, new { @class = "md-input label-fixed", @id = "ValueType" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Transation Type -->
+                                @*<div class="uk-form-row trans">
+                                        <div class="uk-grid" data-uk-grid-margin="">
+
+                                        </div>
+                                    </div>*@
+                                <!--Status-->
+                                <div class="uk-form-row uk-hidden status">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-1-2">
+                                            <div class="uk-autocomplete ">
+                                                <label for="uk_dp_start">@Reports.StatusFrom</label>
+                                                @Html.DropDownListFor(Model => Model.StatusFrom, Model.StatusList, new { @class = "md-input label-fixed", @id = "StatusFrom" })
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-1-3 uk-hidden">
+                                            <div class="uk-autocomplete ">
+                                                <label for="uk_dp_start">@Reports.StatusTo</label>
+                                                @Html.DropDownListFor(Model => Model.StatusTo, Model.StatusList, new { @class = "md-input label-fixed", @id = "StatusTo" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="report-filter-submit">Show</button>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <a class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light " id="Refresh">Reset</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="uk-width-medium-8-10 ">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="" id="report-viewer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

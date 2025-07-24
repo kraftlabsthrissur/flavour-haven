@@ -1,0 +1,199 @@
+﻿@model TradeSuiteApp.Web.Areas.Manufacturing.Models.JobWorkIssueViewModel
+@{
+    ViewBag.Title = Manufacturing.JobWorkIssueDetail;
+}
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Manufacturing.JobWorkIssue</h1>
+            <span class="uk-text-upper uk-text-small">@Manufacturing.JobWorkIssueDetail</span>
+        </div>
+
+
+        <div class="heading_actions hidden-print-preview">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSave'>" + Common.Save + "</a>")
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSaveASDraft'>" + Common.SaveAsDraft + "</a>")
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSaveNew'>" + Common.SaveAndNew + "</a>")
+
+            @Html.HiddenFor(m => m.ID)
+            @Html.ActionLink(Common.Close, "Index", "JobWorkIssue", new { Area = "Manufacturing" }, new { @class = "md-btn " })
+        </div>
+    </div>
+
+    <div id="page_content_inner" class="sales detail-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                @Html.HiddenFor(m => m.ID)
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.IssueNo</label>
+                                            @Html.TextBoxFor(model => model.IssueNo, new { @class = "md-input label-fixed", @id = "txtIssueNo", @readonly = "readonly" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label for="uk_dp_start">@Manufacturing.IssueDate</label>
+                                            @Html.TextBoxFor(model => model.IssueDate, new { @class = "md-input label-fixed", @id = "txtIssueDate", @readonly = "readonly" })
+                                        </div>
+
+                                        <div class="uk-width-medium-2-8">
+                                            <div class="uk-autocomplete " id="supplier-autocomplete">
+                                                <div class="uk-input-group">
+                                                    <label>@Manufacturing.Supplier<span>*</span></label>
+                                                    @Html.TextBoxFor(model => model.Supplier, new { @class = "md-input label-fixed", @id = "SupplierName" })
+                                                    @*@Html.TextBox("SupplierName", "", new { @class = "md-input label-fixed" })*@
+                                                    <span class="uk-input-group-addon">
+                                                        <a data-uk-modal="{target:'#select-supplier',center:false}">
+                                                            <i class="uk-input-group-icon uk-icon-search"></i>
+                                                        </a>
+                                                    </span>
+                                                    <script type="text/autocomplete">
+                                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                            {{~items}}
+                                                            <li data-value="{{ $item.Name }}"
+                                                                data-id="{{$item.ID}}"
+                                                                data-location="{{$item.Location}}"
+                                                                data-state-id="{{$item.StateID}}"
+                                                                data-payment-days="{{$item.PaymentDays}}"
+                                                                data-is-gst-registered="{{$item.IsGSTRegistered}}">
+                                                                <a>
+                                                                    {{ $item.Name }} ({{{ $item.Code }}})
+                                                                    <div>{{{ $item.Location }}}</div>
+                                                                </a>
+                                                            </li>
+                                                            {{/items}}
+                                                        </ul>
+                                                    </script>
+                                                </div>
+                                                @Html.Hidden("SupplierID")
+                                                @Html.Hidden("StateId")
+                                                @Html.Hidden("IsGSTRegistred")
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.Store</label>
+                                            @Html.DropDownListFor(Model => Model.WarehouseID, Model.WarehouseList, "Select", new { @class = "md-input label-fixed", })
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-2-8">
+                                            <div class="uk-autocomplete " id="IssueItem-autocomplete">
+                                                <div class="uk-input-group">
+                                                    <label>@Manufacturing.IssueItemName<span>*</span></label>
+
+                                                    @Html.TextBox("IssueItemName", "", new { @class = "md-input label-fixed" })
+                                                    <span class="uk-input-group-addon">
+                                                        <a data-uk-modal="{target:'#select-item',center:false} ">
+                                                            <i class="uk-input-group-icon uk-icon-search"></i>
+                                                        </a>
+                                                    </span>
+                                                    <script type="text/autocomplete">
+                                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                            {{~items}}
+                                                            <li data-value="{{ $item.Name }}"
+                                                                data-id="{{$item.ID}}"
+                                                                data-unit="{{$item.Unit}}"
+                                                                data-category="{{$item.ItemCategory}}">
+                                                                <a>
+                                                                    {{ $item.Name }}
+                                                                    <div>{{{ $item.Code }}}</div>
+                                                                </a>
+                                                            </li>
+                                                            {{/items}}
+                                                        </ul>
+                                                    </script>
+                                                </div>
+                                                @*@Html.HiddenFor(model => Model.ItemID)*@
+                                                @Html.Hidden("IssueCode")
+                                                @Html.Hidden("IssueItemID")
+                                                @Html.Hidden("ItemCategory")
+                                                @Html.Hidden("StockValue")
+                                                @Html.Hidden("Rate")
+                                            </div>
+                                        </div>
+
+                                        <div class="uk-width-medium-1-8">
+                                            <label for="uk_dp_item">@Manufacturing.Unit</label>
+                                            @Html.TextBox("Unit", " ", new { @id = "IssueUnit", @class = "md-input label-fixed", @readonly = "readonly" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label for="uk_dp_item">@Manufacturing.Qty</label>
+                                            @Html.TextBox("Quantity", " ", new { @id = "IssueQty", @class = "md-input label-fixed mask-production-qty positive" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddJob">@Common.Add</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-group">
+                    <table id="Job-Work-issue-items-list" class="uk-table" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>@Common.SerialNo</th>
+                                <th>@Manufacturing.IssueItemName</th>
+                                <th>@Manufacturing.Unit</th>
+                                <th>@Manufacturing.IssuedQty</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Items != null)
+                            {
+                                foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td class="serial-no uk-text-center">@(1 + @Model.Items.IndexOf(item))</td>
+                                        <td class="issue-item-name">
+                                            @item.IssueItemName
+                                            <input type="hidden" class="issueItem-ID" value=@item.IssueItemID />
+                                            <input type="hidden" class="warehouse-ID" value=@item.WarehouseID />
+                                            <input type="hidden" class="stock" value="@item.Stock">
+                                        </td>
+                                        <td class="issue-unit">@item.IssueUnit</td>
+                                        <td><input type="text" class="md-input mask-production-qty issue-qty" value=@item.IssueQty /></td>
+                                        <td><a class="remove-item"><i class="uk-icon-remove"></i></a> </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                    @Html.Hidden("item-count")
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+@Html.Partial("~/Areas/Masters/Views/Item/StockableItemsList.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Item/StockableList.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Supplier/PartialList.cshtml")
+@Scripts.Render("~/Js/Page/Item")
+@Scripts.Render("~/Js/Page/Supplier")
+@Scripts.Render("~/Js/Page/JobWorkIssue")
+<script type="text/javascript">
+    JobWorkIssue.init();
+</script>
+

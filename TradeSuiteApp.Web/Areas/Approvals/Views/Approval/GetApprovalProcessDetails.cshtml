@@ -1,0 +1,198 @@
+﻿@model  TradeSuiteApp.Web.Areas.Approvals.Models.ApprovalModel
+@{
+    ViewBag.Title = "GetApprovalProcessDetails";
+    Layout = null;
+}
+<div class="uk-modal" id="approval-process" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">@Approvals.ApprovalProcess<i class="material-icons" data-uk-tooltip="{pos:'top'}" title="headline tooltip"></i></h3>
+            @Html.HiddenFor(Model => Model.Status)
+        </div>
+        <div class="uk-modal-content">
+            <br />
+            @if (Model.ApprovalID != 0)
+            {
+                <div id="approval-process-details">
+                    <div class="summary"></div>
+
+                    @if (@Model.History != null && Model.History.Count() > 0)
+                {
+                        <div class="uk-text-right"><a class="md-btn view-history">View History</a></div>
+                        <br />
+                        <div class="timeline history uk-hidden">
+                            @foreach (var item in @Model.History)
+                    {
+                                <div class="timeline_item">
+                                    <div class="timeline_icon @item.IconClass"><i class="material-icons">@item.IconText</i></div>
+                                    <div class="timeline_date">
+                                        <span>@item.Date <br />@item.Time</span>
+                                    </div>
+                                    <div class="timeline_content">
+                                        @item.StatusText
+                                        @if (!item.Comment.Equals(""))
+                                        {
+                                            <div class="timeline_content_addon">
+                                                <blockquote>
+                                                    @item.Comment
+                                                </blockquote>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    @if (@Model.Process != null)
+                {
+                        <div class="timeline">
+                            @foreach (var item in @Model.Process)
+                    {
+                                <div class="timeline_item">
+                                    <div class="timeline_icon @item.IconClass"><i class="material-icons">@item.IconText</i></div>
+                                    <div class="timeline_date">
+                                        <span>@item.Date <br />@item.Time</span>
+                                    </div>
+                                    <div class="timeline_content">
+                                        @item.StatusText
+                                        @if (!item.Comment.Equals(""))
+                                        {
+                                            <div class="timeline_content_addon">
+                                                <blockquote>
+                                                    @item.Comment
+                                                </blockquote>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    @{
+                        var process = Model.Process.Where(a => a.UserID == Model.LoggedInUserID).LastOrDefault();
+                    }
+                  
+                    @if (Model.Requirement == "Clarification" && Model.LoggedInUserID == Model.NextActionUserID && !Model.Status.Equals("Rejected") && !Model.Status.Equals("Cancelled"))
+                    {
+                        <div class="md-card uk-margin-medium-bottom">
+                            <div class="md-card-content">
+                                <br />
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <label>@Approvals.Comment</label>
+                                            @Html.TextArea("ApprovalComment", "", new { @class = "md-input label-fixed" })
+                                            @Html.HiddenFor(model => Model.ApprovalID)
+                                            @Html.HiddenFor(model => Model.NextActionUserID)
+                                            @Html.HiddenFor(model => process.UserID, new { @id = "UserID" })
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <button type="button" class="md-btn md-btn-success " id="btnOKClarify">Clarify</button>
+                                            <input type="hidden" id="ApprovalStatusValue" value="@Approvals.Approved" />
+                                            <input type="hidden" id="ClarificationUserID" value="0" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+                    else if (Model.Requirement == "Approval" && process != null && process.Status.Equals("") && !Model.Status.Equals("Rejected") && !Model.Status.Equals("Cancelled"))
+                    {
+                        <div class="md-card uk-margin-medium-bottom">
+                            <div class="md-card-content">
+                                <br />
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <label>@Approvals.Comment</label>
+                                            @Html.TextArea("ApprovalComment", "", new { @class = "md-input label-fixed" })
+                                            @Html.HiddenFor(model => Model.ApprovalID)
+                                            @Html.HiddenFor(model => Model.NextActionUserID)
+                                            @Html.HiddenFor(model => process.UserID, new { @id = "UserID" })
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                               
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-7-10">
+                                            <span class="icheck-inline">
+                                                <input type="radio" name="Status" class="ApprovalStatus" value="@Approvals.Approved" data-md-icheck />
+                                                <label class="inline-label">Approve</label>
+                                            </span>
+                                            <span class="icheck-inline">
+                                                <input type="radio" name="Status" class="ApprovalStatus" value="@Approvals.Rejected" data-md-icheck />
+                                                <label class="inline-label">Reject</label>
+                                            </span>
+                                            <span class="icheck-inline">
+                                                <input type="radio" name="Status" class="ApprovalStatus" value="@Approvals.RequestedClarification" data-md-icheck />
+                                                <label class="inline-label">Request Clarification</label>
+                                            </span>
+                                        </div>
+                                        <div class="uk-width-medium-3-10">
+                                            @Html.DropDownListFor(Model => Model.UserID, Model.UsersList, "Select", new { @class = "md-input label-fixed uk-hidden", @id = "ClarificationUserID" })
+                                            @Html.Hidden("ApprovalStatusValue")
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <button type="button" class="md-btn md-btn-success " id="btnOKApproval">Ok</button>
+                                        </div>
+                                    </div>
+                                </div>                                
+                            </div>
+                        </div>
+                    }
+
+                    @if (!Model.Status.Equals("Cancelled"))
+                    {
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin>
+                                <div class="uk-width-medium-1-1">
+                                    @if (Model.Status.Equals("Rejected") && Model.NextActionUserID == Model.LoggedInUserID)
+                                    {
+                                        <button type="button" class="md-btn " id="btnInitiate">Re Initiate Approval Request</button>
+                                    }
+                                    @if (Model.Status.Equals(null))
+                                    {
+                                        <button type="button" class="md-btn " id="btnInitiate">Initiate Approval Request</button>
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                        }
+                        else
+                        {
+
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-1">
+                                        <button type="button" class="md-btn " id="btnInitiate">Initiate Approval Request</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+
+
+        </div>
+
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn md-btn-primary uk-modal-close">Close</button>
+        </div>
+    </div>
+</div>

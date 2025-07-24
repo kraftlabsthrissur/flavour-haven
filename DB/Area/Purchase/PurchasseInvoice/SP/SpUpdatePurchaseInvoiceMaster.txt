@@ -1,0 +1,162 @@
+ALTER PROCEDURE [Purchase].[SpUpdatePurchaseInvoiceMaster]       
+(      
+@PurchaseInvoiceID int,      
+@InvoiceNo VARCHAR(50),      
+@InvoiceDate DATETIME,      
+@GrossAmount NUMERIC(18,2),      
+@InvoiceTotal NUMERIC(18,2),      
+@TotalDifference NUMERIC(18,2),      
+@SGSTAmount NUMERIC(18,2),      
+@CGSTAmount NUMERIC(18,2),      
+@IGSTAmount NUMERIC(18,2),      
+@Discount NUMERIC(18,2),  
+@VATAmount NUMERIC(18,4),                     
+@SuppDocAmount NUMERIC(18,4),   
+@SuppShipAmount NUMERIC(18,4),   
+@SupplierOtherCharges NUMERIC(18,4),  
+@FreightAmount NUMERIC(18,2), 
+@PackingCharges NUMERIC(18,2),  
+@PackingForwarding NUMERIC(18,2), 
+@LocalCustomsDuty NUMERIC(18,2), 
+@LocalFreight NUMERIC(18,2), 
+@LocalMiscCharge NUMERIC(18,2), 
+@LocalOtherCharges NUMERIC(18,2), 
+@TaxOnFreight NUMERIC(18,2),      
+@TaxOnPackingCharges NUMERIC(18,2),      
+@TaxOnOtherCharge NUMERIC(18,2),      
+@TDSOnFreightPercentage NUMERIC(9,2),      
+@LessTDS NUMERIC(18,2),      
+@OtherDeductions NUMERIC(18,2),      
+@AmountPayable NUMERIC(18,2),      
+@NetAmount NUMERIC(18,2),      
+@IsDraft BIT,      
+@IsCancelled BIT,      
+@CancelledDate DATETIME,      
+@SelectedQuotationID INT,    
+@Remarks VARCHAR(200),    
+@CreatedUserID INT,      
+@CreatedDate DATETIME,      
+@Status varchar(25),      
+@TDSID int,      
+@GRNNo varchar(20),    
+@FinYear INT,      
+@LocationID INT,      
+@ApplicationID INT)      
+AS    
+BEGIN      
+Declare @PaymentWithIn int,@SupplierID int,@TransNo varchar(20),@SupplierName VARCHAR(100),@SLARemarks varchar(100) = '', @IsApproved bit=1    
+SELECT @SupplierName=Name FROM Supplier where ID =  @SupplierID      
+Select @SupplierID = SupplierID ,@TransNo =PurchaseNo from PurchaseInvoice  where ID = @PurchaseInvoiceID     
+    
+ Set @Status = 'Approved'    
+ SET @IsApproved = 0      
+      
+DECLARE @SerialNo Varchar(20),@PurchaseDate Date    
+SELECT @SerialNo = PurchaseNo, @PurchaseDate = PurchaseDate FROM PurchaseInvoice WHERE ID = @PurchaseInvoiceID    
+      
+  EXEC SpLogChange 'PurchaseInvoice','ID',@PurchaseInvoiceID,@CreatedUserID,@LocationID,@ApplicationID    
+    
+  EXEC SpLogChange 'PurchaseInvoiceTrans','PurchaseInvoiceID',@PurchaseInvoiceID,@CreatedUserID,@LocationID,@ApplicationID    
+    
+  EXEC SpLogChange 'PurchaseInvoiceTaxDetails','PurchaseInvoiceID',@PurchaseInvoiceID,@CreatedUserID,@LocationID,@ApplicationID    
+    
+  EXEC SpLogChange 'PurchaseInvoiceOtherChargesDetails','PurchaseInvoiceID',@PurchaseInvoiceID,@CreatedUserID,@LocationID,@ApplicationID    
+    
+IF (@IsDraft = 0)    
+ BEGIN    
+    
+    exec Common.SpUpdateSerialNo 'PurchaseInvoice','Code',@FinYear,@LocationID ,@ApplicationID,@SerialNo = @SerialNo OUT    
+    SET @PurchaseDate = CURRENT_TIMESTAMP    
+     
+      
+  Update PurchaseInvoice SET PurchaseDate = @PurchaseDate, PurchaseNo=@SerialNo, InvoiceNo = @InvoiceNo,InvoiceDate = @InvoiceDate,  
+  GrossAmount = @GrossAmount, InvoiceTotal = @InvoiceTotal, TotalDifference = @TotalDifference,SGSTAmount = @SGSTAmount,CGSTAmount = @CGSTAmount,  
+  IGSTAmount = @IGSTAmount,Discount= @Discount,VATAmount= @VATAmount, PackingForwarding= @PackingForwarding,SuppDocAmount= @SuppDocAmount,SuppShipAmount= @SuppShipAmount,  
+  SupplierOtherCharges= @SupplierOtherCharges,FreightAmount = @FreightAmount,PackingCharges = @PackingCharges,LocalCustomsDuty = @LocalCustomsDuty,
+  LocalFreight = @LocalFreight,LocalMiscCharge = @LocalMiscCharge,LocalOtherCharges = @LocalOtherCharges,TaxOnFreight = @TaxOnFreight,  
+  TaxOnPackingCharges = @TaxOnPackingCharges,TaxOnOtherCharge = @TaxOnOtherCharge,TDSOnFreightPercentage = @TDSOnFreightPercentage,LessTDS = @LessTDS, OtherDeductions = @OtherDeductions,   
+  AmountPayable = @AmountPayable,NetAmount = @NetAmount,IsDraft = @IsDraft,IsCancelled = @IsCancelled,  CancelledDate = @CancelledDate,  
+  CreatedUserID=@CreatedUserID,CreatedDate =@CreatedDate ,Status=@Status,TDSID=@TDSID,SelectedQuotationID =  @SelectedQuotationID, Remarks =  @Remarks,GRNNo=@GRNNo    
+     Where ID = @PurchaseInvoiceID and FinYear = @FinYear and LocationID = @LocationID and ApplicationID = @ApplicationID     
+    
+     
+         
+   --if abs(@TotalDifference) < 1 AND @IsDraft = 0      
+   --begin      
+          
+    Select @PaymentWithIn = CreditDays from Supplier where ID = @SupplierID      
+    insert into payable(PayableType,PartyID,PayableAmount,PaidAmount,DueDate,Status,Description,CreatedUserID,CreatedDate,FinYear ,LocationID,ApplicationID,TDSAmount,TDSAmountMet,TransDate,SupplierName,InvoiceNo)       
+    select 'Supplier',SupplierID,AmountPayable,0,InvoiceDate+ISNULL(@PaymentWithIn,0),'NotPaid',PurchaseNo,CreatedUserID,CURRENT_TIMESTAMP,FinYear, LocationID, ApplicationID,0,0,PurchaseDate,@SupplierName,InvoiceNo from   
+ PurchaseInvoice where ID=@PurchaseInvoiceID      
+    
+    
+      
+  Select @SLARemarks = 'PurchaseInvoice_GrossAmount_'+CAST(@PurchaseInvoiceID AS varchar(10))    
+  exec SpInsertSLAMappingItem 'INV_Approve','GrossAmount'    
+  ,@SLARemarks,@GrossAmount,@InvoiceNo,'PurchaseInvoice',    
+  @SerialNo,@PurchaseInvoiceID,@FinYear ,@LocationID ,@ApplicationID ,@SupplierID ,-2,-2,    
+  -2,-2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,@PurchaseDate,1    
+    
+  if @SGSTAmount>0    
+  Begin    
+  Select @SLARemarks = 'PurchaseInvoice_SGSTAmount_'+CAST(@PurchaseInvoiceID AS varchar(10))    
+  exec SpInsertSLAMappingItem 'INV_Approve','SGST'    
+  ,@SLARemarks,@SGSTAmount,@InvoiceNo,'PurchaseInvoice',    
+  @SerialNo,@PurchaseInvoiceID,@FinYear ,@LocationID ,@ApplicationID ,@SupplierID ,-2,-2,    
+  -2,-2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,@PurchaseDate,1    
+      
+  Select @SLARemarks = 'PurchaseInvoice_CGSTAmount_'+CAST(@PurchaseInvoiceID AS varchar(10))    
+      
+      
+  exec SpInsertSLAMappingItem 'INV_Approve','CGSTAmount'    
+  ,@SLARemarks,@CGSTAmount,@InvoiceNo,'CGST',    
+  @SerialNo,@PurchaseInvoiceID,@FinYear ,@LocationID ,@ApplicationID ,@SupplierID ,-2,-2,    
+  -2,-2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,@PurchaseDate,1    
+  END    
+  if @IGSTAmount>0    
+  Begin    
+  Select @SLARemarks = 'PurchaseInvoice_IGSTAmount_'+CAST(@PurchaseInvoiceID AS varchar(10))    
+  exec SpInsertSLAMappingItem 'INV_Approve','IGST'    
+  ,@SLARemarks,@IGSTAmount,@InvoiceNo,'PurchaseInvoice',    
+  @SerialNo,@PurchaseInvoiceID,@FinYear ,@LocationID ,@ApplicationID ,@SupplierID ,-2,-2,    
+  -2,-2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,@PurchaseDate,1    
+  End    
+ if @Discount <> 0    
+ begin      
+  --insert into SLAMappingItem (TrnType,KeyValue,Remarks,Amount,TableName,MasterTableName,TransNo,TransID,CreatedDate,FinYear,LocationID,    
+  --ApplicationID,SupplierID,CustomerID,Batch,DepartmentCategoryID,ItemID,IsApprovalPending,Quantity,Rate,TransLocationID,    
+  --DepartmentID,EmployeeID,InterCompanyID,ProjectID)       
+  --Values ('INV_Approve','Discount','PurchaseInvoice_Discount'+CAST(@PurchaseInvoiceID AS varchar(5)),@Discount,'PurchaseInvoice',    
+  --'PurchaseInvoice',@PurchaseNo,@PurchaseInvoiceID,CURRENT_TIMESTAMP,@FinYear, @LocationID, @ApplicationID,@SupplierID,-2,'-2',    
+  ---2,-2,case when abs(@TotalDifference) < 1 then 0 else 1 end ,0,0,0,0,0,0,0)       
+      
+  Select @SLARemarks = 'PurchaseInvoice_Discount'+CAST(@PurchaseInvoiceID AS varchar(10))    
+      
+  exec SpInsertSLAMappingItem 'INV_Approve','Discount'    
+  ,@SLARemarks,@Discount,@InvoiceNo,'PurchaseInvoice',    
+  @SerialNo,@PurchaseInvoiceID,@FinYear ,@LocationID ,@ApplicationID ,@SupplierID ,-2,-2,    
+  -2,-2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,@PurchaseDate,1       
+ end      
+ if @OtherDeductions <> 0  --AND @SupplierAccountCategoryID <> 3    
+ begin      
+  --insert into SLAMappingItem (TrnType,KeyValue,Remarks,Amount,TableName,MasterTableName,TransNo,TransID,CreatedDate,FinYear,    
+  --LocationID,ApplicationID,SupplierID,CustomerID,Batch,DepartmentCategoryID,ItemID,IsApprovalPending,Quantity,Rate,TransLocationID,    
+  --DepartmentID,EmployeeID,InterCompanyID,ProjectID)       
+  --Values ('INV_Approve','Roundoff','PurchaseInvoice_Roundoff '+CAST(@PurchaseInvoiceID AS varchar(5)),@OtherDeductions,    
+  --'PurchaseInvoice','PurchaseInvoice',@PurchaseNo,@PurchaseInvoiceID,CURRENT_TIMESTAMP,@FinYear, @LocationID, @ApplicationID,    
+  --@SupplierID,-2,'-2',-2,-2,case when abs(@TotalDifference) < 1 then 0 else 1 end ,0,0,0,0,0,0,0)     
+      
+  Select @SLARemarks = 'PurchaseInvoice_Roundoff'+CAST(@PurchaseInvoiceID AS varchar(10))    
+      
+  exec SpInsertSLAMappingItem 'INV_Approve','Roundoff'    
+  ,@SLARemarks,@OtherDeductions,@InvoiceNo,'PurchaseInvoice',    
+  @SerialNo,@PurchaseInvoiceID,@FinYear ,@LocationID ,@ApplicationID ,@SupplierID ,-2,-2,    
+  -2,-2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,@PurchaseDate,1        
+ end      
+        
+ END    
+         
+   Delete from PurchaseInvoiceTrans where PurchaseInvoiceID = @PurchaseInvoiceID      
+   Delete from PurchaseInvoiceTaxDetails where PurchaseInvoiceID = @PurchaseInvoiceID      
+   Delete from PurchaseInvoiceOtherChargesDetails where PurchaseInvoiceID = @PurchaseInvoiceID      
+END    

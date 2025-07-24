@@ -1,0 +1,146 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.BRSModel
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.TransactionNumber</label>
+                            @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Accounts.Date</label>
+                            @Html.TextBoxFor(m => m.Date, new { @class = "md-input label-fixed current-date date", @id = "Date", disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-2-8">
+                            <label>@Accounts.BankDetails<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.BankID, Model.BankList, "Select", new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label>@Accounts.FromTransactionDate</label>
+                                @Html.TextBoxFor(m => m.FromTransactionDate, new { @class = "md-input label-fixed past-date date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label>@Accounts.ToTransactionDate</label>
+                                @Html.TextBoxFor(m => m.ToTransactionDate, new { @class = "md-input label-fixed past-date date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label>Upload & Process</label>
+                                <div class="uk-form-file v1">
+                                    <label id="selected-bankstatement">
+                                        @Model.FileName
+                                    </label>
+                                    <label for="select-bankstatement" class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                                        <i class="uk-icon-upload"></i>
+                                    </label>
+                                    <input id="select-bankstatement" type="file" tabindex="-1">
+                                    <input type="hidden" id="FilePath" value="" />   
+                                    <input type="hidden" id="AttachmentID" value="" />                                                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label>&nbsp;</label>
+                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnshow">@Common.Show</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-3-10">
+                <h3>Status as per Bank</h3>
+                <table id="bank-statement-item-list" class="uk-table" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="width-10">@Common.SerialNo</th>
+                            <th class="width-80">@Accounts.InstrumentNumber</th>
+                            <th class="width-80">@Accounts.InstrumentDate</th>
+                            <th class="width-80">@Accounts.Debit</th>
+                            <th class="width-80">@Accounts.Credit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Statements != null)
+                        {
+                            foreach (var Statement in Model.Statements.Select((value, i) => new { i = (i + 1), value }))
+                            {
+                                <tr>
+                                    <td class="uk-text-center">
+                                        @Statement.i
+                                    </td>
+                                    <td><input type="text" class="md-input uk-text BankInstrumentNumber" value="@Statement.value.InstrumentNumber" /></td>
+                                    <td><input type="text" class="md-input uk-text uk-icon-calendar past-date date BankInstrumentDate" value="@Statement.value.InstrumentDate" /></td>
+                                    <td><input type="text" class="md-input uk-text mask-currency BankCredit" value="@Statement.value.Debit.ToString("n2") " /></td>
+                                    <td><input type="text" class="md-input uk-text mask-currency BankDebit" value="@Statement.value.Credit.ToString("n2")" /></td>
+                                </tr>;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="uk-width-medium-7-10">
+                <h3>Status as per Books</h3>
+                <table id="brs-item-list" class="uk-table" cellspacing="0" accesskey="" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="width-60">@Accounts.DocumentNumber</th>
+                            <th class="width-60">@Accounts.InstrumentNumber</th>
+                            <th class="width-40">@Accounts.InstrumentDate</th>
+                            <th class="width-60">@Accounts.Debit</th>
+                            <th class="width-60">@Accounts.Credit</th>
+                            <th class="width-40">@Accounts.BankCharges</th>
+                            <th class="width-60">@Accounts.ItemName</th>
+                            <th class="width-60">@Accounts.EquivalentBankTransactionNumber</th>
+                            <th class="width-80">@Accounts.Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Items != null)
+                        {
+                            foreach (var Item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                            {
+                                <tr>
+                                    <td class="BookDocumentNumber">@Item.value.DocumentNumber</td>
+                                    <td class="BookInstrumentNumber">@Item.value.InstrumentNumber</td>
+                                    <td class="BookInstrumentDate">@Item.value.InstrumentDate</td>
+                                    <td class="BookDebit mask-currency ">@Item.value.Debit.ToString("n2")</td>
+                                    <td class="BookCredit mask-currency">@Item.value.Credit.ToString("n2")</td>
+                                    <td class="BookBankCharges mask-currency">@Item.value.BankCharges.ToString("n2")</td>
+                                    <td><input type="text" class="md-input uk-text Itemname" value="@Item.value.ItemName" /></td>
+                                    <td><input type="text" class="md-input uk-text EquivalentNumber" value="@Item.value.EquivalentBankTransactionNumber" /></td>
+                                    <td>@Html.DropDownList("Status", new SelectList(ViewBag.Status, "Text", "Value"), new { @class = "md-input uk-text Status" })</td>
+                                </tr>;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

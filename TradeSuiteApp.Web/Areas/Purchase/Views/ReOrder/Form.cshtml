@@ -1,0 +1,81 @@
+﻿@model TradeSuiteApp.Web.Areas.Purchase.Models.ReOrderModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-width-medium-1-1">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    @Html.Hidden("ID")
+                    <div class="uk-width-medium-1-10">
+                        <div class="uk-input-group">
+                            <label for="uk_dp_start">SetReOrderDays (In Days)<span>*</span></label>
+                            @Html.TextBoxFor(m => m.ReOrderDays, new { @class = "md-input label-fixed mask-numeric" })
+                        </div>
+                    </div>
+                    <div>
+                        <span class="uk-hidden"></span>
+                        </div>
+                    <div>
+                        <span class="uk-hidden"></span>
+                    </div>
+                    <div>
+                        <span class="uk-width-medium-1-10"></span>
+                    </div>
+
+                    <div class="uk-width-medium-1-10 uk-hidden">
+                        <div class="uk-input-group">
+                            <label for="uk_dp_start">OrderItemFor (In Days)<span>*</span></label>
+                            @Html.TextBoxFor(m => m.OrderDays, new { @class = "md-input label-fixed mask-numeric" })
+                        </div>
+                    </div>
+
+                    <div class="uk-width-medium-1-10 uk-hidden">
+                        <div class="uk-input-group">
+                            <label for="uk_dp_start">ItemType</label>
+                            @Html.DropDownListFor(Model => Model.ItemType, new SelectList(Model.ItemTypeList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                        </div>
+                    </div>
+
+                    <div class="uk-width-medium-1-10">
+                        <div class="md-input-wrapper md-input-filled">
+                            <label>&nbsp;</label>
+                            <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnView">@Common.View</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="uk-form-row">
+    <div>
+        <table id="re-order-list" class="uk-table" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-10"></th>
+                    <th class="width-120">@Purchase.ItemName</th>
+                    <th class="width-40">@Purchase.Unit</th>
+                    <th class="width-120">@Purchase.Supplier</th>
+                    @*<th class="width-10">@Purchase.Qty</th>*@
+                    <th class="width-40">ReOrder(Nos.)</th>
+                    <th class="width-30">@Purchase.Ordered</th>
+                    <th class="width-30">Total Available Stock</th>
+                    <th class="width-20">Last Purchase Qty</th>
+                    <th class="width-20">Last Offer Qty</th>
+                    <th class="width-40">OrderQty</th>
+                    <th class="width-40">Purchase Unit</th>
+                    @*<th class="width-50">@Purchase.LastPurchasedDate</th>*@
+                    <th class="width-120">@Purchase.LastPurchasedSupplier</th>
+                </tr>
+            </thead>
+            <tbody>
+                @Html.Partial("~/Areas/Purchase/Views/ReOrder/ReOrderList.cshtml", Model)
+            </tbody>
+        </table>
+        <input type="hidden" id="item-count" value="" />
+    </div>
+</div>

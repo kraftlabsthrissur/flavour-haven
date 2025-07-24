@@ -1,0 +1,51 @@
+-- =============================================                
+-- Author:  <ajith@kraftlabs.com>                
+-- Create date: <30-Aug-2018>                
+-- Description: <Get Sales Invoice by id>                
+-- =============================================                
+ALTER PROCEDURE [Sales].[SpGetSalesInvoice](                
+ @SalesInvoiceID INT,                
+ @FinYear INT,                 
+ @LocationID INT,                
+ @ApplicationID INT                
+)                
+AS                
+BEGIN                
+                
+ SET NOCOUNT ON;                
+ SELECT P.ID, P.TransNo, InvoiceDate, CustomerID, SalesOrderNos SalesOrders, P.SchemeID,           
+ GrossAmt,TurnoverDiscount,p.OtherCharges,p.CustomerPONo,          
+ PaymentModeID,PM.Name PaymentMode, DiscountAmt, AdditionalDiscount, TaxableAmt,                 
+ SGSTAmt, CGSTAmt, IGSTAmt,p.VATAmount,p.IsGST,p.IsVat,P.CurrencyID,ISNULL(CU.Name,'') CurrencyName, CU.Code CurrencyCode,       
+ p.CurrencyExchangeRate,RoundOff, NetAmt, IsProcessed, IsDraft, IsCancelled,             
+ HoldStock, SalesTypeID, CA.Name AS SalesTypeName,C.Name AS CustomerName, C.CustomerCategory ,             
+ C.CustomerCategoryID, C.PriceListID, C.StateID, P.CashDiscount,BillingAddressID,           
+ B.AddressLine1 AS BillingAddress,            
+ ShippingAddressID, SH.AddressLine1 AS ShippingAddress,P.NoOfBags,P.NoOfBoxes,P.NoOfCans,                
+ P.CessAmount,C.MinimumCreditLimit,C.MaxCreditLimit,          
+ IsNull((sum(ReceivableAmount)-sum(ReceivedAmount) ),0)              
+ as CreditBalance,C.CashDiscountID,C.CashDiscountPercentage,          
+ ISNULL(P.FreightAmount,0.00) FreightAmount,              
+ dbo.FnGetCustomerOutstandingAmount(P.CustomerID,@LocationID,@ApplicationID) AS OutstandingAmount,          
+ P.VehicleNo,ISNULL(C.GSTNo,'') AS CustomerGSTNo,ISNULL(P.Remarks,'') Remarks  ,C.IsGSTRegistered,P.PrintWithItemCode            
+ FROM Sales.SalesInvoice P                
+ INNER JOIN viCustomer C ON C.ID = P.CustomerID                
+ INNER JOIN Category CA ON CA.ID = P.SalesTypeID                
+ LEFT JOIN Addresses B ON B.ID = BillingAddressID                
+ LEFT JOIN Addresses SH ON SH.ID = ShippingAddressID          
+ LEFT JOIN Currency CU on CU.ID=P.CurrencyID        
+ LEFT JOIN PaymentMode PM ON PM.ID = P.PaymentModeID                
+ Left join Receivables R ON R.PArtyID=C.ID                
+ --Left Join DiscountCategory D on D.ID = C.CashDiscountID AND D.DiscountType = 'CashDiscount'                
+ WHERE P.ID = @SalesInvoiceID AND P.Finyear = @FinYear AND P.LocationID = @LocationID           
+ AND P.ApplicationID = @ApplicationID                
+ group by P.ID,P.TransNo, InvoiceDate, CustomerID, SalesOrderNos , P.SchemeID,          
+  GrossAmt,TurnoverDiscount,PaymentModeID,PM.Name , DiscountAmt, AdditionalDiscount,          
+  TaxableAmt,SGSTAmt, CGSTAmt, IGSTAmt, RoundOff, NetAmt, IsProcessed, IsDraft, IsCancelled,           
+  HoldStock, SalesTypeID, CA.Name ,C.Name  , C.CustomerCategory , C.CustomerCategoryID,           
+  C.PriceListID, C.StateID, P.CashDiscount,P.FreightAmount,BillingAddressID, B.AddressLine1,           
+  ShippingAddressID, SH.AddressLine1  ,P.NoOfBags,P.NoOfBoxes,P.NoOfCans,                
+  P.CessAmount,C.MinimumCreditLimit,C.MaxCreditLimit, ReceivableAmount,ReceivedAmount,          
+  C.CashDiscountID,C.CashDiscountPercentage,P.Remarks,P.VehicleNo,C.GSTNo ,C.IsGSTRegistered,      
+  P.VATAmount,P.CurrencyID,CU.Name,CU.Code,P.CurrencyExchangeRate,P.IsGST,P.IsVat,p.OtherCharges,p.CustomerPONo,P.PrintWithItemCode               
+END 

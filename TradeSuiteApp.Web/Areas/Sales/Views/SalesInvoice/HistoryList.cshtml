@@ -1,0 +1,236 @@
+﻿<input type="button" class="uk-hidden" id="show-history" data-uk-modal="{target:'#select-history', center:false}" />
+<div class="uk-modal" id="select-history" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog uk-modal-dialog-large" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Purchase History / Sales Order History<i class="material-icons"></i></h3>
+        </div>
+        <ul class="uk-tab" data-uk-tab="{connect:'#tabs-history-content',animation:'slide-horizontal'}" id="tabs-invoice-item-history">
+            <li class="uk-active" data-tab=""><a>@Sales.PurchaseHistory</a></li>
+            <li data-tab=""><a>@Sales.POPendingHistory</a></li>
+            <li data-tab=""><a>@Sales.PurchaseLegacyHistory</a></li>
+            <li data-tab="Quotation"><a>@Sales.QuotationHistory</a></li>
+            <li data-tab="Sales"><a>@Sales.SalesInvoiceHistory</a></li>
+        </ul>
+        <ul id="tabs-history-content" class="uk-switcher uk-margin">
+
+            <li>
+                <table id="purchase-history-list" class="uk-table" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="width-20">@Common.SerialNo</th>
+                            <th class="width-80">@Purchase.PurchaseOrderNo</th>
+                            <th class="width-80">@Purchase.PurchaseOrderDate</th>
+                            <th class="width-80">@Purchase.Supplier</th>
+                            <th class="width-80">@Purchase.ItemCode</th>
+                            <th class="width-80">@Purchase.ItemName</th>
+                            <th class="width-80">@Purchase.PartsNumber</th>
+                            <th class="width-30">@Masters.LandedCost</th>
+                            <th class="width-30">@Purchase.MRP</th>
+                            <th class="width-30">@Purchase.Quantity</th>
+                            <th class="width-30">@Purchase.Unit</th>
+                            <th class="width-30">@Purchase.DiscountPer</th>
+                            <th class="width-30">@Purchase.VAT</th>
+                            <th class="width-30">@Purchase.NetAmount</th>
+                        </tr>
+                    </thead>
+                    <thead class="search">
+                        <tr>
+                            <th></th>
+                            <th>@Purchase.PurchaseOrderNo</th>
+                            <th>@Purchase.PurchaseOrderDate</th>
+                            <th>@Purchase.Supplier</th>
+                            <th></th>
+                            <th>@Purchase.ItemName</th>
+                            <th>@Purchase.PartsNumber</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="uk-modal-footer uk-text-right">
+                    <button type="button" class="md-btn uk-modal-close">Close</button>
+                </div>
+            </li>
+            <li>
+                <table id="pending-po-history-list" class="uk-table" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="width-20">@Common.SerialNo</th>
+                            <th class="width-80">@Purchase.PurchaseOrderNo</th>
+                            <th class="width-80">@Purchase.PurchaseOrderDate</th>
+                            <th class="width-80">@Purchase.Supplier</th>
+                            <th class="width-80">@Purchase.ItemCode</th>
+                            <th class="width-80">@Purchase.ItemName</th>
+                            <th class="width-80">@Purchase.PartsNumber</th>
+                            <th class="width-30">@Masters.LandedCost</th>
+                            <th class="width-30">@Purchase.MRP</th>
+                            <th class="width-30">@Purchase.QtyOrdered</th>
+                            <th class="width-30">@Purchase.ReceivedQty</th>
+                            <th class="width-30">@Purchase.Unit</th>
+                            <th class="width-30">@Purchase.DiscountPer</th>
+                            <th class="width-30">@Purchase.VAT</th>
+                            <th class="width-30">@Purchase.NetAmount</th>
+                        </tr>
+                    </thead>
+                    <thead class="search">
+                        <tr>
+                            <th></th>
+                            <th>@Purchase.PurchaseOrderNo</th>
+                            <th>@Purchase.PurchaseOrderDate</th>
+                            <th>@Purchase.Supplier</th>
+                            <th></th>
+                            <th>@Purchase.ItemName</th>
+                            <th>@Purchase.PartsNumber</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="uk-modal-footer uk-text-right">
+                    <button type="button" class="md-btn uk-modal-close">Close</button>
+                </div>
+            </li>
+            <li>
+                <table id="purchase-legacy-history-list" class="uk-table" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="width-20">@Common.SerialNo</th>
+                            <th class="width-20">@Purchase.ReferenceNo</th>
+                            <th class="width-80">@Purchase.ItemCode</th>
+                            <th class="width-80">@Purchase.ItemName</th>
+                            <th class="width-80">@Purchase.Supplier</th>
+                            <th class="width-80">@Purchase.PartsNumber</th>
+                            <th class="width-80">@Purchase.OrderDate</th>
+                            <th class="width-30">@Purchase.Quantity</th>
+                            <th class="width-30">@Masters.Rate</th>
+                            <th class="width-30">@Purchase.GrossAmount</th>
+                            <th class="width-30">@Purchase.Discount</th>
+                            <th class="width-30">@Purchase.Tax</th>
+                            <th class="width-30">@Purchase.NetAmount</th>
+                        </tr>
+                    </thead>
+                    <thead class="search">
+                        <tr>
+                            <th></th>
+                            <th>@Purchase.ReferenceNo</th>
+                            <th>@Purchase.ItemCode</th>
+                            <th>@Purchase.ItemName</th>
+                            <th>@Purchase.Supplier</th>
+                            <th>@Purchase.PartsNumber</th>
+                            <th>@Purchase.OrderDate</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="uk-modal-footer uk-text-right">
+                    <button type="button" class="md-btn uk-modal-close">Close</button>
+                </div>
+            </li>
+            <li>
+                <table id="sales-quotation-history-list" class="uk-table" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="width-20">@Common.SerialNo</th>
+                            <th class="width-80">@Sales.OrderNo</th>
+                            <th class="width-80">@Sales.OrderDate</th>
+                            <th class="width-80">@Sales.Customer</th>
+                            <th class="width-80">@Sales.ItemCode</th>
+                            <th class="width-80">@Sales.ItemName</th>
+                            <th class="width-80">@Sales.PartsNumber</th>
+                            <th class="width-60">@Purchase.GrossAmount</th>
+                            <th class="width-30">@Sales.Qty</th>
+                            <th class="width-30">@Sales.Unit</th>
+                            <th class="width-30">@Sales.DiscountPercent</th>
+                            <th class="width-30">@Sales.VAT</th>
+                            <th class="width-60">@Sales.TaxableAmount</th>
+                            <th class="width-60">@Sales.NetAmount</th>
+                        </tr>
+                    </thead>
+                    <thead class="search">
+                        <tr>
+                            <th></th>
+                            <th>@Sales.OrderNo</th>
+                            <th>@Sales.OrderDate</th>
+                            <th>@Sales.Customer</th>
+                            <th></th>
+                            <th>@Purchase.ItemName</th>
+                            <th>@Purchase.PartsNumber</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="uk-modal-footer uk-text-right">
+                    <button type="button" class="md-btn uk-modal-close">Close</button>
+                </div>
+            </li>
+            <li>
+                <table id="sales-history-list" class="uk-table" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="width-20">@Common.SerialNo</th>
+                            <th class="width-80">@Sales.OrderNo</th>
+                            <th class="width-80">@Sales.OrderDate</th>
+                            <th class="width-80">@Sales.CustomerName</th>
+                            <th class="width-80">@Purchase.ItemCode</th>
+                            <th class="width-80">@Purchase.ItemName</th>
+                            <th class="width-80">@Purchase.PartsNumber</th>
+                            <th class="width-30">@Purchase.MRP</th>
+                            <th class="width-30">@Purchase.Quantity</th>
+                            <th class="width-30">@Purchase.Unit</th>
+                            <th class="width-30">@Purchase.DiscountPer</th>
+                            <th class="width-30">@Purchase.VAT</th>
+                            <th class="width-30">@Purchase.NetAmount</th>
+                        </tr>
+                    </thead>
+                    <thead class="search">
+                        <tr>
+                            <th></th>
+                            <th>@Sales.OrderNo</th>
+                            <th>@Sales.OrderDate</th>
+                            <th>@Sales.CustomerName</th>
+                            <th></th>
+                            <th>@Purchase.ItemName</th>
+                            <th>@Purchase.PartsNumber</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="uk-modal-footer uk-text-right">
+                    <button type="button" class="md-btn uk-modal-close">Close</button>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,125 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Asset.Models.RetirementModel
+@{
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 48, media: 960 }">
+        <div class="heading_title">
+            <h1>@Asset.Retirement</h1>
+            <span class="uk-text-upper uk-text-small">@Asset.CreateRetirement</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn save'>" + Asset.Save + "</a>")
+            
+            @Html.ActionLink(Common.Close, "Index", "Retirement", new { Area = "Asset" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a >@Common.Action</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                @Html.HiddenFor(m => m.ID)
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="le ft-block">
+                                    <div class="uk-form-row">
+                                        <div class="uk-grid" data-uk-grid-margin="">
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.TransNo</label>
+                                                @Html.TextBoxFor(m => m.RetirementTransNo, new { @class = "md-input", @disabled = "disabled", @id = "TransNo" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.TransDate</label>
+                                                @Html.TextBoxFor(m => m.DateStr, new { @class = "md-input", @disabled = "disabled", @id = "TransDate" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.AssetCode</label>
+                                                @Html.TextBoxFor(m => m.AssetCode, new { @class = "md-input", @disabled = "disabled", @id = "AssetNumber" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.CapitalizationDate</label>
+                                                @Html.TextBoxFor(m => m.CapitalisationDateStr, new { @class = "md-input", @disabled = "disabled", @id = "TransDate" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Asset.ItemName</label>
+                                                @Html.TextBoxFor(m => m.ItemName, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Asset.AssetName</label>
+                                                @Html.TextBoxFor(m => m.AssetName, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.Location</label>
+                                                @Html.TextBoxFor(m => m.Location, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            @Html.HiddenFor(m => m.AssetQty)
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.AssetUniqueNo</label>
+                                                @Html.TextBoxFor(m => m.AssetUniqueNo, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.AccountCategory</label>
+                                                @Html.TextBoxFor(m => m.ItemAccountCategory, new { @class = "md-input", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.ResidualValue</label>
+                                                @Html.TextBoxFor(m => m.ResidualValue, new { @class = "md-input mask-qty", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Asset.ClosingGrossBlockValue</label>
+                                                @Html.TextBoxFor(m => m.ClosingGrossBlockValue, new { @class = "md-input mask-qty", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-2-8">
+                                                <label>@Asset.ClosingAccumulatedDepreciation</label>
+                                                @Html.TextBoxFor(m => m.ClosingAccumulatedDepreciation, new { @class = "md-input mask-qty", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.ClosingWDV</label>
+                                                @Html.TextBoxFor(m => m.ClosingWDV, new { @class = "md-input  mask-qty", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.AssetQty</label>
+                                                @Html.TextBoxFor(m => m.AssetQty, new { @class = "md-input mask-qty", @disabled = "disabled" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.SaleQty</label>
+                                                @Html.TextBoxFor(m => m.SaleQty, new { @class = "md-input mask-qty" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <label>@Asset.SaleValue</label>
+                                                @Html.TextBoxFor(m => m.SaleValue, new { @class = "md-input mask-qty" })
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <div class="uk-input-group">
+                                                    <label for="uk_dp_start">@Asset.EndDate</label>
+                                                    @Html.TextBoxFor(m => m.EndDateStr, Model.EndDateStr, new { @class = "md-input  label-fixed future-date date", @id = "EndDate" })
+                                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date "></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/Retirement")
+<script type="text/javascript">
+    retirement.init();
+</script>
+
+
+

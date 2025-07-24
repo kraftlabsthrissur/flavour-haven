@@ -1,0 +1,5 @@
+ALTER PROCEDURE [Master].[SPGetCurrencyList]      
+AS      
+BEGIN      
+ SELECT S.ID,S.Code,S.Name,s.Description,c.Name as CountryName,s.DecimalPlaces FROM Currency S join Country c on s.CountryID=c.ID    
+END 

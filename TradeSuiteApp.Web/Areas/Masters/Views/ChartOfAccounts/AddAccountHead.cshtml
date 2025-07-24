@@ -1,0 +1,43 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.ChartOfAccountsModel
+@{
+    ViewBag.Title = "AddAccountHead";
+}
+<div class="uk-modal" id="add-account-head" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Add Account Head<i class="material-icons"></i></h3>
+        </div>
+        <br />
+        <div class="uk-modal-content">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-1-5 AccountCode">
+                        <label>@Masters.AccountCode<span>*</span></label>
+                        @Html.TextBoxFor(model => model.AccountID, new { @class = "md-input label-fixed"})
+                    </div>
+                    <div class="uk-width-medium-1-3">
+                        <label>@Masters.AccountName<span>*</span></label>
+                        @Html.TextBoxFor(model => model.AccountName, new { @class = "md-input label-fixed "})
+                    </div>
+                    <div class="uk-width-medium-1-5">
+                        <label>@Masters.OpeningAmount<span>*</span></label>
+                        @Html.TextBoxFor(model => model.OpeningAmount, new { @class = "md-input mask-currency label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-1-5 item-align-icheck">
+                        <div class="uk-grid" data-uk-grid-margin>
+                            <label>&nbsp;</label>
+                        </div>
+                        <input type="checkbox" class="icheckbox IsManual" data-md-icheck />&nbsp;@Html.Label("Is Manual")
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <input type="hidden" id="ID" />
+            <input type="hidden" id="ParentID" />
+            <input type="hidden" id="Level" />
+            <button type="button" class="md-btn md-btn-primary" id="btnAdd">@Common.Save</button>
+            <button type="button" class="md-btn  uk-modal-close">@Common.Close</button>
+        </div>
+    </div>
+</div>

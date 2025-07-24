@@ -1,0 +1,82 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.RoomAllocationModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-width-medium-1-1">
+            <div class="uk-grid" data-uk-grid-margin="">
+                @Html.HiddenFor(m => m.ID)
+                <div class="uk-width-medium-1-10">
+                    <div class="uk-input-group">
+                        <label>@AHCMS.Date*</label>
+                        @Html.TextBoxFor(m => m.Date, new { @class = "md-input label-fixed  date future-date", @disabled = "disabled" })
+                    </div>
+                </div>
+                <div class="uk-width-medium-2-10">
+                    <label>@AHCMS.Patient</label>
+                    <div class="uk-autocomplete " id="patient-autocomplete">
+                        <div class="uk-input-group">
+                            @Html.TextBoxFor(m => m.PatientName, new { @class = "md-input label-fixed" })
+                            <span class="uk-input-group-addon">
+                                <a data-uk-modal="{target:'#select-patient',center:false}">
+                                    <i class="uk-input-group-icon uk-icon-search"></i>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                    @*@Html.HiddenFor(m => m.PatientID)*@
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <div class="md-input-wrapper md-input-filled">
+                        <label>&nbsp;</label>
+                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddPatient">@Masters.AddPatient</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-width-medium-1-1">
+            <div class="uk-grid" data-uk-grid-margin="">
+                <div class="uk-width-medium-1-10">
+                    <div class="uk-input-group">
+                        <label>@AHCMS.FromDate*</label>
+                        @Html.TextBoxFor(m => m.FromDate, new { @class = "md-input label-fixed  date future-date" })
+                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                    </div>
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <div class="uk-input-group">
+                        <label>@AHCMS.ToDate*</label>
+                        @Html.TextBoxFor(m => m.ToDate, new { @class = "md-input label-fixed  date future-date" })
+                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                    </div>
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@AHCMS.RoomType<span>*</span></label>
+                    @Html.DropDownListFor(m => m.RoomTypeID, new SelectList(Model.RoomTypeList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                </div>
+                    <div class="uk-width-medium-1-10">
+                        <label>@AHCMS.AvailableRooms*</label>
+                        <select id="RoomID" class="md-input label-fixed Room">
+                                <option>Select</option>
+                            </select>
+                    </div>    
+                <div class="uk-width-medium-1-10">
+                    <label>@AHCMS.Rate<span>*</span></label>
+                    @Html.TextBoxFor(m => m.Rate, new { @class = "md-input label-fixed mask-positive-currency" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+

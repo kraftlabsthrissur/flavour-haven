@@ -1,0 +1,34 @@
+ALTER VIEW [dbo].[viCustomer] AS                  
+                  
+Select C.ID,C.Code,C.Name,ISNULL(CC.ID ,0)AS CustomerCategoryID,ISNULL(CC.Name,'') AS CustomerCategory ,ISNULL(CA.Name,'') AS CustomerAccountsCategory,C.TradeLegalName AS CustomerLegalName,Currency,C.PropratorName,ISNULL(C.OldCode,'') AS OldCode,  
+(select top 1 BA.AddressLine1 from Addresses BA LEFT join State BS on  BA.PartyType = 'Customer' and BA.IsDefault = 1 and BA.IsBilling = 1 AND BS.ID = BA.StateID  WHERE BA.PartyID = C.ID ) AS BillingAddress1,  
+(select top 1 BA.AddressLine2 from Addresses BA LEFT join State BS on  BA.PartyType = 'Customer' and BA.IsDefault = 1 and BA.IsBilling = 1 AND BS.ID = BA.StateID  WHERE BA.PartyID = C.ID ) AS BillingAddress2,  
+(select top 1 BA.AddressLine3 from Addresses BA LEFT join State BS on  BA.PartyType = 'Customer' and BA.IsDefault = 1 and BA.IsBilling = 1 AND BS.ID = BA.StateID  WHERE BA.PartyID = C.ID ) AS BillingAddress3,  
+ISNULL((select top 1 BA.Place from Addresses BA LEFT join State BS on  BA.PartyType = 'Customer' and BA.IsDefault = 1 and BA.IsBilling = 1 AND BS.ID = BA.StateID  WHERE BA.PartyID = C.ID ),'') AS BillingPlace,  
+(select top 1 BA.DistrictID from Addresses BA LEFT join State BS on  BA.PartyType = 'Customer' and BA.IsDefault = 1 and BA.IsBilling = 1 AND BS.ID = BA.StateID  WHERE BA.PartyID = C.ID ) AS BillingDistrictID,  
+(select top 1 BA.LandLine1 from Addresses BA LEFT join State BS on  BA.PartyType = 'Customer' and BA.IsDefault = 1 and BA.IsBilling = 1 AND BS.ID = BA.StateID  WHERE BA.PartyID = C.ID )LandLine1,  
+(select top 1 BA.LandLine2 from Addresses BA LEFT join State BS on  BA.PartyType = 'Customer' and BA.IsDefault = 1 and BA.IsBilling = 1 AND BS.ID = BA.StateID  WHERE BA.PartyID = C.ID )LandLine2,  
+(select top 1 BA.MobileNo from Addresses BA LEFT join State BS on  BA.PartyType = 'Customer' and BA.IsDefault = 1 and BA.IsBilling = 1 AND BS.ID = BA.StateID  WHERE BA.PartyID = C.ID )MobileNo,  
+(select top 1 BA.DistrictID from Addresses BA LEFT join State BS on  BA.PartyType = 'Customer' and BA.IsDefault = 1 and BA.IsBilling = 1 AND BS.ID = BA.StateID  WHERE BA.PartyID = C.ID )DistrictID,  
+(select top 1 BS.ID from Addresses BA LEFT join State BS on  BA.PartyType = 'Customer' and BA.IsDefault = 1 and BA.IsBilling = 1 AND BS.ID = BA.StateID  WHERE BA.PartyID = C.ID ) AS BillingStateID,  
+(select top 1 BS.Name from Addresses BA LEFT join State BS on  BA.PartyType = 'Customer' and BA.IsDefault = 1 and BA.IsBilling = 1 AND BS.ID = BA.StateID  WHERE BA.PartyID = C.ID )AS BillingState,  
+(select top 1 SA.AddressLine1 from Addresses SA  LEFT join State SS on  SA.PartyType = 'Customer' and SA.IsDefaultShipping = 1 and SA.IsShipping = 1 AND SS.ID = SA.StateID   WHERE SA.PartyID = C.ID ) AS ShippingAddress1,  
+(select top 1 SA.AddressLine2 from Addresses SA  LEFT join State SS on  SA.PartyType = 'Customer' and SA.IsDefaultShipping = 1 and SA.IsShipping = 1 AND SS.ID = SA.StateID   WHERE SA.PartyID = C.ID )  AS ShippingAddress2,  
+(select top 1 SA.AddressLine3  from Addresses SA  LEFT join State SS on  SA.PartyType = 'Customer' and SA.IsDefaultShipping = 1 and SA.IsShipping = 1 AND SS.ID = SA.StateID   WHERE SA.PartyID = C.ID ) AS ShippingAddress3,  
+(select top 1 SA.Place from Addresses SA  LEFT join State SS on  SA.PartyType = 'Customer' and SA.IsDefaultShipping = 1 and SA.IsShipping = 1 AND SS.ID = SA.StateID   WHERE SA.PartyID = C.ID )  AS ShippingPlace,  
+(select top 1  SA.DistrictID  from Addresses SA  LEFT join State SS on  SA.PartyType = 'Customer' and SA.IsDefaultShipping = 1 and SA.IsShipping = 1 AND SS.ID = SA.StateID   WHERE SA.PartyID = C.ID )AS ShippingDistrictID,  
+(select top 1 SS.CountryID  from Addresses SA  LEFT join State SS on  SA.PartyType = 'Customer' and SA.IsDefaultShipping = 1 and SA.IsShipping = 1 AND SS.ID = SA.StateID   WHERE SA.PartyID = C.ID )CountryID ,  
+(select top 1 SS.ID from Addresses SA  LEFT join State SS on  SA.PartyType = 'Customer' and SA.IsDefaultShipping = 1 and SA.IsShipping = 1 AND SS.ID = SA.StateID   WHERE SA.PartyID = C.ID )  AS StateID ,  
+(select top 1 SS.Name from Addresses SA  LEFT join State SS on  SA.PartyType = 'Customer' and SA.IsDefaultShipping = 1 and SA.IsShipping = 1 AND SS.ID = SA.StateID   WHERE SA.PartyID = C.ID ) AS ShippingState ,  
+IsGSTRegistered,GSTNo,C.AadhaarNo,C.PANNo,CreditDays,CA.ID CustomerAccountsCategoryID,        
+CustomerTaxCategoryID,RelatedCustomerID,IsBlockedForSalesOrders,IsBlockedForSalesInvoices,C.PriceListID,C.PaymentTypeID ,                
+C.SchemeID,C.LocationID,C.MinimumCreditLimit,C.MaxCreditLimit,C.CashDiscountID,ISNULL(D.DiscountPercentage,0.00) AS CashDiscountPercentage,              
+ISNULL(C.FSOID,0)  FSOID,ISNULL(F.FSOName,'')  FSOName,            
+IsBlockedForChequeReceipt ,C.CategoryID,C.CurrencyID,Cu.Name CurrencyName,Cu.Code CurrencyCode,Cu.CurrencyPrefix,ISNULL(Cu.DecimalPlaces,2)DecimalPlaces               
+From Customer C                  
+LEFT join CustomerCategory CC on C.CategoryID = CC.ID                  
+LEFT Join CustomerAccountsCategory CA on CA.ID = C.CustomerAccountsCategoryID                             
+left join DiscountCategory D on D.ID = C.CashDiscountID AND D.DiscountType = 'CashDiscount'               
+left join FSO F on F.ID = C.FSOID              
+left join Currency Cu on Cu.ID = C.CurrencyID              
+where Current_timestamp between StartDate AND ExpiryDate And IsDraftCustomer = 0 --and C.ID=11709 

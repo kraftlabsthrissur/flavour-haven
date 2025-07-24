@@ -1,0 +1,69 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.BillTypeModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-grid" data-uk-grid-margin>
+        <div class="uk-form-row">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="width-80">
+                    <input type="radio" name="type" class="radioOp" data-md-icheck value="OP" checked /> @Html.Label("OP")
+                </div>
+                <div class="width-80">
+                    <input type="radio" name="type" class="radioIp" data-md-icheck value="IP" /> @Html.Label("IP")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<br />
+<div class="uk-grid" data-uk-grid-margin id="OutPatient">
+    @if (Model.OPItems != null)
+    {
+        foreach (var item in Model.OPItems.Select((value, i) => new { i = (i + 1), value }))
+        {
+            <div class="uk-width-1-5 lab">
+                <h5>
+                    @if (item.value.State == "")
+                    {
+                        <input type="checkbox" class="icheckbox check-box op " data-md-icheck value="@item.value.BillTypeID" />
+                        @item.value.BillTypeName
+
+                    }
+                    else
+                    {
+                        <input type="checkbox" class="icheckbox check-box op " data-md-icheck value="@item.value.BillTypeID" checked />
+                        @item.value.BillTypeName
+
+                    }
+                </h5>
+            </div>
+        }
+    }
+</div>
+
+<div class="uk-grid" data-uk-grid-margin id="InPatient">
+    @if (Model.IPItems != null)
+    {
+        foreach (var item in Model.IPItems.Select((value, i) => new { i = (i + 1), value }))
+        {
+            <div class="uk-width-1-5 lab">
+                <h5>
+                    @if (item.value.State == "")
+                    {
+                        <input type="checkbox" class="icheckbox check-box ip " data-md-icheck value="@item.value.BillTypeID" />
+                        @item.value.BillTypeName
+
+                    }
+                    else
+                    {
+                        <input type="checkbox" class="icheckbox check-box ip " data-md-icheck value="@item.value.BillTypeID" checked />
+                        @item.value.BillTypeName
+
+                    }
+                </h5>
+            </div>
+        }
+    }
+</div>

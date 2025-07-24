@@ -1,0 +1,45 @@
+-- =============================================                          
+-- Author:  <ajith@kraftlabs.com>                          
+-- Create date: <31-Aug-2018>                          
+-- Description: <Get Sales Invoice items by SalesInvoiceId>                          
+-- =============================================                          
+--exec  [Sales].[SpGetSalesInvoiceItems] 2,2018,1,1                          
+ALTER PROCEDURE [Sales].[SpGetSalesInvoiceItems](                          
+ @SalesInvoiceID INT,                          
+ @FinYear INT,                           
+ @LocationID INT,                          
+ @ApplicationID INT                          
+)                          
+AS                      
+BEGIN                          
+                          
+ SET NOCOUNT ON;                               
+                          
+ SELECT SIT.ID, SalesInvoiceID, SalesOrderTransID,ProformaInvoiceTransID, SIT.ItemID,SIT.InvoiceQty, SIT.InvoiceOfferQty,                         
+  SIT.Quantity, SIT.MRP, SIT.BasicPrice, SIT.OfferQty,SIT.SecondaryUnit,SIT.SecondaryMRP,SIT.SecondaryOfferQty,SIT.SecondaryQty,SIT.SecondaryUnitSize,           
+  SIT.GrossAmount, SIT.DiscountPercentage, SIT.BatchID, SIT.BatchTypeID,SIT.DiscountAmount, SIT.AdditionalDiscount, SIT.TurnoverDiscount, SIT.TaxableAmount,           
+  SIT.SGSTPercentage, SIT.CGSTPercentage, SIT.IGSTPercentage,SIT.IsGST,SIT.IsVat,SOT.VATPercentage,SOT.VATAmount,SIT.SGSTAmt, SIT.CGSTAmt, SIT.IGSTAmt, SIT.NetAmt,           
+  SIT.WareHouseID, SIT.ItemName,SIT.PartsNumber,SIT.DeliveryTerm,SIT.Model,ISNULL(CU.Name,'')CurrencyName, SIT.CurrencyID, U.UOM AS UnitName, I.Code, B.BatchNo BatchName,          
+  dbo.FnGetAvailableStock(SIT.ItemID,SIT.BatchID,SIT.BatchTypeID,SIT. WareHouseID, @FinYear, @LocationID, @ApplicationID) Stock ,SIT.UnitID,SIT.MRP AS Rate,          
+  SIT.CashDiscount,0.0 LooseRate,I.SalesUnitID,ISNULL(POT.ID,0) as POTransID,ISNULL(POT.PurchaseOrderID,0) as PurchaseOrderID,ISNULL(POT.Rate,0.0) as PORate,          
+  SIT.PrintWithItemName,ISNULL(POT.Quantity,0.0) as POQuantity   ,SIT.CessPercentage,SIT.CessAmount, B.ExpiryDate, I.PackSize ,US.UOM AS PrimaryUnit,                      
+  Case when I.CategoryID=222 then BT.Name else '' end as BatchType, I.CategoryID            
+  FROM Sales.SalesInvoiceTrans SIT                          
+  INNER JOIN viItem I ON I.ID = SIT.ItemID                          
+  INNER JOIN Batch B ON B.ID = SIT.BatchID                           
+  INNER JOIN Unit U on SIT.UnitID =u.ID                       
+  LEFT JOIN Unit US ON US.ID = I.UnitID                               
+  LEFT join sales.SalesOrderTrans SOT on SOT.Id=SIT.SalesOrderTransID                   
+  LEFT JOIN Currency CU on CU.ID=SIT.CurrencyID                  
+  --left join Sales.SalesOrder SO on SO.ID=SOT.SalesOrderID                         
+  left join   sales.ProformaInvoiceTrans POoT on POoT.Id=SIT.ProformaInvoiceTransID                          
+  left join Sales.ProformaInvoice PO on PO.ID=POoT.ProformaInvoiceID                        
+  left join   sales.SalesOrderTrans SOoT on SOoT.Id=POoT.SalesOrderTranID                          
+  --left join Sales.SalesOrder SOo on SOo.ID=SOoT.SalesOrderID                        
+  left join PurchaseOrderTrans POT on (POT.ID=SOT.POTransID or POT.ID=SOoT.POTransID ) and POT.ItemID=SIT.ItemID                          
+                         
+  Left Join BatchType BT on BT.ID=SIT.BatchTypeID                      
+  --left join PurchaseOrder PO on PO.ID=POT.PurchaseOrderID                          
+  WHERE SIT.SalesInvoiceID = @SalesInvoiceID AND SIT.Finyear = @FinYear AND SIT.LocationID = @LocationID AND SIT.ApplicationID = @ApplicationID                           
+  ORDER BY I.PackSize DESC,I.Unit DESC,I.SalesCategory,I.Name                          
+END 

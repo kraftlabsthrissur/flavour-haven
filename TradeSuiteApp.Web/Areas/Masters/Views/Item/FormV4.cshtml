@@ -1,0 +1,704 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.ItemModel
+<div class="uk-width-medium-8-10">
+    <div class="md-card">
+        <div class="md-card-content master-card-padding">
+            <div class="uk-width-1-1">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid">
+                            <div class="uk-width-1-1">
+                                <ul class="uk-tab" data-uk-tab="{connect:'#tabs_1_content'}">
+                                    <li class="uk-active" aria-expanded="true"><a>GENERAL</a></li>
+                                    <li aria-expanded="true"><a>COST</a></li>
+                                    <li aria-expanded="true"><a>SALES PRICE</a></li>
+                                    <li style="display: none;" ><a>QUALITY</a></li>
+                                    <li style="display: none;"><a>UNIT</a></li>
+                                    <li style="display: none;"><a>MISE</a></li>
+                                    <li aria-expanded="true"><a>TAX</a></li>
+                                    <li style="display: none;"><a>PARTS NUMBER</a></li>
+                                    <li aria-expanded="true"><a>WAREHOUSE</a></li>
+                                    <li style="display: none;"><a>PART ALTERNATIVES</a></li>
+                                    <li style="display: none;"><a>BOM</a></li>
+                                </ul>
+                                <ul id="tabs_1_content" class="uk-switcher uk-margin" style="width:100%">
+                                    <li aria-hidden="false" class="uk-active" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-1-1">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-1-8">
+                                                            <label> @Masters.PartCode </label>
+                                                            @Html.TextBoxFor(m => m.Code, new { @class = "md-input" })
+                                                            @Html.HiddenFor(m => m.ID)
+                                                            @Html.HiddenFor(m => m.SalesInquiryItemID)
+                                                            @Html.HiddenFor(m => m.PurchaseRequisitionTrasID)
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.Category<span>*</span></label>
+                                                            @Html.DropDownListFor(Model => Model.CategoryID, new SelectList(Model.CategorySelectList, "Value", "Text"), new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.Description <span>*</span></label>
+                                                            @Html.TextBoxFor(m => m.Name, new { @class = "md-input" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.Remarks</label>
+                                                            @Html.TextBoxFor(m => m.SanskritName, new { @class = "md-input" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.RegionalLanguage</label>
+                                                            @Html.TextBoxFor(m => m.MalayalamName, new { @class = "md-input" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.PartsClass<span>*</span></label>
+                                                            @Html.DropDownListFor(Model => Model.PurchaseCategoryID, new SelectList(Model.PurchaseCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.PartsGroup<span>*</span></label>
+                                                            @Html.DropDownListFor(Model => Model.BusinessCategoryID, new SelectList(Model.BusinessCategoryList, "Value", "Text"), new { @class = "md-input label-fixed" })
+                                                        </div>
+
+                                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                                            <label>@Masters.UOMGroup <span>*</span></label>
+                                                            @Html.DropDownListFor(Model => Model.UnitGroupID, new SelectList(Model.UnitGroupList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.Units <span>*</span></label>
+                                                            @Html.DropDownListFor(Model => Model.InventoryUnitID, new SelectList(Model.UOMList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+
+                                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                                            <label>@Masters.PurchaseUOM <span>*</span></label>
+                                                            <select id="PurchaseUnitID" class="md-input label-fixed">
+                                                                <option value="">Select</option>
+                                                                @foreach (var unit in Model.UnitList)
+                                                                {
+                                                                    <option @(Model.PurchaseUnitID == unit.ID ? "selected=selected" : "") value="@unit.ID" data-uom="@unit.PackSize">@unit.UOM</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                                            <label>@Masters.SalesUOM <span>*</span></label>
+                                                            @Html.DropDownListFor(Model => Model.SalesUnitID, new SelectList(Model.UOMList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                                            <label>@Masters.LooseUnit <span>*</span></label>
+                                                            @Html.DropDownListFor(Model => Model.LooseUnitID, new SelectList(Model.UOMList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                                            <label>@Masters.ConversionPToI <span>*</span></label>
+                                                            @Html.TextBoxFor(m => m.ConversionFactorPurchaseToInventory, new { @class = "md-input" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                                            <label>@Masters.ConversionP2L <span>*</span></label>
+                                                            @Html.TextBoxFor(m => m.ConversionFactorPurchaseToLoose, "", new { maxlength = 10, @class = "md-input label-fixed " })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                                            <label>@Masters.ConversionSToI <span>*</span></label>
+                                                            @Html.TextBoxFor(m => m.ConversionFactorSalesToInventory, "", new { maxlength = 10, @class = "md-input label-fixed " })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                                            <label>@Masters.ConversionLToS <span>*</span></label>
+                                                            @Html.TextBoxFor(m => m.ConversionFactorLooseToSales, "", new { maxlength = 10, @class = "md-input label-fixed " })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-1-1">
+                                                    <div id="location-Container" class="item-location">
+                                                        <div class="uk-form-row">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <div class="uk-width-medium-2-8">
+                                                                    <label>@Masters.SecondaryUnit </label>
+                                                                    @Html.DropDownListFor(Model => Model.ItemSecondaryUnitID, new SelectList(Model.SecondaryUnitList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                                </div>
+                                                                <div class="uk-width-medium-1-8">
+                                                                    <br />
+                                                                    <button class="md-btn" id="btnAddSecondaryUnit">@Common.Add</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <br />
+                                                        <div class="uk-form-row">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <table id="itemsecondaryunit-list" class="uk-table" cellspacing="0" width="100%">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th class="width-30">@Common.SerialNo</th>
+                                                                            <th class="width-60">@Masters.SecondaryUnit</th>
+
+                                                                            <th class="width-30"></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @if (Model.ItemSecondaryUnitList != null)
+                                                                        {
+                                                                            foreach (var m in Model.ItemSecondaryUnitList.Select((item, i) => new { i = (Convert.ToInt32(i) + 1), item }))
+                                                                            {
+                                                                                <tr>
+                                                                                    <td class="uk-text-center">
+                                                                                        @Html.DisplayFor(modelItem => (m.i))
+                                                                                        <input type="hidden" class="ID" value="@m.item.ID" />
+                                                                                        <input type="hidden" class="ItemID" value="@m.item.ItemID" />
+                                                                                    </td>
+                                                                                    <td class="uk-text-center">
+                                                                                        @Html.DisplayFor(modelItem => m.item.SecondaryUnit)
+                                                                                        <input type="hidden" class="SecondaryUnitID" value="@m.item.SecondaryUnitID" />
+                                                                                        <input type="hidden" class="SecondaryUnit" value="@m.item.SecondaryUnit" />
+                                                                                    </td>
+                                                                                    <td class="uk-text-center">
+                                                                                        <button class="md-btn md-btn-danger btnDeleteItemSecondaryUnit">Delete</button>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            }
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-input-group">
+                                                        <label>@Masters.CostPrice </label>
+                                                        @Html.TextBoxFor(m => m.CostPrice, new { @class = "md-input label-fixed mask-sales3-currency" })
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-input-group">
+                                                        <label>@Masters.PurchasePrice </label>
+                                                        @Html.TextBoxFor(m => m.PurchasePrice, new { @class = "md-input label-fixed mask-sales3-currency" })
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-input-group">
+                                                        <label>@Masters.LandedCost </label>
+                                                        @Html.TextBoxFor(m => m.LandedCost, new { @class = "md-input label-fixed mask-sales3-currency" })
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-input-group">
+                                                        <label>@Masters.CostMethod <span>*</span></label>
+                                                        @Html.DropDownListFor(Model => Model.CostingMethodID, new SelectList(Model.CostingMethodList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-input-group">
+                                                        <label>@Masters.DiscountPercentage </label>
+                                                        @Html.TextBoxFor(m => m.DiscountPercentage, new { @class = "md-input label-fixed mask-sales3-currency" })
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-input-group">
+                                                        <label>Display Percentage  </label>
+                                                        @Html.TextBoxFor(m => m.DisplayPercentage, new { @class = "md-input label-fixed mask-sales3-currency" })
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-input-group">
+                                                        <label>Cross Reference   </label>
+                                                        @Html.TextBoxFor(m => m.cross_reference, new { @class = "md-input label-fixed" })
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-input-group">
+                                                        <label>Brand</label>
+                                                        @Html.DropDownListFor(Model => Model.BrandID, new SelectList(Model.BrandList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.Location </label>
+                                                    @Html.DropDownListFor(Model => Model.PriceLocationID, new SelectList(Model.LocationList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.SalePrice </label>
+                                                    @Html.TextBoxFor(Model => Model.SalesPrice, "", new { @class = "md-input label-fixed mask-sales3-currency" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.LoosePrice </label>
+                                                    @Html.TextBoxFor(Model => Model.LoosePrice, "", new { @class = "md-input label-fixed mask-sales3-currency" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <br />
+                                                    <button class="md-btn" id="btnAddSalesPrice">@Common.Add</button>
+                                                </div>
+                                            </div>
+                                            <div class="uk-grid uk-hidden">
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.Location </label>
+                                                    @Html.TextBoxFor(Model => Model.Location, "", new { @class = "md-input label-fixed" })
+                                                    @Html.HiddenFor(Model => Model.PriceLocationID)
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.SalePrice </label>
+                                                    @Html.TextBoxFor(Model => Model.SalesPrice, "", new { @class = "md-input label-fixed mask-sales3-currency mask-sales3-currency"})
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.LoosePrice </label>
+                                                    @Html.TextBoxFor(Model => Model.LoosePrice, "", new { @class = "md-input label-fixed mask-sales3-currency" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <br />
+                                                    <button class="md-btn" id="btnAddSalesPrice">@Common.Update</button>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    <table id="saleitemsprice-list" class="uk-table" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="width-40">@Common.SerialNo</th>
+                                                                <th class="width-100">@Masters.Location</th>
+                                                                <th>@Masters.SalePrice</th>
+                                                                <th>@Masters.LoosePrice</th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if (Model.ItemSalesPriceList != null)
+                                                            {
+                                                                foreach (var m in Model.ItemSalesPriceList.Select((item, i) => new { i = (Convert.ToInt32(i) + 1), item }))
+                                                                {
+                                                                    <tr>
+                                                                        <td class="uk-text-center">
+                                                                            @Html.DisplayFor(modelItem => (m.i))
+                                                                            <input type="hidden" class="ID" value="@m.item.ID" />
+                                                                            <input type="hidden" class="ItemID" value="@m.item.ItemID" />
+                                                                        </td>
+                                                                        <td class="uk-text-center">
+                                                                            @Html.DisplayFor(modelItem => m.item.Location)
+                                                                            <input type="hidden" class="LocationID" value="@m.item.LocationID" />
+                                                                        </td>
+                                                                        <td class="uk-text-center">
+                                                                            @Html.TextBoxFor(modelItem => m.item.SalesPrice, new { @class = "md-input SalesPrice", @disabled = "disabled" })
+                                                                        </td>
+                                                                        <td class="uk-text-center">
+                                                                            @Html.TextBoxFor(modelItem => m.item.LoosePrice, new { @class = "md-input LoosePrice", @disabled = "disabled" })
+                                                                        </td>
+                                                                        <td class="uk-text-center">
+                                                                            @if (m.item.ID == 0)
+                                                                            {
+                                                                                <button class="md-btn md-btn-danger btnDeleteItemSalesPrice">Delete</button>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <button class="md-btn md-btn-primary btnEditItemSalesPrice">Edit</button>
+                                                                            }
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.ReOrderQty</label>
+                                                    @Html.TextBoxFor(m => m.ReOrderQty, "", new { maxlength = 10, @class = "md-input label-fixed mask-sales3-currency" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.ItemLength </label>
+                                                    @Html.TextBoxFor(Model => Model.ItemLength, new { @class = "md-input label-fixed mask-sales3-currency" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.LengthUOM</label>
+                                                    @Html.DropDownListFor(Model => Model.LengthUOMID, new SelectList(Model.UOMList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.ItemWidth </label>
+                                                    @Html.TextBoxFor(Model => Model.ItemWidth, new { @class = "md-input label-fixed mask-sales3-currency" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.WidthUOM </label>
+                                                    @Html.DropDownListFor(Model => Model.WidthUOMID, new SelectList(Model.UOMList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.ItemHeight </label>
+                                                    @Html.TextBoxFor(Model => Model.ItemHight, new { @class = "md-input label-fixed mask-sales3-currency" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.HeightUOM </label>
+                                                    @Html.DropDownListFor(Model => Model.HightUOMID, new SelectList(Model.UOMList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.NetWeight </label>
+                                                    @Html.TextBoxFor(Model => Model.NetWeight, new { @class = "md-input label-fixed mask-sales3-currency" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.NetWeightUOM </label>
+                                                    @Html.DropDownListFor(Model => Model.NetWeightUOMID, new SelectList(Model.UOMList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.InnerDiameter </label>
+                                                    @Html.TextBoxFor(Model => Model.InnerDiameter, new { @class = "md-input label-fixed mask-sales3-currency" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.OuterDiameter </label>
+                                                    @Html.TextBoxFor(Model => Model.OuterDiameter, new { @class = "md-input label-fixed mask-sales3-currency" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-1-1">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.Buyer </label>
+                                                            @Html.DropDownListFor(Model => Model.BuyerID, new SelectList(Model.BuyerList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.SupplierPartCode </label>
+                                                            @Html.TextBoxFor(Model => Model.SupplierPartCode, new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.OEMCode </label>
+                                                            @Html.TextBoxFor(Model => Model.OEMCode, new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.OEMCountry </label>
+                                                            @Html.DropDownListFor(Model => Model.OEMCountryID, new SelectList(Model.OEMCountryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.ABCCode </label>
+                                                            @Html.DropDownListFor(Model => Model.ABCCodeID, new SelectList(Model.ABCCodeList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.HSNCode </label>
+                                                            @Html.TextBoxFor(Model => Model.HSNCode, new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.EANCode </label>
+                                                            @Html.TextBoxFor(Model => Model.EANCode, new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.BarCode </label>
+                                                            @Html.TextBoxFor(Model => Model.BarCode, new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.Supplier </label>
+                                                            @Html.DropDownListFor(Model => Model.SupplierID, new SelectList(Model.SupplierList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.Budget </label>
+                                                            @Html.TextBoxFor(Model => Model.BudgetQuantity, new { @class = "md-input label-fixed mask-sales3-currency" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.Make </label>
+                                                            @Html.TextBoxFor(Model => Model.Make, new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.Model </label>
+                                                            @Html.TextBoxFor(Model => Model.Model, new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="true" class="" style="width:100%">
+                                        <div id="location-Container" class="item-location">
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.Location </label>
+                                                        @Html.DropDownListFor(Model => Model.LocationID, new SelectList(Model.LocationList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.TaxType </label>
+                                                        @Html.DropDownListFor(Model => Model.TaxTypeID, new SelectList(Model.TaxTypeList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                    </div>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.ItemTaxCategory </label>
+                                                        @Html.DropDownListFor(Model => Model.GSTCategoryID, new SelectList(Model.GSTCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <br />
+                                                        <button class="md-btn" id="btnAddTax">@Common.Add</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    <table id="itemtax-list" class="uk-table" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="width-30">@Common.SerialNo</th>
+                                                                <th class="width-60">@Masters.Location</th>
+                                                                <th class="width-60">@Masters.TaxType</th>
+                                                                <th class="width-80">@Masters.ItemTaxCategory</th>
+                                                                <th class="width-30"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if (Model.ItemTaxList != null)
+                                                            {
+                                                                foreach (var m in Model.ItemTaxList.Select((item, i) => new { i = (Convert.ToInt32(i) + 1), item }))
+                                                                {
+                                                                    <tr>
+                                                                        <td class="uk-text-center">
+                                                                            @Html.DisplayFor(modelItem => (m.i))
+                                                                            <input type="hidden" class="ID" value="@m.item.ID" />
+                                                                            <input type="hidden" class="ItemID" value="@m.item.ItemID" />
+                                                                        </td>
+                                                                        <td class="uk-text-center">
+                                                                            @Html.DisplayFor(modelItem => m.item.Location)
+                                                                            <input type="hidden" class="LocationID" value="@m.item.LocationID" />
+                                                                        </td>
+                                                                        <td class="uk-text-center">
+                                                                            @Html.DisplayFor(modelItem => m.item.TaxType)
+                                                                            <input type="hidden" class="TaxTypeID" value="@m.item.TaxTypeID" />
+                                                                        </td>
+                                                                        <td class="uk-text-center">
+                                                                            @Html.DisplayFor(modelItem => m.item.GSTCategory)
+                                                                            <input type="hidden" class="GSTCategoryID" value="@m.item.GSTCategoryID" />
+                                                                        </td>
+                                                                        <td class="uk-text-center">
+                                                                            <button class="md-btn md-btn-danger btnDeleteTax">Delete</button>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="true" class="" style="width:100%">
+                                        <div id="location-Container" class="item-location">
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    <div class="uk-width-medium-2-8">
+                                                        <label>@Masters.PartsNo </label>
+                                                        @Html.TextBoxFor(Model => Model.PartsNumbers, new { @class = "md-input label-fixed" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <br />
+                                                        <button class="md-btn" id="btnAddPartsNumber">@Common.Add</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    <table id="itempartsno-list" class="uk-table" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="width-30">@Common.SerialNo</th>
+                                                                <th class="width-60">@Masters.PartsNo</th>
+                                                                <th class="width-60">@Masters.Default</th>
+                                                                <th class="width-30"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if (Model.ItemPartsNumberList != null)
+                                                            {
+                                                                foreach (var m in Model.ItemPartsNumberList.Select((item, i) => new { i = (Convert.ToInt32(i) + 1), item }))
+                                                                {
+                                                                    <tr>
+                                                                        <td class="uk-text-center">
+                                                                            @Html.DisplayFor(modelItem => (m.i))
+                                                                            <input type="hidden" class="ID" value="@m.item.ID" />
+                                                                            <input type="hidden" class="ItemID" value="@m.item.ItemID" />
+                                                                        </td>
+                                                                        <td class="uk-text-center">
+                                                                            @Html.DisplayFor(modelItem => m.item.PartsNumber)
+                                                                            <input type="hidden" class="PartsNumber" value="@m.item.PartsNumber" />
+                                                                        </td>
+                                                                        <td class="uk-text-center">
+                                                                            <input type="radio" class="IsDefault" name="IsDefault" @(m.item.IsDefault ? "checked" : "") />
+                                                                        </td>
+                                                                        <td class="uk-text-center">
+                                                                            <button class="md-btn md-btn-danger btnDeleteItemPartsNumber">Delete</button>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.WareHouse </label>
+                                                    @Html.DropDownListFor(Model => Model.WareHouseID, new SelectList(Model.WareHouseList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.Bin </label>
+                                                    @Html.DropDownListFor(Model => Model.BinID, new SelectList(Model.BinList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.Lot </label>
+                                                    @Html.DropDownListFor(Model => Model.LotID, new SelectList(Model.LotList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <label>@Masters.IsDefault<span></span></label>
+                                                    </div>
+                                                    @Html.CheckBoxFor(m => m.IsDefault, new { @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <br />
+                                                    <button class="md-btn" id="btnAddWareHouse">@Common.Add</button>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <table id="itemwarehouse-list" class="uk-table" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="width-30">@Common.SerialNo</th>
+                                                            <th>@Masters.WareHouse</th>
+                                                            <th>@Masters.Bin</th>
+                                                            <th>@Masters.Lot</th>
+                                                            <th>@Masters.IsDefault</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (Model.ItemWareHouseList != null)
+                                                        {
+                                                            foreach (var m in Model.ItemWareHouseList.Select((item, i) => new { i = (Convert.ToInt32(i) + 1), item }))
+                                                            {
+                                                                <tr>
+                                                                    <td class="uk-text-center">
+                                                                        @Html.DisplayFor(modelItem => (m.i))
+                                                                        <input type="hidden" class="ID" value="@m.item.ID" />
+                                                                        <input type="hidden" class="ItemID" value="@m.item.ItemID" />
+                                                                    </td>
+                                                                    <td class="uk-text-center">
+                                                                        @Html.DisplayFor(modelItem => m.item.WareHouse)
+                                                                        <input type="hidden" class="WareHouseID" value="@m.item.WareHouseID" />
+                                                                    </td>
+                                                                    <td class="uk-text-center">
+                                                                        @Html.DisplayFor(modelItem => m.item.Bin)
+                                                                        <input type="hidden" class="BinID" value="@m.item.BinID" />
+                                                                    </td>
+                                                                    <td class="uk-text-center">
+                                                                        @Html.DisplayFor(modelItem => m.item.Lot)
+                                                                        <input type="hidden" class="LotID" value="@m.item.LotID" />
+                                                                    </td>
+                                                                    <td class="uk-text-center">
+                                                                        @Html.DisplayFor(modelItem => m.item.Default)
+                                                                        <input type="hidden" class="IsDefault" value="@m.item.IsDefault" />
+                                                                    </td>
+                                                                    <td class="uk-text-center">
+                                                                        <button class="md-btn md-btn-danger btnDeleteWareHoue">Delete</button>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-5">
+                                                    <div class="uk-autocomplete " id="alternative-item-autocomplete">
+                                                        <label>@Masters.AlternativeItemName<span></span></label>
+                                                        @Html.TextBoxFor(m => m.AlternativeItemName, "", new { @class = "md-input label-fixed" })
+                                                        <span class="uk-input-group-addon">
+                                                            <a data-uk-modal="{target:'#select-alternative-item'}">
+                                                                <i class="uk-input-group-icon uk-icon-search"></i>
+                                                            </a>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    <table id="alternativeitem-list" class="uk-table" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="width-30">@Common.SerialNo</th>
+                                                                <th>@Masters.ItemCode</th>
+                                                                <th class="width-60">@Masters.ItemName</th>
+                                                                <th>@Masters.ItemCategory</th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if (Model.AlternativeItemList != null)
+                                                            {
+                                                                foreach (var m in Model.AlternativeItemList.Select((item, i) => new { i = (Convert.ToInt32(i) + 1), item }))
+                                                                {
+                                                                    <tr>
+                                                                        <td class="uk-text-center">
+                                                                            @Html.DisplayFor(modelItem => (m.i))
+                                                                            <input type="hidden" class="ID" value="@m.item.ID" />
+                                                                        </td>
+                                                                        <td class="uk-text-center">
+                                                                            @Html.DisplayFor(modelItem => m.item.Code)
+                                                                            <input type="hidden" class="ItemID" value="@m.item.ItemID" />
+                                                                            <input type="hidden" class="AlternativeItemID" value="@m.item.AlternativeItemID" />
+                                                                        </td>
+                                                                        <td class="uk-text-center">
+                                                                            @Html.DisplayFor(modelItem => m.item.Name)
+                                                                        </td>
+                                                                        <td class="uk-text-center">
+                                                                            @Html.DisplayFor(modelItem => m.item.Category)
+                                                                        </td>
+                                                                        <td class="uk-text-center">
+                                                                            <button class="md-btn md-btn-danger btnDeleteAlternativeItem">Delete</button>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="true" class="" style="width:100%">
+                                        <div id="location-Container" class="item-location">
+
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

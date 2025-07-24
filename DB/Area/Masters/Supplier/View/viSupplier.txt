@@ -1,0 +1,20 @@
+            
+ALTER VIEW [dbo].[viSupplier] AS            
+                        
+Select  S.ID,S.Code,S.Name,SupplierCategoryID AS SupplierCategoryID ,Currency ,S.OldSupplierCOde ,S.TradeLegalName          
+,BA.AddressLine1 AS BillingAddress1,BA.AddressLine2 AS BillingAddress2,BA.AddressLine3 AS BillingAddress3,BA.Place AS BillingPlace,BA.DistrictID AS BillingDistrictID            
+,SA.AddressLine1 AS ShippingAddress1,SA.AddressLine2 AS ShippingAddress2,SA.AddressLine3 AS ShippingAddress3,SA.Place AS ShippingPlace,SA.DistrictID AS ShippingDistrictID            
+,IsGSTRegistered,GSTNo,AdharNo,PanCardNo,CreditDays,SupplierAccountsCategoryID,SupplierTaxCategoryID,SupplierTaxSubCategoryID            
+,PaymentMethodID,PaymentGroupID,RelatedSupplierID,IsBlockForPayment,IsBlockForReceipts,ISNULL(SS.ID ,0)AS StateID ,            
+ SupplierItemCategory AS ItemCategory, SC.Name AS SupplierCategory,ISNULL(BS.ID,0) AS BillingStateID,ISNULL(BS.Name,'') AS BillingState,      
+ISNULL( SS.Name,'') AS ShippingState,CASE WHEN IsGSTRegistered = 1 THEN 'Yes' ELSE 'No' END AS GSTRegistered,      
+ ISNULL(BankName,'') AS BankName,ISNULL(IFSCNo,'') AS IFSCNo,ISNULL(BankACNo,'') AS BankACNo ,ISNULL(BA.Email,'')   Email ,s.CurrencyID,    
+Cu.Name CurrencyName,Cu.Code CurrencyCode,Cu.CurrencyPrefix,ISNULL(Cu.DecimalPlaces,2)DecimalPlaces,BA.LandLine1,BA.LandLine2,BA.MobileNo       
+From Supplier S            
+Inner join Addresses BA on BA.PartyID = S.ID and BA.PartyType = 'Supplier' and BA.IsDefault = 1 and BA.IsBilling = 1            
+Inner join Addresses SA on SA.PartyID = S.ID and SA.PartyType = 'Supplier' and SA.IsDefaultShipping = 1 and SA.IsShipping = 1            
+left join State BS on BS.ID = BA.StateID            
+LEFT join State SS on SS.ID = SA.StateID            
+INNER JOIN SupplierCategory SC ON SupplierCategoryID = SC.ID         
+left join Currency Cu on Cu.ID = S.CurrencyID     
+where S.IsActiveSupplier=1

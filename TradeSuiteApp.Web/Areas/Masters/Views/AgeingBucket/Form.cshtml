@@ -1,0 +1,98 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Masters.Models.AgeingBucketModel
+@{
+    ViewBag.Title = "_form";
+}
+<div class="uk-grid" data-uk-grid-margin>
+    <div class="uk-width-medium-1-2">
+        <div class="uk-form-row">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-2-10">
+                    <label for="uk_dp_start">@Masters.Code</label>
+                    @Html.TextBoxFor(m => m.Code, new { @class = "md-input label-fixed", @id = "Code", @disabled = "disabled" })
+                </div>
+                <div class="uk-width-medium-2-6">
+                    <label for="uk_dp_start">@Masters.Bucket<span>*</span></label>
+                    @if (Model.ID > 0)
+                    {
+                        @Html.TextBoxFor(m => m.Name, new { @class = "md-input label-fixed", @id = "Bucket", @disabled = "disabled" })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.Name, new { @class = "md-input label-fixed", @id = "Bucket" })
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="uk-grid" data-uk-grid-margin>
+    <div class="uk-width-medium-1-1">
+        <div class="uk-form-row">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.Start <span>*</span></label>
+                    @Html.TextBox("Start", "", new { maxlength = 10, @class = "md-input label-fixed mask-numeric" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.End<span>*</span> </label>
+                    @Html.TextBox("End", "", new { maxlength = 10, @class = "md-input label-fixed mask-numeric" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <div class="md-input-wrapper md-input-filled">
+                        <label>&nbsp;</label>
+                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnadd">@Common.Add</button>
+                    </div>
+                    <input type="hidden" id="item-count" value="@Model.Trans.Count()" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+
+<div class="section-group">
+    <table id="tbl_ageing_bucket" class="uk-table" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th class="width-20">@Common.SerialNo</th>
+                <th class="width-120">@Common.Code</th>
+                <th class="width-240">@Masters.BucketName</th>
+                <th class="width-120">@Masters.Start</th>
+                <th class="width-120">@Masters.End</th>
+                <th>@Masters.Description</th>
+                <th class="width-10"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                if (Model.Trans != null)
+                {
+                    foreach (var item in Model.Trans)
+                    {
+                        <tr class="">
+                            <td class="uk-text-center">
+                                @(1 + @Model.Trans.IndexOf(item))
+                                <input type="hidden" class="ID " value="@item.ID" />
+                            </td>
+                            <td>@Model.Code</td>
+                            <td>@Model.Name</td>
+                            <td class="uk-text-right StartDay"><input type="text" class="md-input Start  mask-numeric" value="@item.Start" /></td>
+                            <td class="uk-text-right EndDay"><input type="text" class="md-input End  mask-numeric" value="@item.End" /></td>
+                            <td class="description">@item.Name
+                            <td class="uk-text-center remove-item">
+                                <a data-uk-tooltip="{pos:" bottom"}">
+                                    <i class="md-btn-icon-small uk-icon-remove"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+
+</div>

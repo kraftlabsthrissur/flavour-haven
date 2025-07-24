@@ -1,0 +1,104 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.BRSModel
+
+@if (Model.Items != null)
+{
+
+    foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+            </td>
+            @if ((item.value.ReconciledDate == "01-01-1900"))
+            {
+                <td class="uk-text-center checked width-20" data-md-icheck><input type="checkbox" class="chkCheck" /></td>
+            }
+            else
+            {
+                <td class="uk-text-center checked width-20" data-md-icheck><input type="checkbox" class="chkCheck" disabled="disabled" /></td>
+            }
+            <td>
+                @item.value.AccountName
+            </td>
+            <td>
+                <input type="hidden" class="DocumentID" value="@item.value.DocumentID" />
+                @item.value.DocumentNumber
+            </td>
+            <td>
+                <input type="hidden" class="DocumentType" value="@item.value.DocumentType" />
+                @item.value.DocumentType
+            </td>
+            <td>
+                @item.value.InstrumentDate
+            </td>
+
+
+
+
+            @if ((item.value.ReconciledDate == "01-01-1900"))
+            {
+                <td>
+                    <input class="md-input label-fixed ReferenceNo" value="@item.value.ReferenceNo" disabled="disabled"/>
+                </td>
+            }
+            else
+            {
+                <td>
+                    <input class="md-input label-fixed ReferenceNo" value="@item.value.ReferenceNo" disabled="disabled">
+                </td>
+            }
+            @if ((item.value.ReconciledDate == "01-01-1900"))
+            {
+                <td>
+                    <input class="md-input label-fixed Remarks" value="@item.value.Remarks" disabled="disabled" />
+                </td>
+            }
+            else
+            {
+                <td>
+                    <input class="md-input label-fixed Remarks" value="@item.value.Remarks" disabled="disabled" />
+                </td>
+            }
+            @if ((item.value.ReconciledDate == "01-01-1900"))
+            {
+                string currentYear = DateTime.Now.Year.ToString();
+                @*@BalAsPerCompanyBooks = @BalAsPerCompanyBooks + (@item.value.Debit - @item.value.Credit);*@
+                
+                <td>
+                   <input type="text" class="md-input label-fixed past-date date  ReconciledDate" value="dd-mm-@currentYear" data-inputmask="'alias': 'dd-mm-yyyy'" data-inputmask-showmaskonhover="false" placeholder="dd-mm-yyyy" autocomplete="off" disabled="disabled" />
+                </td>
+            }
+            else
+            {
+                @*@AmountNotReflectedInBankCredit = @AmountNotReflectedInBankCredit + (@item.value.Credit);
+                @AmountNotReflectedInBankDebit = @AmountNotReflectedInBankDebit + (@item.value.Debit);*@
+                <td>
+                    <input type="text" class="md-input label-fixed past-date date ReconciledDate" value="@item.value.ReconciledDate" data-inputmask="'alias': 'dd-mm-yyyy'" data-inputmask-showmaskonhover="false" placeholder="dd-mm-yyyy" autocomplete="on" disabled="disabled" />
+                </td>
+            }
+            @*@BalAsPerBank = (@BalAsPerBank + (@BalAsPerCompanyBooks + @AmountNotReflectedInBankDebit) - (@AmountNotReflectedInBankCredit));*@
+            <td class="Debit">
+                @item.value.Debit
+            </td>
+            <td class="Credit">
+                @item.value.Credit
+            </td>
+
+        </tr>
+    }
+    <tr>
+        <td colspan="9" class="bold">Balance As Per Company Books</td>
+        <td class="mask-currency bold" id="BalAsPerCompanyBooks">@Model.BalAsPerCompanyBooks</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td colspan="9" class="bold">Amount Not Reflected In Bank</td>
+        <td class="mask-currency bold" id="DebitAmountNotReflectedInBank">@Model.DebitAmountNotReflectedInBank</td>
+        <td class="mask-currency bold" id="CreditAmountNotReflectedInBank">@Model.CreditAmountNotReflectedInBank</td>
+    </tr>
+    <tr>
+        <td colspan="9" class="bold">Balance As Per Bank</td>
+        <td class="mask-currency bold" id="BalAsPerBank">@Model.BalAsPerBank</td>
+        <td></td>
+    </tr>
+}

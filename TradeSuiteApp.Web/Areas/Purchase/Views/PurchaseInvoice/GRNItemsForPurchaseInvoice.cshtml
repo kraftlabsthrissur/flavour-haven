@@ -1,0 +1,87 @@
+﻿@model List<BusinessObject.GRNTransItemBO>
+
+
+@if (Model != null)
+{
+
+    foreach (var item in Model.Select((value, i) =>
+                new
+                {
+                    i = (i + 1),
+                    dynChkID = "chk_unprocItem_" + value.ItemID,
+                    GSTPercent = String.Format("{0:F2}", (value.SGSTPercent + value.CGSTPercent + value.IGSTPercent)),
+                    value
+                }))
+    {
+        var IGSTPercentage = @item.value.IGSTPercent;
+        var Classname = (item.value.CurrentProfitTolerance <= item.value.PrevoiusBatchNetProfitRatio) ? "insufficient-stock included" : "included";
+
+        <tr class="@Classname">
+            <td class="uk-text-center showitemhistory action"><a class="uk-text-center action"><i class="uk-icon-eye-slash"></i></a></td>
+            <td class="uk-text-center">@item.i</td>
+            <td class="uk-text-center checked" data-md-icheck>
+                <input type="hidden" class="hdnGRNID" value="@item.value.GRNID" />
+                <input type="hidden" class="CurrentProfitTolerance" value="@item.value.CurrentProfitTolerance" />
+                <input type="hidden" class="PrevoiusBatchNetProfitRatio" value="@item.value.PrevoiusBatchNetProfitRatio" />
+                <input type="hidden" class="hdnGRNTransID" value="@item.value.GRNTransID" />
+                <input type="hidden" class="hdnPOID" value="@item.value.PurchaseOrderID" />
+                <input type="hidden" class="FreightAmt" value="@item.value.FreightAmt" />
+                <input type="hidden" class="OtherCharges" value="@item.value.OtherCharges" />
+                <input type="hidden" class="PackingShippingCharge" value="@item.value.PackingShippingCharge" />
+                <input type="hidden" class="PurchaseOrderNo" value="@item.value.PurchaseOrderNo" />
+                <input type="hidden" class="hdnId" value="@item.value.Id" />
+                <input type="hidden" class="SGSTPercent" value="@item.value.SGSTPercent" />
+                <input type="hidden" class="CGSTPercent" value="@item.value.CGSTPercent" />
+                <input type="hidden" class="IGSTPercent" value="@item.value.IGSTPercent" />
+                <input type="hidden" class="MilkPurchaseID" value="@item.value.MilkPurchaseID" />
+                <input type="hidden" class="UnitID" value="@item.value.UnitID" />
+                <input type="hidden" class="BatchID" value="@item.value.BatchID" />
+                <input type="hidden" class="PurchaseMRP" value="@item.value.PurchaseMRP" />
+                <input type="hidden" class="RetailMRP" value="@item.value.RetailMRP" />
+                <input type="hidden" class="ProfitPrice" value="@item.value.ProfitPrice" />
+                <input type="hidden" class="ProfitRatio" value="@item.value.ProfitRatio" />
+                <input type="hidden" class="validprofit" value="0" />
+                <input type="hidden" class="CessPercentage" value="@item.value.CessPercent" />
+                <input type="hidden" class="LooseQty" value="@item.value.LooseQty" />
+                <input type="hidden" class="POLooseQty" value="@item.value.POLooseQty" />
+                <input type="hidden" class="PreviousProfitPrice" value="0" />
+                @if (item.value.InclusiveGST)
+                {
+                    <input type="hidden" class="IsInclusiveGST" value="1" />
+                }
+                else
+                {
+                    <input type="hidden" class="IsInclusiveGST" value="0" />
+                }
+
+                @if (item.value.PurchaseInvoiceID <= 0)
+                {               //Create
+                    <input type="checkbox" class="chkItem" id="@item.dynChkID" value="@item.value.ItemID" checked disabled />
+                }
+                else
+                {               //Edit
+                    <input type="checkbox" class="chkItem" id="@item.dynChkID" value="@item.value.ItemID" checked disabled />
+                }
+
+            </td>
+            <td class="ItemName">@item.value.ItemName</td>
+            <td class="Batch">@item.value.Batch</td>
+            <td class="Unit">@item.value.Unit</td>
+            @*<td class="uk-text-right GSTPercent mask-qty">@item.value.IGSTPercent</td>*@
+            <td><input type="text" readonly="readonly" disabled="disabled" class="md-input txtItemInvoiceQty mask-qty" value="@item.value.InvoiceQty" /></td>
+            <td><input type="text" readonly="readonly" disabled="disabled" class="md-input OfferQty mask-qty" value="@item.value.OfferQty" /></td>
+            <td><input type="text" class="md-input txtInvoiceRate mask-currency" value="@item.value.InvoiceRate" /></td>
+            <td><input type="text" class="md-input mask-currency" value="@item.value.RetailMRP" /></td>
+            <td><input type="text" readonly="readonly" disabled="disabled" class="md-input txtItemInvoiceValue mask-currency" value="@item.value.InvoiceValue" /></td>
+            <td><input type="text" class="md-input DiscountAmount mask-currency" value="@item.value.DiscountAmount" /></td>
+            <td>
+                @Html.DropDownList("gstPercentage", new SelectList(ViewBag.TaxPercentages, "IGSTPercentage", "GSTPercentage", @IGSTPercentage), new { @class = "md-input uk-text uk-text-right gstPercentage" })
+            </td>
+            <td><input type="text" readonly="readonly" class="md-input SGSTAmt mask-currency" value="@item.value.SGSTAmt" /></td>
+            <td><input type="text" readonly="readonly" class="md-input CGSTAmt mask-currency" value="@item.value.CGSTAmt" /></td>
+            <td><input type="text" readonly="readonly" class="md-input IGSTAmt mask-currency" value="@item.value.IGSTAmt" /></td>
+            <td><input type="text" readonly="readonly" disabled="disabled" class="md-input NetAmount mask-currency" value="@item.value.NetAmount" /></td>
+            <td><input type="text" class="md-input  txtItemRemarks" value="@item.value.Remarks" /></td>
+        </tr>
+    }
+}

@@ -1,0 +1,40 @@
+      
+ALTER PROCEDURE [Purchase].[SpGetPurchaseRequisitionTransDetails]      
+(@ID INT,      
+@UserID int,      
+@FinYear INT,      
+@LocationID INT,      
+@ApplicationID INT)      
+AS      
+BEGIN      
+SET NOCOUNT ON      
+      
+Begin       
+--exec  Purchase.SpGetPurchaseRequisitionTransDetails  12,1,2018,1,1      
+------------------ TRANS DATA --------------------------      
+      
+Declare @IsViewer int,@DepartmentID int ,@ToDepartmentID int,@FromDepartmentID int      
+ SELECT @IsViewer = CASE WHEN COUNT(*) = 0 THEN 0 ELSE 1 END        
+ FROM AspNetUsers U       
+ LEFT JOIN UserRoles UR ON U.ID = UR.UserID      
+ LEFT JOIN Roles R ON R.ID = UR.RoleID        
+ WHERE  ((R.Name LIKE 'TRANSACTION VIEWER' AND UR.LocationID = @LocationID) OR UserName LIKE 'admin')      
+ AND U.ID = @UserID      
+      
+ SELECT @DepartmentID = DepartmentID FROM Employee WHERE UserID = @UserID      
+ select @ToDepartmentID =ToDeptID  from PurchaseRequisition Where ID = @ID       
+ select @FromDepartmentID =FromDeptID  from PurchaseRequisition Where ID = @ID       
+      
+      
+SELECT PRT.PurchaseRequisitionID,PRT.SalesInquiryItemID, PRT.ItemID,ISNULL(IM.Name,PRT.ItemName) AS ItemName,ISNULL(IM.Code,PRT.ItemCode) ItemCode,PRT.PartsNumber,
+PRT.ItemTypeID,ISNULL(IT.Name,'') AS ItemType, PRT.Quantity,PRT.OrderedQty,PRT.Stock,PRT.QtyUnderQC, PRT.Remarks, PRT.RequiredStatus, PRT.RequiredDate,ISNULL(U.UOM,'') as Unit,
+PRT.UnitID, PRT.FinYear, PRT.LocationID, PRT.ApplicationID,ISNULL(IM.CategoryID ,0)AS ItemCategoryID       
+ FROM PurchaseRequisitionTrans PRT  Inner join PurchaseRequisition PR on PR.ID=PRT.PurchaseRequisitionID      
+ LEFT JOIN viItem IM ON PRT.ItemID = IM.ID  
+ LEFT JOIN ItemType IT ON PRT.ItemTypeID = IT.ID      
+ LEFT join Unit U on U.ID=PRT.UnitID    WHERE PRT.PurchaseRequisitionID = @ID      
+  AND(PR.CreatedUserID =@UserID OR @IsViewer = 1 OR @FromDepartmentID =@DepartmentID  OR @ToDepartmentID = @DepartmentID)      
+  AND PRT.FinYear = @FinYear AND PRT.LocationID = @LocationID        
+End      
+       
+END      

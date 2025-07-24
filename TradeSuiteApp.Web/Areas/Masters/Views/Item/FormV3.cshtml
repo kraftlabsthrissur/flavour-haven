@@ -1,0 +1,695 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.ItemModel
+<div class="uk-width-medium-8-10">
+    <div class="md-card">
+        <div class="md-card-content master-card-padding">
+            <div class="uk-width-1-1">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid">
+                            <div class="uk-width-1-1">
+                                <ul class="uk-tab uk-hidden" data-uk-tab="{connect:'#tabs_1_content'}">
+                                    <li class="uk-active" aria-expanded="true"><a>GENERAL DETAILS</a></li>
+                                    <li aria-expanded="true"><a>SUPPLY CHAIN</a></li>
+                                    <li aria-expanded="true"><a>PURCHASE</a></li>
+                                    <li aria-expanded="true"><a>QUALITY CHECKING</a></li>
+                                    <li aria-expanded="true"><a>PRODUCTION</a></li>
+                                    <li aria-expanded="true"><a>SALES</a></li>
+                                    <li aria-expanded="true"><a>COST</a></li>
+                                    <li aria-expanded="true"><a>ACCOUNTS</a></li>
+                                    <li aria-expanded="true"><a>LOCATION MAPPING DETAILS</a></li>
+                                </ul>
+                                <ul id="tabs_1_content" class="uk-switcher uk-margin" style="width:100%">
+                                    <li aria-hidden="false" class="uk-active" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-1-1">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-1-8">
+                                                            <label>
+                                                                @Masters.Code
+                                                            </label>
+                                                            @Html.TextBoxFor(m => m.Code, new { @class = "md-input", @disabled = "disabled" })
+                                                        </div>
+                                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                                            <label>@Masters.OldCode</label>
+                                                            @Html.TextBoxFor(m => m.OldItemCode, new { @class = "md-input" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.ItemCategory <span>*</span></label>
+                                                            @if (Model.ID > 0)
+                                                            {
+                                                                <select id="CategoryID" class="md-input label-fixed" disabled>
+                                                                    <option value="0">Select</option>
+                                                                    @foreach (var category in Model.ItemCategoryList)
+                                                                    {
+                                                                        <option @(Model.CategoryID == category.ID ? "selected='selected'" : "") value="@category.ID" data-type="@category.Type" data-code="@category.Code">@category.Name</option>
+                                                                    }
+                                                                </select>
+                                                            }
+                                                            else
+
+                                                            {
+                                                                <select id="CategoryID" class="md-input label-fixed">
+                                                                    <option value="0">Select</option>
+                                                                    @foreach (var category in Model.ItemCategoryList)
+                                                                    {
+                                                                        <option @(Model.CategoryID == category.ID ? "selected='selected'" : "") value="@category.ID" data-type="@category.Type" data-code="@category.Code">@category.Name</option>
+                                                                    }
+                                                                </select>
+                                                            }
+                                                        </div>
+
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.SalesCategory <span>*</span></label>
+                                                            @Html.DropDownListFor(Model => Model.SalesCategoryID, new SelectList(Model.SalesCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.ItemName <span>*</span></label>
+                                                            @Html.TextBoxFor(m => m.Name, new { @class = "md-input" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                                            <label>@Masters.NameMalayalam</label>
+                                                            @Html.TextBoxFor(m => m.MalayalamName, new { @class = "md-input" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                                            <label>@Masters.NameHindi</label>
+                                                            @Html.TextBoxFor(m => m.HindiName, new { @class = "md-input" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                                            <label>@Masters.NameSanskrit</label>
+                                                            @Html.TextBoxFor(m => m.SanskritName, new { @class = "md-input" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                                            <label>@Masters.OldItemName</label>
+                                                            @Html.TextBoxFor(m => m.OldName, new { @class = "md-input" })
+                                                        </div>
+
+                                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                                            <label>@Masters.StorageCategory</label>
+                                                            @Html.DropDownListFor(Model => Model.StorageCategoryID, new SelectList(Model.StorageCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        @*<div class="uk-width-medium-2-8 ">
+                                                                <label>
+                                                                    @Masters.ItemType @if (Model.ID == 0)
+                                                                    {
+                                                                        <span>*</span>
+                                                                    }
+                                                                </label>
+                                                                @Html.DropDownListFor(Model => Model.ItemTypeID, new SelectList(Model.ItemTypeList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                            </div>*@
+                                                        @Html.HiddenFor(Model => Model.ItemTypeID)
+                                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                                            <label>@Masters.OldCode 2</label>
+                                                            @Html.TextBoxFor(m => m.OldItemCode2, new { @class = "md-input" })
+                                                        </div>
+                                                        <div class="uk-width-medium-1-8">
+                                                            <label>@Masters.HSNCode </label>
+                                                            @Html.TextBoxFor(m => m.HSNCode, new { @class = "md-input" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                                            <label>@Masters.BarCode</label>
+                                                            @Html.TextBoxFor(m => m.BarCode, new { @class = "md-input" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                                            <label>@Masters.QRCode</label>
+                                                            @Html.TextBoxFor(m => m.QRCode, new { @class = "md-input" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                                            <label>@Masters.Description</label>
+                                                            @Html.TextBoxFor(m => m.Description, new { @class = "md-input" })
+                                                        </div>
+                                                        
+
+                                                        <div class="uk-width-medium-1-8">
+                                                            <label>@Masters.PurchaseUOM <span>*</span></label>
+                                                            <select id="PurchaseUnitID" class="md-input label-fixed">
+                                                                <option value="">Select</option>
+                                                                @foreach (var unit in Model.UnitList)
+                                                                {
+                                                                    <option @(Model.PurchaseUnitID == unit.ID ? "selected=selected" : "") value="@unit.ID" data-uom="@unit.PackSize">@unit.UOM</option>
+                                                                }
+                                                            </select>
+
+                                                            @*@Html.DropDownListFor(Model => Model.PurchaseUnitID, new SelectList(Model.UOMList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })*@
+                                                        </div>
+
+                                                        <div class="uk-width-medium-1-8">
+                                                            <label>@Masters.LooseUnit <span>*</span></label>
+                                                            <select id="InventoryUnitID" class="md-input label-fixed">
+                                                                <option value="">Select</option>
+                                                                @foreach (var unit in Model.UnitList)
+                                                                {
+                                                                    <option @(Model.InventoryUnitID == unit.ID ? "selected=selected" : "") value="@unit.ID" data-uom="@unit.PackSize">@unit.UOM</option>
+                                                                }
+                                                            </select>
+
+                                                            @*@Html.DropDownListFor(Model => Model.PurchaseUnitID, new SelectList(Model.UOMList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })*@
+                                                        </div>
+
+                                                        @*<div class="uk-width-medium-1-8">
+                                                            <label>@Masters.LooseUnit <span>*</span></label>
+                                                            @Html.DropDownListFor(Model => Model.InventoryUnitID, new SelectList(Model.UOMList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>*@
+
+                                                        <div class="uk-width-medium-1-8">
+                                                            <label>@Masters.PackSize </label>
+                                                            @Html.TextBoxFor(m => m.PackSize, "", new { maxlength = 10, @class = "md-input label-fixed " })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.ConversionFactorPurchaseToLoose <span>*</span></label>
+                                                            @Html.TextBoxFor(m => m.ConversionFactorPurchaseToInventory, new { @class = "md-input" })
+                                                        </div>
+
+                                                        <div class="uk-width-medium-1-8">
+                                                            <label>@Masters.GSTCategory <span>*</span></label>
+                                                            @Html.DropDownListFor(Model => Model.GSTCategoryID, new SelectList(Model.GSTCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.GSTSubCategory <span>*</span></label>
+                                                            @Html.DropDownListFor(Model => Model.GSTSubCategoryID, new SelectList(Model.GSTSubCategoryList, "Value", "Text"), new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.Manufacturer </label>
+                                                            @Html.DropDownListFor(Model => Model.ManufacturerID, new SelectList(Model.ManufacturerList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-1-1 uk-hidden">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <label>&nbsp;</label>
+                                                            </div>
+                                                            @Html.HiddenFor(m => m.IsStockValue)
+                                                            <input type="checkbox" class="icheckbox IsStockValue" data-md-icheck checked/>&nbsp;<label class="stock-value">Stock Value</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active uk-hidden uk-hidden" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.BusinessCategory </label>
+                                                    @Html.DropDownListFor(Model => Model.BusinessCategoryID, new SelectList(Model.BusinessCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.SecondaryUOM <span>*</span></label>
+                                                    @Html.DropDownListFor(Model => Model.SecondaryUnitID, new SelectList(Model.UOMList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                </div>
+
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.UOM <span>*</span></label>
+                                                    @Html.HiddenFor(m => m.UnitOMID)
+                                                    <select id="UnitID" class="md-input label-fixed">
+                                                        <option value="">Select</option>
+                                                        @foreach (var unit in Model.UnitList)
+                                                        {
+                                                            <option @(Model.UnitID == unit.ID ? "selected=selected" : "") value="@unit.ID" data-uom="@unit.PackSize">@unit.UOM</option>
+                                                        }
+                                                    </select>
+
+                                                    @*@Html.DropDownListFor(Model => Model.UnitID, new SelectList(Model.UnitList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })*@
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.PackSize </label>
+                                                    @Html.TextBoxFor(m => m.PackSize, "", new { maxlength = 10, @class = "md-input label-fixed " })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.ConversionFactorP2I <span>*</span></label>
+                                                    @Html.TextBoxFor(m => m.ConversionFactorPtoI, "", new { maxlength = 10, @class = "md-input label-fixed " })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-input-group">
+                                                        <label>@Masters.BirthDate </label>
+                                                        @Html.TextBoxFor(m => m.BirthDate, new { @class = "md-input label-fixed past-date date" })
+                                                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-input-group">
+                                                        <label>@Masters.DisContinuedDate </label>
+                                                        @Html.TextBoxFor(m => m.DisContinuedDate, new { @class = "md-input label-fixed future-date date" })
+                                                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.MinStockQTY </label>
+                                                    @Html.TextBoxFor(m => m.MinStockQTY, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.MaxStockQTY </label>
+                                                    @Html.TextBoxFor(m => m.MaxStockQTY, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-1-1">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <label>&nbsp;</label>
+                                                            </div>
+                                                            @Html.HiddenFor(m => m.IsStockItem)
+                                                            <input type="checkbox" class="icheckbox IsStockItem" data-md-icheck checked/>&nbsp;<label class="stock-item">Stock item</label>
+                                                        </div>
+                                                        @*<div class="uk-width-medium-1-1">
+                                                                <div class="uk-grid" data-uk-grid-margin>
+                                                                    <label>&nbsp;</label>
+                                                                </div>
+                                                                @Html.HiddenFor(m => m.IsStockValue)
+                                                                <input type="checkbox" class="icheckbox IsStockValue" data-md-icheck />&nbsp;<label class="stock-value">Stock Value</label>
+
+                                                            </div>*@
+                                                        <div class="uk-width-medium-1-1">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <label>&nbsp;</label>
+                                                            </div>
+                                                            @Html.HiddenFor(m => m.IsDemandPlanRequired)
+                                                            <input type="checkbox" class="icheckbox IsDemandPlanRequired" data-md-icheck />&nbsp;<label class="demand-plan">Demand Plan Required</label>
+                                                        </div>
+                                                        <div class="uk-width-medium-1-1">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <label>&nbsp;</label>
+                                                            </div>
+                                                            @Html.HiddenFor(m => m.IsMaterialPlanRequired)
+                                                            <input type="checkbox" class="icheckbox IsMaterialPlanRequired" data-md-icheck />&nbsp;<label class="material-plan">Material Plan Required</label>
+                                                        </div>
+                                                        <div class="uk-width-medium-1-1">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <label>&nbsp;</label>
+                                                            </div>
+                                                            @Html.HiddenFor(m => m.IsPhantomItem)
+                                                            <input type="checkbox" class="icheckbox IsPhantomItem" data-md-icheck />&nbsp;<label class="phantom-item">Phantom item</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active uk-hidden" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.PurchaseCategory </label>
+                                                    @Html.DropDownListFor(Model => Model.PurchaseCategoryID, new SelectList(Model.PurchaseCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                </div>
+
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.ReOrderQty</label>
+                                                    @Html.TextBoxFor(m => m.ReOrderQty, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.ReOrderLevelQty</label>
+                                                    @Html.TextBoxFor(m => m.ReOrderLevel, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.MinPurchaseQty</label>
+                                                    @Html.TextBoxFor(m => m.MinPurchaseQTY, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.MaxPurchaseQty</label>
+                                                    @Html.TextBoxFor(m => m.MaxPurchaseQTY, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.QtyTolerancePercent </label>
+                                                    @Html.TextBoxFor(m => m.QtyTolerancePercent, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty" })
+                                                </div>
+
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-input-group">
+                                                        <label>@Masters.SeasonStarts</label>
+                                                        @Html.TextBoxFor(m => m.SeasonPurchaseStarts, new { @class = "md-input label-fixed past-date date" })
+                                                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <div class="uk-input-group">
+                                                        <label>@Masters.SeasonEnds</label>
+                                                        @Html.TextBoxFor(m => m.SeasonPurchaseEnds, new { @class = "md-input label-fixed future-date date" })
+                                                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.PurchaseLeadTime </label>
+                                                    @Html.TextBoxFor(m => m.PurchaseLeadTime, new { @class = "md-input mask-numeric" })
+                                                </div>
+                                                @*<div class="uk-width-medium-2-8">
+                                                        <label>@Masters.ConversionFactorPurchase2Iinventory <span>*</span></label>
+                                                        @Html.TextBoxFor(m => m.ConversionFactorPurchaseToInventory, new { @class = "md-input" })
+                                                    </div>*@
+                                            </div>
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-1-1">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-2-8 item-align-icheck">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <label>&nbsp;</label>
+                                                            </div>
+                                                            @Html.HiddenFor(m => m.IsPurchaseItem)
+                                                            <input type="checkbox" class="icheckbox IsPurchaseItem" data-md-icheck />&nbsp;<label class="purchase-item">Purchase Item</label>
+                                                        </div>
+                                                        <div class="uk-width-medium-1-1 item-align-icheck">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <label>&nbsp;</label>
+                                                            </div>
+                                                            @Html.HiddenFor(m => m.IsSeasonalPurchase)
+                                                            <input type="checkbox" class="icheckbox IsSeasonalPurchase" data-md-icheck />&nbsp;<label class="seasonal-purchase">Seasonal Purchase</label>
+                                                        </div>
+                                                        <div class="uk-width-medium-1-1 item-align-icheck">
+                                                            <div class="uk-grid" data-uk-grid-margin>
+                                                                <label>&nbsp;</label>
+                                                            </div>
+                                                            @Html.HiddenFor(m => m.IsPORequired)
+                                                            <input type="checkbox" class="icheckbox IsPORequired" data-md-icheck checked />&nbsp;<label class="po-item">PO Item</label>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active uk-hidden" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.BotanicalName</label>
+                                                    @Html.TextBoxFor(m => m.BotanicalName, "", new { @class = "md-input label-fixed " })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.QCCategory </label>
+                                                    @Html.DropDownListFor(Model => Model.QCCategoryID, new SelectList(Model.QCCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.PatentNo</label>
+                                                    @Html.TextBoxFor(m => m.PatentNo, "", new { maxlength = 10, @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.ConversionFactorP2Secondary <span>*</span></label>
+                                                    @Html.TextBoxFor(m => m.ConversionFactorPtoSecondary, "", new { maxlength = 10, @class = "md-input label-fixed " })
+                                                </div>
+                                            </div>
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8 ">
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsQCRequired)
+                                                        <input type="checkbox" class="icheckbox IsQCRequired" data-md-icheck />&nbsp;<label class="qc-purchase">QC Purchase</label>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsQCRequiredForProduction)
+                                                        <input type="checkbox" class="icheckbox IsQCRequiredForProduction" data-md-icheck />&nbsp;<label class="qc-production">QC Production</label>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsProprietary)
+                                                        <input type="checkbox" class="icheckbox IsProprietary" data-md-icheck />&nbsp;<label class="proprietary-item">Proprietary item</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active uk-hidden" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8 uk-hidden ">
+                                                    <label>@Masters.ProductionGroup </label>
+                                                    @Html.TextBoxFor(Model => Model.ProductionGroup, new { @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.ProductionCategory </label>
+                                                    @Html.DropDownListFor(Model => Model.ProductionCategoryID, new SelectList(Model.productionCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.MasterFormula </label>
+                                                    @Html.DropDownListFor(Model => Model.MasterFormulaRefNo, new SelectList(Model.GetMasterFormulaList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.NormalLossQty </label>
+                                                    @Html.TextBoxFor(m => m.NormalLossQty, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.NormalLossPercent </label>
+                                                    @Html.TextBoxFor(m => m.NormalLossPercent, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.ProdLeadTime </label>
+                                                    @Html.TextBoxFor(m => m.ProductLeadDays, "", new { maxlength = 10, @class = "md-input label-fixed " })
+                                                </div>
+                                                <div class="uk-width-medium-2-8 uk-hidden">
+                                                    <label>@Masters.BatchSizeQty </label>
+                                                    @Html.TextBoxFor(m => m.BatchSizeQTY, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.ShelfLifeInDays </label>
+                                                    @Html.TextBoxFor(m => m.ShelfLifeMonths, "", new { maxlength = 10, @class = "md-input label-fixed mask-numeric" })
+                                                </div>
+                                            </div>
+
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8 ">
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsMasterFormula)
+                                                        <input type="checkbox" class="icheckbox IsMasterFormula" data-md-icheck />&nbsp;<label class="formula-item">Formula Item</label>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsReProcessAllowed)
+                                                        <input type="checkbox" class="icheckbox IsReProcessAllowed" data-md-icheck />&nbsp;<label class="reprocess-item">Re-Process item</label>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsBatch)
+                                                        <input type="checkbox" class="icheckbox IsBatch" data-md-icheck />&nbsp;<label class="batch-item">Batch item</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active uk-hidden" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-1-1">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.SalesIncentiveCategory </label>
+                                                            @Html.DropDownListFor(Model => Model.SalesIncentiveCategoryID, new SelectList(Model.SalesIncentiveCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.SalesCategory <span>*</span></label>
+                                                            @Html.DropDownListFor(Model => Model.SalesCategoryID, new SelectList(Model.SalesCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.DiseaseCategory </label>
+                                                            @Html.DropDownListFor(Model => Model.DiseaseCategoryID, new SelectList(Model.DiseaseCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.DrugScheduleType </label>
+                                                            @Html.DropDownListFor(Model => Model.DrugScheduleID, new SelectList(Model.DrugScheduleTypeList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.SalesUOM <span>*</span></label>
+                                                            @Html.DropDownListFor(Model => Model.SalesUnitID, new SelectList(Model.UOMList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.MinSalesQtyFull </label>
+                                                            @Html.TextBoxFor(m => m.MinSalesQtyFull, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.MinSalesQtyLoose </label>
+                                                            @Html.TextBoxFor(m => m.MinSalesQtyLoose, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.MaxSaleQTY </label>
+                                                            @Html.TextBoxFor(m => m.MaxSalesQty, "", new { maxlength = 10, @class = "md-input label-fixed mask-qty" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.ConversionFactorP2s <span>*</span></label>
+                                                            @Html.TextBoxFor(m => m.ConversionFactorPtoS, "", new { maxlength = 10, @class = "md-input label-fixed " })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <label>@Masters.ConversionFactorSales2Iinventory <span>*</span></label>
+                                                            @Html.TextBoxFor(m => m.ConversionFactorSalesToInventory, new { @class = "md-input" })
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <div class="uk-input-group">
+                                                                <label>@Masters.SeasonStarts</label>
+
+                                                                @Html.TextBoxFor(m => m.SeasonStarts, new { @class = "md-input label-fixed future-date date", @id = "SeasonStarts" })
+
+
+                                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <div class="uk-input-group">
+                                                                <label>@Masters.SeasonEnds</label>
+
+                                                                @Html.TextBoxFor(m => m.SeasonEnds, new { @class = "md-input label-fixed past-date date" })
+
+                                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-2-8">
+                                                            <div class="uk-width-medium-1-1 item-align-icheck">
+                                                                <div class="uk-grid" data-uk-grid-margin>
+                                                                    <label>&nbsp;</label>
+                                                                </div>
+                                                                @Html.HiddenFor(m => m.IsSaleable)
+                                                                <input type="checkbox" class="icheckbox IsSaleable" data-md-icheck checked />&nbsp;<label class="saleable-item">Saleable item</label>
+                                                            </div>
+                                                            <div class="uk-width-medium-1-1 item-align-icheck">
+                                                                <div class="uk-grid" data-uk-grid-margin>
+                                                                    <label>&nbsp;</label>
+                                                                </div>
+                                                                @Html.HiddenFor(m => m.N2GActivity)
+                                                                <input type="checkbox" class="icheckbox N2GActivity" data-md-icheck />&nbsp;<label class="n2g">N2G Activity</label>
+                                                            </div>
+                                                            <div class="uk-width-medium-1-1 item-align-icheck">
+                                                                <div class="uk-grid" data-uk-grid-margin>
+                                                                    <label>&nbsp;</label>
+                                                                </div>
+                                                                @Html.HiddenFor(m => m.IsMrp)
+                                                                <input type="checkbox" class="icheckbox IsMrp" data-md-icheck />&nbsp;<label class="mrp">MRP</label>
+                                                            </div>
+
+                                                            <div class="uk-width-medium-1-1 item-align-icheck">
+                                                                <div class="uk-grid" data-uk-grid-margin>
+                                                                    <label>&nbsp;</label>
+                                                                </div>
+                                                                @Html.HiddenFor(m => m.IsPriceListReference)
+                                                                <input type="checkbox" class="icheckbox IsPriceListReference" data-md-icheck />&nbsp;<label class="pricelist">Price List Reference</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active uk-hidden" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.CostCategory </label>
+                                                    @Html.DropDownListFor(Model => Model.CostingCategoryID, new SelectList(Model.CostCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="false" class="uk-active uk-hidden" style="width:100%">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.AssetCategory </label>
+                                                    @Html.DropDownListFor(Model => Model.AssetCategoryID, new SelectList(Model.AssetCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                </div>
+                                                
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.AccountCategory <span>*</span></label>
+                                                    @if (Model.ID > 0)
+                                                    {
+                                                        @Html.DropDownListFor(Model => Model.AccountsCategoryID, new SelectList(Model.AccountCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.DropDownListFor(Model => Model.AccountsCategoryID, new SelectList(Model.AccountCategoryList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                    }
+                                                </div>
+
+                                            </div>
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-2-8 ">
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsLocation)
+                                                        <input type="checkbox" class="icheckbox IsLocation" data-md-icheck />&nbsp;<label class="location">Location</label>
+                                                    </div>
+
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsInterCompany)
+                                                        <input type="checkbox" class="icheckbox IsInterCompany" data-md-icheck />&nbsp;<label class="inercomapny">Inter Company</label>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsDepartment)
+                                                        <input type="checkbox" class="icheckbox IsDepartment" data-md-icheck />&nbsp;<label class="department">Department</label>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsEmployee)
+                                                        <input type="checkbox" class="icheckbox IsEmployee" data-md-icheck />&nbsp;<label class="employee">Employee</label>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsProject)
+                                                        <input type="checkbox" class="icheckbox IsProject" data-md-icheck />&nbsp;<label class="project">Project</label>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-1 item-align-icheck">
+                                                        <div class="uk-grid" data-uk-grid-margin>
+                                                            <label>&nbsp;</label>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IsAsset)
+                                                        <input type="checkbox" class="icheckbox IsAsset" data-md-icheck />&nbsp;<label class="asset">Asset</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li aria-hidden="true" class="" style="width:100%">
+                                        <div id="location-Container" class="item-location">
+                                            <div class="uk-width-medium-1-1">
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    @foreach (var location in Model.LocationList)
+                                                    {
+                                                        <div class="uk-width-medium-2-8 Locationdiv">
+                                                            <input type="checkbox" class="icheckbox ItemLocation" value="@location.Value" data-md-icheck />&nbsp;
+                                                            <label id="locationLabel">@location.Text</label>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <input type="hidden" id="Item-Location-Mapping" value="0">
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

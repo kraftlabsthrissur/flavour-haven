@@ -1,0 +1,74 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.PriceListModel
+@{
+    ViewBag.Title = "Form";
+}
+
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-2-10">
+                <label>@Masters.Name</label>
+                @Html.TextBoxFor(m => m.Name, new { @class = "md-input label-fixed" })
+                @Html.HiddenFor(m => m.ID)
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="uk-input-group">
+                    <label for="uk_dp_start">@Masters.FromDate</label>
+                    @Html.TextBoxFor(model => model.FromDate, new { @class = "md-input label-fixed date future-date" })
+                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                </div>
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="uk-input-group">
+                    <label for="uk_dp_start">@Masters.ToDate</label>
+                    @Html.TextBoxFor(model => model.ToDate, new { @class = "md-input label-fixed date future-date" })
+                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="md-input-wrapper md-input-filled">
+                    <label></label>
+                    <div class="uk-form-file v1">
+                        <label id="selected-file">
+                            Upload XLS File
+                        </label>
+                        <label class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                            <i class="uk-icon-upload"></i>
+                        </label>
+                        <input id="select-file" type="file" tabindex="-1">
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <br />
+                <a href="/Reports/Sales/GetItemForPriceList">Download PriceList Templates</a>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="uk-form-row">
+    <div class="section-group">
+        <table id="Pricelist" class="uk-table " width=100">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-10"></th>
+                    <th class="width-50">@Masters.ItemCode</th>
+                    <th class="width-50">@Masters.ItemName</th>
+                    <th class="width-50">@Masters.Price</th>
+                    <th class="width-50">@Masters.LoosePrice</th>
+                </tr>
+            </thead>
+            <tbody>
+              
+            </tbody>
+        </table>
+        <input type="hidden" id="item-count" value="@Model.Items.Count()" />
+    </div>
+</div>
+
+
+
+@Scripts.Render("~/Js/Page/PriceList")

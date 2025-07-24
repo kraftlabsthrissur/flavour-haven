@@ -1,0 +1,15 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Reports.Models.ReportViewModel
+@*@using ReportViewerForMvc;*@
+@{
+    Layout = null;
+    var UUID = Guid.NewGuid().ToString();
+    Session["ReportViewer-"+ UUID] = ViewBag.ReportViewer as Microsoft.Reporting.WebForms.ReportViewer;
+}
+
+@*@Html.ReportViewer(ViewBag.ReportViewer as Microsoft.Reporting.WebForms.ReportViewer)*@
+
+
+<iframe name="ReportViewerFrame" src="~/ReportViewerForm.aspx?Key=ReportViewer-@UUID">
+    Your browser does not support inline frames.
+</iframe>

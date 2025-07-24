@@ -1,0 +1,40 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.RoleModel
+@{
+    ViewBag.Title = "Actions";
+}
+
+<div class="uk-form-row">
+    <div class="uk-grid" data-uk-grid-margin>
+        <div class="uk-width-medium-1-1">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-10">
+                        <label>@Masters.Code</label>
+                        @Html.TextBoxFor(m => m.Code, new { @class = "md-input label-fixed", })
+                    </div>
+                    <div class="uk-width-medium-1-5">
+                        <label for="uk_dp_start">@Masters.RoleName<span>*</span></label>
+                        @Html.TextBoxFor(m => m.RoleName, new { @class = "md-input", })
+                    </div>
+                    <div class="uk-width-medium-1-5">
+                        <label>@Masters.Remarks<span>*</span></label>
+                        @Html.TextBoxFor(m => m.Remarks, new { @class = "md-input", })
+                    </div>
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-8-10">
+                        <div class="uk-accordion" data-uk-accordion="{showfirst: false}">
+                            @foreach (var area in Model.Areas)
+                            {
+                                <h5 class="uk-accordion-title areas not-opened">@area.Area</h5>
+                                <div class="uk-accordion-content" id="@area.Area"></div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

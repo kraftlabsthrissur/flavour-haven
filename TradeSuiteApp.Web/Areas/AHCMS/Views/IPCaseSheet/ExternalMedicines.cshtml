@@ -1,0 +1,46 @@
+﻿
+@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+
+
+@if (Model.InternalMedicine != null)
+{
+    foreach (var item in Model.InternalMedicine.Select((value, i) => new { i = (i + 1), value }))
+    {
+
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+                <input type="hidden" class="UnitID" value="@item.value.UnitID" />
+                <input type="hidden" class="Quantity" value="@item.value.Quantity" />
+                <input type="hidden" class="GroupID" value="@item.value.TransID" />
+                <input type="hidden" class="PatientMedicineID" value="@item.value.PatientMedicinesID" />
+                <input type="hidden" class="DischargeSummaryID" value="@item.value.DischargeSummaryID" />
+            </td>
+            <td class="Medicine">
+                @item.value.Medicine
+            </td>
+            <td class="Prescription">
+                @item.value.Prescription
+            </td>
+            <td class="StartDate">@item.value.StartDate</td>
+            <td class="EndDate">@item.value.EndDate</td>
+            @*<td class="uk-text-center">
+                @if (!@item.value.IsDischarged)
+                {
+                    <button class="edit_internal_medicines"><i class="material-icons">create</i></button>
+                }
+                else
+                {
+                    <button class="edit_internal_medicines uk-hidden"><i class="material-icons">create</i></button>
+                }
+
+            </td>*@
+            <td>
+            </td>
+        </tr>
+    }
+}
+
+
+
+

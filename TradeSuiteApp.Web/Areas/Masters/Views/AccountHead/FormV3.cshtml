@@ -1,0 +1,44 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.AccountGroupModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-1-1">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+
+                        <div class="uk-width-medium-2-10">
+                            <div class="uk-autocomplete " id="group-name-autocomplete">
+                                <label>@Masters.Group<span>*</span></label>
+                                @Html.TextBoxFor(model => model.AccountGroupName, new { @class = "md-input label-fixed" })
+                                @Html.HiddenFor(model => model.AccountGroupID)
+                            </div>
+                        </div>
+
+
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.AccountCode<span>*</span></label>
+                            @Html.TextBoxFor(model => model.AccountID, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-10">
+                            <label>@Masters.AccountName<span>*</span></label>
+                            @Html.TextBoxFor(model => model.AccountName, new { @class = "md-input label-fixed" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.OpeningAmount</label>
+                            @Html.TextBoxFor(model => model.OpeningAmount, new { @class = "md-input label-fixed mask-currency" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <label>Debit/Credit</label>
+                            @Html.DropDownListFor(Model => Model.OpeningAmountType, new SelectList(Model.OpeningAmountTypeList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

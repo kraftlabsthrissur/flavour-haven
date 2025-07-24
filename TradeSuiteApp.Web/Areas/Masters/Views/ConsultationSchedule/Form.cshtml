@@ -1,0 +1,108 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.ConsultationScheduleModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-width-medium-9-10">
+        <div class="uk-form-row">
+            <div class="uk-grid" data-uk-grid-margin="">
+                <div class="uk-width-medium-2-10">
+                    <div class="uk-autocomplete " id="employee-autocomplete">
+                        <div class="uk-input-group">
+                            <label for="uk_dp_start">@AHCMS.Doctor<span>*</span></label>
+                            @Html.TextBoxFor(m => m.DoctorName, new { @class = "md-input label-fixed" })
+                            <span class="uk-input-group-addon">
+                                <a data-uk-modal="{target:'#select-employee',center:false}">
+                                    <i class="uk-input-group-icon uk-icon-search"></i>
+                                </a>
+                            </span> 
+                            <script type="text/autocomplete">
+                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                    {{~items}}
+                                    <li data-value="{{ $item.Name}}"
+                                        data-id="{{$item.ID}}"
+                                        data-EmployeeCode="{{$item.Code}}"
+                                        data-placement="{{$item.Location}}">
+                                        <a>
+                                            {{ $item.Name }}
+                                            <div>{{ $item.Code }}</div>
+                                        </a>
+                                    </li>
+                                    {{/items}}
+                                </ul>
+                            </script>
+                        </div>
+                    </div>
+                    @Html.HiddenFor(m => m.DoctorID)
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label for="uk_dp_start">@Masters.ConsultationFee</label>
+                    @Html.TextBoxFor(model => model.ConsultationFee, new { @class = "md-input label-fixed mask-numeric" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label for="uk_dp_start">@Masters.ConsultationFeeValidity</label>
+                    @Html.TextBoxFor(model => model.ConsultationFeeValidity, new { @class = "md-input label-fixed mask-numeric" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label for="uk_dp_start">@Masters.TimeSlot *</label>
+                    @Html.TextBoxFor(model => model.TimeSlot, new { @class = "md-input label-fixed mask-numeric" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.ScheduleDays *</label>
+                    @Html.DropDownListFor(Model => Model.WeekDay, new SelectList(Model.WeekDayList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.StartTime *</label>
+                    <input type="text" id="StartTime" class="md-input label-fixed" data-uk-timepicker="{format:'12h',step:'15',start:'7'}">
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Masters.EndTime *</label>
+                    <input type="text" id="EndTime" class="md-input label-fixed" data-uk-timepicker="{format:'12h',step:'15',start:'7'}">
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <div class="md-input-wrapper md-input-filled">
+                        <label>&nbsp;</label>
+                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddItems">@Common.Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <table id="consultation-schedule-list" class="uk-table" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-200">@Masters.ScheduleDays</th>
+                    <th class="width-200">@Masters.StartTime</th>
+                    <th class="width-200">@Masters.EndTime</th>
+                    <th class="width-10"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items != null)
+                {
+                    foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                        <tr>
+                            <td class="uk-text-center">
+                                @item.i
+                            </td>
+                            <td><input type="text" value="@item.value.WeekDay" class="md-input WeekDay" disabled /></td>
+                            <td><input type="text" value="@item.value.StartTime" class="md-input StartTime" disabled /> </td>
+                            <td><input type="text" value="@item.value.EndTime" class="md-input EndTime" disabled /></td>
+                            <td><a class="remove-item"><i class="uk-icon-remove added"></i></a></td>
+                        </tr>;
+                    }
+                }
+            </tbody>
+
+        </table>
+        <input type="hidden" id="item-count" value="" />
+    </div>
+</div>
+
+

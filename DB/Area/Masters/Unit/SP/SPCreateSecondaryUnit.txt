@@ -1,0 +1,31 @@
+  
+  
+CREATE PROCEDURE [Master].[SPCreateSecondaryUnit](    
+ @Name varchar(20),    
+ @UnitID int,
+ @PackSize numeric(18,2),  
+ @UnitGroupID int,   
+ @CreatedUserID int,    
+ @CreatedDate datetime,    
+ @ReturnValue int OUTPUT    
+ )    
+AS  
+BEGIN    
+ DECLARE  @Exists Int    
+ SELECT @Exists=Count(*) FROM SecondaryUnit where Name=@Name    
+ IF @Exists = 0    
+  BEGIN    
+   Insert into SecondaryUnit(Name,UnitID,Packsize,UnitGroupID,CreatedUserID,CreatedDate)     
+   values (@Name,@UnitID,@Packsize,@UnitGroupID,@CreatedUserID,@CreatedDate)    
+   SET @ReturnValue = 1    
+   END    
+ ELSE    
+   BEGIN     
+    SET @ReturnValue = -1    
+   END    
+END  
+  
+  
+  
+  
+  

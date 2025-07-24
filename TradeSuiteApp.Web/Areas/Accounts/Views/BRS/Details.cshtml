@@ -1,0 +1,161 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.BRSModel
+
+@{
+    ViewBag.Title = Accounts.BankReconciliationStatementDetails;
+
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Accounts.BankReconciliationStatement</h1>
+            <span class="uk-text-upper uk-text-small">@Accounts.BankReconciliationStatementDetails</span>
+        </div>
+        <div class="heading_actions">
+            @if (Model.IsDraft)
+            {
+                @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "Edit", "BRS", new { Area = "Accounts", id = (Model != null) ? Model.ID : 0 }, new { @class = "md-btn " }))
+                
+            }           
+            @Html.ActionLink(Common.Back, "Index", "BRS", new { Area = "Accounts" }, new { @class = "md-btn " })
+            @Html.HiddenFor(m => m.ID)
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="bank-details-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Accounts.TransactionNumber</label>
+                                            @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Accounts.Date</label>
+                                            @Html.TextBoxFor(m => m.Date, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Accounts.BankDetails</label>
+                                            @Html.TextBoxFor(m => m.BankName, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Accounts.FromTransactionDate</label>
+                                            @Html.TextBoxFor(m => m.FromTransactionDate, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Accounts.ToTransactionDate</label>
+                                            @Html.TextBoxFor(m => m.ToTransactionDate, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Accounts.UploadFile</label>
+                                            @Html.TextBoxFor(m => m.FileName, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                                <div class="uk-form-row">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-4-10">
+                                <h3>Status as per Bank</h3>
+                                <table id="bank-statement-item-list" class="uk-table" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="width-10">@Common.SerialNo</th>
+                                            <th class="width-100">@Accounts.InstrumentNumber</th>
+                                            <th class="width-40">@Accounts.InstrumentDate</th>
+                                            <th class="width-80">@Accounts.Debit</th>
+                                            <th class="width-80">@Accounts.Credit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tbody>
+                                        @if (Model.Statements != null)
+                                        {
+                                            foreach (var Statement in Model.Statements.Select((value, i) => new { i = (i + 1), value }))
+                                            {
+                                                <tr>
+                                                    <td class="uk-text-center">
+                                                        @Statement.i
+                                                    </td>
+                                                    <td> @Statement.value.InstrumentNumber</td>
+                                                    <td> @Statement.value.InstrumentDate </td>
+                                                    <td class="uk-text-right"> @Statement.value.Debit.ToString("n2") </td>
+                                                    <td class="uk-text-right"> @Statement.value.Credit.ToString("n2") </td>
+                                                </tr>;
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="uk-width-medium-6-10">
+                                <h3>Status as per Books</h3>
+                                <table id="brs-item-list" class="uk-table" cellspacing="0" accesskey="" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="width-10">@Common.SerialNo</th>
+                                            <th class="width-80">@Accounts.DocumentNumber</th>
+                                            <th class="width-80">@Accounts.InstrumentNumber</th>
+                                            <th class="width-40">@Accounts.InstrumentDate</th>
+                                            <th class="width-40">@Accounts.Debit</th>
+                                            <th class="width-40">@Accounts.Credit</th>
+                                            <th class="width-40">@Accounts.BankCharges</th>
+                                            <th class="width-40">@Accounts.ItemName</th>
+                                            <th class="width-40">@Accounts.EquivalentBankTransactionNumber </th>
+                                            <th class="width-60">@Accounts.Status </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Items != null)
+                                        {
+                                            foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                                            {
+                                                <tr>
+                                                    <td class="uk-text-center">
+                                                        @item.i
+                                                        <input type="hidden" class="ItemID" readonly="readonly" value="@item.value.ID" />
+                                                    </td>
+                                                    <td> @item.value.DocumentNumber</td>
+                                                    <td> @item.value.InstrumentNumber</td>
+                                                    <td> @item.value.InstrumentDate </td>
+                                                    <td class="uk-text-right"> @item.value.Debit.ToString("n2") </td>
+                                                    <td class="uk-text-right"> @item.value.Credit.ToString("n2") </td>
+                                                    <td class="uk-text-right"> @item.value.BankCharges.ToString("n2") </td>
+                                                    <td> @item.value.ItemName </td>
+                                                    <td> @item.value.EquivalentBankTransactionNumber </td>
+                                                    <td> @item.value.Status </td>
+
+                                                </tr>;
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/BRS")
+

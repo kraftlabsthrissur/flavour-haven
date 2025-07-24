@@ -1,0 +1,82 @@
+ALTER TABLE PurchaseOrderTrans
+ADD VATPercentage Numeric(18,4)
+
+ALTER TABLE PurchaseOrderTrans
+ADD CurrencyID int
+
+ALTER TABLE PurchaseOrderTrans
+ADD IsGST int DEFAULT 0;
+
+ALTER TABLE PurchaseOrderTrans
+ADD IsVat int DEFAULT 0;
+
+ALTER TABLE PurchaseOrderTrans
+ADD Model NVARCHAR(200)
+
+ALTER TABLE PurchaseOrderTrans
+ADD PartsNumber NVARCHAR(200)
+
+ALTER TABLE PurchaseOrderTrans
+ADD ItemName NVARCHAR(200)
+
+ALTER TABLE PurchaseOrderTrans
+ADD ExchangeRate Numeric(18,4) NOT NULL DEFAULT 0;
+
+
+
+ALTER TABLE GoodsReceiptNoteTrans 
+ADD VATPercentage Numeric(18,4)
+
+ALTER TABLE GoodsReceiptNoteTrans 
+ADD CurrencyID int
+
+ALTER TABLE GoodsReceiptNoteTrans 
+ADD IsGST int DEFAULT 0;
+
+ALTER TABLE GoodsReceiptNoteTrans 
+ADD IsVat int DEFAULT 0;
+
+ALTER TABLE GoodsReceiptNoteTrans 
+ADD Remark NVARCHAR(200)
+
+ALTER TABLE GoodsReceiptNoteTrans 
+ADD Model NVARCHAR(200)
+
+ALTER TABLE GoodsReceiptNoteTrans 
+ADD PartsNumber NVARCHAR(200)
+
+ALTER TABLE GoodsReceiptNoteTrans 
+ADD ItemName NVARCHAR(200)
+
+ALTER TABLE GoodsReceiptNoteTrans 
+ALTER  COLUMN [LooseRate] NUMERIC(18,4)
+
+  ALTER TABLE GoodsReceiptNoteTrans 
+ALTER  COLUMN [PurchaseRate] NUMERIC(18,4)
+
+  ALTER TABLE GoodsReceiptNoteTrans 
+ALTER  COLUMN [GrossAmount] NUMERIC(18,4)
+
+  ALTER TABLE GoodsReceiptNoteTrans 
+ALTER  COLUMN [SGSTAmt] NUMERIC(18,4)
+
+  ALTER TABLE GoodsReceiptNoteTrans 
+ALTER  COLUMN [CGSTAmt] NUMERIC(18,4)
+
+  ALTER TABLE GoodsReceiptNoteTrans 
+ALTER  COLUMN [IGSTAmt] NUMERIC(18,4)
+
+ALTER TABLE GoodsReceiptNoteTrans 
+ALTER  COLUMN [NetPurchasePrice] NUMERIC(18,4)
+
+ALTER TABLE PurchaseOrder 
+ALTER  COLUMN Discount NUMERIC(18,4)
+
+
+
+ALTER TABLE PurchaseOrder
+ADD CurrencyExchangeRate Numeric(18,4) NOT NULL DEFAULT 0;
+
+
+
+

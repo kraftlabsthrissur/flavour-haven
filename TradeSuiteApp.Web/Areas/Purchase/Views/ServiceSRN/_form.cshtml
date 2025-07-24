@@ -1,0 +1,193 @@
+﻿@model TradeSuiteApp.Web.Areas.Purchase.Models.SRNViewModel
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Purchase.SRNNO</label>
+                            @Html.TextBoxFor(m => m.SRNNumber, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label for="uk_dp_start">@Purchase.SRNDate</label>
+                                @Html.TextBoxFor(m => m.Date, new { @class = "md-input label-fixed date", @disabled = "disabled" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            @if (Model.IsDraft)
+                            {
+                                <label>@Purchase.SupplierName</label>
+                                @Html.TextBoxFor(m => m.SupplierName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+
+                            }
+                            else
+                            {
+                                <div class="uk-autocomplete " id="supplier-autocomplete">
+                                    <div class="uk-input-group">
+                                        <label>@Purchase.Supplier <span>*</span></label>
+                                        <input type="text" class="md-input label-fixed" id="SupplierName" />
+                                        <span class="uk-input-group-addon">
+                                            <a data-uk-modal="{target:'#select-supplier',center:false}">
+                                                <i class="uk-input-group-icon uk-icon-search"></i>
+                                            </a>
+                                        </span>
+                                    </div>
+                                    <script type="text/autocomplete">
+                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                            {{~items}}
+                                            <li data-value="{{ $item.Name }}"
+                                                data-id="{{$item.ID}}"
+                                                data-location="{{$item.Location}}"
+                                                data-state-id="{{$item.StateID}}"
+                                                data-is-gst-registered="{{$item.IsGSTRegistered}}">
+                                                <a>
+                                                    {{ $item.Name }} {{{ ($item.Code) }}}
+                                                    <div>{{{ $item.Location }}}</div>
+                                                </a>
+                                            </li>
+                                            {{/items}}
+                                        </ul>
+                                    </script>
+                                </div>
+                            }
+                            @Html.HiddenFor(m => m.SupplierID)
+                            @*@Html.Hidden("SrDate")*@
+                            @Html.HiddenFor(m => m.ServicePODate)
+
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <label>@Purchase.ChallanNo <span>*</span></label>
+                            @Html.TextBoxFor(m => m.DeliveryChallanNo, new { @class = "md-input label-fixed", @id = "DeliveryChallanNo" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label for="uk_dp_start">@Purchase.ChallanDate <span>*</span></label>
+                                @*<input class="md-input label-fixed past-date date" type="text" id="invoice_date">*@
+                                @Html.TextBoxFor(m => m.DeliveryChallanDate, new { @class = "md-input label-fixed  past-date date" })
+
+
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label>@Purchase.SelectPurchaseOrder</label>
+                                <input type="text" class="md-input label-fixed" id="PurchseOrder" />
+                                <span class="uk-input-group-addon">
+                                    <a data-uk-modal="{target:'#select_po',center:false}">
+                                        <i class="uk-input-group-icon uk-icon-search"></i>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <table id="service-srn-items" class="uk-table">
+        <thead>
+            <tr>
+                <th class="width-10">@Common.SerialNo</th>
+                <th class="width-10"></th>
+                <th class="width-250">@Purchase.ItemName</th>
+                <th class="width-10">@Purchase.Unit</th>
+                <th class="width-80">@Purchase.PONo</th>
+                <th class="width-80">@Purchase.PORate</th>
+                <th class="width-60">@Purchase.PendingPOQty</th>
+                <th class="width-80">@Purchase.ReceivedQty</th>
+                <th class="width-80">@Purchase.AcceptedQty</th>
+                <th class="width-80">@Purchase.AcceptedValue</th>
+                <th class="width-100">@Common.Location</th>
+                <th class="width-100">@Common.Department</th>
+                <th class="width-100">@Common.Employee</th>
+                <th class="width-100">@Common.Company</th>
+                <th class="width-100">@Common.Project</th>
+                <th class="width-200">@Purchase.Remarks</th>
+            </tr>
+        </thead>
+        <tbody>
+
+
+            @Html.Partial("~/Areas/Purchase/Views/ServiceSRN/_SRNItems.cshtml", Model.Trans)
+
+
+        </tbody>
+
+    </table>
+
+
+    <input type="hidden" id="item-count" value="@Model.Trans.Count()" />
+    <input type="hidden" id="invoice-count" value="0" />
+</div>
+
+<div class="uk-modal " id="select_po" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Select Purchase Order <i class="material-icons" data-uk-tooltip="{pos:'top'}" title="headline tooltip"></i></h3>
+        </div>
+        <div id="purchaseOrderListContainer">
+            <table id="purchase-order-list" class="uk-table" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th class="width-10">@Common.SerialNo</th>
+                        <th class="width-10"></th>
+                        <th class="width-40">@Purchase.TransNo</th>
+                        <th class="width-40">@Purchase.PODate</th>
+                        <th class="width-250">@Purchase.Supplier</th>
+                        <th class="width-250">@Purchase.RequestedBy</th>
+                        <th class="width-250">@Purchase.POValue</th>
+                    </tr>
+                </thead>
+                <thead class="search">
+                    <tr>
+                        <th class="width-10">@Common.SerialNo</th>
+                        <th class="width-10"></th>
+                        <th class="width-40">@Purchase.TransNo</th>
+                        <th class="width-250">@Purchase.PODate</th>
+                        <th class="width-250">@Purchase.Supplier</th>
+
+                        <th class="width-250">@Purchase.RequestedBy</th>
+                        <th class="width-40">@Purchase.NetAmount</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        if (Model.UnProcessedPOService != null)
+
+                        {
+                            foreach (var itm in Model.UnProcessedPOService.Select((value, i) => new { i = (i + 1), value }))
+                            {
+                                <tr>
+                                    <td class="uk-text-center clId">@itm.i<input type="hidden" class="Date" value="@itm.value.PurchaseOrderDate" /></td>
+                                    <td class="uk-text-center checked " data-md-icheck><input type="checkbox" class="purchase-order-id" value="@itm.value.ID" /></td>
+                                    <td>@itm.value.PurchaseOrderNo</td>
+                                    <td>@itm.value.PurchaseOrderDate</td>
+                                    <td>@itm.value.SupplierName</td>
+                                    <td>@itm.value.RequestedBy</td>
+                                    <td class="mask-qty">@itm.value.NetAmt</td>
+                                </tr>
+
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn uk-modal-close">Close</button>
+            <button type="button" class="md-btn md-btn-primary uk-modal-close" id="btnOkPoList">Ok</button>
+        </div>
+    </div>
+</div>

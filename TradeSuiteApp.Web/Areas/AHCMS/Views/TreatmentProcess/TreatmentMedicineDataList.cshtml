@@ -1,0 +1,31 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.TreatmentScheduleModel
+
+@if (Model.Medicines != null)
+{
+    foreach (var item in Model.Medicines.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+            </td>
+            <td class="uk-text-center"><input type="checkbox" name="medicines" data-md-icheck class="md-input check-box medicines-check-box" /></td>
+            <td>
+                <input type="hidden" class="ItemID" value="@item.value.ItemID" />
+                <input type="hidden" class="UnitID" value="@item.value.UnitID" />
+                <input type="hidden" class="TreatmentScheduleID" value="@item.value.TreatmentScheduleID" />
+                <input type="hidden" class="TreatmentProcessID" value="@item.value.TreatmentProcessID" />
+                <input type="hidden" class="ProductionGroupID" value="@item.value.ProductionGroupID" />
+                @item.value.Item.
+            </td>
+           
+            <td>
+                <input type="text" class="md-input mask-qty Stock" value="@item.value.Stock" readonly="readonly" />
+            </td>
+            <td><input type="text" class="md-input mask-qty Qty" value="@item.value.Qty" disabled="disabled" /></td>
+            <td>
+                @item.value.Unit
+            </td>
+    </tr>
+    }
+}
+

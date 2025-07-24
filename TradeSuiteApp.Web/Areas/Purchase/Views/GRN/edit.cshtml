@@ -1,0 +1,234 @@
+﻿@model TradeSuiteApp.Web.Areas.Purchase.Models.GRNModel
+@Html.HiddenFor(m => m.Id)
+@Html.HiddenFor(m => m.SupplierID)
+@{
+    ViewBag.Title = @Purchase.EditGRN;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Purchase.GRNForStockItems</h1>
+            <span class="uk-text-upper uk-text-small">@Purchase.EditGRN</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn save-grn'>" + Common.Save + "</a>")
+            @ActionAuthorization.IsAuthorized("SaveAsDraft", "<a class='md-btn save-draft-grn'>" + Common.SaveAsDraft + "</a>")
+
+
+            @Html.ActionLink(Common.Close, "Index", "GRN", new { Area = "Purchase" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.GRNNo</label>
+                                            @Html.TextBoxFor(m => m.Code, new { @class = "md-input  label-fixed", @id = "GRNNo", disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Purchase.GRNDate</label>
+                                                <input class="md-input label-fixed past-date date" type="text" id="txtDate" data-relaxation="-3" value="@Model.GRNDate">
+                                                <span class="uk-input-group-addon"><i data-relaxation="-3" class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+
+                                            <label>@Purchase.Supplier</label>
+                                            @Html.TextBoxFor(m => m.SupplierName, new { @class = "md-input  label-fixed", @disabled = "disabled" })
+                                            @Html.HiddenFor(m => m.SupplierID, new { @class = "md-input label-fixed" })
+                                            @Html.Hidden("StateId")
+                                            @Html.Hidden("Code")
+                                            @Html.Hidden("IsGSTRegistred", "false")
+                                            @Html.HiddenFor(m => m.PurchaseOrderDate)
+
+
+                                        </div>
+                                        <div class="uk-width-medium-1-8 grn">
+                                            <div class="uk-input-group">
+                                                <label>@Purchase.SelectPurchaseOrder</label>
+                                                <input type="text" class="md-input label-fixed" id="txt-purchase-order" />
+                                                <span class="uk-input-group-addon" data-uk-modal="{target:'#select_po',center:false }">
+                                                    <i class="uk-input-group-icon uk-icon-search"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.Location</label>
+                                            @Html.DropDownListFor(Model => Model.WarehouseID, new SelectList(Model.WarehoueList, "ID", "Name"), "Select", new { @class = "md-input label-fixed", @id = "StoreID" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.Location</label>
+                                            @Html.DropDownListFor(Model => Model.WarehouseID, new SelectList(Model.WarehoueList, "ID", "Name"), "Select", new { @class = "md-input label-fixed", @id = "StoreID" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.ChallanNo</label>
+                                            @Html.TextBoxFor(m => m.InvoiceNo, new { @class = "md-input  label-fixed", @id = "invoice-number" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Purchase.ChallanDate</label>
+                                                @Html.TextBoxFor(m => m.InvoiceDate, "{0:dd-MMM-yyyy}", new { @class = "md-input label-fixed current-date date", @id = "invoice-date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <table id="grn-items-list" class="uk-table" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th class="width-10">@Common.SerialNo</th>
+                                    <th class="width-10"></th>
+                                    <th class="width-250">@Purchase.ItemName</th>
+                                    <th class="width-10">@Purchase.Unit</th>
+                                    <th class="width-40 batch_type">@Purchase.BatchType</th>
+                                    <th class="width-100">@Purchase.PONo</th>
+                                    <th class="width-80">@Purchase.PendingPOQty</th>
+                                    <th class="width-40">@Purchase.ReceivedQty</th>
+                                    <th class="width-40">@Purchase.AcceptedQty</th>
+                                    <th class="width-40 batch-hidden">@Purchase.Batch</th>
+                                    <th class="width-80 batch-hidden">@Purchase.ExpDate</th>
+                                    <th class="width-250">@Purchase.Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.grnItems.Select((value, i) => new { i = (i + 1), value }))
+                                {
+                                    <tr class="included">
+                                        <td class="uk-text-center">@Html.DisplayFor(modelItem => (item.i))</td>
+                                        <td class="uk-text-center checked chkValid" data-md-icheck>
+                                            <input type="checkbox" class="include-item" checked />
+                                            <input type="hidden" class="purchase-order-id" value="@item.value.PurchaseOrderID" />
+                                            <input type="hidden" class="purchase-order-trans-id" value="@item.value.POTransID" />
+                                            <input type="hidden" class="qty-tolerance-percent" value="@item.value.QtyTolerancePercent" />
+                                            <input type="hidden" class="item-id" value="@item.value.ItemID" />
+                                            <input type="hidden" class="quantity" value="@item.value.POQuantity" />
+                                            <input type="hidden" class="UnitID" value="@item.value.UnitID" />
+                                            <input type="hidden" class="is-qc-required" value="@(item.value.IsQCRequired ? 1:0)" />
+                                            <input type="hidden" class="pending-po-quantity" value="@item.value.PendingPOQty" />
+                                            <input type="hidden" class="toleranceqty" value="@item.value.QtyTolerance" />
+                                            <input type="hidden" class="item-category" value="@item.value.ItemCategory" />
+                                        </td>
+                                        <td>@item.value.ItemName</td>
+                                        <td class="">@item.value.Unit</td>
+                                        <td class="batch_type">@item.value.BatchType</td>
+                                        <td>@item.value.PurchaseOrderNo</td>
+                                        <td class="uk-text-right pending-po-quantity">@item.value.PendingPOQty</td>
+                                        <td><input type="text" class="md-input mask-currency received-qty" value="@item.value.ReceivedQty"></td>
+                                        <td><input type="text" class="md-input mask-currency accepted-qty" value="@item.value.AcceptedQty"></td>
+                                        <td class="batch-hidden"><input type="text" class="md-input batch" value="@item.value.Batch"></td>
+                                        <td class="batch-hidden">
+                                            <div class="uk-input-group">
+                                                <input class="md-input label-fixed future_date_only date expiry-date" type="text" value="@item.value.ExpiryDate">
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date-only"></i></span>
+                                            </div>
+                                        </td>
+                                        <td class="uk-text-right "><input type="text" class="md-input remarks" value="@item.value.Remarks"></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <input type="hidden" id="item-count" value="@Model.grnItems.Count()" />
+                        <input type="hidden" id="invoice-count" value="0" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="uk-modal " id="select_po" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog " style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Select Purchase Order <i class="material-icons" data-uk-tooltip="{pos:'top'}" title="headline tooltip"></i></h3>
+        </div>
+        <table id="purchase-order-list" class="uk-table" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-10"></th>
+                    <th class="width-40">@Purchase.TransNo</th>
+                    <th class="width-250">@Purchase.PODate</th>
+                    <th class="width-250">@Purchase.Supplier</th>
+                    <th class="width-250">@Purchase.RequestedBy</th>
+                    <th class="width-40">@Purchase.NetAmount</th>
+
+                </tr>
+            </thead>
+            <thead class="search">
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-10"></th>
+                    <th class="width-40">@Purchase.TransNo</th>
+                    <th class="width-250">@Purchase.PODate</th>
+                    <th class="width-250">@Purchase.Supplier</th>
+                    <th class="width-250">@Purchase.RequestedBy</th>
+                    <th class="width-40">@Purchase.NetAmount</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    if (Model.UnProcesedPOList != null)
+
+                    {
+                        foreach (var itm in Model.UnProcesedPOList.Select((value, i) => new { i = (i + 1), value }))
+                        {
+                            <tr class="rowUnPr">
+                                <td class="uk-text-center clId">
+                                    @itm.i<input type="hidden" class="clprIdItem" value="@itm.value.ID" />
+                                    <input type="hidden" class="Date" value="@itm.value.PurchaseOrderDate" />
+                                </td>
+                                <td class="uk-text-center checked clChk" data-md-icheck><input type="checkbox" class="purchase-order-id" value="@itm.value.ID" /></td>
+
+                                <td>@itm.value.PurchaseOrderNo</td>
+                                <td class="quantity">@itm.value.PurchaseOrderDate</td>
+                                <td>@itm.value.SupplierName</td>
+                                <td>@itm.value.RequestedBy</td>
+                                <td class="mask-qty">@itm.value.NetAmt</td>
+                            </tr>
+
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn uk-modal-close">Close</button>
+            <button type="button" class="md-btn md-btn-primary uk-modal-close" id="btnSelectPurchaseOrders">Ok</button>
+
+        </div>
+    </div>
+</div>
+@Html.Partial("~/Areas/Masters/Views/Supplier/PartialList.cshtml")
+@Scripts.Render("~/Js/Page/GRN")
+@Scripts.Render("~/Js/Page/Supplier")
+<script type="text/javascript">
+    GRN.init();
+    GRN.get_invoice_number_count();
+</script>

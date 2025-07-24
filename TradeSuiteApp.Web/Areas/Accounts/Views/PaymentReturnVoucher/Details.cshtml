@@ -1,0 +1,109 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.PaymentReturnVoucherModel
+@{
+    ViewBag.Title = @Accounts.PaymentReturnVoucherDetails;
+}
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Accounts.PaymentReturnVoucher</h1>
+            <span class="uk-text-upper uk-text-small">@Accounts.PaymentReturnVoucherDetails</span>
+        </div>
+        <div class="heading_actions">
+            @Html.HiddenFor(m => m.ID)
+            @if (Model.IsDraft)
+            {
+                @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "Edit", "PaymentReturnVoucher", new { Area = "Accounts", @id = Model.ID }, new { @class = "md-btn " }))
+            }
+            @ActionAuthorization.IsAuthorized("PaymentReturnVoucherPrintPdf", " <a class='md-btn printpdf'>Print As PDF</a>")
+            @Html.ActionLink(Common.Back, "Index", "PaymentReturnVoucher", new { Area = "Accounts" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="details-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Accounts.TransNo</label>
+                                            @Html.TextBoxFor(m => m.VoucherNo, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label for="uk_dp_start">@Accounts.TransDate</label>
+                                            @Html.TextBoxFor(m => m.VoucherDate, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Accounts.Supplier</label>
+                                            @Html.TextBoxFor(model => model.SupplierName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Accounts.ModeOfPayment</label>
+                                @Html.TextBoxFor(model => model.PaymentTypeName, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                            </div>
+                            <div class="uk-width-medium-2-8">
+                                <label>@Accounts.BankCashAC</label>
+                                @Html.TextBoxFor(model => model.BankName, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                                <label>@Accounts.ReferenceNumber</label>
+                                @Html.TextBoxFor(model => model.BankReferenceNumber, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <table id="customer-return-list" class="uk-table scroll-table" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th class="width-10">@Accounts.SerialNumber</th>
+                                    <th class="width-80">@Accounts.SupplierName</th>
+                                    <th class="width-60">@Accounts.Amount</th>
+                                    <th class="width-60">@Accounts.Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Items != null)
+                                {
+                                    foreach (var itm in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                                    {
+                                        <tr>
+                                            <td class="uk-text-center">@itm.i</td>
+                                            <td>@Model.SupplierName</td>
+                                            <td class="mask-currency">@itm.value.Amount</td>
+                                            <td>@itm.value.Remarks</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/PaymentReturnVoucher")
+
+<script type="text/javascript">
+    PaymentReturnVoucher.details();
+</script>

@@ -1,0 +1,257 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.BatchModel
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.Batch</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.BatchDetails</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("EditBatchInvoice", "<a class='md-btn btnBatchEdit'>" + Common.Save + "</a>")
+
+
+            @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "edit", "Batch", new { Area = "Masters", @id = Model.ID }, new { @class = "md-btn " }))
+
+            @Html.ActionLink(Common.Back, "Index", "Batch", new { Area = "Masters" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-1">
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.Batch</label>
+                                    @Html.TextBoxFor(m => m.BatchNo, new { @class = "md-input", @disabled = "disabled" })
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.CustomBatch</label>
+                                    @Html.TextBoxFor(m => m.CustomBatchNo, new { @class = "md-input", @disabled = "disabled" })
+                                </div>
+                                <div class="uk-width-medium-2-8">
+                                    <label>@Masters.ItemName</label>
+                                    @Html.TextBoxFor(m => m.ItemName, new { @class = "md-input", @disabled = "disabled" })
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.SalesCategory</label>
+                                    @Html.TextBoxFor(m => m.Itemtype, new { @class = "md-input", @disabled = "disabled" })
+                                </div>
+                                @Html.HiddenFor(m => m.PackSize)
+                                @Html.HiddenFor(m => m.ID)
+
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.ExpairyDate</label>
+                                    @Html.TextBoxFor(m => m.ExpDate, new { @class = "md-input", @disabled = "disabled" })
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.ManufacturerDate</label>
+                                    @Html.TextBoxFor(m => m.ManufacturingDate, new { @class = "md-input", @disabled = "disabled" })
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.Unit</label>
+                                    <select id="UnitID" class="md-input label-fixed">
+                                        <option value="0">Select</option>
+                                        @foreach (var unit in Model.UOMList)
+                                        {
+                                            <option @(Model.UnitID == unit.ID ? "selected='selected'" : "") value="@unit.ID" data-packsize="@unit.PackSize" data-unit="@unit.UOM">@unit.UOM</option>
+                                        }
+                                    </select>
+                                </div>
+                                @*<div class="uk-width-medium-1-8">
+                                    <label>@Masters.ISKPrice</label>
+                                    @Html.TextBoxFor(m => m.ISKPrice, new { @class = "md-input mask-sales-currency", @disabled = "disabled" })
+                                    </div>
+                                    <div class="uk-width-medium-1-8">
+                                    <label>@Masters.OSKPrice</label>
+                                    @Html.TextBoxFor(m => m.OSKPrice, new { @class = "md-input mask-sales-currency", @disabled = "disabled" })
+                                    </div>
+                                    <div class="uk-width-medium-1-8">
+                                    <label>@Masters.ExportPrice</label>
+                                    @Html.TextBoxFor(m => m.ExportPrice, new { @class = "md-input mask-sales-currency", @disabled = "disabled" })
+                                    </div>*@
+                            </div>
+                        </div>
+                        <div class="uk-form-row">
+                           
+                                <div class="uk-grid" data-uk-grid-margin="">
+
+
+                                    <div class="uk-width-medium-1-5">
+                                        <label for="uk_dp_start">@Masters.RetailPrice</label>
+
+                                    </div>
+                                    <div class="uk-width-medium-1-5">
+                                        <label for="uk_dp_start">@Masters.MRP</label>
+                                        @Html.TextBoxFor(m => m.RetailMRP, new { @class = "md-input label-fixed mask-currency", })
+                                    </div>
+                                    <div class="uk-width-medium-1-5">
+
+                                        <label for="uk_dp_start">@Masters.Loose</label>
+                                        @Html.TextBoxFor(m => m.RetailLooseRate, new { @class = "md-input label-fixed mask-currency ", @disabled = "disabled" })
+                                    </div>
+                                    <div class="uk-width-medium-1-5">
+
+                                        <label for="uk_dp_start">@Masters.GST</label>
+                                       @Html.DropDownListFor(model => model.TaxPercentage, new SelectList(
+                                            Model.GstList, "IGSTPercentage", "GSTPercentage", Model.TaxPercentage), new { @class = "md-input tax-percentage", })
+    </div>
+                                    
+
+                                </div>
+                            
+                        </div>
+                        @*<div class="uk-form-row">
+
+                            <div class="uk-grid" data-uk-grid-margin="">
+                                <div class="uk-width-medium-1-5">
+                                    <label for="uk_dp_start">@Masters.PurchasePrice</label>
+
+                                </div>
+                                <div class="uk-width-medium-1-5">
+                                    <label for="uk_dp_start">@Masters.Full</label>
+                                    @Html.TextBoxFor(m => m.PurchaseMRP, new { @class = "md-input label-fixed mask-currency" })
+                                </div>
+                                <div class="uk-width-medium-1-5">
+
+                                    <label for="uk_dp_start">@Masters.Loose</label>
+                                    @Html.TextBoxFor(m => m.PurchaseLooseRate, new { @class = "md-input label-fixed mask-currency ", @disabled = "disabled" })
+                                </div>
+                            </div>
+
+                        </div>*@
+                        <div class="uk-form-row">
+                            <table id="tbl-batch-details" class="uk-table" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th class="width-10">@Common.SerialNo</th>
+                                        <th class="width-10"></th>
+                                        <th class="width-50">@Purchase.InvoiceNo</th>
+                                        <th class="width-100">@Purchase.InvoiceDate</th>
+                                        <th class="width-100">@Purchase.Supplier</th>
+                                        <th class="width-50">@Purchase.PurchaseUnit</th>
+                                        <th class="width-50">@Purchase.InvoiceQty</th>
+                                        <th class="width-50">@Purchase.OfferQty</th>
+                                        <th class="width-50">@Purchase.TotalQuantity</th>
+                                        <th class="width-50">@Purchase.PurchaseRate</th>
+                                        <th class="width-50">@Purchase.NetPurchaseRate</th>
+                                        <th class="width-50">@Purchase.PurchaseLooseRate</th>                                        
+                                        <th class="width-50">@Purchase.SGSTAmt</th>
+                                        <th class="width-50">@Purchase.CGSTAmt</th>
+                                        <th class="width-50">@Purchase.DiscountPer</th>
+                                        <th class="width-50">@Purchase.Discount</th>
+                                        <th class="width-50">@Purchase.ProfitRatio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Trans)
+                                    {
+                                        <tr class="included">
+                                            <td class="uk-text-center">@(1 + Model.Trans.IndexOf(item))</td>
+                                            <td class="uk-text-center checked" data-md-icheck="">
+                                                <input type="checkbox" class="include-item" value="@item.ItemID" checked="checked">
+                                            </td>
+                                            <td class="InvoiceNo">
+                                                <input type="hidden" class="hdnId" value="@item.ID">
+                                                <input type="hidden" class="RetailMRP" value="@item.RetailMRP">
+                                                <input type="hidden" class="CessPercentage" value="@item.CessPercentage">
+                                                <input type="hidden" class="GSTPercentage" value="@item.GSTPercentage">
+                                                <input type="hidden" class="PreviousQuantity" value="@item.Quantity">
+                                                <input type="hidden" class="PreviousOfferQty" value="@item.OfferQty">
+                                                <input type="hidden" class="PreviousInvoiceRate" value="@item.InvoiceRate">
+                                                <input type="hidden" class="PreviousPurchasePrice" value="@item.PurchasePrice">
+                                                <input type="hidden" class="PreviousPurchaseLooseRate" value="@item.PurchaseLooseRate">
+                                                <input type="hidden" class="PreviousSalesRate" value="@item.SalesRate">
+                                                <input type="hidden" class="PreviousLooseSalesRate" value="@item.LooseSalesRate">
+                                                <input type="hidden" class="PreviousGSTAmount" value="@item.GSTAmount">
+                                                <input type="hidden" class="PreviousDiscount" value="@item.Discount">
+                                                <input type="hidden" class="PreviousProfitRatio" value="@item.ProfitRatio">
+
+                                                <input type="hidden" class="PreviousProfitRatio" value="@item.ProfitRatio">
+                                                <input type="hidden" class="SalesRate" value="@item.SalesRate">
+                                                <input type="hidden" class="LooseSalesRate" value="@item.LooseSalesRate">
+                                                <input type="hidden" class="PreviousCGSTAmt" value="@item.CGSTAmt">
+                                                <input type="hidden" class="PreviousSGSTAmt" value="@item.SGSTAmt">
+
+                                                @item.InvoiceNo
+                                            </td>
+                                            <td class="InvoiceDate">@item.InvoiceDate</td>
+                                            <td>@item.SupplierName</td>
+                                            <td class="PreviousUnit">                                                @item.Unit                                        </td>
+                                            <td>
+                                                <input type="text" class="md-input Quantity  mask-qty" value="@item.Quantity"/>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="md-input OfferQty mask-qty" value="@item.OfferQty"/>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="md-input LooseQty  mask-currency" value="@item.LooseQty" readonly />
+                                            </td>
+                                            <td>
+                                                <input type="text" class="md-input InvoiceRate mask-crrency" value="@item.InvoiceRate"/>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="md-input PurchasePrice mask-currency" value="@item.PurchasePrice" readonly/>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="md-input PurchaseLooseRate  mask-currency" value="@item.PurchaseLooseRate" readonly/>
+                                            </td>
+                                            @*<td>
+                                                <input type="text" class="md-input SalesRate  mask-currency" value="@item.SalesRate" readonly/>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="md-input LooseSalesRate  mask-currency" value="@item.LooseSalesRate" readonly/>
+                                            </td>*@
+                                           
+                                            <td>
+                                                <input type="text" class="md-input SGSTAmt mask-currency" value="@item.SGSTAmt" readonly/>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="md-input CGSTAmt mask-currency" value="@item.CGSTAmt" readonly/>
+
+                                            </td>
+                                            <td>
+                                                <select class="md-input label-fixed DiscountID">
+                                                    <option value="0">Select</option>
+                                                    @foreach (var discount in item.DiscountList)
+                                                    {
+                                                        <option @( item.DiscountID == discount.ID ? "selected='selected'" : "") value="@discount.ID" data-percent="@discount.DiscountPercentage">@discount.DiscountCategory</option>
+                                                    }
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="md-input Discount mask-currency" value="@item.Discount" readonly />
+                                            </td>
+                                            <td>
+                                                <input type="text" class="md-input ProfitRatio  mask-currency" value="@item.ProfitRatio" readonly/>
+
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/Batch")
+<script type="text/javascript">
+    Batch.Details();
+</script>

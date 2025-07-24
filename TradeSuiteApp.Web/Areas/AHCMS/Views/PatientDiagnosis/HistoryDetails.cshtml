@@ -1,0 +1,284 @@
+﻿
+@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+<div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+    <div class="heading_title">
+        <h1>@AHCMS.PatientHistoryDetails</h1>
+
+    </div>
+    <div class="heading_actions">
+        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light btnBackToHistory" style="width: 90px;"><i class="uk-icon-history md-color-white"></i> &nbsp;Back</button>
+        @if (!Model.IsCompleted)
+        {
+            <button class="md-btn md-btn-primary btn-block md-btn-wave-light waves-effect waves-button waves-light btnReview" style="width:90px;"><i class="uk-icon-pencil md-color-white"></i> Review</button>
+        }
+        else
+        {
+            <button class="md-btn md-btn-primary btn-block md-btn-wave-light waves-effect waves-button waves-light btnReview uk-hidden" style="width:90px;"><i class="uk-icon-pencil md-color-white"></i> Review</button>
+        }
+
+
+
+
+
+    </div>
+</div>
+@if (Model.History != null)
+{
+    List<string> Temp = new List<string>();
+    foreach (var item in Model.History.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <table class="uk-table" cellpadding="0" cellspacing="0">
+            <thead>
+                <tr class="historytr">
+                    <td style="border :0px;width:500px;">
+                        <i class="uk-icon-user md-color-white"></i>&nbsp;&nbsp;Reported Date : @item.value.ReportedDate.ToString("dd-MMM-yyyy")
+                    </td>
+                    <td style="border :0px;width:500px;">&nbsp;Appointment Type : @item.value.AppointmentType</td>
+                     
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="md-bg-white">
+                    <td style="border :0px;width:300px;">OP/IP No</td>
+                    <td style="border :0px;width:500px;">@item.value.TransNo</td>
+                </tr>
+                @*<tr class="md-bg-white">
+                    <td style="border :0px;width:300px;">@AHCMS.Patient</td>
+                    <td style="border :0px;width:500px;">@item.value.Patient</td>
+                </tr>*@
+                @*<tr class="md-bg-white">
+                    <td style="border :0px;width:300px;">@AHCMS.AppointmentType</td>
+                    <td style="border :0px;width:500px;">@item.value.AppointmentType</td>
+                </tr>*@
+                @*<tr class="md-bg-white">
+                    <td style="border :0px;width:300px;">@AHCMS.ReportedDate</td>
+                    <td style="border :0px;width:500px;">@item.value.ReportedDate.ToString("dd-MMM-yyyy")</td>
+                </tr>*@
+                @if (item.value.AppointmentType == "IP")
+                {
+                    <tr class="md-bg-white">
+                        <td style="border :0px;width:300px;">@AHCMS.DischargedDate</td>
+                        <td style="border :0px;width:500px;">@item.value.DischargedDate</td>
+                    </tr>
+                    <tr class="md-bg-white">
+                        <td style="border :0px;width:300px;">@AHCMS.Disease</td>
+                        <td style="border :0px;width:500px;">@item.value.Disease</td>
+                    </tr>
+                }
+                <tr class="md-bg-white">
+                    <td style="border :0px;width:300px;">@AHCMS.Doctor</td>
+                    <td style="border :0px;width:500px;">@item.value.Doctor</td>
+                </tr>
+                <tr class="md-bg-white">
+                    <td style="border :0px;width:300px;">@AHCMS.SuggestedReviewDate</td>
+                    <td style="border :0px;width:500px;">@item.value.SuggestedReviewDate</td>
+                </tr>
+                <tr class="md-bg-white">
+                    <td style="border :0px;width:300px;">@AHCMS.PresentingComplaints</td>
+                    <td style="border :0px;width:500px;">@item.value.PresentingComplaints</td>
+                </tr>
+                <tr class="md-bg-white">
+                    <td style="border :0px;width:300px;">Associated complaints</td>
+                    <td style="border :0px;width:500px;">@item.value.Associatedcomplaints</td>
+                </tr>
+                <tr class="md-bg-white">
+                    <td style="border :0px;width:300px;">Contemporary Diagnosis</td>
+                    <td style="border :0px;width:500px;">@item.value.ContemporaryDiagnosis</td>
+                </tr>
+                <tr class="md-bg-white">
+                    <td style="border :0px;width:300px;">Ayurvedic Diagnosis</td>
+                    <td style="border :0px;width:500px;">@item.value.AyurvedicDiagnosis</td>
+                </tr>
+                @*<tr class="md-bg-white">
+                        <td style="border :0px;vertical-align:top;width:300px">@AHCMS.VitalChart</td>
+                        <td style="border :0px">
+                            @foreach (var vitalchart in item.value.VitalChartHistory.Select((value, i) => new { i = (i + 1), value }))
+                            {
+                                <table class="no-border">
+                                    <tbody>
+                                        <tr class="md-bg-white">
+                                            <td style="border :0px">BP</td>
+                                            <td style="border :0px">@vitalchart.value.BP</td>
+                                            <td style="border :0px">Pulse</td>
+                                            <td style="border :0px">@vitalchart.value.Pulse</td>
+                                        </tr>
+                                        <tr class="md-bg-white">
+                                            <td style="border :0px">Temperature</td>
+                                            <td style="border :0px">@vitalchart.value.Temperature</td>
+                                            <td style="border :0px">HR</td>
+                                            <td style="border :0px">@vitalchart.value.HR</td>
+                                        </tr>
+                                        <tr class="md-bg-white">
+                                            <td style="border :0px">RR</td>
+                                            <td style="border :0px">@vitalchart.value.RR</td>
+                                            <td style="border :0px">Height</td>
+                                            <td style="border :0px">@vitalchart.value.Height</td>
+                                        </tr>
+                                        <tr class="md-bg-white">
+                                            <td style="border :0px">Weight</td>
+                                            <td style="border :0px">@vitalchart.value.Weight</td>
+                                            <td style="border :0px">Others</td>
+                                            <td style="border :0px">@vitalchart.value.Others</td>
+                                        </tr>
+                                        <tr class="md-bg-white">
+                                            <td style="border :0px">Time</td>
+                                            <td style="border :0px">@vitalchart.value.Time</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            }
+                        </td>
+                    </tr>*@
+                <tr class="md-bg-white">
+                    <td style="border :0px;vertical-align:top;width:300px">@AHCMS.Medicines</td>
+                    <td style="border :0px">
+                        @foreach (var medicines in item.value.MediceinsHistory.Select((value, i) => new { i = (i + 1), value }))
+                        {
+                            <table class="no-border">
+                                <tbody>
+                                    <tr class="md-bg-white">
+                                        <td style="border :0px;">Medicine</td>
+                                        <td style="border :0px;">@medicines.value.Medicine</td>
+                                    </tr>
+                                    <tr class="md-bg-white">
+                                        <td style="border :0px;">Description</td>
+                                        <td style="border :0px">@medicines.value.Description</td>
+                                    </tr>
+                                    @*<tr class="md-bg-white">
+                                            <td style="border :0px">
+                                                @if (@medicines.value.IsMorning == true)
+                                                {
+                                                    <input type="checkbox" name="IsMorning" class="IsMorning" data-md-icheck checked="" disabled value="" />@Html.Label("  Morning  ")
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" name="IsMorning" class="IsMorning" data-md-icheck disabled value="" />@Html.Label("  Morning  ")
+                                                }
+                                                @if (@medicines.value.IsNoon == true)
+                                                {
+                                                    <input type="checkbox" name="IsNoon" class="IsNoon" data-md-icheck checked="" disabled value="" />@Html.Label("  Noon  ")
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" name="IsNoon" class="IsNoon" data-md-icheck disabled value="" />@Html.Label("  Noon  ")
+                                                }
+                                            </td>
+                                            <td style="border :0px">
+                                                @if (@medicines.value.IsEvening == true)
+                                                {
+                                                    <input type="checkbox" name="IsEvening" class="IsEvening" data-md-icheck checked="" disabled value="" />@Html.Label("  Evening  ")
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" name="IsEvening" class="IsEvening" data-md-icheck disabled value="" />@Html.Label("  Evening  ")
+                                                }
+                                                @if (@medicines.value.IsNight == true)
+                                                {
+                                                    <input type="checkbox" name="IsNight" class="IsEvening" data-md-icheck checked="" disabled value="" />@Html.Label("  Night  ")
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" name="IsNight" class="IsNight" data-md-icheck disabled value="" />@Html.Label("  Night  ")
+                                                }
+                                                @if (@medicines.value.IsMultipleTimes == true)
+                                                {
+                                                    <input type="checkbox" name="IsNight" class="IsEvening" data-md-icheck checked="" disabled value="" />@Html.Label("  Multiple Times  ")
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" name="IsNight" class="IsNight" data-md-icheck disabled value="" />@Html.Label("  Multiple Times   ")
+                                                }
+                                            </td>
+                                        </tr>*@
+                                    <tr class="md-bg-white">
+                                        <td style="border :0px">No of Days :</td>
+                                        <td style="border :0px">@medicines.value.NoofDays</td>
+                                    </tr>
+                                    <tr class="md-bg-white">
+                                        @{
+                                            var startdate = Convert.ToDateTime(@medicines.value.StartDate);
+                                            var enddate = Convert.ToDateTime(@medicines.value.EndDate);
+                                        }
+                                        <td style="border :0px">
+                                            Start Date : @startdate.ToString("dd-MM-yyyy")
+                                        </td>
+                                        <td style="border :0px">
+                                            End Date : @enddate.ToString("dd-MM-yyyy")
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                                            }
+                    </td>
+                </tr>
+                <tr class="md-bg-white">
+                    <td style="border :0px;vertical-align:top;width:300px">@AHCMS.Treatment</td>
+                    <td style="border :0px">
+                        @foreach (var treatment in item.value.TreatmentHistory.Select((value, i) => new { i = (i + 1), value }))
+                        {
+                            <table class="no-border">
+                                <tbody>
+                                    <tr class="md-bg-white">
+                                        <td style="border :0px">Treatment</td>
+                                        <td style="border :0px">@treatment.value.Name</td>
+                                    </tr>
+                                    <tr class="md-bg-white">
+                                        <td style="border :0px">Therapist</td>
+                                        <td style="border :0px">@treatment.value.TherapistName</td>
+                                    </tr>
+                                    <tr class="md-bg-white">
+                                        <td style="border :0px">Treatment Room</td>
+                                        <td style="border :0px">@treatment.value.TreatmentRoomName</td>
+                                    </tr>
+                                    <tr class="md-bg-white">
+                                        <td style="border :0px">Medicine</td>
+                                        <td style="border :0px">@treatment.value.Medicine</td>
+                                    </tr>
+                                    <tr class="md-bg-white">
+                                        <td style="border :0px">No of Days</td>
+                                        <td style="border :0px">@treatment.value.NoofDays</td>
+                                    </tr>
+                                    <tr class="md-bg-white">
+                                        @{
+                                            var startdate = Convert.ToDateTime(@treatment.value.StartDate);
+                                            var enddate = Convert.ToDateTime(@treatment.value.EndDate);
+                                        }
+                                        <td style="border :0px">
+                                            Start Date : @startdate.ToString("dd-MM-yyyy")
+                                        </td>
+                                        <td style="border :0px">
+                                            End Date : @enddate.ToString("dd-MM-yyyy")
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                                            }
+                    </td>
+                </tr>
+                @if (@item.value.AppointmentType == "IP")
+                {
+                    <tr class="md-bg-white">
+                        <td style="border :0px;vertical-align:top;width:300px">@AHCMS.Rounds</td>
+                        <td style="border :0px">
+                            @foreach (var rounds in item.value.RoundsHistory.Select((value, i) => new { i = (i + 1), value }))
+                        {
+                                <table class="no-border">
+                                    <tbody>
+                                        <tr class="md-bg-white">
+                                            <td style="border :0px">Date</td>
+                                            <td style="border :0px">@rounds.value.RoundsDate</td>
+                                        </tr>
+                                        <tr class="md-bg-white">
+                                            <td style="border :0px">Remarks</td>
+                                            <td style="border :0px">@rounds.value.Remarks</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+             }
+          }

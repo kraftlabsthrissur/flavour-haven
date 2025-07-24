@@ -1,0 +1,44 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.ReceiptVoucherModel
+
+@{
+    ViewBag.Title = "Edit Receipt Voucher";
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Accounts.ReceiptVoucherTitle</h1>
+            <span class="uk-text-upper uk-text-small">@Accounts.EditReceiptVoucher</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("SaveV3", "<a class='md-btn btnSave'>" + Common.Save + "</a>")
+            @ActionAuthorization.IsAuthorized("SaveAsDraftV3", "<a class='md-btn btnSaveDraft'>" + Common.SaveAsDraft + "</a>")
+            @Html.ActionLink(Common.Close, "IndexV3", "Receipt", new { Area = "Accounts" }, new { @class = "md-btn " })
+            @Html.HiddenFor(Model => Model.IsDraft)
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                @{Html.RenderPartial("/Areas/Accounts/Views/Receipt/FormV3.cshtml", Model); }
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/ReceiptVoucherV3")
+@Scripts.Render("~/Js/Page/Customer")
+@Html.Partial("~/Areas/Masters/Views/AccountHead/AccountHeadListV3.cshtml")
+@Scripts.Render("~/Js/Page/AccountHead")
+
+<script type="text/javascript">
+    receipt.init();
+    $("#btnAddReceipt").trigger("click");
+    receipt.count_items();
+</script>

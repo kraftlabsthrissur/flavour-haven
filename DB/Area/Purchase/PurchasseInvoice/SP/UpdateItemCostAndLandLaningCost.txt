@@ -1,0 +1,32 @@
+CREATE PROCEDURE [dbo].[UpdateItemCostAndLandLaningCost]  
+    @ItemID INT,  
+    @InvoiceQty NUMERIC(18, 4),  
+    @LandingCost NUMERIC(18, 4),
+	@InvoiceLocalRate  NUMERIC(18, 4),
+    @LocationID INT,  
+    @FinYear INT  
+AS  
+BEGIN  
+    SET NOCOUNT ON;  
+  
+    DECLARE @StockInLocation NUMERIC(18, 4) = 0;  
+    DECLARE @ItemCost NUMERIC(18, 4) = 0;  
+  
+    SET @StockInLocation = [dbo].[FnGetAvailableStockInLocation](@ItemID, @LocationID, @FinYear);  
+  
+    SET @ItemCost = ( SELECT TOP 1 b.CostPrice FROM Batch b WHERE b.ItemID = @ItemID AND b.LocationID = @LocationID );  
+  
+  
+    IF (@ItemCost > 0 AND @StockInLocation > 0)  
+    BEGIN  
+        SET @ItemCost = (((@LandingCost + @InvoiceLocalRate ) * @InvoiceQty) + (@StockInLocation * @ItemCost)) / (@InvoiceQty + @StockInLocation);  
+    END  
+    ELSE  
+    BEGIN  
+        SET @ItemCost = @InvoiceLocalRate +  @LandingCost;  
+    END  
+  
+    UPDATE Batch   SET CostPrice = @ItemCost,LandedCost = @LandingCost   WHERE ItemID = @ItemID AND LocationID = @LocationID;  
+  
+    SET NOCOUNT OFF;  
+END  

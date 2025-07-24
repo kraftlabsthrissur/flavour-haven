@@ -1,0 +1,57 @@
+﻿@model TradeSuiteApp.Web.Areas.Sales.Models.GoodsReceiptModel
+
+@{
+    ViewBag.Title = "Goods Delivery Note Details";
+}
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Sales.GoodsDeliveryNote</h1>
+            <span class="uk-text-upper uk-text-small">@Sales.GoodsDeliveryNoteDetails</span>
+        </div>
+        <div class="heading_actions">
+            @if (Model.IsDraft && !Model.IsCanceled)
+            {
+                @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "Edit", "GoodsReceiptNote", new { Area = "Sales", id = Model.ID }, new { @class = "md-btn " }))
+
+            }
+
+            @Html.HiddenFor(m => m.ID)
+            @if (!Model.IsCanceled && Model.IsCancelable)
+            {
+                @ActionAuthorization.IsAuthorized("Cancel", " <a class='md-btn cancel'>Cancel</a>")
+
+            }
+            @*@ActionAuthorization.IsAuthorized("Print", " <a class='md-btn print'>Print</a>")*@
+            @ActionAuthorization.IsAuthorized("GoodsReceiptNotePrintPdf", " <a class='md-btn printpdf'>Print As PDF</a>")
+            @ActionAuthorization.IsAuthorized("GoodsReceiptNoteExportPrintPdf", " <a class='md-btn ExportPrintPdf'>Export As PDF</a>")
+            @if (ViewBag.CloseURL != null)
+            {
+                <a href='/Approvals/Approval/' class='md-btn'>@Common.Back</a>
+            }
+            else
+            {
+                @Html.ActionLink(Common.Back, "Index", "GoodsReceiptNote", new { Area = "Sales" }, new { @class = "md-btn " })
+            }
+            @*<form action="/Reports/Sales/PickListProformaInvoice/@Model.ID" method="POST">
+            @ActionAuthorization.IsAuthorized("Print", "<input type='submit' class='md-btn' value='Print' />")
+        </form>*@
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="sales details-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                @{Html.RenderPartial("View", Model); }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,169 @@
+﻿@model TradeSuiteApp.Web.Areas.Reports.Models.MaterialPurificationModel
+@{
+    ViewBag.ReportTitle = "Material Purification";
+}
+
+@Scripts.Render("~/Js/Page/MaterialPurificationReport")
+
+<div id="page_content_inner">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-2-10 ">
+                            <form action="/Reports/Manufacturing/MaterialPurification" id="report-filter-form" method="POST" data-name="MaterialPurification">
+                                <input type="hidden" value="Stock" id="ItemAutoType" />
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.IssueDateFrom</label>
+                                                @Html.TextBoxFor(model => model.FromDateString, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.IssueDateTo</label>
+                                                @Html.TextBoxFor(model => model.ToDateString, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.ReceiptDateFrom</label>
+                                                @Html.TextBoxFor(model => model.ReceiptDateFrom, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.ReceiptDateTo</label>
+                                                @Html.TextBoxFor(model => model.ReceiptDateTo, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row ">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-autocomplete " id="preprocess-issueno-autocomplete">
+                                                <label for="uk_dp_start">@Reports.IssueNo</label>
+                                                @Html.TextBoxFor(Model => Model.IssueNo, new { @class = "md-input label-fixed" })
+                                            </div>
+                                            @Html.HiddenFor(m => m.IssueNoID)
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-autocomplete " id="preprocess-receiptno-autocomplete">
+                                                <label for="uk_dp_start">@Reports.ReceiptNo</label>
+                                                @Html.TextBoxFor(Model => Model.ReceiptNo, new { @class = "md-input label-fixed" })
+                                            </div>
+                                            @Html.HiddenFor(m => m.ReceiptNoID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row ">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1 ">
+                                            <div class="uk-autocomplete " id="suppliername-autocomplete">
+                                                <label for="uk_dp_start">@Reports.SupplierName</label>
+                                                @Html.TextBoxFor(Model => Model.SupplierName, new { @class = "md-input label-fixed" })
+                                            </div>
+                                            @Html.HiddenFor(m => m.SupplierID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Item Code -->
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-autocomplete " id="item-code-from-autocomplete">
+                                                <label for="uk_dp_start">@Reports.IssueItemCode</label>
+                                                @Html.TextBox("ItemCodeFrom", "", new { @class = "md-input label-fixed" })
+                                                <span></span>
+                                            </div>
+                                            @Html.HiddenFor(m => m.IssueItemCodeID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-autocomplete " id="preprocess-issue-item-name-autocomplete">
+                                                <label for="uk_dp_start">@Reports.IssueItemName</label>
+                                                @Html.TextBox("IssueItemName", "", new { @class = "md-input label-fixed" })
+                                                <span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @Html.HiddenFor(m => m.IssueItemID)
+                                </div>
+                                <!--Item Code -->
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-autocomplete " id="item-code-to-autocomplete">
+                                                <label for="uk_dp_start">@Reports.ReceiptItemCode</label>
+                                                @Html.TextBox("ItemCodeTo", "", new { @class = "md-input label-fixed" })
+                                                <span></span>
+                                            </div>
+                                            @Html.HiddenFor(m => m.ReceiptItemCodeID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-autocomplete " id="preprocess-receipt-item-name-autocomplete">
+                                                <label for="uk_dp_start">@Reports.ReceiptItemName</label>
+                                                @Html.TextBox("ReceiptItemName", "", new { @class = "md-input label-fixed" })
+                                                <span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @Html.HiddenFor(m => m.ReceiptItemID)
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-1-1">
+                                            <label for="uk_dp_start">@Reports.Activity</label>
+                                            @Html.DropDownListFor(m => m.ProcessID, Model.ProcessList, "Select", new { @class = "md-input label-fixed", @id = "ProcessID" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="report-filter-submit">Show</button>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <a class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light " id="Refresh">Reset</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="uk-width-medium-8-10 ">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="" id="report-viewer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

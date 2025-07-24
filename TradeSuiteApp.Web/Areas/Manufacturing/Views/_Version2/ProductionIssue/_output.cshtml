@@ -1,0 +1,76 @@
+﻿@model  List<TradeSuiteApp.Web.Areas.Manufacturing.Models.OutputModel>
+
+@{
+//var endDateStr =  Model.EndDate?.ToString("dd-MM-yyyy");
+// var varianceStr = Model.Variance > 0 ? Model.Variance.ToString() : string.Empty;
+}
+
+
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        var sub_product = @item.IsSubProduct == true ? "SubProduct" : "";
+        var disabled = @item.IsSubProduct == true ? "disabled" : "";
+        var completed = @item.IsSubProduct == true ? "" : @item.ProductionStatus;
+        var subproductvalue = @item.IsSubProduct == true ? "true" : "false";
+        <tr class="@completed @sub_product" data-production-sequence="@item.ProductionSequence">
+            <td>
+                @(1 + Model.IndexOf(item))
+            </td>
+            <td>
+                @item.ItemName
+                <input type="hidden" class="ItemID" value="@item.ItemID" />
+                <input type="hidden" class="ProductionIssueID" value="@item.ProductionIssueID" />
+                <input type="hidden" class="ProductionSequence" value="@item.ProductionSequence" />
+                <input type="hidden" class="StandardBatchSize" value="@item.StandardBatchSize" />
+                <input type="hidden" class="ActualBatchSize" value="@item.ActualBatchSize" />
+                <input type="hidden" class="SubProduct" value="@subproductvalue" />
+            </td>
+            <td>
+                <input type="text" class="md-input mask-production-qty txtStandardOutput" value="@item.StandardOutput" readonly @disabled />
+            </td>
+            <td>
+                <input type="text" class="md-input mask-production-qty txtActualOutput" value="@item.ActualOutput" @disabled />
+            </td>
+            <td>
+                <input type="text" class="md-input mask-production-qty txtVariance" value="@item.Variance" readonly @disabled />
+            </td>
+            <td class="uk-text">
+                @Html.DropDownList("ReceiptStore", new SelectList(ViewBag.WareHouses, "Value", "Text", item.StoreID), "Select", new { @class = "md-input ReceiptStore", @disabled = @disabled })
+            </td>
+            <td>
+                <input type="text" class="md-input label-fixed  txtStartDate" value="@item.StartDateStr" readonly @disabled />
+            </td>
+            <td>
+                <input type="text" class="md-input uk-text time txtStartTime" value="@item.StartTimeStr" readonly @disabled />
+            </td>
+            <td>
+                <div class="uk-input-group">
+                    <input type="text" class="md-input label-fixed current-date date txtEndDate" value="@item.EndDateStr" @disabled />
+                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar current-date endDate"></i></span>
+                </div>
+            </td>
+            <td>
+                <input type="text" class="md-input uk-text time txtEndTime" value="@item.EndTimeStr" @disabled />
+            </td>
+
+            <td>
+                @if (item.IsSubProduct == true)
+                {
+                    <input type="text" class="md-input uk-text disabled " value="Completed" @disabled />
+                }
+                else
+                {
+
+
+                    <select class='md-input OutputStatus'>
+                        <option value='started' @(item.ProductionStatus == "started" ? "selected = selected" : "")>Started</option>
+                        <option value='completed' @(item.ProductionStatus == "completed" ? "selected = selected" : "")>Completed</option>
+                    </select>
+                }
+            </td>
+            <td></td>
+        </tr>
+    }
+}

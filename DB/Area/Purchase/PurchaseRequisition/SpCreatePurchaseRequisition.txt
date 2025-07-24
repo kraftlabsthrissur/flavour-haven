@@ -1,0 +1,50 @@
+ALTER PROCEDURE [Purchase].[SpCreatePurchaseRequisition](    
+@Code VARCHAR(20),        
+@Date DATETIME,    
+@SalesInquiryID INT,    
+@RequisitionNo VARCHAR(50),        
+@PurchaseRequisitedCustomer VARCHAR(200),      
+@RequisitedCustomerAddress VARCHAR(MAX),      
+@RequisitedPhoneNumber1 VARCHAR(100),      
+@RequisitedPhoneNumber2 VARCHAR(100),      
+@Remarks  VARCHAR(MAX),      
+@QuotationProcessed BIT,        
+@FullyOrdered BIT,        
+@FromDeptID INT,        
+@ToDeptID INT,        
+@Cancelled BIT,        
+@CancelledDate DATETIME,        
+@CreatedUserID INT,        
+@CreatedDate DATETIME,        
+@IsDraft bit,        
+@FinYear INT,        
+@LocationID INT,        
+@ApplicationID INT,        
+@PurRequisitionID INT OUTPUT)        
+AS        
+BEGIN        
+SET NOCOUNT ON  
+IF(@FromDeptID=0)
+BEGIN SET @FromDeptID=null END
+IF(@ToDeptID=0)
+BEGIN SET @ToDeptID=null END
+    
+IF(@SalesInquiryID > 0 AND EXISTS(SELECT * FROM Sales.SalesInquiry S WHERE ID=@SalesInquiryID AND S.Canceled=0 AND S.Converted=0))    
+Begin    
+ INSERT INTO PurchaseRequisition(Code,Date,RequisitionNo,QuotationProcessed,FullyOrdered,FromDeptID,ToDeptID,Cancelled,CancelledDate,CreatedUserID,        
+ CreatedDate,FinYear,LocationID,ApplicationID,IsDraft,PurchaseRequisitedCustomer,RequisitedCustomerAddress,RequisitedPhoneNumber1,RequisitedPhoneNumber2,Remarks)        
+ VALUES (@Code,@Date,'',@QuotationProcessed,@FullyOrdered,@FromDeptID,@ToDeptID,@Cancelled,@CancelledDate,@CreatedUserID,        
+ @CreatedDate,@FinYear,@LocationID,@ApplicationID,@IsDraft,@PurchaseRequisitedCustomer,@RequisitedCustomerAddress,@RequisitedPhoneNumber1,@RequisitedPhoneNumber2,@Remarks)        
+ SET @PurRequisitionID = SCOPE_IDENTITY()      
+ Update Sales.SalesInquiry SET Converted=1,Status='Converted' WHERE ID=@SalesInquiryID    
+END    
+ELSE IF(@SalesInquiryID < 1)    
+BEGIN    
+ INSERT INTO PurchaseRequisition(Code,Date,RequisitionNo,QuotationProcessed,FullyOrdered,FromDeptID,ToDeptID,Cancelled,CancelledDate,CreatedUserID,        
+ CreatedDate,FinYear,LocationID,ApplicationID,IsDraft,PurchaseRequisitedCustomer,RequisitedCustomerAddress,RequisitedPhoneNumber1,RequisitedPhoneNumber2,Remarks)        
+ VALUES (@Code,@Date,'',@QuotationProcessed,@FullyOrdered,@FromDeptID,@ToDeptID,@Cancelled,@CancelledDate,@CreatedUserID,        
+ @CreatedDate,@FinYear,@LocationID,@ApplicationID,@IsDraft,@PurchaseRequisitedCustomer,@RequisitedCustomerAddress,@RequisitedPhoneNumber1,@RequisitedPhoneNumber2,@Remarks)        
+ SET @PurRequisitionID = SCOPE_IDENTITY()      
+END    
+      
+END

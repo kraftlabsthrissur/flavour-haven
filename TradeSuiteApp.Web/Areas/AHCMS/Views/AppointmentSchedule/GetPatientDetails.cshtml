@@ -1,0 +1,26 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.AppointmentScheduleModel
+@if (Model.Items != null)
+{
+    foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+            </td>
+            <td class="patient_name">@item.value.PatientName</td>
+            <td class="patient_code">@item.value.Code</td>
+            <td class="patient_age">@item.value.Age</td>
+            <td class="patient_gender">@item.value.Gender</td>
+            
+            @*<td class="uk-text-right mask-currency">@item.value.ReceivedQty</td>*@
+            @*<td>
+                <input type="text" class="md-input label-fixed mask-numeric print-qty" data-id="@item.value.ReceivedQty" value="@item.value.ReceivedQty" />
+            </td>*@
+        </tr>
+    }
+}
+
+
+
+
+

@@ -1,0 +1,46 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+<input type="button" id="show-labresult" data-uk-modal="{target:'#labresult-list', center:false}" />
+<div class="uk-modal" id="labresult-list" aria-hidden="true" style="display: none; overflow-y: scroll;">
+        <div class="uk-modal-dialog" style="">
+            <div class="uk-modal-header">
+                <h3 class="uk-modal-title">Lab Test Result<i class="material-icons" data-uk-tooltip="{pos:'top'}" title="headline tooltip"></i></h3>
+            </div>
+            <table id="labtest-result-list" class="uk-table" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>
+                            @AHCMS.Investigation
+                        </th>
+                        <th class="uk-width-medium-1-8">
+                            @AHCMS.ObservedValue
+                        </th>
+                        <th class="uk-width-medium-1-8">
+                            @AHCMS.Unit
+                        </th>
+                        <th class="uk-width-medium-1-8">
+                            @AHCMS.BiologicalReferenceInterval
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ResultList != null)
+                    {
+                        foreach (var item in Model.ResultList.Select((value, i) => new { i = (i + 1), value }))
+                        {
+                            <tr>
+                                <td class="LabTest">@item.value.LabTest</td>
+                                <td class="ObservedValue">@item.value.ObservedValue</td>
+                                <td class="Unit">@item.value.Unit</td>
+                                <td class="BiologicalReference">@item.value.BiologicalReference</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+            <div class="uk-modal-footer uk-text-right">
+                <button type="button" class="md-btn  uk-modal-close">@Common.Close</button>
+            </div>
+        </div>
+    </div>
+
+

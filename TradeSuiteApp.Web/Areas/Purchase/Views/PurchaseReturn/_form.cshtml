@@ -1,0 +1,175 @@
+﻿@model TradeSuiteApp.Web.Areas.Purchase.Models.PurchaseReturnModel
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Purchase.ReturnNumber</label>
+                            @Html.TextBoxFor(m => m.ReturnNo, new { @class = "md-input label-fixed", @id = "txtReturnNo", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label for="uk_dp_start">@Purchase.ReturnDate</label>
+                                @Html.TextBoxFor(m => m.ReturnDate, new { @class = "md-input", @disabled = "disabled" })
+                            </div>
+                        </div>
+                        @Html.HiddenFor(m => m.ID)
+                        @if (Model.ID > 0)
+                        {<div class="uk-width-medium-2-8">
+                            <label>@Purchase.Supplier</label>
+                            @Html.TextBoxFor(m => m.SupplierName, new { @class = "md-input label-fixed", @id = "txtReturnNo", @readonly = "readonly" })
+                        </div>
+                        }
+                        else
+                        {
+                            <div class="uk-width-medium-2-8">
+                                <div class="uk-autocomplete " id="supplier-autocomplete">
+                                    <div class="uk-input-group">
+                                        <label>@Purchase.Supplier<span>*</span></label>
+                                        @Html.TextBox("SupplierName", "", new { @class = "md-input label-fixed" })
+                                        <span class="uk-input-group-addon" data-uk-modal="{target:'#select-supplier',center:false}">
+                                            <i class="uk-input-group-icon uk-icon-search"></i>
+                                        </span>
+                                        <script type="text/autocomplete">
+                                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                {{~items}}
+                                                <li data-value="{{ $item.Name }}"
+                                                    data-id="{{$item.ID}}"
+                                                    data-location="{{$item.Location}}"
+                                                    data-state-id="{{$item.StateID}}"
+                                                    data-is-gst-registered="{{$item.IsGSTRegistered}}">
+                                                    <a>
+                                                        {{ $item.Name }} ({{{ $item.Code }}})
+                                                        <div>{{{ $item.Location }}}</div>
+                                                    </a>
+                                                </li>
+                                                {{/items}}
+                                            </ul>
+                                        </script>
+                                    </div>
+                                </div>
+                                @Html.Hidden("SupplierID")
+                                @Html.Hidden("StateId")
+                                @Html.Hidden("IsGSTRegistred", "false")
+                            </div>
+                        }
+                        <div class="uk-width-medium-2-8">
+                            <div class="uk-autocomplete " id="invoice-autocomplete">
+                                <div class="uk-input-group">
+                                    <label>@Purchase.SelectPRO<span>*</span></label>
+                                    @Html.TextBox("InvoiceNo", "", new { @class = "md-input label-fixed" })
+                                    <span class="uk-input-group-addon">
+                                        <a class="GetInvoice" data-uk-modal="{target:'#get-PRO',center:false}">
+                                            <i class="uk-input-group-icon uk-icon-search"></i>
+                                        </a>
+                                    </span>
+
+                                </div>
+                            </div>
+                            @Html.Hidden("SGSTPercentage")
+                            @Html.Hidden("CGSTPercentage")
+                            @Html.Hidden("IGSTPercentage")
+                            @Html.Hidden("SGSTAmount")
+                            @Html.Hidden("CGSTAmount")
+                            @Html.Hidden("IGSTAmount")
+                            @Html.HiddenFor(m => m.SupplierID)
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-1">
+                            <label>@Purchase.NetAmount</label>
+                            @Html.TextBoxFor(model => model.NetAmount, new { @class = "md-input label-fixed mask-currency x-large", @disabled = "disabled", @id = "txtNetAmount" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <table id="tblPurchaseReturnItems" class="uk-table scroll" cellspacing="0" width=100>
+
+        <thead>
+            <tr>
+                <th class="width-10">@Common.SerialNo</th>
+
+                <th class="width-200">@Purchase.ItemName</th>
+                <th class="width-100">@Purchase.ReturnNumber</th>
+                <th class="width-40">@Purchase.Unit</th>
+                <th class="width-40">@Purchase.ReturnOrderQty</th>
+                <th class="width-40">@Purchase.GrnQty</th>
+                <th class="width-40">@Purchase.ReturnQty</th>
+                <th class="width-40">@Purchase.Rate</th>
+                <th class="width-40">@Purchase.GSTper</th>
+                <th class="width-40">@Purchase.SGSTAmt</th>              
+                <th class="width-40">@Purchase.CGSTAmt</th>
+                <th class="width-40">@Purchase.IGSTAmt</th>
+                <th class="width-40">@Purchase.Total</th>
+                <th class="width-40">@Purchase.Remarks</th>
+                <th class="width-10"></th>
+            </tr>
+        </thead>
+        <tbody class="tbody">
+
+            @if (Model != null)
+            {
+                if (Model.ReturnItems != null)
+                {
+                    foreach (var item in Model.ReturnItems)
+                    {
+                        var gstPercentage = item.CGSTPercent + item.IGSTPercent + item.SGSTPercent;
+                        <tr class="rowPr">
+                            <td class="uk-text-center">@(1 + @Model.ReturnItems.IndexOf(item))</td>
+                            <td>@item.ItemName</td>
+                            <td>
+                                <input type="hidden" class="ItemID" value="@item.ItemID" />
+                                <input type="hidden" class="UnitID" value="@item.UnitID" />
+                                <input type="hidden" class="Stock" value="@item.Stock" />
+                                <input type="hidden" class="WareHouseID" value="@item.WarehouseID" />
+                                <input type="hidden" class="BatchTypeID" value="@item.BatchTypeID" />
+                                <input type="hidden" class="Qty" value="@item.AcceptedQty" />
+                                <input type="hidden" class="InvoiceID" value="@item.InvoiceID" />
+                                <input type="hidden" class="PurchaseReturnOrderID" value="@item.PurchaseReturnOrderID" />
+
+                                <input type="hidden" class="clSgstPercentage" value="@item.SGSTPercent" />
+                                <input type="hidden" class="clCgstPercentage" value="@item.CGSTPercent" />
+                                <input type="hidden" class="clIgstPercentage" value="@item.IGSTPercent" />
+
+                                <input type="hidden" class="PurchaseReturnOrderTransID" value="@item.PurchaseReturnOrderTransID" />
+                                @item.ReturnNo
+                            </td>
+                            <td> @item.Unit</td>
+                            <td class="clAcptQty mask-qty">
+                                @item.AcceptedQty
+                            </td>
+                            <td class="clGrnQty mask-qty"> @item.GRNQty</td>
+                            <td class="mask-qty clReturnQty">@item.Quantity</td>
+
+                            <td class="clRate mask-currency">@item.Rate</td>
+                            <td class="mask-qty"> @gstPercentage</td>                       
+                            <td class="clSgstAmount mask-currency"> @item.SGSTAmount</td>                          
+                            <td class="clCgstAmount mask-currency"> @item.CGSTAmount</td>
+                            <td class="clIgstAmount mask-currency">@item.IGSTAmount</td>
+                            <td class="clTotal mask-currency">@item.Amount</td>
+                            <td><input type="text" class="md-input clRemarks" value="@item.Remarks" /></td>
+                            <td class="uk-text-center">
+                                <a class="remove-item">
+                                    <i class="md-btn-icon-small uk-icon-remove"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+    <input type="hidden" id="item-count" value="@Model.ReturnItems.Count()" />
+</div>

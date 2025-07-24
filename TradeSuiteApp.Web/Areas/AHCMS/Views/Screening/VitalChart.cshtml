@@ -1,0 +1,26 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+
+
+<tr>
+    @if (!Model.IsCompleted)
+    {
+        <td class="width-50">@Html.TextBoxFor(model => model.BP, "", new { @class = "md-input label-fixed" })</td>
+        <td class="width-50">@Html.TextBoxFor(model => model.Pulse, "", new { @class = "md-input label-fixed" })</td>
+        <td class="width-50">@Html.TextBoxFor(model => model.Temperature, "", new { @class = "md-input label-fixed" })
+            @Html.DropDownList("Unit", new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text="Celcius ", Value = "Celcius" },
+                            new SelectListItem{ Text="Fahrenheit", Value = "Fahrenheit"}                        
+           }, new { @class = "md-input label-fixed" })
+    </td>
+        <td class="width-50">@Html.TextBoxFor(model => model.HR, "", new { @class = "md-input label-fixed" }) </td>
+
+    }
+    else
+    {
+        <td class="width-50">@Html.TextBoxFor(model => model.BP, "", new { @class = "md-input label-fixed", @disabled = "disabled" })</td>
+        <td class="width-50">@Html.TextBoxFor(model => model.Pulse, "", new { @class = "md-input label-fixed", @disabled = "disabled" })</td>
+        <td class="width-50">@Html.TextBoxFor(model => model.Temperature, "", new { @class = "md-input label-fixed", @disabled = "disabled" }) </td>
+        <td class="width-50">@Html.TextBoxFor(model => model.HR, "", new { @class = "md-input label-fixed", @disabled = "disabled" }) </td>
+    }
+</tr>

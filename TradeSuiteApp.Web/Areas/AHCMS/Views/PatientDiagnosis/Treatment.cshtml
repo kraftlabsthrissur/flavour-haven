@@ -1,0 +1,119 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+
+
+@if (Model.TreatmentItems != null)
+{
+    var IsMorning = "";
+    var IsNoon = "";
+    var IsEvening = "";
+    var IsNight = "";
+
+
+
+
+    foreach (var item in Model.TreatmentItems.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+                <input type="hidden" class="TreatmentID" value="@item.value.TreatmentID" />
+                <input type="hidden" class="TherapistID" value="@item.value.TherapistID" />
+                <input type="hidden" class="TreatmentRoomID" value="@item.value.TreatmentRoomID" />                
+                <input type="hidden" class="PatientTreatmentID" value="@item.value.PatientTreatmentID" />
+
+                @if(item.value.IsMorning==true)
+                {
+                    IsMorning = "true";
+                }
+                else
+                {
+                    IsMorning = "false";
+                }
+
+
+                <input type="hidden" class="IsMorning" value=@IsMorning />
+                <input type="hidden" class="MorningTime" value="@item.value.MorningTime" />
+
+                @if (item.value.IsNoon == true)
+                {
+                    IsNoon = "true";
+                }
+                else
+                {
+                    IsNoon = "false";
+                }
+
+
+                <input type="hidden" class="IsNoon" value="@IsNoon" />
+                <input type="hidden" class="NoonTime" value="@item.value.NoonTime" />
+
+                @if (item.value.Isevening == true)
+                {
+                    IsEvening = "true";
+                }
+                else
+                {
+                    IsEvening = "false";
+                }
+
+                <input type="hidden" class="IsEvening" value="@IsEvening" />
+                <input type="hidden" class="EveningTime" value="@item.value.EveningTime" />
+
+                @if (item.value.IsNight == true)
+                {
+                    IsNight = "true";
+                }
+                else
+                {
+                    IsNight = "false";
+                }
+
+                <input type="hidden" class="IsNight" value="@IsNight" />
+                <input type="hidden" class="NightTime" value="@item.value.NightTime" />
+
+                <input type="hidden" class="MorningTimeID" value="@item.value.MorningID" />
+                <input type="hidden" class="NoonTimeID" value="@item.value.NoonID" />
+                <input type="hidden" class="EveningTimeID" value="@item.value.EveningID" />
+                <input type="hidden" class="NightTimeID" value="@item.value.NightID" />
+
+
+
+            </td>
+            <td class="Treatment">@item.value.Name
+                
+            </td>
+            <td class="Therapist">@item.value.TherapistName</td>
+            <td class="TreatmentRoom">@item.value.TreatmentRoomName</td>
+            <td class="Instructions">@item.value.Instructions</td>
+            <td class="StartDate">@item.value.StartDate</td>
+            <td class="EndDate">@item.value.EndDate</td>
+            <td class="NoofTreatments">@item.value.NoOfTreatment</td>
+            <td>@item.value.FinishedTreatment/@item.value.NoOfTreatment</td>
+            <td>@item.value.DoctorName</td>
+            <td class="uk-text-center">
+                @if (!@item.value.IsCompleted)
+                {
+                    <button class="edit_treatment"><i class="material-icons">create</i></button>
+                }
+                else
+                {
+                    <button class="edit_treatment uk-hidden"><i class="material-icons">create</i></button>
+                }
+            </td>
+            <td>
+                @if (!@item.value.IsCompleted)
+                {
+                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light btncanceltreatment">Cancel</button>
+                }
+            </td>
+            <td>
+                @if (!@item.value.IsCompleted)
+                {
+                    <a class="remove-treatment"><i class="uk-icon-remove"></i></a>
+                }
+            </td>
+        </tr>
+    }
+}
+
+

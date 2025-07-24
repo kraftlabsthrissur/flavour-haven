@@ -1,0 +1,59 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Masters.Models.AccountGroupModel
+
+<input type="button" id="show-add-account-head" data-uk-modal="{target:'#add-account-head', center:false}"/>
+<div class="uk-modal" id="add-account-head" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Add Account Head<i class="material-icons"></i></h3>
+        </div>
+        <div class="uk-modal-content">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+
+                    <div class="uk-width-medium-1-2">
+                        <label>@Masters.Group<span>*</span></label>
+                        <div class="uk-autocomplete " id="group-name-autocomplete">
+                            <div class="uk-input-group">
+                                @Html.TextBox("AccountGroupName", "", new { @class = "md-input label-fixed",@ID= "AccountGroupName" })
+                                @Html.Hidden("AccountGroupID")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="uk-width-medium-1-4">
+                        <label>@Masters.AccountCode<span>*</span></label>
+                        @Html.TextBoxFor(model => model.AccountID, new { @class = "md-input label-fixed" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+
+                    <div class="uk-width-medium-1-4">
+                        <label>@Masters.AccountName<span>*</span></label>
+                        @Html.TextBoxFor(model => model.AccountName, new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-1-4">
+                        <label>@Masters.OpeningAmount</label>
+                        @Html.TextBoxFor(model => model.OpeningAmount, new { @class = "md-input label-fixed mask-currency" })
+                    </div>
+
+                    <div class="uk-width-medium-1-4">
+                        <label>Debit/Credit</label>
+                        @Html.DropDownListFor(Model => Model.OpeningAmountType, new SelectList(Model.OpeningAmountTypeList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn  uk-modal-close account-head-add-modal-close">@Common.Close</button>
+            <button type="button" class="md-btn md-btn-primary" id="btnSaveAccountHead">@Common.Save</button>
+        </div>
+    </div>
+</div>
+
+

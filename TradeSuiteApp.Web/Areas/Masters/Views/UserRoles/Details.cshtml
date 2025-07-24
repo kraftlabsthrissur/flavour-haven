@@ -1,0 +1,108 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Masters.Models.UserRolesModel
+@{
+    ViewBag.Title = Masters.UserRolesDetails;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.UserRoles</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.UserRolesDetails</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "Edit", "UserRoles", new { Area = "Masters", id = (Model != null) ? Model.UserID : 0 }, new { @class = "md-btn " }))
+            @Html.ActionLink(Common.Back, "Index", "UserRoles", new { Area = "Masters" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="details-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label for="uk_dp_start">@Masters.UserName<span>*</span></label>
+                                            @Html.TextBoxFor(m => m.UserName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            @Html.HiddenFor(m => m.UserID)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="page_content_inner" class="list-view">
+                <div class="md-card uk-margin-medium-bottom">
+                    <div class="md-card-content">
+                        <table id="user-role-list" class="uk-table" cellspacing="0" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th class="width-10">@Common.SerialNo</th>
+                                    <th class="width-80">@Masters.UserName</th>
+                                    <th class="width-80">@Masters.Role</th>
+                                    <th class="width-80">@Masters.Location</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.UserRoles != null)
+                                {
+                                    foreach (var item in Model.UserRoles.Select((value, i) => new { i = (i + 1), value }))
+                                    {
+                                        <tr>
+                                            <td>@Html.DisplayFor(modelItem => (item.i))</td>
+                                            <td class="UserName">
+                                                @item.value.UserName
+                                                <input type="hidden" class="UserID" value="@item.value.UserID" />
+                                                <input type="hidden" class="RoleID" value="@item.value.RoleID" />
+                                                <input type="hidden" class="LocationID" value="@item.value.LocationID" />
+                                            </td>
+                                            <td class="RoleName">@item.value.RoleName </td>
+                                            <td class="Location">@item.value.Location </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+    </div>
+
+    
+</div>
+
+@Scripts.Render("~/Js/Page/UserRole")
+
+<script type="text/javascript">
+    UserRole.details();
+</script>
+
+
+                       
+                   
+                   
+              
+    
+   
+
+
+
+
+
+
+

@@ -1,0 +1,33 @@
+
+ALTER TABLE StockRequisitionTrans
+ADD SecondaryUnit VARCHAR(200);
+
+ALTER TABLE StockRequisitionTrans
+ADD SecondaryUnitSize  Numeric(18,4) NOT NULL DEFAULT 1;
+
+ALTER TABLE StockRequisitionTrans
+ADD SecondaryQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE StockIssueTrans
+ADD SecondaryUnit VARCHAR(200);
+
+ALTER TABLE StockIssueTrans
+ADD SecondaryUnitSize  Numeric(18,4) NOT NULL DEFAULT 1;
+
+ALTER TABLE StockIssueTrans
+ADD SecondaryQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE StockIssueTrans
+ADD SecondaryIssueQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE StockReceiptTrans
+ADD SecondaryIssueQty Numeric(18,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE StockReceiptTrans
+ADD SecondaryUnit VARCHAR(200);
+
+ALTER TABLE StockReceiptTrans
+ADD SecondaryUnitSize  Numeric(18,4) NOT NULL DEFAULT 1;
+
+ALTER TABLE StockReceiptTrans
+ADD SecondaryReceiptQty Numeric(18,4) NOT NULL DEFAULT 0;

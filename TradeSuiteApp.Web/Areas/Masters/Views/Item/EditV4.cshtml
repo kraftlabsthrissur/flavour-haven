@@ -1,0 +1,119 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.ItemModel
+@{
+    ViewBag.Title = "Edit Item";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+@Styles.Render("~/Css/Item")
+<style>
+    /* Hide the Dropify remove button */
+    .dropify-wrapper .dropify-clear {
+        display: none !important;
+    }
+</style>
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.Item</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.EditItem</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn BtnSave'>" + Common.Save + "</a>")
+
+            @Html.HiddenFor(m => m.ID)
+            @Html.ActionLink(Common.Close, "IndexV4", "Item", new { Area = "Masters" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="" class="form-view">
+        <div class="md-card uk-margin-medium-bottom remove-box-shadow">
+            <div class="md-card-content">
+                <div class="uk-grid" data-uk-grid-margin>
+                    @{Html.RenderPartial("/Areas/Masters/Views/Item/FormV4.cshtml", Model); }
+                    <div class="uk-width-medium-2-10">
+                        <div class="md-card">
+                            <div class="md-card-content small-padding">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div  class="uk-width-medium-1-8">
+                                        <button class="md-btn md-btn-danger" id="btnDeleteImage">Delete</button>
+                                    </div>
+                                    <div id="ItemImage" class="uk-width-medium-1-1">
+                                        <div class="js-upload" uk-form-custom>
+                                            <input type="file" class="dropify" data-default-file="@Model.ItemImagePath" />
+                                        </div>
+                                    </div>
+                                    <div id="ItemListImage" class="uk-width-medium-1-1">
+                                        <div class="uk-grid" data-uk-grid-margin="">
+                                            <div class="uk-width-medium-1-8">
+                                                <img src="@Model.ItemImages[0]" alt="" class="uploadimage1" />
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <img src="@Model.ItemImages[1]" alt="" class="uploadimage2" />
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <img src="@Model.ItemImages[2]" alt="" class="uploadimage3" />
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <img src="@Model.ItemImages[3]" alt="" class="uploadimage4" />
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <img src="@Model.ItemImages[4]" alt="" class="uploadimage5" />
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <img src="@Model.ItemImages[5]" alt="" class="uploadimage6" />
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <img src="@Model.ItemImages[6]" alt="" class="uploadimage7" />
+                                            </div>
+                                            <div class="uk-width-medium-1-8">
+                                                <img src="@Model.ItemImages[7]" alt="" class="uploadimage8" />
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div>
+
+                                    </div>
+                                    <div class="uk-width-medium-1-1 uk-hidden">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        @Html.CheckBoxFor(m => m.IsDisContinued, new { @class = "md-input icheckbox", @checked = Model.IsDisContinued })&nbsp;<label class="stock-value">DisContinued</label>
+                                    </div>
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-5-10">
+                                                    @Html.CheckBoxFor(m => m.Isactive, new { @class = "md-input icheckbox", @checked = Model.Isactive })&nbsp;<label class="stock-value">Is Active</label>
+                                                </div>
+                                                <div class="uk-width-medium-5-10">
+                                                    @Html.CheckBoxFor(m => m.IsStockValue, new { @class = "md-input icheckbox", @checked = Model.IsStockValue })
+                                                    <label class="stock-value">Stock Value</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Html.Partial("~/Areas/Masters/Views/Item/AlternativeItemList.cshtml")
+@Scripts.Render("~/Js/Page/ItemV4")
+<script type="text/javascript">
+    $(function () {
+        Item.init();
+    });
+</script>
+
+

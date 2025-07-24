@@ -1,0 +1,295 @@
+﻿@model TradeSuiteApp.Web.Areas.Purchase.Models.ServicePRViewModel
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Purchase.RequisitionCode</label>
+                            @Html.TextBoxFor(m => m.PurchaseRequisitionNumber, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label for="uk_dp_start">@Purchase.Date</label>
+                                <input class="md-input label-fixed past-date date" type="text" id="PrDate" data-relaxation="-3" value="@DateTime.Now.ToString("dd-MM-yyyy")" disabled="disabled">
+                                <span class="uk-input-group-addon"><i data-relaxation="-3" class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Common.Department<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.FromDeptID, new SelectList(Model.DDLDepartment, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Purchase.ItemCategory</label>
+                            @Html.DropDownList("DDLItemCategory", new SelectList(Model.DDLItemCategory, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-1-10">
+                <label>@Purchase.PurchaseCategory</label>
+                @Html.DropDownList("DDLPurchaseCategory", new SelectList(Model.DDLPurchaseCategory, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-autocomplete " id="item-autocomplete">
+                    <label>@Purchase.Item <span>*</span></label>
+                    <input type="text" id="ItemName" class="md-input label-fixed" />
+                    <span class="uk-input-group-addon">
+                        <a data-uk-modal="{target:'#select-item',center:false}">
+                            <i class="uk-input-group-icon uk-icon-search"></i>
+                        </a>
+                    </span>
+                    <script type="text/autocomplete">
+                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                            {{~items}}
+                            <li data-value="{{ $item.Name }}"
+                                data-id="{{$item.ID}}"
+                                data-unit="{{$item.Unit}}"
+                                data-last-pr="{{$item.LastPR}}"
+                                data-lowest-pr="{{$item.LowestPR}}"
+                                data-pending-order-qty="{{$item.PendingOrderQty}}"
+                                data-qty-with-qc="{{$item.QtyUnderQC}}"
+                                data-qty-available="{{$item.QtyAvailable}}"
+                                data-item-category="{{$item.ItemCategoryID}}"
+                                data-travel-category="{{$item.TravelCategoryID}}"
+                                data-gst-percentage="{{$item.GSTPercentage}}">
+                                <a>
+                                    {{ $item.Name }}
+                                    <div>{{$item.Code}}</div>
+                                </a>
+                            </li>
+                            {{/items}}
+                        </ul>
+                    </script>
+                </div>
+                @Html.Hidden("ItemID")
+                @Html.Hidden("Unit")
+                @Html.Hidden("LastPr")
+                @Html.Hidden("LowestPr")
+                @Html.Hidden("PendingOrderQty")
+                @Html.Hidden("QtyWithQc")
+                @Html.Hidden("QtyAvailable")
+                @Html.Hidden("GSTPercentage")
+                @Html.Hidden("CategoryID")
+                @Html.Hidden("TravelCategoryID")
+
+
+                <input type="hidden" value="service" id="type" />
+
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Purchase.RequiredQuantity <span>*</span></label>
+                <input type="text" id="txtRqQty" min="0" class="md-input label-fixed uk-text-right mask-qty" />
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="uk-input-group">
+                    <label for="uk_dp_start">@Purchase.RequisitionDate</label>
+                    <input class="md-input label-fixed future-date date" type="text" id="txtExpDate">
+                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                </div>
+            </div>
+            <div class="uk-width-medium-1-10 uk-hidden travel-services" id="select_travel_from">
+                <label>@Purchase.TravelFrom</label>
+                @Html.DropDownList("TravelFromID", new SelectList(Model.TravelFromList, "Value", "Text"), "Select", new { @class = "md-input label-fixed", })
+
+            </div>
+            <div class="uk-width-medium-1-10 uk-hidden travel-services" id="select_travel_to">
+                <label>@Purchase.TravelTo</label>
+                @Html.DropDownList("TravelToID", new SelectList(Model.TravelToList, "Value", "Text"), "Select", new { @class = "md-input label-fixed", })
+
+            </div>
+            <div class="uk-width-medium-1-10 uk-hidden travel-services" id="select_travel_date">
+                <div class="uk-input-group">
+                    <label for="uk_dp_start">@Purchase.TravelDate</label>
+                    <input class="md-input label-fixed future-date date" type="text" id="travelDate">
+                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                </div>
+            </div>
+
+            <div class="uk-width-medium-1-10 uk-hidden travel-services" id="select_travel_mode">
+                <label>@Purchase.ModeOfTransport</label>
+                @Html.DropDownList("TransportModeID", new SelectList(Model.TransportModeList, "Value", "Text"), "Select", new { @class = "md-input label-fixed", })
+            </div>
+            <div class="uk-width-medium-1-10 uk-hidden travel-services" id="select_travel_remarks">
+                <label>@Purchase.TravelRemarks</label>
+                @Html.TextBox("TravelingRemarks", "", new { @class = "md-input label-fixed" })
+            </div>
+        </div>
+    </div>
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            @if (Model.IsBranchLocation)
+            {
+                <div class="uk-width-medium-1-10">
+                    <label>@Common.Location<span>*</span></label>
+                    @Html.DropDownListFor(Model => Model.LocationID, new SelectList(Model.DDLLocation, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @id = "sprLocation", @disabled = "disabled" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Common.Department<span>*</span></label>
+                    @Html.DropDownListFor(Model => Model.DepartmentID, new SelectList(Model.DDLDepartment, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @id = "sprDepartment", @disabled = "disabled" })
+                </div>
+            }
+            else
+            {
+                <div class="uk-width-medium-1-10">
+                    <label>@Common.Location<span>*</span></label>
+                    @Html.DropDownListFor(Model => Model.LocationID, new SelectList(Model.DDLLocation, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @id = "sprLocation" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Common.Department<span>*</span></label>
+                    @Html.DropDownListFor(Model => Model.DepartmentID, new SelectList(Model.DDLDepartment, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @id = "sprDepartment" })
+                </div>
+            }
+
+            <div class="uk-width-medium-1-10">
+                <label>@Common.Employee</label>
+                @Html.DropDownList("sprEmployee", new SelectList(Model.DDLEmployee, "Value", "Text"), "Select", new { @class = "md-input label-fixed", })
+
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Common.InterCompany</label>
+                @Html.DropDownList("sprInterCompany", new SelectList(Model.DDLInterCompany, "Value", "Text"), "Select", new { @class = "md-input label-fixed", })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Common.Project</label>
+                @Html.DropDownList("sprProject", new SelectList(Model.DDLProject, "Value", "Text"), "Select", new { @class = "md-input label-fixed", })
+            </div>
+            <div class="uk-width-medium-2-10">
+                <label>@Purchase.Specification</label>
+                <input type="text" class="md-input label-fixed" id="sprRemarks" />
+            </div>
+
+
+            <div class="uk-width-medium-1-10">
+                <div class="md-input-wrapper md-input-filled">
+                    <label>&nbsp;</label>
+                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddProduct">@Common.Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <table id="service-purchase-requisition-items-list" class="uk-table" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th class="width-10">@Common.SerialNo</th>
+                <th class="width-250">@Purchase.ItemName</th>
+                <th class="width-10">@Purchase.Unit</th>
+                <th class="width-60">@Purchase.RequiredQuantity</th>
+                <th class="width-100">@Purchase.RequisitionDate</th>
+                <th class="width-100">@Common.Location</th>
+                <th class="width-100">@Common.Department</th>
+                <th class="width-100">@Common.Employee</th>
+                <th class="width-100">@Common.Company</th>
+                <th class="width-100">@Common.Project</th>
+                <th class="width-120">@Purchase.Specification</th>
+                <th class="width-10"></th>
+            </tr>
+        </thead>
+        @*<tbody class="prTbody"></tbody>
+            <tbody class="sprTbody"></tbody>*@
+        <tbody class="prTbody">
+            @if ((Model.PrTrans != null))
+            {
+                for (var i = 0; i < Model.PrTrans.Count; i++)
+                {
+
+                    <tr class="rowPr">
+                        <td class="uk-text-center"> @(i + 1)  </td>
+                        <td>
+                            @Html.DisplayFor(m => m.PrTrans[i].ItemName)
+                            @Html.HiddenFor(m => m.PrTrans[i].ID, new { @class = "ItemId" })
+                            @Html.HiddenFor(m => m.PrTrans[i].LocationID, new { @class = "LocationId" })
+                            @Html.HiddenFor(m => m.PrTrans[i].DepartmentID, new { @class = "DepartmentId" })
+                            @Html.HiddenFor(m => m.PrTrans[i].EmployeeID, new { @class = "EmployeeId" })
+                            @Html.HiddenFor(m => m.PrTrans[i].InterCompanyID, new { @class = "InterCompanyId" })
+                            @Html.HiddenFor(m => m.PrTrans[i].ProjectID, new { @class = "ProjectId" })
+                            @Html.HiddenFor(m => m.PrTrans[i].TravelCategoryID, new { @class = "TravelCategoryID" })
+
+
+                        <td> @Model.PrTrans[i].Unit </td>
+                        <td>
+                            <input type="text" class="uk-text-right md-input mask-currency txtRqQty" value="@Model.PrTrans[i].ReqQuantity" />
+                        </td>
+                        <td>
+                            <div class="uk-input-group">
+                                <input class="md-input label-fixed future-date date txtDate" type="text" id="txtDate" value="@Model.PrTrans[i].ExpDate">
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                            </div>
+                        </td>
+                        <td class="sprLocation"> @Model.PrTrans[i].Location </td>
+                        <td class="sprDepartment"> @Model.PrTrans[i].Department </td>
+                        <td class="sprEmployee"> @Model.PrTrans[i].Employee</td>
+                        <td class="sprInterCompany"> @Model.PrTrans[i].InterCompany </td>
+                        <td class="sprProject"> @Model.PrTrans[i].Project</td>
+                        <td><input type="text" class="sprRemarks md-input" value="@Model.PrTrans[i].Remark" /> </td>
+                        <td class="uk-text-center">
+                            <a class="remove-item">
+                                <i class="uk-icon-remove"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    if (@Model.PrTrans[i].TravelCategoryID > 0)
+                    {
+                        <tr>
+                            <td>
+                                @Html.HiddenFor(m => m.PrTrans[i].TravelFromID, new { @class = "travelfromId" })
+                                @Html.HiddenFor(m => m.PrTrans[i].TravelToID, new { @class = "traveltoId" })
+                                @Html.HiddenFor(m => m.PrTrans[i].TransportModeID, new { @class = "modeoftravelId" })
+                            </td>
+                            <td colspan="11">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-form-row">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-1-10">
+                                                    <label>@Purchase.TravelFrom</label>
+                                                    @Html.TextBoxFor(Model => Model.PrTrans[i].TravelFrom, new { @class = "md-input label-fixed", @disabled = "disabled" })
+
+
+                                                </div>
+                                                <div class="uk-width-medium-1-10">
+                                                    <label>@Purchase.TravelTo</label>
+                                                    @Html.TextBoxFor(Model => Model.PrTrans[i].TravelTo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-1-5">
+                                                    <label>@Purchase.ModeOfTransport</label>
+                                                    @Html.TextBoxFor(Model => Model.PrTrans[i].TransportMode, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                </div>
+                                                <div class="uk-width-medium-1-5">
+                                                    <label>@Purchase.TravelDate</label>
+                                                    @Html.TextBoxFor(Model => Model.PrTrans[i].TravelDate, new { @class = "md-input label-fixed traveldate", @disabled = "disabled" })
+
+                                                </div>
+                                                <div class="uk-width-medium-1-5">
+                                                    <label>@Purchase.TravelRemarks</label>
+                                                    @Html.TextBoxFor(Model => Model.PrTrans[i].TravelingRemarks, new { @class = "md-input label-fixed travelremark", @disabled = "disabled" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+    <input type="hidden" id="item-count" value="@Model.PrTrans.Count()" />
+</div>

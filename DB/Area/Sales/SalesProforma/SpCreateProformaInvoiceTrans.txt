@@ -1,0 +1,94 @@
+-- =============================================      
+-- Author:  ajith@kraftlabs.com      
+-- Create date: 25-Feb-2019      
+-- Description:       
+-- =============================================      
+ALTER PROCEDURE [Sales].[SpCreateProformaInvoiceTrans] (      
+ @ProformaInvoiceID int,      
+ @Items XML,      
+ @CreatedUserID int,      
+ @FinYear int,      
+ @LocationID int,      
+ @ApplicationID int,      
+ @RetValue int OUTPUT      
+)      
+AS      
+BEGIN      
+ SET NOCOUNT ON;      
+ DECLARE @ToWarehouseID int,@IsCancelled int      
+ SET @RetValue = 1      
+ --SELECT @ToWarehouseID = ConfigValue FROM configuration WHERE ConfigName LIKE 'DefaultHoldonStore' AND LocationID = @LocationID AND ApplicationID = @ApplicationID      
+      
+ INSERT INTO Sales.ProformaInvoiceTrans (ProformaInvoiceID, SalesOrderTranID, ItemID, BatchID, BatchTypeID, Quantity, MRP, BasicPrice,      
+  OfferQty, GrossAmount, DiscountID, DiscountPercentage, DiscountAmount, AdditionalDiscount, TurnoverDiscount, TaxableAmount,  
+  VATAmount,VatPercentage,SecondaryUnit,SecondaryOfferQty,SecondaryUnitSize,SecondaryMRP,SecondaryQty,  
+  SGSTPercentage, CGSTPercentage, IGSTPercentage, SGSTAmt, CGSTAmt, IGSTAmt, NetAmt, WareHouseID, FinYear, LocationID,      
+  ApplicationID, SortOrder, InvoiceQty, InvoiceOfferQty,UnitID,CessPercentage,CessAmount,    
+  PrintWithItemName, CurrencyID,IsGST,IsVat,Model,DeliveryTerm,PartsNumber,ItemName)      
+  SELECT       
+  @ProformaInvoiceID,      
+  CONVERT(INT, InvoiceTrans.item.query('SalesOrderItemID').value('.','VARCHAR(20)')),      
+  CONVERT(INT, InvoiceTrans.item.query('ItemID').value('.','VARCHAR(20)')),      
+  CONVERT(INT, InvoiceTrans.item.query('BatchID').value('.','VARCHAR(20)')),       
+  CONVERT(INT, InvoiceTrans.item.query('BatchTypeID').value('.','VARCHAR(20)')),       
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('Quantity').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('MRP').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('BasicPrice').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('OfferQty').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('GrossAmount').value('.','VARCHAR(40)')),      
+  0, --DiscountID      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('DiscountPercentage').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('DiscountAmount').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('AdditionalDiscount').value('.','VARCHAR(40)')),      
+  0, --TurnoverDiscount      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('TaxableAmount').value('.','VARCHAR(40)')),   
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('VATAmount').value('.','VARCHAR(40)')),   
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('VATPercentage').value('.','VARCHAR(40)')),  
+  CONVERT(VARCHAR, InvoiceTrans.item.query('SecondaryUnit').value('.','VARCHAR(200)')),   
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('SecondaryOfferQty').value('.','VARCHAR(40)')),  
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('SecondaryUnitSize').value('.','VARCHAR(40)')),  
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('SecondaryMRP').value('.','VARCHAR(40)')),  
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('SecondaryQty').value('.','VARCHAR(40)')),  
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('SGSTPercentage').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('CGSTPercentage').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('IGSTPercentage').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('SGSTAmt').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('CGSTAmt').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('IGSTAmt').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('NetAmt').value('.','VARCHAR(40)')),      
+  CONVERT(INT, InvoiceTrans.item.query('StoreID').value('.','VARCHAR(20)')),      
+  @FinYear,      
+  @LocationID,      
+  @ApplicationID,      
+  CONVERT(int, InvoiceTrans.item.query('SortOrder').value('.','VARCHAR(16)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('InvoiceQty').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('InvoiceOfferQty').value('.','VARCHAR(40)')),      
+  CONVERT(int, InvoiceTrans.item.query('UnitID').value('.','VARCHAR(40)')),      
+  CONVERT(Numeric(18,2), InvoiceTrans.item.query('CessPercentage').value('.','VARCHAR(16)')),      
+  CONVERT(Numeric(18,4), InvoiceTrans.item.query('CessAmount').value('.','VARCHAR(16)')),    
+  CONVERT(BIT, InvoiceTrans.item.query('PrintWithItemName').value('.','VARCHAR(5)')),    
+  CONVERT(INT, InvoiceTrans.item.query('CurrencyID').value('.','VARCHAR(20)')),     
+  CONVERT(INT, InvoiceTrans.item.query('IsGST').value('.','VARCHAR(20)')),    
+  CONVERT(INT, InvoiceTrans.item.query('IsVat').value('.','VARCHAR(20)')),     
+  CONVERT(VARCHAR, InvoiceTrans.item.query('Model').value('.','VARCHAR(200)')),
+  CONVERT(VARCHAR, InvoiceTrans.item.query('DeliveryTerm').value('.','VARCHAR(200)')),
+  CONVERT(VARCHAR, InvoiceTrans.item.query('PartsNumber').value('.','VARCHAR(200)')),    
+  CONVERT(VARCHAR, InvoiceTrans.item.query('ItemName').value('.','VARCHAR(200)'))    
+  FROM @Items.nodes('/InvoiceTrans/Item') as InvoiceTrans(item)      
+      
+      
+  -- To check sale Order is Cancelled or not      
+      
+  Select @IsCancelled = SUM(Cast(SO.IsCancelled as int)) from Sales.ProformaInvoiceTrans PIT       
+  inner join Sales.SalesOrderTrans SOT ON SOT.ID=PIT.SalesOrderTranID      
+  inner join Sales.SalesOrder SO ON SO.ID=SOT.SalesOrderID      
+  where PIT.ProformaInvoiceID=@ProformaInvoiceID      
+      
+  IF(@IsCancelled > 0)      
+  begin      
+      SET @RetValue = -3      
+  end      
+        
+END      
+      
+      

@@ -1,0 +1,170 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.LaboratoryTestModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.Code</label>
+                            @Html.TextBoxFor(m => m.Code, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            @Html.HiddenFor(m => m.PurchaseCategoryID)
+                            @Html.HiddenFor(m => m.QCCategoryID)
+                            @Html.HiddenFor(m => m.GSTSubCategoryID)
+                            @Html.HiddenFor(m => m.SalesCategoryID)
+                            @Html.HiddenFor(m => m.SalesIncentiveCategoryID)
+                            @Html.HiddenFor(m => m.StorageCategoryID)
+                            @Html.HiddenFor(m => m.ItemTypeID)
+                            @Html.HiddenFor(m => m.AccountsCategoryID)
+                            @Html.HiddenFor(m => m.BusinessCategoryID)
+                            @Html.HiddenFor(m => m.ItemUnitID)
+                            @Html.HiddenFor(m => m.CategoryID)
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.Name<span>*</span></label>
+                            @Html.TextBoxFor(m => m.Name, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.BiologicalReference<span>*</span></label>
+                            @Html.TextBoxFor(m => m.BiologicalReference, new { @class = "md-input label-fixed" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label>@Masters.Unit*</label>
+                                @Html.TextBoxFor(m => m.Unit, new { @class = "md-input label-fixed" })
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.GSTPercentage<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.GSTCategoryID, Model.GSTCategoryList, "Select", new { @class = " md-input label-fixed", })
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.Specimen / Sample</label>
+                            @Html.DropDownListFor(Model => Model.SpecimenID, Model.SpecimenList, "Select", new { @class = " md-input label-fixed", })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Masters.Method / Department</label>
+                            @Html.TextBoxFor(m => m.Method, new { @class = "md-input label-fixed" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.Rate</label>
+                            @Html.TextBoxFor(m => m.Rate, new { @class = "md-input label-fixed mask-currency" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label>@Masters.AddedDate*</label>
+                                @Html.TextBoxFor(m => m.AddedDate, new { @class = "md-input label-fixed  date future-date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.Description</label>
+                            @Html.TextBoxFor(m => m.Description, new { @class = "md-input label-fixed" })
+                        </div>
+                        @if (Model.ID > 0)
+                        {
+                            <div class="uk-width-medium-1-8">
+                                <label></label><br />
+                                <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.IsAlsoGroup) == true ? "checked='checked'" : string.Empty)  data-md-icheck id="IsAlsoGroup" />&nbsp; @Html.Label("Is also a Group")
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="uk-width-medium-1-8">
+                                <label></label><br />
+                                <input type="checkbox" class="icheckbox" @(Convert.ToBoolean(Model.IsAlsoGroup) == true ? "checked='checked'" : string.Empty)  data-md-icheck checked id="IsAlsoGroup" />&nbsp; @Html.Label("Is also a Group")
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="uk-form-row lab-group">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-4">
+                            <label>@AHCMS.LabTest</label>
+                            <div class="uk-autocomplete" id="Labtest-autocomplete">
+                                <div class="uk-input-group">
+                                    @Html.TextBoxFor(model => model.LabTest, new { @class = "md-input label-fixed" })
+                                    <span class="uk-input-group-addon">
+                                        <a data-uk-modal="{target:'#select-labtest',center:false}">
+                                            <i class="uk-input-group-icon uk-icon-search"></i>
+                                        </a>
+                                        <script type="text/autocomplete">
+                                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                {{~items}}
+                                                <li data-value="{{ $item.Name }}"
+                                                    data-id="{{$item.ID}}">
+                                                    <a>
+                                                        {{ $item.Name }} ({{ $item.Code }})   
+                                                    </a>
+                                                </li>
+                                                {{/items}}
+                                            </ul>
+                                        </script>
+                                    </span>
+
+                                </div>
+                            </div>
+                            @Html.HiddenFor(model => model.LabTestID)
+                            @Html.Hidden("Category")
+                        </div>
+                        <div class="uk-width-medium-1-10">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label>&nbsp;</label>
+                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddTest">@Common.Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="tablescroll">
+        <table id="lab-items-list" class="uk-table" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th class="width-20">@Common.SerialNo</th>
+                    <th class="">@AHCMS.LabTest</th>               
+                    <th class="width-20"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items != null)
+                {
+                    foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td class="uk-text-center serial-no">@(1 + @Model.Items.IndexOf(item))</td>
+                            <td class="item-name">
+                                @item.LabTest<input type="hidden" class="LabTestID" value=@item.LabTestID />                               
+                            </td>                             
+                            <td><a class="remove-item"><i class="uk-icon-remove"></i></a></td>
+                        </tr>
+                    }
+                }
+            </tbody>           
+        </table>   
+        <input type="hidden" id="item-count" value="0" />     
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/LaboratoryTest")
+@Html.Partial("~/Areas/Masters/Views/LaboratoryTest/LabTestList.cshtml", Model)
+<script type="text/javascript">
+    LaboratoryTest.init();
+</script>
+
+
+
+
+
+

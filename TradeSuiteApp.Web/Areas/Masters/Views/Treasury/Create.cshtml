@@ -1,0 +1,178 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.TreasuryModel
+@{
+    ViewBag.Title = @Masters.CreateNewTreasury;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.Treasury</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.CreateNewTreasury</span>
+        </div>
+        <div class="heading_actions">
+            @Html.ActionLink(Common.Viewlist, "Index", "Treasury", new { Area = "Masters" }, new { @class = "md-btn " })
+
+            @ActionAuthorization.IsAuthorized("Create", "<a class='md-btn btnSave'>" + Common.Save + "</a>")
+
+            @Html.ActionLink(Common.Close, "Index", "Treasury", new { Area = "Masters" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.Type </label>
+                                            @Html.DropDownListFor(Model => Model.Type, Model.TypeList, "Select", new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Masters.Name </label>
+                                            @Html.TextBoxFor(m => m.AliasName, "", new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                            <label>@Masters.Location</label>
+                                            @Html.DropDownListFor(Model => Model.ID, new SelectList(Model.LocationList, "Value", "Text"), "Select", new { @class = "md-input label-fixed Location" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.OpeningAmount </label>
+                                            @Html.TextBoxFor(m => m.OpeningAmount, new { @class = "md-input label-fixed mask-currency" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Masters.Remarks </label>
+                                            @Html.TextBoxFor(m => m.remarks, "", new { @class = "md-input label-fixed" })<br />
+                                        </div>
+                                        <div class="uk-width-medium-1-10">
+                                            <label>@Masters.ForPayment</label>
+                                            <div class="uk-grid uk-margin-small-top" data-uk-grid-margin="">
+                                                @Html.HiddenFor(m => m.IsPayment)
+                                                <div class="uk-input-group">
+                                                    <input type="checkbox" class="icheckbox IsPayment" data-md-icheck checked />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-10">
+                                            <label>@Masters.ForCollection</label>
+                                            <div class="uk-grid uk-margin-small-top" data-uk-grid-margin="">
+                                                @Html.HiddenFor(m => m.IsReceipt)
+                                                <div class="uk-input-group">
+                                                    <input type="checkbox" class="icheckbox IsReceipt" data-md-icheck checked />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                            <label>@Masters.BankCode </label>
+                                            @Html.TextBoxFor(m => m.BankCode, "", new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                            <div class="uk-autocomplete " id="accountcode-autocomplete">
+                                                <label>@Masters.AccountCode <span>*</span></label>
+                                                @Html.TextBoxFor(m => m.AccountCode, "", new { @class = "md-input label-fixed " })
+                                                @*<input type="text" id="AccountCode" class="md-input label-fixed" />*@
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Code}}"
+                                                            data-id="{{$item.ID}}"
+                                                            data-AccountName="{{$item.AccountName}}">
+                                                            <a>
+                                                                {{$item.Code}}
+                                                                <div>{{$item.AccountName}}</div>
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.Hidden("AccountID")
+                                        </div>
+                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                            <label>@Masters.AccountName </label>
+                                            @Html.TextBoxFor(m => m.AccountName, "", new { @class = "md-input label-fixed", @readonly = "readonly" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                            <label>@Masters.BankName </label>
+                                            @Html.TextBoxFor(m => m.BankName, "", new { @class = "md-input label-fixed" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                            <label>@Masters.BankBranchName </label>
+                                            @Html.TextBoxFor(m => m.BankBranchName, "", new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                            <label>@Masters.CoBranchName </label>
+                                            @Html.TextBoxFor(m => m.CoBranchName, "", new { @class = "md-input label-fixed" })
+                                        </div>
+                                      
+
+                                        @*<div class="uk-width-medium-2-8">
+                                                <label>@Masters.Location </label>
+                                                @Html.TextBoxFor(m => m.LocationMapping, "", new { @class = "md-input label-fixed" })
+                                            </div>*@
+                                        <div class="uk-width-medium-1-6 uk-hidden">
+                                            <label>@Masters.AccountNumber </label>
+                                            @Html.TextBoxFor(m => m.AccountNo, "", new { @class = "md-input label-fixed" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                            <label>@Masters.IFSC </label>
+                                            @Html.TextBoxFor(m => m.IFSC, "", new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                            <label>@Masters.AccountType1 </label>
+                                            @Html.TextBoxFor(m => m.AccountType1, "", new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                            <label>@Masters.AccountType2 </label>
+                                            @Html.TextBoxFor(m => m.AccountType2, "", new { @class = "md-input label-fixed" })
+                                        </div>
+                                   
+                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Masters.StartDate</label>
+                                                @Html.TextBoxFor(model => model.StartDate, new { @class = "md-input label-fixed date future-date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Masters.EndDate</label>
+                                                @Html.TextBoxFor(model => model.EndDate, new { @class = "md-input label-fixed date future-date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                            </div>
+                                        </div>
+                                    
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/Treasury")

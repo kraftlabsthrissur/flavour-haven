@@ -1,0 +1,20 @@
+CREATE PROCEDURE [Sales].[SpGetCurrencyDecimalClassByCurrencyID](  
+@CurrencyID int  
+)          
+AS          
+BEGIN          
+ SELECT (CASE   
+        WHEN c.DecimalPlaces = 2 THEN 'mask-sales2-currency'   
+        WHEN c.DecimalPlaces = 3 THEN 'mask-sales3-currency'   
+  WHEN c.DecimalPlaces = 4 THEN 'mask-sales4-currency'   
+        ELSE ''   
+        END) AS normalclass,   
+  (CASE   
+        WHEN c.DecimalPlaces = 2 THEN 'x-large mask-sales2-currency'   
+        WHEN c.DecimalPlaces = 3 THEN 'x-large mask-sales3-currency'   
+  WHEN c.DecimalPlaces = 4 THEN 'x-large mask-sales4-currency'   
+        ELSE ''   
+        END) AS largeclass,c.DecimalPlaces   
+    
+  FROM Currency c WHERE c.ID = @CurrencyID        
+END   

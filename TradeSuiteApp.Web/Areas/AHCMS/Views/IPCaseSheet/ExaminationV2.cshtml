@@ -1,0 +1,131 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+@if (Model.ExaminationItems != null)
+{
+    List<string> Temp = new List<string>();
+    var TempGroupName = "";
+    var count = 0;
+
+    foreach (var item in Model.ExaminationItems.Select((value, i) => new { i = (i + 1), value }))
+    {
+        if (item.value.Type == "Description")
+        {
+            <tr>
+                @if (item.value.IsParent == false)
+                {
+                    <td class="uk-text-center"></td>
+                }
+                else
+                {
+                    <td class="uk-text-center">@item.i</td>
+                }            
+                <td class="width-70 Area">
+                    @item.value.GroupName
+                </td>
+
+                <td>
+                    @if (!Model.IsCompleted)
+                    {
+                        <input type="hidden" class="ID" value="@item.value.ID" />
+                        @Html.TextBoxFor(model => @item.value.Description, new { @class = "md-input label-fixed examination-results description " + @item.value.Name })
+                    }
+                    else
+                    {
+                        <input type="hidden" class="ID" value="@item.value.ID" />
+                        @Html.TextBoxFor(model => @item.value.Description, new { @class = "md-input label-fixed examination-results description " + @item.value.Name, @disabled = "disabled" })
+
+                    }
+                </td>
+
+            </tr>
+        }
+
+        else if (item.value.Type == "Value")
+        {
+            count += 1;
+            if (TempGroupName == item.value.GroupName)
+            {
+                if (!Model.IsCompleted)
+                {
+                    <div class="width-100 dropdownline">
+                        <label>@item.value.Name</label>
+                        @Html.Raw("<input type = 'hidden' class='ID' value=" + @item.value.ID + " />")
+                        @Html.DropDownListFor(Model => @item.value.GeneralOptionID,
+                                                                                                         new SelectList(Model.GeneralOptions.First(a => a.Key == @item.value.Name).Value, "value", "text", @item.value.GeneralOptionID),
+                                                                                                         "Select", new { @class = "md-input label-fixed value examination-results" })
+                    </div>
+                }
+                else
+                {
+                    <div class="width-100 dropdownline">
+                        <label>@item.value.Name</label>
+                        @Html.Raw("<input type = 'hidden' class='ID' value=" + @item.value.ID + " />")
+                        @Html.DropDownListFor(Model => @item.value.GeneralOptionID,
+                                                                                                         new SelectList(Model.GeneralOptions.First(a => a.Key == @item.value.Name).Value, "value", "text", @item.value.GeneralOptionID),
+                                                                                                         "Select", new { @class = "md-input label-fixed value examination-results", @disabled = "disabled" })
+                    </div>
+                }
+            }
+            else
+            {
+                TempGroupName = item.value.GroupName;
+
+                @Html.Raw("<tr>")
+                @Html.Raw("<td class='uk-text-center'>")@item.i
+                @Html.Raw("</td>")
+
+                @Html.Raw("<td class='width-70 Area'>")
+                @item.value.GroupName
+
+                @Html.Raw("</td>")
+                @Html.Raw("<td class='" + @item.value.GroupName + "'><div class='width-100 dropdownline'><input type = 'hidden' class='ID' value=" + @item.value.ID + " />")
+                if (Model.ExaminationItems.Where(a => a.GroupName == TempGroupName).Count() != count)
+                {
+                    <label>@item.value.Name</label>
+                }
+                if (!Model.IsCompleted)
+                {
+                    @Html.DropDownListFor(Model => @item.value.GeneralOptionID,
+                                                                                             new SelectList(Model.GeneralOptions.First(a => a.Key == @item.value.Name).Value, "value", "text", @item.value.GeneralOptionID),
+                                                                                             "Select", new { @class = "md-input label-fixed value examination-results" }) @Html.Raw("</div>")
+                }
+                else
+                {
+                    @Html.DropDownListFor(Model => @item.value.GeneralOptionID,
+                                                                                             new SelectList(Model.GeneralOptions.First(a => a.Key == @item.value.Name).Value, "value", "text", @item.value.GeneralOptionID),
+                                                                                             "Select", new { @class = "md-input label-fixed value examination-results", @disabled = "disabled" }) @Html.Raw("</div>")
+                }
+
+            }
+            if (Model.ExaminationItems.Where(a => a.GroupName == TempGroupName).Count() == count)
+            {
+                count = 0;
+
+                @Html.Raw("</td>")
+                @Html.Raw("</tr>")
+            }
+        }
+        else
+        {
+            <tr>
+                <td class="uk-text-center">@item.i</td>
+
+                <td class="width-70 Area">
+
+                    @item.value.GroupName
+                </td>
+
+                <td>
+                    <input type="hidden" class="ID" value="@item.value.ID" />
+
+
+                    <div class="uk-autocomplete " id="name-autocomplete">
+                        <input type="text" value="@item.value.Diagnosis" class="md-input label-fixed" />
+                        <input type="hidden" id="DiagnosisID" class="value examination-results" value="@item.value.Value" />
+                    </div>
+
+                </td>
+
+            </tr>
+        }
+    }
+}

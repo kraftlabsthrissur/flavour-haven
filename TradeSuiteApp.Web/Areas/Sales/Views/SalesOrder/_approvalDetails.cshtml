@@ -1,0 +1,70 @@
+﻿@model TradeSuiteApp.Web.Areas.Sales.Models.CustomersModel
+<input type="button" id="show-approval" data-uk-modal="{target:'#approval', center:false}" />
+<div class="uk-modal" id="approval" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Customer Details<i class="material-icons"></i></h3>
+        </div>
+        <br />
+        <div class="uk-modal-content">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-6-10">
+                        <label>@Sales.CustomerName</label>
+                        <label> : </label>
+                        <label id="Name">@Html.DisplayFor(model => model.Name)</label>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-6-10">
+                        <label>@Sales.CustomerCategory</label>
+                        <label> : </label>
+                        <label>@Html.DisplayFor(model => model.CustomerCategoryName)</label>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-6-10">
+                        <label>@Sales.CustomerAccountsCategory</label>
+                        <label> : </label>
+                        <label>@Html.DisplayFor(model => model.CustomerAccountsCategoryName)</label>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-6-10">
+                        <label>@Sales.GSTNo</label>
+                        <label> : </label>
+                        <label>@Html.DisplayFor(model => model.GstNo)</label>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-6-10">
+                        <label>@Sales.Color</label>
+                        <label> : </label>
+                        <label>@Html.DisplayFor(model => model.Color, new { @class = "color" })</label>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-6-10">
+                        <label>@Sales.OutstandingAmount</label>
+                        <label> : </label>
+                        <label>@Html.DisplayFor(model => model.OutstandingAmount)</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn md-btn-primary" id="btnOkApprove">Approve</button>
+            <button type="button" class="md-btn uk-modal-close">Close</button>
+        </div>
+    </div>
+</div>

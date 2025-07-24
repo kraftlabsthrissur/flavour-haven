@@ -1,0 +1,70 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.ApprovalQueueModel
+<div class="uk-form-row">
+    <div class="uk-grid" data-uk-grid-margin>
+        <div class="uk-width-medium-1-1">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-2-10">
+                        <label>@Approvals.ApprovalQueue</label>
+                        @Html.TextBoxFor(m => m.QueueName, "", new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-2-10">
+                        <label>@Common.Location<span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.LocationID, Model.LocationList, "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="uk-width-medium-1-1">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-2-10">
+                        <label>@Approvals.UserName<span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.EmployeeID, Model.EmployeeList, "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-2-10">
+                        <label>@Approvals.SortOrder<span>*</span></label>
+                        @Html.TextBoxFor(m => m.SortOrder, "", new { @class = "md-input label-fixed mask-numeric" })
+                    </div>
+                    <div class="uk-width-medium-1-10">
+                        <div class="md-input-wrapper md-input-filled">
+                            <label>&nbsp;</label>
+                            <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddItem">@Common.Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div class="section-group">
+    <table id="approval-queue-trans-list" class="uk-table" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th class="width-20">@Common.SerialNo</th>
+                <th >@Approvals.UserName</th>               
+                <th >@Common.Location</th>
+                <th class="width-60">@Approvals.SortOrder</th>
+                <th class="width-20"></th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.QueueTrans.Select((value, i) => new { i = (i + 1), value }))
+            {
+                <tr>
+                    <td class="index"> @(1 + @Model.QueueTrans.IndexOf(item.value))<input type='hidden' class='OldSortOrder' value='@item.value.SortOrder'></td>
+                    <td> @item.value.UserName<input type='hidden' class='EmployeeID' value='@item.value.UserID'></td>                   
+                    <td> @Model.Location<input type='hidden' class='LocationID' value='@Model.LocationID'>
+                    <td> <input type='text' class='SortOrder md-input mask-numeric' value='@item.value.SortOrder' ></td>
+                </td>
+                <td class="uk-text-center" onclick="$(this).parent().remove()"> <a data-uk-tooltip="{pos:" bottom"}"><i class="md-btn-icon-small uk-icon-remove"></i></a></td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    <input type="hidden" id="queue-count" value="@Model.QueueTrans.Count()" />
+</div>

@@ -1,0 +1,121 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.CustomerDebitNoteModel
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-1-8">
+                        <label>@Accounts.TransactionNumber</label>
+                        @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input", @disabled = "disabled" })
+                    </div>  
+                    <div class="uk-width-medium-1-8">
+                        <label>@Accounts.Date</label>
+                        @Html.TextBoxFor(m => m.Date, new { @class = "md-input", @disabled = "disabled" })
+                    </div>
+                    <div class="uk-width-medium-2-8">
+                        <label>@Accounts.Customer</label>
+                        @Html.TextBoxFor(m => m.CustomerName, new { @class = "md-input", @disabled = "disabled" })
+                    </div>
+                </div>
+            </div>
+
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.SGSTAmount</label>
+                            @Html.TextBoxFor(m => m.SGSTAmt, new { @class = "md-input label-fixed mask-currency", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.CGSTAmount</label>
+                            @Html.TextBoxFor(m => m.CGSTAmt, new { @class = "md-input label-fixed mask-currency", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.IGSTAmount</label>
+                            @Html.TextBoxFor(m => m.IGSTAmt, new { @class = "md-input label-fixed mask-currency", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.TaxableAmount</label>
+                            @Html.TextBoxFor(m => m.TaxableAmount, new { @class = "md-input label-fixed mask-currency", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.RoundOff</label>
+                            @Html.TextBoxFor(m => m.RoundOff, new { @class = "md-input mask-sales-currency label-fixed", @tabindex = "-1", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+                </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-1">
+                            <label>@Accounts.TotalAmount</label>
+                            @Html.TextBoxFor(m => m.TotalAmount, new { @class = "md-input label-fixed x-large mask-currency", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <table id="customerdebitnote-item-list" class="uk-table" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-60">@Accounts.ReferenceInvoiceNumber</th>
+                    <th class="width-80">@Accounts.ReferenceDocumentDate</th>
+                    <th class="width-200">@Accounts.ItemName</th>
+                    <th class="width-40">@Accounts.Quantity</th>
+                    <th class="width-40">@Accounts.Rate</th>
+                    <th class="width-60">@Accounts.Amount</th>
+                    <th class="width-60">@Accounts.GSTPercentage</th>
+                    <th class="width-60">@Accounts.SGSTAmount</th>
+                    <th class="width-60">@Accounts.CGSTAmount</th>
+                    <th class="width-60">@Accounts.IGSTAmount</th>
+                    <th class="width-100">@Common.Location</th>
+                    <th class="width-100">@Common.Department</th>
+                    <th class="width-100">@Common.Employee</th>
+                    <th class="width-100">@Common.InterCompany</th>
+                    <th class="width-100">@Common.Project</th>
+                    <th class="width-100">@Accounts.Remarks </th>
+                    <th class="width-120">@Accounts.NetAmount </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items != null)
+                {
+                    foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                        <tr>
+                            <td class="uk-text-center">
+                                @item.i
+                                <input type="hidden" class="ItemID" readonly="readonly" value="@item.value.ID" />
+                            </td>
+                            <td> @item.value.ReferenceInvoiceNumber</td>
+                            <td> @item.value.ReferenceDocumentDate</td>
+                            <td> @item.value.ItemName </td>
+                            <td class="mask-qty"> @item.value.Qty </td>
+                            <td class="mask-currency"> @item.value.Rate </td>
+                            <td class="mask-currency"> @item.value.Amount </td>
+                            <td class="mask-currency"> @item.value.GSTPercentage </td>
+                            <td class="mask-currency"> @item.value.SGSTAmt </td>
+                            <td class="mask-currency"> @item.value.CGSTAmt </td>
+                            <td class="mask-currency"> @item.value.IGSTAmt </td>
+                            <td> @item.value.Location </td>
+                            <td> @item.value.Department</td>
+                            <td> @item.value.Employee </td>
+                            <td> @item.value.InterCompany </td>
+                            <td> @item.value.Project </td>
+                            <td> @item.value.Remarks </td>
+                            <td class="mask-currency"> @item.value.NetAmount </td>
+                        </tr>;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

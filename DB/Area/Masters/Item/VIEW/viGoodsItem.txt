@@ -1,0 +1,31 @@
+  
+        
+ALTER VIEW [dbo].[viGoodsItem] AS                
+select I.ID,I.Code, I.Name,ISNULL(I.Description,'')PartsNumber,ISNULL(I.SanskritName,'')Remark,ISNULL(I.Make,'')Make,ISNULL(I.Model,'')Model, I.BarCode, I.HSNCode, I.MalayalamName,I.ItemTypeID         
+  ,I.CategoryID, I.PurchaseCategoryID,I.SalesCategoryID,I.AccountsCategoryID,I.BusinessCategoryID,C.Name AS Category        
+  ,PC.Name AS PurchaseCategory,SC.Name AS SalesCategory         
+  ,SA.Name As AccountsCategory,CB.Name BusinessCategory      
+  ,I.UnitID AS PrimaryUnitID, I.InventoryUnitID, I.PurchaseUnitID                
+  ,I.SalesUnitID ,U.UOM AS Unit,IU.UOM AS InventoryUnit,PU.UOM AS PurchaseUnit,SU.UOM AS SalesUnit                
+  ,I.QtyTolerancePercent,I.MinStockQty, I.MaxStockQty,I.MinSalesQtyLoose, I.MinSalesQtyFull, I.MaxSalesQty, I.MinPurchaseQty, I.MaxPurchaseQty                
+  ,I.IsSeasonalPurchase, I.IsQCRequired                 
+  ,I.IsStockitem, I.IsPurchaseItem, I.IsPORequired,I.GSTCategoryID              
+  ,G.SGSTPercent,G.CGSTPercent,G.IGSTPercent,G.VATPercentage,G.Name AS GSTCategory,TT.Name TaxType,G.TaxTypeID,IT.LocationID      
+  ,I.OldItemCode,I.IsSaleable,I.IsQCRequiredForProduction  ,I.PackSize             
+  ,I.ConversionFactorPtoS,I.ConversionFactorPtoSecondary,I.ConversionFactorPtoI,I.ConversionFactorPurchaseToInventory,I.ConversionFactorSalesToInventory              
+from item I                    
+ left join Category C on C.ID = I.CategoryID                
+ left join Category PC on PC.ID = I.PurchaseCategoryID          
+ left join Category SC on SC.ID = I.SalesCategoryID                
+ left join Category SA on SA.ID = I.AccountsCategoryID          
+ left join Category CB on CB.ID=I.businessCategoryID            
+ left join Unit U on U.ID = I.UnitID                
+ left join Unit SU on SU.ID = I.SalesUnitID                
+ left join Unit IU on IU.ID = I.InventoryUnitID                
+ left join Unit PU on PU.ID = I.PurchaseUnitID                
+ left join Unit SaU on SaU.ID = I.SecondaryUnitID       
+ left JOIN ItemTax It on   It.ItemID=I.ID          
+ left JOIN TaxType TT on   It.TaxTypeID=TT.ID          
+ left JOIN GSTCategory G WITH (NOLOCK) on G.ID = IT.GSTCategoryID              
+Where I.IsStockValue = 1 AND I.IsPhantomItem =  0 AND I.Isactive = 1 AND I.BirthDate < Current_timestamp and (I.DiscontinuedDate is null or I.DiscontinuedDate  >  Current_timestamp  )      
+ AND I.IsDiscontinued = 0   

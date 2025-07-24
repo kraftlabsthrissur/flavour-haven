@@ -1,0 +1,40 @@
+﻿
+@{
+    ViewBag.Title = "PartialList";
+}
+
+<div class="uk-modal" id="select-source" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog uk-modal-dialog-large" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">@Sales.ServiceSalesOrders<i class="material-icons" data-uk-tooltip="{pos:'top'}" title="headline tooltip"></i></h3>
+        </div>
+        <table id="sales-order-list" class="uk-table" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="width-40">@Common.SerialNo</th>
+                    <th class="width-20"></th>
+                    <th class="width-80">@Sales.OrderNo</th>
+                    <th class="width-80">@Sales.OrderDate</th>
+                    <th>@Sales.CustomerName</th>
+                    <th class="width-50">@Sales.NetAmount</th>
+                </tr>
+            </thead>
+            <thead class="search">
+                <tr>
+                    <th>@Common.SerialNo</th>
+                    <th></th>
+                    <th>@Sales.OrderNo</th>
+                    <th>@Sales.OrderDate</th>
+                    <th>@Sales.CustomerName</th>
+                    <th>@Sales.NetAmount</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn uk-modal-close">Close</button>
+            <button type="button" class="md-btn md-btn-primary uk-modal-close" id="btnOkSalesOrder">Ok</button>
+        </div>
+    </div>
+</div>
+

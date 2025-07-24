@@ -1,0 +1,45 @@
+    
+    
+      
+ALTER PROCEDURE [Sales].[SpGetSalesInvoiceItemForSalesReturn]      
+(@SalesInvoiceID INT,      
+@PricelistID int,      
+@FinYear INT,      
+@LocationID INT,      
+@ApplicationID INT)      
+AS      
+BEGIN      
+SET NOCOUNT ON      
+Begin       
+declare @WareHouseID int,@LocationHeadID int      
+      
+ SELECT @LocationHeadID = LocationHeadID FROM Location WHERE ID = @LocationID        
+select @WareHouseID=warehouseID from [Sales].[SalesInvoiceTrans] where SalesInvoiceID=@SalesInvoiceID  and FinYear=@FinYear and LocationID=@LocationID and ApplicationID=@ApplicationID      
+set @PriceListID=dbo.FnGetBasePriceListID(@LocationID,@ApplicationID)      
+      
+select SIT.ID as SalesInvoiceTransID,SalesInvoiceID as SalesInvoiceID,I.ID as ItemID,I.Code as ItemCode,I.Name as ItemName,SIT.UnitID as TransUnitID,    
+(SIT.InvoiceQty -Isnull(ReturnQtyMet,0)) as Quantity,    
+SIT.MRP,SIT.BasicPrice,(SIT.InvoiceOfferQty-Isnull(ReturnOfferQtyMet,0)) as OfferQty,    
+SIT.GrossAmount,SIT.DiscountPercentage,SIT.DiscountAmount,SIT.TaxableAmount,SIT.AdditionalDiscount,      
+SIT.SGSTPercentage,SIT.CGSTPercentage,SIT.IGSTPercentage,SIT.SGSTAmt,SIT.CGSTAmt,SIT.IGSTAmt,SIT.NetAmt,SI.TransNo,SIT.BatchID,SIT.WareHouseID,      
+ dbo.FnGetAvailableStock(I.ID,null,null,@WareHouseID,@FinYear,@LocationID,@ApplicationID) AS Stock ,B.BatchNo,SIT.BatchTypeID,      
+ I.UnitID,I.SalesUnitID,I.Unit,I.SalesUnit ,ISNULL(PD.MRP, ISNULL(IC.TransferPrice,0.0)) AS FullRate,  
+ SIT.SecondaryUnit,SIT.SecondaryUnitSize,SIT.SecondaryQty,SIT.SecondaryMRP,SIT.SecondaryOfferQty,  
+ISNULL(PD.LoosePrice, (ISNULL(IC.TransferPrice,0.0) * dbo.FnConvertUnit(I.ID,null,I.UnitID,I.SalesUnitID) )) LooseRate ,       
+(case when SIt.UnitID<>I.SalesUnitID then dbo.FnConvertUnit(I.ID,(SIT.InvoiceQty -Isnull(ReturnQtyMet,0)-ISNULL(SIT.InvoiceOfferQty,0.0)),I.UnitID,I.SalesUnitID)    
+else dbo.FnConvertUnit(I.ID,(SIT.InvoiceQty -Isnull(ReturnQtyMet,0)-ISNULL(SIT.InvoiceOfferQty,0.0)),I.SalesUnitID,I.UnitID)  end)    as ConvertedQuantity ,     
+(case when SIt.UnitID<>I.SalesUnitID then dbo.FnConvertUnit(I.ID,(SIT.InvoiceOfferQty-Isnull(ReturnOfferQtyMet,0)),I.UnitID,I.SalesUnitID)    
+else dbo.FnConvertUnit(I.ID,(SIT.InvoiceOfferQty-Isnull(ReturnOfferQtyMet,0)),I.SalesUnitID,I.UnitID)  end)   as ConvertedOfferQuantity      
+From [Sales].[SalesInvoiceTrans] SIT      
+inner join  [Sales].[SalesInvoice] SI on SI.ID=SIT.SalesInvoiceID      
+inner join viSalesItem I on I.ID=SIT.ItemID      
+inner join Batch B on SIT.BatchID=B.ID      
+inner join Unit  U on U.ID=SIT.UnitID      
+LEFT JOIN PriceListDetails PD on PD.ItemID = I.ID AND PD.PriceListID = @PriceListID AND PD.BasePriceListID = B.BasePriceListID--PD.BasePriceListID = @BasePriceListID      
+LEFT JOIN ItemwiseCostHistory IC ON IC.ItemID = I.ID AND IC.IsActive = 1 AND IC.LocationHeadID = @LocationHeadID      
+      
+where SIT.SalesInvoiceID=@SalesInvoiceID and SIT.FinYear=@FinYear and SIT.LocationID=@LocationID and SIT.ApplicationID=@ApplicationID      
+and ( (SIT.OfferQty-Isnull(ReturnOfferQtyMet,0))> 0 or (SIT.InvoiceQty -Isnull(ReturnQtyMet,0)-ISNULL(SIT.InvoiceOfferQty,0.0)) >0)    
+--and SIT.ReturnQty<(SIT.OfferQty+SIT.Quantity)      
+End      
+End      

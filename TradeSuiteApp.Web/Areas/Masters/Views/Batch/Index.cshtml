@@ -1,0 +1,59 @@
+﻿@model IEnumerable<TradeSuiteApp.Web.Areas.Masters.Models.BatchModel>
+@{
+    ViewBag.Title = "Index";
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.Batch</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.BatchList</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Create", Html.ActionLink(Common.Create, "Create", "Batch", new { Area = "Masters" }, new { @class = "md-btn" }))
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div><div id="page_content_inner" class="list-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <table id="batch-list" class="uk-table">
+                    <thead>
+                        <tr>
+                            <th class="width-20">@Common.SerialNo</th>
+                            <th class="width-80">@Masters.Batch</th>
+                            <th>@Masters.ItemName</th>
+                            <th class="width-120">@Masters.SalesCategory</th>
+                            <th class="width-80">@Masters.MRP</th>
+                            <th class="width-80">@Masters.CreatedOn</th>
+                            <th class="width-80">@Masters.ExpairyDate</th>
+                            <th class="width-80">@Masters.ProfitRatio</th>
+                        </tr>
+                    </thead>
+                    <thead class="search">
+                        <tr>
+                            <th class="width-20">@Common.SerialNo</th>
+                            <th class="width-80">@Masters.Batch</th>
+                            <th>@Masters.ItemName</th>
+                            <th class="width-120">@Masters.SalesCategory</th>
+                            <th class="width-80">@Masters.MRP</th>
+                            <th class="width-80">@Masters.CreatedOn</th>
+                            <th class="width-80">@Masters.ExpairyDate</th>
+                            <th class="width-80">@Masters.ProfitRatio</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/Batch")
+<script type="text/javascript">
+    Batch.list();
+</script>

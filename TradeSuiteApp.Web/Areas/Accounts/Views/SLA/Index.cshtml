@@ -1,0 +1,357 @@
+﻿@model  TradeSuiteApp.Web.Areas.Accounts.Models.SLAViewModel
+@{
+    ViewBag.Title = Accounts.SLATitle;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Accounts.SLATitle</h1>
+            <span class="uk-text-upper uk-text-small">@Accounts.SLATitle</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Process", "<a class='md-btn sla-process'>" + Common.Process + "</a>")
+            @ActionAuthorization.IsAuthorized("PostAccounts", "<a class='md-btn sla-post'>" + Accounts.Post + "</a>")
+            
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="uk-grid">
+                    <div class="uk-width-1-1">
+                        <ul class="uk-tab" data-uk-tab="{connect:'#tabs-sla-content',animation:'slide-horizontal'}" id="tabs-sla">
+                            <li class="uk-active"><a>@Accounts.Values</a></li>
+                            <li><a>@Accounts.ToBePosted</a></li>
+                            <li><a>@Accounts.Posted</a></li>
+                            <li><a>@Accounts.Errors</a></li>
+                        </ul>
+                        <ul id="tabs-sla-content" class="uk-switcher uk-margin">
+                            <li>
+                                <table id="sla-values-items-list" class="uk-table" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="width-80">
+                                                @Common.SerialNo
+                                            </th>
+                                            <th  class="width-80">
+                                                @Common.Date
+                                            </th>
+                                            <th>
+                                                @Accounts.TransType
+                                            </th>
+                                            <th>
+                                                @Accounts.KeyValue
+                                            </th>
+                                            <th>
+                                                @Accounts.Amount
+                                            </th>
+                                            <th>
+                                                @Accounts.Event
+                                            </th>                                            
+                                            <th>
+                                                @Accounts.DocumentTable
+                                            </th>
+                                            <th>
+                                                @Accounts.DocumentNumber
+                                            </th>
+                                            <th>
+                                                @Accounts.Details
+                                            </th>                                           
+                                        </tr>
+                                    </thead>
+                                    <thead class="search">
+                                        <tr>
+                                            <th>
+                                                @Common.SerialNo
+                                            </th>
+                                            <th>
+                                                @Common.Date
+                                            </th>
+                                            <th>
+                                                @Accounts.TransType
+                                            </th>
+                                            <th>
+                                                @Accounts.KeyValue
+                                            </th>
+                                            <th>
+                                                @Accounts.Amount
+                                            </th>
+                                            <th>
+                                                @Accounts.Event
+                                            </th>                                            
+                                            <th>
+                                                @Accounts.DocumentTable
+                                            </th>
+                                            <th>
+                                                @Accounts.DocumentNumber
+                                            </th>
+                                            <th>
+                                                @Accounts.Details
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </li>
+                            <li>
+                                <table id="sla-to-be-posted-items-list" class="uk-table" >
+                                    <thead>
+                                        <tr>
+                                            <th class="width-40">
+                                                @Common.SerialNo
+                                            </th>
+                                            <th class="width-80">
+                                                @Common.Date
+                                            </th>
+                                            <th>
+                                                @Accounts.DebitAccount
+                                            </th>
+                                            <th>
+                                                @Accounts.DebitAccountName
+                                            </th>
+                                            <th>
+                                                @Accounts.CreditAccount
+                                            </th>
+                                            <th>
+                                                @Accounts.CreditAccountName
+                                            </th>
+                                            <th>
+                                                @Accounts.Amount
+                                            </th>
+                                            <th>
+                                                @Accounts.ItemName
+                                            </th>
+                                            <th>
+                                                @Accounts.SupplierName
+                                            </th>
+                                            <th>
+                                                @Accounts.DocumentTable
+                                            </th>
+                                            <th>
+                                                @Accounts.DocumentNumber
+                                            </th>
+                                            <th>
+                                                @Accounts.Details
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <thead class="search">
+                                        <tr>
+                                            <th>
+                                                @Common.SerialNo
+                                            </th>
+                                            <th>
+                                                @Common.Date
+                                            </th>
+                                            <th>
+                                                @Accounts.DebitAccount
+                                            </th>
+                                            <th>
+                                                @Accounts.DebitAccountName
+                                            </th>
+                                            <th>
+                                                @Accounts.CreditAccount
+                                            </th>
+                                            <th>
+                                                @Accounts.CreditAccountName
+                                            </th>
+                                            <th>
+                                                @Accounts.Amount
+                                            </th>
+                                            <th>
+                                                @Accounts.ItemName
+                                            </th>
+                                            <th>
+                                                @Accounts.SupplierName
+                                            </th>
+                                            <th>
+                                                @Accounts.DocumentTable
+                                            </th>
+                                            <th>
+                                                @Accounts.DocumentNumber
+                                            </th>
+                                            <th>
+                                                @Accounts.Details
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </li>
+                            <li>
+                                <table id="sla-posted-items-list" class="uk-table" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="width-40">
+                                                @Common.SerialNo
+                                            </th>
+                                            <th class="width-80">
+                                                @Common.Date
+                                            </th>
+                                            <th>
+                                                @Accounts.DebitAccount
+                                            </th>
+                                            <th>
+                                                @Accounts.DebitAccountName
+                                            </th>
+                                            <th>
+                                                @Accounts.CreditAccount
+                                            </th>
+                                            <th>
+                                                @Accounts.CreditAccountName
+                                            </th>
+                                            <th>
+                                                @Accounts.Amount
+                                            </th>
+                                            <th>
+                                                @Accounts.DocumentTable
+                                            </th>
+                                            <th>
+                                                @Accounts.DocumentNumber
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <thead class="search">
+                                        <tr>
+                                            <th>
+                                                @Common.SerialNo
+                                            </th>
+                                            <th>
+                                                @Common.Date
+                                            </th>
+                                            <th>
+                                                @Accounts.DebitAccount
+                                            </th>
+                                            <th>
+                                                @Accounts.DebitAccountName
+                                            </th>
+                                            <th>
+                                                @Accounts.CreditAccount
+                                            </th>
+                                            <th>
+                                                @Accounts.CreditAccountName
+                                            </th>
+                                            <th>
+                                                @Accounts.Amount
+                                            </th>
+                                            <th>
+                                                @Accounts.DocumentTable
+                                            </th>
+                                            <th>
+                                                @Accounts.DocumentNumber
+                                            </th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </li>
+                            <li>
+                                <table id="sla-error-items-list" class="uk-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="width-40">
+                                                @Common.SerialNo
+                                            </th>
+                                            <th class="width-80">
+                                                @Common.Date
+                                            </th>
+                                            <th>
+                                                @Accounts.TransType
+                                            </th>
+                                            <th>
+                                                @Accounts.KeyValue
+                                            </th>
+                                            <th>
+                                                @Accounts.Event
+                                            </th>
+                                            <th>
+                                                @Accounts.ItemName
+                                            </th>
+                                            <th>
+                                                @Accounts.SupplierName
+                                            </th>
+                                            <th>
+                                                @Accounts.Description
+                                            </th>
+                                            <th>
+                                                @Accounts.Remarks
+                                            </th>
+                                            <th>
+                                                @Accounts.DocumentTable
+                                            </th>
+                                            <th>
+                                                @Accounts.DocumentNumber
+                                            </th>
+                                            <th>
+                                                @Accounts.Details
+                                            </th>
+
+                                        </tr>
+                                    </thead>
+                                    <thead class="search">
+                                        <tr>
+                                            <th>
+                                                @Common.SerialNo
+                                            </th>
+                                            <th>
+                                                @Common.Date
+                                            </th>
+                                            <th>
+                                                @Accounts.TransType
+                                            </th>
+                                            <th>
+                                                @Accounts.KeyValue
+                                            </th>
+                                            <th>
+                                                @Accounts.Event
+                                            </th>
+                                            <th>
+                                                @Accounts.ItemName
+                                            </th>
+                                            <th>
+                                                @Accounts.SupplierName
+                                            </th>
+                                            <th>
+                                                @Accounts.Description
+                                            </th>
+                                            <th>
+                                                @Accounts.Remarks
+                                            </th>
+                                            <th>
+                                                @Accounts.DocumentTable
+                                            </th>
+                                            <th>
+                                                @Accounts.DocumentNumber
+                                            </th>
+                                            <th>
+                                                @Accounts.Details
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/SLA")
+<script type="text/javascript" >
+    SLA.list();    
+</script>

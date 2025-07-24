@@ -1,0 +1,19 @@
+  
+ALTER PROCEDURE [Purchase].[SpGetPurchaseInvoiceIDForPurchaseReturn]  
+(@SupplierID INT,  
+@FromDate datetime,  
+@ToDate datetime,  
+@FinYear INT,  
+@LocationID INT,  
+@ApplicationID INT)  
+AS  
+BEGIN  
+SET NOCOUNT ON  
+Begin   
+select PurchaseNo,PurchaseDate,NetAmount InvoiceTotal,ID,InvoiceNo from purchaseInvoice  
+where  SupplierID=@SupplierID  And LocationID=@LocationID and ApplicationID=@ApplicationID   
+AND IsDraft = 0  and Status='Approved'order by id desc  
+End  
+End  
+  
+  

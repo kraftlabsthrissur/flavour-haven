@@ -1,0 +1,97 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.SalesRepresentativeModel
+@{
+    ViewBag.Title = @Masters.CreateSalesRepresentatives;
+}
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.SalesRepresentatives</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.CreateSalesRepresentatives</span>
+        </div>
+        <div class="heading_actions">
+            @Html.ActionLink(Common.Close, "Index", "SalesRepresentative", new { Area = "Masters" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content">
+        <div id="page_content_inner">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-1-1">
+                    <div class="md-card">
+                        <div class="md-card-content">
+                            <h3 class="heading_a uk-margin-small-bottom">@Masters.SalesRepresentatives</h3>
+                            <div id="tA">
+                                @ShowTree(Model.SalesRepresentatives, 0)
+
+                                @*function for loop*@
+                                @helper  ShowTree(IEnumerable<TradeSuiteApp.Web.Areas.Masters.Models.SalesRepresentativeListModel> SalesRepresentatives, int level)
+                                {
+                                <ul>
+                                    @foreach (var SR in SalesRepresentatives.Where(a => a.ParentID == level))
+                                    {
+                                        <li>
+                                            @SR.FSOName (@SR.Designation)
+                                            <span class="uk-input-group-addon">
+                                                @if (SR.IsSubLevel == true)
+                                                {
+                                                    <button class="btnAdd" data-parent-id="@SR.ID" data-area-id="@SR.AreaID">+</button>
+                                                }
+                                                <button class="btnEdit" data-id="@SR.ID" data-fso="@SR.FSOName" data-area-id="@SR.AreaID" data-area="@SR.Area" data-designationid="@SR.DesignationID" data-sales-categoryid="@SR.SalesIncentiveCategoryID" data-is-sublevel="@SR.IsSubLevel" data-employeeid="@SR.EmployeeID" data-parent-id="@SR.ParentID" data-designation="@SR.Designation">
+                                                    <i class="uk-icon-pencil-square-o" aria-hidden="true"></i>
+                                                </button>
+                                                @if (SR.IsChild == false)
+                                                {
+                                                    <button class="btnCancel" data-id="@SR.ID"><i class="uk-icon-times" aria-hidden="true"></i></button>
+                                                }
+                                                @SR.FSOName (@SR.Designation)
+                                            </span>
+
+                                            @{
+                                                var children = Model.SalesRepresentatives.Where(e => e.ParentID == SR.ID);
+                                                if (children.Count() > 0)
+                                                {
+                                                    @ShowTree(children, SR.ID)
+                                                }
+                                            }
+                                        </li>
+                                                }
+                                </ul>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+@Html.Partial("~/Areas/Masters/Views/SalesRepresentative/PartialSalesRepresentative.cshtml")
+
+<link href="~/Assets/css/ui.fancytree.min.css" rel="stylesheet" />
+<script src="~/Assets/scripts/plugins/jquery-ui.min.js"></script>
+<script src="~/Assets/scripts/plugins/jquery.fancytree-all.min.js"></script>
+
+
+@Html.Partial("~/Areas/Masters/Views/Employee/PartialList.cshtml")
+@Scripts.Render("~/Js/Page/Employee")
+@Scripts.Render("~/Js/Page/SalesRepresentative")
+<script type="text/javascript">
+    SalesRepresentative.init();
+</script>
+
+
+
+
+
+
+

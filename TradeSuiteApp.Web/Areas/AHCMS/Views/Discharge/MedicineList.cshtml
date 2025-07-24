@@ -1,0 +1,20 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.DischargeModel
+
+
+@if (Model.MedicineList != null)
+{
+    foreach (var item in Model.MedicineList.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+            </td>
+            <td class="Treatment">@item.value.Medicine</td>
+            <td class="Therapist">@item.value.Qty</td>
+            <td class="TreatmentRoom">@item.value.Unit</td>
+            <td class="Instructions">@item.value.Instructions</td>
+        </tr>
+    }
+}
+
+

@@ -1,0 +1,15 @@
+﻿@model IEnumerable<TradeSuiteApp.Web.Areas.User.Models.SalesByLocationModel>
+@foreach (var item in Model)
+{
+    var dirClass = item.Amount < item.PreviousMonthAmount ? "down":"up";
+    var displayClass = item.Amount == 0 && item.PreviousMonthAmount == 0 ? "uk-hidden" : "";
+    <div class="sales  @dirClass @displayClass @item.LocationCode @item.LocationType">
+        <label>@item.LocationName</label>
+        <span>
+            <span data-previous-amount="@item.PreviousMonthAmount" data-amount="@item.Amount" class="amount mask-currency x-large">@(item.Amount / 100000)</span> L
+        </span>
+        <i class="mask-currency">@((item.Amount - item.PreviousMonthAmount) / 100000)</i>
+        <div class="uk-hidden">@item.Budget</div>
+    </div>
+}
+

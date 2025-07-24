@@ -1,0 +1,116 @@
+                  
+ALTER PROCEDURE [Master].[SpGetSaleableItemList](          
+@ItemCategoryID int,                    
+@SalesCategoryID int,                    
+@PriceListID int,                   
+@StoreID int,                   
+@BatchTypeID int,                   
+@FullOrLoose varchar(1),                    
+@CheckStock BIT,                    
+@CodeHint varchar(100),                    
+@NameHint varchar(100),                  
+@ItemCategoryHint varchar(100),                   
+@SalesCategoryHint varchar(100),         
+@PartsNoHint varchar(100),         
+@ModelHint varchar(100),         
+@RemarkHint varchar(100),         
+@SortField varchar(100),                    
+@SortOrder varchar(10),                   
+@Offset int = 0,                    
+@Limit int = 20,                   
+@FinYear int,                    
+@LocationID int,                    
+@ApplicationID int)                   
+AS BEGIN                      
+DECLARE                   
+@LocationHeadID int                    
+Declare @BasePriceListID int,@StateID int                    
+SELECT @LocationHeadID = LocationHeadID FROM Location WHERE ID = @LocationID                      
+SELECT @StateID =StateID from location where id=@LocationID                     
+Begin if @StateID=32                    
+begin                     
+  select @PriceListID=id from pricelist where name='ISK'                     
+end                   
+else                     
+begin                    
+  select @PriceListID=id from pricelist where name='ISK'                     
+end                    
+End              
+SET @BasePriceListID=dbo.FnGetBasePriceListID(@LocationID,@ApplicationID)            
+SET @ItemCategoryID=0            
+IF @ItemCategoryID = 0                    
+BEGIN                      
+SET @ItemCategoryID = NULL                    
+END                    
+--IF @ItemCategoryID <> 222                    
+--BEGIN                    
+SET @BatchTypeID = 0                    
+--END                    
+IF @SalesCategoryID = 0                    
+BEGIN                     
+SET @SalesCategoryID = NULL                    
+END                    
+IF @BatchTypeID = 0                   
+BEGIN                     
+SET @BatchTypeID = NULL                    
+END                        
+Set @Offset = @Offset + 1                    
+Declare @totalRecords int = 0;                    
+                  
+SELECT @totalRecords =  COUNT(*) FROM viSalesPartsNumberItem  V                     
+LEFT JOIN PriceListDetails PD on PD.ItemID = V.ID AND PD.PriceListID = @PriceListID AND PD.BasePriceListID = @BasePriceListID AND PD.LocationID = @LocationID                     
+LEFT JOIN ItemwiseCostHistory IC ON IC.ItemID = V.ID AND IC.IsActive = 1 AND IC.LocationHeadID = @LocationHeadID                   
+   Where(@CodeHint IS NULL OR  Code Like  ISNULL(@CodeHint,'')+ '%')                      
+   AND (@NameHint IS NULL OR Name Like '%' + ISNULL(@NameHint,'')+'%')                   
+   AND (@ItemCategoryHint IS NULL OR Category Like '%' + ISNULL(@ItemCategoryHint,'')+'%' )               
+   AND (@SalesCategoryHint IS NULL OR  SalesCategory Like  ISNULL(@SalesCategoryHint,'')+ '%')           
+   AND (@PartsNoHint IS NULL OR V.PartsNumber like '%' + @PartsNoHint+ '%')         
+   AND (@RemarkHint IS NULL OR V.SanskritName Like '%' + @RemarkHint+ '%')         
+   AND (@ModelHint IS NULL OR V.Model Like '%' + @ModelHint+ '%')         
+   AND V.CategoryID = ISNULL(@ItemCategoryID,V.CategoryID)                 
+   AND (V.SalesCategoryID IS NULL OR  V.SalesCategoryID = ISNULL(@SalesCategoryID,V.SalesCategoryID))                     
+   AND ((@CheckStock = 1 AND dbo.FnGetAvailableStock(V.ID,null,@BatchTypeID,@StoreID,@FinYear,@LocationID,@ApplicationID) > 0 ) OR (@CheckStock =  0))                    
+                   
+;WITH Item_CTE AS                  
+  (SELECT top 10000  Count(*) OVER (Partition by 1) AS recordsFiltered,    V.ID, Code, Name,V.PartsNumber,V.SanskritName Remark,V.Model,V.Make, Category, SalesCategory, SalesUnitID AS UnitID,                   
+  SalesUnit AS Unit,UnitID AS PrimaryUnitID,Unit AS PrimaryUnit,CGSTPercent, IGSTPercent, SGSTPercent, CessPercentage,VATPercentage,TaxType,TaxTypeID,                   
+  ConversionFactorPtoI,SalesCategoryID,MinSalesQtyFull,MinSalesQtyLoose,MaxSalesQtyFull,MaxSalesQtyLoose,(CASE @CheckStock  WHEN 0 THEN dbo.FnGetAvailableStock(V.ID,null,@BatchTypeID,@StoreID,@FinYear,@LocationID,@ApplicationID)                      
+   ELSE dbo.FnGetAvailableStock(V.ID,null,@BatchTypeID,@StoreID,@FinYear,@LocationID,@ApplicationID) END)Stock,ISNULL(PD.MRP, ISNULL(IC.TransferPrice,0.0)) AS Rate,                  
+  @PriceListID Pricelistid,@BatchTypeID BatchTypeID,@StoreID StoreID,                     
+  ISNULL(PD.LoosePrice, (ISNULL(IC.TransferPrice,0.0) * dbo.FnConvertUnit(V.ID,0,V.UnitID,V.SalesUnitID) )) LooseRate ,                     
+  ROW_NUMBER() OVER ( ORDER BY  CASE WHEN V.Name  = ISNULL(@NameHint,'') THEN 1 WHEN V.NAME LIKE ISNULL(@NameHint,'')+'%' THEN 2 ELSE 3 END ASC,                   
+  case when @SortField+@SortOrder = 'NameASC' then Name End ASC,                      
+   case when @SortField+@SortOrder = 'NameDESC' then Name End DESC,              
+   case when @SortField+@SortOrder = 'ItemCategoryASC' then Category End ASC,                   
+   case when @SortField+@SortOrder = 'ItemCategoryDESC' then Category End DESC,                    
+   case when @SortField+@SortOrder = 'SalesCategoryASC' then SalesCategory End ASC,                   
+   case when @SortField+@SortOrder = 'SalesCategoryDESC' then SalesCategory End DESC,                  
+   case when @SortField+@SortOrder = 'RateASC' then PD.MRP End ASC,                      
+   case when @SortField+@SortOrder = 'RateDESC' then PD.MRP End DESC,                     
+   case when @SortField+@SortOrder = 'CodeASC' then Code End ASC,                     
+   case when @SortField+@SortOrder = 'CodeDESC' then Code End DESC,        
+   case when @SortField+@SortOrder = 'PartsNumberASC' then V.PartsNumber End ASC,              
+   case when @SortField+@SortOrder = 'PartsNumberESC' then V.PartsNumber End DESC,        
+   case when @SortField+@SortOrder = 'RemarkASC' then V.SanskritName End ASC,              
+   case when @SortField+@SortOrder = 'RemarkESC' then V.SanskritName End DESC,        
+   case when @SortField+@SortOrder = 'ModelASC' then V.Model End ASC,              
+   case when @SortField+@SortOrder = 'ModelDESC' then V.Model End DESC) AS RowNum                     
+   FROM viSalesPartsNumberItem V WITH (NOLOCK)                     
+   LEFT JOIN PriceListDetails PD WITH (NOLOCK) on PD.ItemID = V.ID AND PD.PriceListID = @PriceListID AND PD.BasePriceListID = @BasePriceListID AND PD.LocationID = @LocationID                     
+   LEFT JOIN ItemwiseCostHistory IC ON IC.ItemID = V.ID AND IC.IsActive = 1  AND IC.LocationHeadID = @LocationHeadID                     
+   Where(@CodeHint IS NULL OR  Code Like  ISNULL(@CodeHint,'')+ '%')                      
+   AND (@NameHint IS NULL OR Name Like '%' + ISNULL(@NameHint,'')+'%')                   
+   AND (@ItemCategoryHint IS NULL OR Category Like '%' + ISNULL(@ItemCategoryHint,'')+'%' )               
+   AND (@SalesCategoryHint IS NULL OR  SalesCategory Like  ISNULL(@SalesCategoryHint,'')+ '%')           
+   AND (@PartsNoHint IS NULL OR V.PartsNumber like '%' + @PartsNoHint+ '%')         
+   AND (@RemarkHint IS NULL OR V.SanskritName Like '%' + @RemarkHint+ '%')         
+   AND (@ModelHint IS NULL OR V.Model Like '%' + @ModelHint+ '%')         
+   AND V.CategoryID = ISNULL(@ItemCategoryID,V.CategoryID)                 
+   AND (V.SalesCategoryID IS NULL OR  V.SalesCategoryID = ISNULL(@SalesCategoryID,V.SalesCategoryID))                     
+   AND ((@CheckStock = 1 AND dbo.FnGetAvailableStock(V.ID,null,@BatchTypeID,@StoreID,@FinYear,@LocationID,@ApplicationID) > 0 ) OR (@CheckStock =  0))     
+   )                     
+   SELECT ID, Code, Name,PartsNumber,Remark,Make,Model, Category, SalesCategory,UnitID,SalesCategoryID, Unit, CGSTPercent, IGSTPercent, SGSTPercent,VATPercentage,TaxTypeID,TaxType,CessPercentage,                  
+   PrimaryUnitID, PrimaryUnit, ISNULL((SELECT STRING_AGG(Name+'|'+CAST(PackSize AS varchar(10)), ',') FROM SecondaryUnit su where su.UnitID=Item_CTE.UnitID),'')SecondaryUnits,    
+   ConversionFactorPtoI, recordsFiltered, @totalRecords AS totalRecords,Rate,Stock,LooseRate,MinSalesQtyFull,MinSalesQtyLoose,MaxSalesQtyFull,MaxSalesQtyLoose, dbo.GetItemStoreLocations(Item_CTE.ID) as ItemStoreLocations               
+   FROM Item_CTE  WHERE RowNum >= @Offset  AND RowNum   < @Offset + @Limit                     
+End 

@@ -1,0 +1,116 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.CustomerReturnVoucherModel
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-1-10">
+                <label>@Accounts.TransNo</label>
+                @Html.TextBoxFor(model => model.VoucherNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Accounts.TransDate</label>
+                @Html.TextBoxFor(model => model.VoucherDate, new { @class = "md-input label-fixed", @disabled = "disabled" })
+            </div>
+            @Html.HiddenFor(Model => Model.ID)
+            <div class="uk-width-medium-1-10">
+                <label for="uk_dp_start">@Sales.CustomerCategory</label>
+                @Html.DropDownListFor(model => model.CustomerCategoryID, Model.CustomerCategoryList, "Select", new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-autocomplete " id="customer-autocomplete">
+                    <div class="uk-input-group">
+                        <label>@Sales.CustomerName<span>*</span></label>
+                        @Html.TextBoxFor(model => model.CustomerName, new { @class = "md-input label-fixed" })
+                        <span class="uk-input-group-addon">
+                            <a data-uk-modal="{target:'#select-customer',center:false}">
+                                <i class="uk-input-group-icon uk-icon-search"></i>
+                            </a>
+                        </span>
+                        <script type="text/autocomplete">
+                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                {{~items}}
+                                <li data-value="{{ $item.Name }}"
+                                    data-id="{{$item.ID}}"
+                                    data-code="{{$item.Code}}"
+                                    data-location="{{$item.Location}}"
+                                    data-state-id="{{$item.StateID}}"
+                                    data-price-list-id="{{$item.PriceListID}}"
+                                    data-isblocked-for-cheque-receipt="{{$item.IsBlockedForChequeReceipt}}"
+                                    data-is-gst-registered="{{$item.IsGSTRegistered}}">
+                                    <a>
+                                        {{ $item.Name }} ({{{ $item.Code }}})
+                                        <div>{{{ $item.Location }}}</div>
+                                    </a>
+                                </li>
+                                {{/items}}
+                            </ul>
+                        </script>
+                    </div>
+                </div>
+
+            </div>
+
+            @Html.HiddenFor(Model => Model.CustomerID)
+            <div class="uk-width-medium-1-10">
+                <label>@Accounts.Amount<span>*</span></label>
+                @Html.TextBoxFor(model => model.Amount, new { @class = "md-input label-fixed mask-positive-currency" })
+            </div>
+            <div class="uk-width-medium-2-10">
+                <label>Customer Bank Name/ Remarks</label>
+                @Html.TextBoxFor(model => model.Remarks, new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="md-input-wrapper md-input-filled">
+                    <label>&nbsp;</label>
+                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddItem">@Common.Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-1-10">
+                <label>@Accounts.ModeOfPayment<span>*</span></label>
+                @Html.DropDownListFor(Model => Model.PaymentTypeID, Model.PaymentTypeList, "Select", new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-2-10">
+                <label for="uk_dp_start">@Accounts.BankName<span>*</span></label>
+                @Html.DropDownListFor(Model => Model.BankID, Model.BankList, "Select", new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-2-10">
+                <label>@Accounts.ReferenceNumber</label>
+                @Html.TextBoxFor(Model => Model.BankReferenceNumber, new { @class = "md-input label-fixed" })
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <table id="customer-return-list" class="uk-table" cellspacing="0">
+        <thead>
+            <tr>
+                <th class="width-20">@Common.SerialNo</th>
+                <th class="width-60">@Accounts.Customer</th>
+                <th class="width-60">@Accounts.Amount</th>
+                <th class="width-60">@Accounts.Remarks</th>
+                <th class="width-10"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Items != null)
+            {
+                foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                {
+                    <tr>
+                        <td class="uk-text-center">@item.i</td>
+                        <td class="uk-text-center CustomerName">@item.value.CustomerName</td>
+                        <td class="Amount mask-currency">@item.value.Amount</td>
+                        <td class="uk-text-center Remarks">@item.value.Remarks</td>
+                        <td class="uk-text-center"><a class="remove-item"><i class="uk-icon-remove"></i></a></td>
+                    </tr>;
+                }
+            }
+        </tbody>
+
+    </table>
+    <input type="hidden" id="item-count" value="@Model.Items.Count" />
+</div>
+@Html.Partial("~/Areas/Masters/Views/Customer/PartialList.cshtml")

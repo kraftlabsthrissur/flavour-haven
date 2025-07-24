@@ -1,0 +1,150 @@
+﻿@model TradeSuiteApp.Web.Areas.Manufacturing.Models.ProductionScheduleViewModel
+
+@{
+    ViewBag.Title = "ProductionScheduleDetails";
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Manufacturing.ProductionSchedule</h1>
+            <span class="uk-text-upper uk-text-small">@Manufacturing.ProductionScheduleDetails</span>
+        </div>
+        <div class="heading_actions">
+            @if (Model.IsDraft && !Model.IsCancelled)
+            {
+                @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "Edit", "ProductionSchedule", new { Area = "Manufacturing", id = Model.ID }, new { @class = "md-btn edit" }))
+                @ActionAuthorization.IsAuthorized("Cancel", "<a class='md-btn cancel'>" + Common.Cancel + "</a>")
+
+            }
+            @Html.ActionLink(Common.Back, "Index", "ProductionSchedule", new { Area = "Manufacturing" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.HiddenFor(m => m.ID)
+    <div id="page_content_inner" class="details-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.TransNo</label>
+                                            @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label for="uk_dp_start">@Manufacturing.TransDate</label>
+                                            @Html.TextBoxFor(m => m.TransDateStr, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Manufacturing.ProductionGroup</label>
+                                            @Html.TextBoxFor(m => m.ProductionGroupName, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Manufacturing.Machine</label>
+                                            @Html.TextBoxFor(m => m.Machine, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Manufacturing.MouldName</label>
+                                            @Html.TextBoxFor(m => m.MouldName, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.ProcessName</label>
+                                            @Html.TextBoxFor(m => m.Process, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.StartDate</label>
+                                            @Html.TextBoxFor(m => m.ProductionStartDateStr, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.StartTime</label>
+                                            @Html.TextBoxFor(m => m.StartTime, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.EndDate</label>
+                                            @Html.TextBoxFor(m => m.EndDate, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.EndTime</label>
+                                            @Html.TextBoxFor(m => m.EndTime, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 ">
+                                            <label class="stdbatchsize" for="uk_dp_start">@Manufacturing.StandardBatchSize</label>
+                                            @Html.TextBoxFor(model => model.StandardBatchSize, new { @class = "md-input label-fixed mask-production-qty stdbatchsize", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Manufacturing.Batchsize</label>
+                                            @Html.TextBoxFor(m => m.ActualBatchSize, new { @class = "md-input mask-production-qty", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-group">
+                    <table id="production-schedule-item-list" class="uk-table" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="width-10">@Common.SerialNo</th>
+                                <th class="width-250">@Manufacturing.ItemName</th>
+                                <th class="width-40">@Manufacturing.Unit</th>
+                                <th class="width-100">@Manufacturing.StandardQtyForStdBatch</th>
+                                <th class="width-80">@Manufacturing.RequiredQuantity</th>
+                                <th class="width-80">@Manufacturing.RequiredDate</th>
+                                <th class="width-200">@Manufacturing.Remarks</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Items != null)
+                            {
+                                foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                                {
+                                    <tr>
+                                        <td class="uk-text-center">
+                                            @item.i
+                                            <input type="hidden" class="ItemID" readonly="readonly" value="@item.value.ID" />
+                                        </td>
+                                        <td> @item.value.ItemName</td>
+                                        <td> @item.value.Unit </td>
+                                        <td class="mask-production-qty">
+                                            @item.value.YogamQty
+                                        </td>
+                                        <td class="mask-production-qty"> @item.value.RequiredQty </td>
+                                        <td> @item.value.RequiredDateStr </td>
+                                        <td> @item.value.Remarks </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/ProductionSchedule")
+<script type="text/javascript">
+    production_schedule.details();
+</script>
+

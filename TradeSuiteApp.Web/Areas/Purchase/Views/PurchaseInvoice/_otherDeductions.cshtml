@@ -1,0 +1,107 @@
+﻿@*@model List<TradeSuiteApp.Web.Areas.Purchase.Models.PurchaseOrderOtherDeductionViewModel>*@
+@model dynamic
+@{
+    bool isEdit = true;
+    if (Model==null || Model.GetType() == new List<TradeSuiteApp.Web.Areas.Purchase.Models.PurchaseOrderOtherDeductionViewModel>().GetType())
+    {
+        isEdit = false;
+    }
+}
+
+@if (!isEdit)
+{
+    var createModel =Model!=null? (List<TradeSuiteApp.Web.Areas.Purchase.Models.PurchaseOrderOtherDeductionViewModel>)Model:null;
+<table id="tbl-other-charges" class="uk-table" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th class="width-10">@Common.SerialNo</th>
+            <th class="width-80">@Purchase.Particulars</th>
+            <th class="width-80">@Purchase.PONumber</th>
+            <th class="width-100">@Purchase.POValue</th>
+            <th class="width-100">@Purchase.InvoiceValue</th>
+            <th class="width-40">@Purchase.Difference</th>
+            <th class="width-250">@Purchase.Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (createModel != null && createModel.Count > 0)
+        {
+            int rowNo = 1;
+            //foreach (var otherDeduction in Model.Select((value, i) => new { i = i + 1, value }))
+            foreach (var otherDeduction in createModel)
+            {
+                <tr>
+                    <input type="hidden" class="hdnPurchaseOrderID" value="@otherDeduction.PurchaseOrderID" />
+                    <td class="uk-text-center">@(rowNo++)</td>
+                    <td class="deductionName">@Purchase.Freight</td>
+                    <td class="">@otherDeduction.PurchaseOrderNumber</td>
+                    <td class="uk-text-right freightPOValue deductionPOValue mask-currency">@otherDeduction.Freight</td>
+                    <td class="uk-text-right"><input type="text" class="md-input label-fixed txtFreightInvoiceValue txtDeductionInvoiceValue mask-currency" /></td>
+                    <td class="uk-text-right freightDiff deductionDiffValue mask-currency">-@otherDeduction.Freight</td>
+                    <td><input type="text" class="md-input label-fixed label-fixed txtFreightRemarks txtDeductionRemarks" /></td>
+                </tr>
+                <tr>
+                    <input type="hidden" class="hdnPurchaseOrderID" value="@otherDeduction.PurchaseOrderID" />
+                    <td class="uk-text-center">@(rowNo++)</td>
+                    <td class="deductionName">@Purchase.OtherDeductions</td>
+                    <td class="">@otherDeduction.PurchaseOrderNumber</td>
+                    <td class="uk-text-right otherChargePOValue deductionPOValue mask-currency">@otherDeduction.OtherCharge</td>
+                    <td class="uk-text-right"><input type="text" class="md-input label-fixed txtOtherChargeInvoiceValue txtDeductionInvoiceValue mask-currency" /></td>
+                    <td class="uk-text-right otherChargeDiff deductionDiffValue mask-currency">-@otherDeduction.OtherCharge</td>
+                    <td><input type="text" class="md-input label-fixed txtOtherDeductionRemarks txtDeductionRemarks" /></td>
+                </tr>
+                <tr>
+                    <input type="hidden" class="hdnPurchaseOrderID" value="@otherDeduction.PurchaseOrderID" />
+                    <td class="uk-text-center">@(rowNo++)</td>
+                    <td class="deductionName">@Purchase.PackingCharges</td>
+                    <td class="">@otherDeduction.PurchaseOrderNumber</td>
+                    <td class="uk-text-right packingChargePOValue deductionPOValue mask-currency">@otherDeduction.PackingCharge</td>
+                    <td class="uk-text-right"><input type="text" class="md-input label-fixed txtPackingChargeInvoiceValue txtDeductionInvoiceValue mask-currency" /></td>
+                    <td class="uk-text-right packingChargeDiff deductionDiffValue mask-currency">-@otherDeduction.PackingCharge</td>
+                    <td><input type="text" class="md-input label-fixed label-fixed txtPackingChargeRemarks txtDeductionRemarks" /></td>
+                </tr>
+            }
+        }
+        
+    </tbody>
+</table>
+}
+else
+{
+    var editModel = (List<BusinessObject.PurchaseInvoiceOtherChargeDetailBO>)Model;
+    <table id="tbl-other-charges" class="uk-table" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th class="width-10">@Common.SerialNo</th>
+                <th class="width-80">@Purchase.Particulars</th>
+                <th class="width-80">@Purchase.PONumber</th>
+                <th class="width-100">@Purchase.POValue</th>
+                <th class="width-100">@Purchase.InvoiceValue</th>
+                <th class="width-40">@Purchase.Difference</th>
+                <th class="width-250">@Purchase.Remarks</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (editModel != null && editModel.Count > 0)
+            {
+                int rowNo = 1;
+                //foreach (var otherDeduction in Model.Select((value, i) => new { i = i + 1, value }))
+                foreach (var otherDeduction in editModel)
+                {
+                    <tr>
+                        <input type="hidden" class="hdnPurchaseOrderID" value="@otherDeduction.PurchaseOrderID" />
+                        <input type="hidden" class="hdnID" value="@otherDeduction.Id" />
+                        <td class="uk-text-center">@(rowNo++)</td>
+                        <td class="deductionName">@otherDeduction.Particular</td>
+                        <td class="">@otherDeduction.PurchaseOrderNumber</td>
+                        <td class="uk-text-right freightPOValue deductionPOValue mask-currency">@otherDeduction.POValue</td>
+                        <td class="uk-text-right">@otherDeduction.InvoiceValue</td>
+                        <td class="uk-text-right freightDiff deductionDiffValue mask-currency">@otherDeduction.DifferenceValue</td>
+                        <td>@otherDeduction.Remarks</td>
+                    </tr>
+                }
+            }
+           
+        </tbody>
+    </table>
+}

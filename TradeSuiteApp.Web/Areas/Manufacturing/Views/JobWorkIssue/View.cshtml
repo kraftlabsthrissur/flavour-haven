@@ -1,0 +1,66 @@
+﻿@model TradeSuiteApp.Web.Areas.Manufacturing.Models.JobWorkIssueViewModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Manufacturing.IssueNo</label>
+                            @Html.HiddenFor(m => m.ID)
+                            @Html.TextBoxFor(model => model.IssueNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Manufacturing.IssueDate</label>
+                            @Html.TextBoxFor(model => model.IssueDate, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label for="uk_dp_start">@Manufacturing.SupplierName</label>
+                            @Html.TextBoxFor(model => model.Supplier, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Manufacturing.Store</label>
+                            @Html.DropDownListFor(Model => Model.WarehouseID, Model.WarehouseList, "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section-group">
+        <br />
+            <div class="uk-grid">
+                <div class="uk-width-1-1">
+                    <div class="tablescroll">
+                        <table id="Job-Work-issue-items-list" class="uk-table" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>@Common.SerialNo</th>
+                                    <th>@Manufacturing.IssueItemName</th>
+                                    <th>@Manufacturing.Unit</th>
+                                    <th>@Manufacturing.IssuedQty</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td class="uk-text-center">@(1 + @Model.Items.IndexOf(item))</td>
+                                        <td>@item.IssueItemName</td>
+                                        <td>@item.IssueUnit</td>
+                                        <td>@item.IssueQty</td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+   
+

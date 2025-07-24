@@ -1,0 +1,78 @@
+﻿@model  List<TradeSuiteApp.Web.Areas.Manufacturing.Models.ProductionIssueMaterialItemModel>
+@{
+    var tempSequence = 0;
+    var increment = 0;
+    //var QC = 0;
+}
+@foreach (var item in Model.Select((value, i) => new { i = (i + 1), value }))
+{
+    //if (item.value.IsQcRequired )
+    //{ QC = 1; }
+    var IsAdditionalIssue = (item.value.IsAdditionalIssue == false) ? 0 : 1;
+    var IsPositiveIssueQty = ((item.value.IsAdditionalIssue == true) || (item.value.StandardQty > 0)) ? 1 : 0;
+    var IsSubProduct = (item.value.IsSubProduct == false) ? 0 : 1;
+    if (item.value.ProductionSequence != tempSequence)
+    {
+        tempSequence = item.value.ProductionSequence;
+        increment = 0;
+    }
+    increment++;
+    <tr data-production-sequence="@item.value.ProductionSequence">
+        <td>
+            @increment
+        </td>
+        <td data-md-icheck>
+
+            <input type="checkbox" class="fill" data-md-icheck @(item.value.IssueQty != 0 ? "disabled" : "") />
+        </td>
+        <td>
+            @item.value.RawMaterialName
+            <input type="hidden" class="hdnMaterialID" value="@item.value.RawMaterialId" />
+            <input type="hidden" class="hdnMaterialProductionIssueID" value="@item.value.MaterialProductionIssueID" />
+            <input type="hidden" class="ProductDefinitionTransID" value="@item.value.ProductDefinitionTransID" />
+            <input type="hidden" class="ProductionSequence" value="@item.value.ProductionSequence" />
+            <input type="hidden" class="stock" value="@(item.value.Stock + item.value.IssueQty)" />
+            <input type="hidden" class="StoreID" value="@ViewBag.DefaultWareHouseID" />
+            <input type="hidden" class="UnitID" value="@item.value.RawMaterialUnitID" />
+            <input type="hidden" class="IsAdditionalIssue" value=@IsAdditionalIssue />
+            <input type="hidden" class="IsPositiveIssueQty" value=@IsPositiveIssueQty />
+            <input type="hidden" class="BatchTypeID" value=@item.value.BatchTypeID />
+            <input type="hidden" class="ActualOutPutForStdBatch  mask-production-qty" value=@item.value.ActualOutPutForStdBatch />
+            <input type="hidden" class="Category" value="@item.value.Category" />
+            <input type="hidden" class="IsSubProduct" value=@IsSubProduct />
+            @*<input type="hidden" class="IsQcRequired" value="@QC" />*@
+
+        </td>
+        <td>
+            @item.value.UOM
+        </td>
+        <td>
+            <input type="text" class="md-input mask-production-qty txtStdQtyStdBatch" value="@item.value.StandardQty" readonly="readonly" />
+        </td>
+        <td>
+            <input type="text" class="md-input mask-production-qty txtStdQtyActualBatch" value="@item.value.ActualQty" readonly="readonly" />
+        </td>
+        <td class="mask-production-qty">
+            @item.value.Stock
+        </td>
+        <td>
+            <input type="text" class="md-input mask-production-qty txtIssuedQty" value="@item.value.IssueQty" @(item.value.IssueQty != 0 ? "readonly" : "") />
+        </td>
+        <td>
+            <input type="text" class="md-input mask-production-qty  txtVariance" value="@item.value.Variance" readonly />
+        </td>
+        <td>
+            <div class="uk-input-group">
+                <input type="text" class="md-input label-fixed past-date date txtIssueDate" name="txtIssueDate" readonly value="@item.value.IssueDateStr" />
+            </div>
+        </td>
+        <td>
+            <input type="text" class="md-input uk-text txtRemarks" value="@item.value.Remarks" />
+        </td>
+        <td>
+            <div class="uk-input-group  @(item.value.IssueQty == 0 || item.value.ActualQty == 0 ? "uk-hidden":"") ">
+                <button class="btnOpenMaterialQtyMaintenance @(item.value.IssueQty >= item.value.ActualQty ? "" : "editable")" value="@item.value.RawMaterialId" name="@item.value.RawMaterialName" uom="@item.value.UOM">+</button>
+            </div>
+        </td>
+    </tr>
+}

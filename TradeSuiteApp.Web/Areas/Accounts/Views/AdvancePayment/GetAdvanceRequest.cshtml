@@ -1,0 +1,37 @@
+﻿@model List<TradeSuiteApp.Web.Areas.Accounts.Models.AdvancePaymentAdvanceRequestTransModel>
+@{
+    Layout = null;
+}
+@if (Model != null)
+{
+    foreach (var itm in Model.Select((value, i) => new { i = (i + 1), value }))
+    {
+
+        <tr>
+            <td class="uk-text-center">@itm.i</td>
+            <td class="transNo">
+                @itm.value.AdvanceRequestNo <input type="hidden" class="hdnPOID" value="@itm.value.ID" />
+                <input type="hidden" class="hdnItemID" value="@itm.value.ItemID" />
+            </td>
+            <td class="podate">@itm.value.AdvanceRequestDateStr</td>
+
+            <td class="poTerms"></td>
+            <td class="poAdvance mask-positive-currency uk-text-right">@itm.value.Advance</td>
+            <td>@itm.value.ItemName</td>
+            <td>
+                <input type="text" class="md-input uk-text-right txtAmount mask-positive-currency" value=@itm.value.Amount />
+                <input type="hidden" class="md-input uk-text-right request-amount mask-qty" value=@itm.value.Amount />
+            </td>
+            <td>
+                @*<input type="text" class="md-input txtTDSCode" />*@
+                @*@Html.DropDownList("ddlTDSCode", new SelectList(ViewBag.TDSCodes, "Text", "Value"), "Select", new { @class = "md-input label-fixed ddlTDSCode" })*@
+            </td>
+            <td><input type="text" class="md-input uk-text-right txtTDSAmount mask-qty " readonly value="0" /></td>
+            <td><input type="text" class="md-input uk-text-right txtNetAmount mask-qty " readonly  value =@itm.value.Amount/></td>
+
+            <td><input type="text" class="md-input txtRemarks" /></td>
+        </tr>
+
+    }
+}
+

@@ -1,0 +1,27 @@
+  
+  
+  
+ALTER view [dbo].[viPurchaseOrder] AS  
+
+Select DISTINCT  P.ID, PurchaseOrderNo, PurchaseOrderNo TransNo, PurchaseOrderDate TransDate,P.ItemCategory AS CategoryName,  
+ isnull(P.Item,(select top 1 PT.ItemName FROM PurchaseOrderTrans PT WHERE PT.PurchaseOrderID=P.ID) ) AS ItemName,
+ P.AccountsCategory, S.Name SupplierName, NetAmt,P.ItemCategoryID,P.AccountsCategoryID AS ItemAccountsCategoryID,  
+ Case When P.IsSuspended=1 Then'Suspended'    When P.OrderMet=1 Then 'Processed' Else P.Status  End   as Status, E.DepartmentID AS DepartmentID,  
+ CASE WHEN S.SupplierCategoryID = 9 THEN 9 ELSE 0 END AS SupplierCategoryID,   
+ CASE WHEN S.SupplierAccountsCategoryID = 3 THEN 3 ELSE 0 END AS SupplierAccountsCategoryID,  
+ P.IsDraft, P.OrderMet IsProcessed,  P.IsApproved, P.IsSuspended, P.Cancelled IsCancelled,  
+ CASE   
+  WHEN (SELECT COUNT(*) * SUM(QtyMet) FROM PurchaseOrderTrans POT WHERE PurchaseOrderID = P.ID AND QtyMet < Quantity) <> 0   
+  THEN 1  
+  ELSE 0  
+ END AS IsPartiallyProcessed,  
+ P.FinYear, P.LocationID, P.ApplicationID, P.CreatedUserID,  
+ Case When ISNULL(P.PRFromDepartmentID,0)=0 Then E.DepartmentID Else P.PRFromDepartmentID End As CreatedDepartmentID,  
+ Case When ISNULL(P.PRToDepartmentID,0)=0 Then E.DepartmentID Else P.PRToDepartmentID End As ToDepartmentID    
+ from PurchaseOrder P   
+ --INNER JOIN PurchaseOrderTrans PT on PT.PurchaseOrderID = P.ID  
+ INNER JOIN Supplier S ON S.ID = P.SupplierID  
+ INNER JOIN Employee E on E.UserID=P.CreatedUserID  
+
+
+  

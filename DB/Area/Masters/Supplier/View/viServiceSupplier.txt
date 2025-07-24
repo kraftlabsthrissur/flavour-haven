@@ -1,0 +1,22 @@
+    
+    
+ALTER view [dbo].[viServiceSupplier] AS        
+        
+Select Distinct S.ID,S.Code,S.Name         
+,BA.Place AS BillingPlace,BS.ID AS StateID        
+,IsGSTRegistered,S.GSTNo,CreditDays,OldSupplierCode,      
+ SupplierItemCategory AS ItemCategory, SC.Name AS SupplierCategory ,SLM.LocationID,    
+ CASE WHEN IsGSTRegistered = 1 THEN 'Yes' ELSE 'No' END AS GSTRegistered ,IsNULL(L.ID,0) as InterCompanyLocationID,    
+ ISNULL(BA.Email,'') Email,s.CurrencyID,  
+Cu.Name CurrencyName,Cu.Code CurrencyCode,Cu.CurrencyPrefix,ISNULL(Cu.DecimalPlaces,2)DecimalPlaces,BA.LandLine1,BA.LandLine2,BA.MobileNo     
+From Supplier S WITH(NOLOCK)        
+Inner join Addresses BA WITH(NOLOCK) on BA.PartyID = S.ID and BA.PartyType = 'Supplier' and BA.IsDefault = 1 and BA.IsBilling = 1         
+Inner join State BS WITH(NOLOCK) on BS.ID = BA.StateID        
+INNER JOIN SupplierCategory SC ON SupplierCategoryID = SC.ID        
+INNER JOIN SupplierLocationMapping SLM ON S.ID = SLM.SupplierID      
+LEFT JOIN Location L ON L.supplierID=S.ID    
+left join Currency Cu on Cu.ID = S.CurrencyID   
+where S.IsDeactivated = 0 and S.IsBlockForPurchase = 0 AND S.IsServiceSupplier = 1 AND S.IsActiveSupplier=1    
+    
+    
+    

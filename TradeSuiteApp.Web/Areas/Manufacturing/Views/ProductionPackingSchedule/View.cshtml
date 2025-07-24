@@ -1,0 +1,150 @@
+﻿@model  TradeSuiteApp.Web.Areas.Manufacturing.Models.ProductionPackingScheduleModel
+@{
+    ViewBag.Title = "View";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-1-10">
+                <label>@Manufacturing.TransNo</label>
+                @Html.TextBoxFor(model => model.TransNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Manufacturing.TransDate</label>
+                @Html.TextBoxFor(model => model.Date, new { @class = "md-input label-fixed", @disabled = "disabled" })
+            </div>
+
+            <div class="uk-width-medium-2-10">
+                <label for="uk_dp_start">@Manufacturing.ItemName</label>
+                @Html.TextBoxFor(model => model.ItemName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label for="uk_dp_start">@Manufacturing.UOM</label>
+                @Html.TextBoxFor(model => model.UOM, new { @class = "md-input label-fixed", @disabled = "disabled" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label for="uk_dp_start">@Manufacturing.BatchNo</label>
+
+                @Html.TextBoxFor(Model => Model.BatchNo, new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                @Html.HiddenFor(Model => Model.BatchID)
+            </div>
+
+            <div class="uk-width-medium-1-10">
+                <label for="uk_dp_start">@Manufacturing.PackedQty</label>
+                @Html.TextBoxFor(model => model.PackedQty, new { @class = "md-input label-fixed mask-production-qty", @disabled = "disabled" })
+            </div>
+            <div class="uk-width-medium-1-10" id="select_batch_type">
+                <label for="uk_dp_start">@Manufacturing.BatchType</label>
+                @Html.TextBoxFor(model => model.BatchType, new { @class = "md-input label-fixed", @disabled = "disabled" })
+            </div>
+            <input type="hidden" value="@Model.ID" id="ID" />
+        </div>
+    </div>
+
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+
+
+            <div class="uk-width-medium-1-10">
+                <div class="uk-input-group">
+                    <label>@Masters.StartDate <span>*</span></label>
+                    @Html.TextBoxFor(m => m.StartDate, new { @class = "md-input label-fixed  date future-date", @disabled = "disabled" })
+                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <label>@Manufacturing.Remarks</label>
+                @Html.TextBoxFor(model => model.Remarks, new { @class = "md-input label-fixed", @disabled = "disabled" })
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-1-1">
+                <table id="production-packing-material-list" class="uk-table" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="width-20">
+                                @Common.SerialNo
+                            </th>
+                            <th class="width-40">
+                                @Manufacturing.ItemCode
+                            </th>
+                            <th class="width-200">
+                                @Manufacturing.ItemName
+                            </th>
+                            <th class="width-10">
+                                @Manufacturing.UOM
+                            </th>
+                            <th class="width-40 BatchType">
+                                @Manufacturing.BatchType
+                            </th>
+                            <th class="width-60">
+                                @Manufacturing.AvailableStock
+                            </th>
+                            <th class="width-80">
+                                @Manufacturing.StandardQtyForStdBatch
+                            </th>
+                            <th class="width-80">
+                                @Manufacturing.ActualQtyForActualBatch
+                            </th>
+                            <th class="width-60">
+                                @Manufacturing.IssuedQty
+                            </th>
+                            <th class="width-40">
+                                @Manufacturing.Remarks
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @if (Model.Materials != null)
+                        {
+                        foreach (var item in Model.Materials)
+                        {
+
+                        var IsAdditionalIssue = item.IsAdditionalIssue == true ? 1 : 0;
+                        var IsMaterialReturn = item.IsMaterialReturn == true ? 1 : 0;
+
+                        <tr class="@(item.IsDraft ? "new":"saved")">
+                            <td>
+                                @(1 + @Model.Materials.IndexOf(item) )
+                            </td>
+                            <td>@item.ItemCode</td>
+                            <td>@item.ItemName</td>
+                            <td>@item.UOM</td>
+                            <td class="BatchType batch_type">
+                                @item.BatchType
+                            </td>
+                            <td class="mask-production-qty Stock">@item.AvailableStock</td>
+                            <td class="mask-production-qty StandardQty">@item.StandardQty</td>
+                            <td class="mask-production-qty ActualQty">@item.ActualQty</td>
+                            @if (IsAdditionalIssue == 1 || IsMaterialReturn == 1)
+                            {
+                                <td>
+                                    <input type="text" class="md-input mask-production-qty IssueQty" value="@item.IssueQty" disabled="disabled" />
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <input type="text" class="md-input mask-production-qty IssueQty" value="@item.IssueQty" disabled="disabled" />
+                                </td>
+                            }
+                            <td>
+                                <input type="text" class="md-input  Remarks" value="@item.Remarks" disabled="disabled" />
+                            </td>
+                        </tr>
+                        }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+

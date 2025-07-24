@@ -1,0 +1,355 @@
+﻿@model TradeSuiteApp.Web.Areas.Stock.Models.StockIssueViewModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Stock.IssueNo</label>
+                            @Html.TextBoxFor(m => m.IssueNo, new { @class = "md-input", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Stock.IssueDate</label>
+                            @Html.TextBoxFor(m => m.Date, new { @class = "md-input", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Stock.IssueLocation<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.IssueLocationID, Model.LocationList, "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Stock.IssuePremise<span>*</span></label>
+                            @if (Model.ID > 0)
+                            {
+                                @Html.DropDownListFor(Model => Model.IssuePremiseID, Model.PremiseList, "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(Model => Model.IssuePremiseID, Model.PremiseList, "Select", new { @class = "md-input label-fixed" })
+                            }
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Stock.ReceiptLocation<span>*</span></label>
+                            <select id="ReceiptLocationID" class="md-input label-fixed" @((Model.ID > 0) ? "disabled =disabled" : "")>
+                                <option>Select</option>
+                                @foreach (var location in Model.ReceiptLocationList)
+                                {
+                                    <option data-state-id="@location.StateID" value="@location.ID" @((Model.ReceiptLocationID == location.ID) ? "selected ='selected'" : "")>@location.Name</option>
+                                }
+                            </select>
+                            @Html.HiddenFor(Model => Model.LocationStateID)
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Stock.ReceiptPremise<span>*</span></label>
+                            @if (Model.ID > 0)
+                            {
+                                @Html.DropDownListFor(Model => Model.ReceiptPremiseID, Model.ReceiptPremiseList, "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(Model => Model.ReceiptPremiseID, Model.ReceiptPremiseList, "Select", new { @class = "md-input label-fixed" })
+                            }
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <div class="uk-input-group">
+                                <label>@Stock.SelectRequest<span>*</span></label>
+                                @Html.TextBoxFor(Model => Model.RequestNo, new { @class = "md-input label-fixed" })
+                                <span class="uk-input-group-addon">
+                                    <a class="show-stock-requisitions">
+                                        <i class="uk-input-group-icon uk-icon-search"></i>
+                                    </a>
+                                </span>
+                                <input type="button" class="uk-hidden" id="stock-requisitions" data-uk-modal="{target:'#add-request', center:false}" />
+                            </div>
+                            @Html.HiddenFor(m => m.ID, new { @class = "md-input label-fixed" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8 inter-branch">
+                            <label>@Stock.GrossAmount</label>
+                            @Html.TextBoxFor(m => m.GrossAmount, new { @class = "md-input mask-currency", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8 inter-branch">
+                            <label>@Stock.TradeDiscount</label>
+                            @Html.TextBoxFor(m => m.TradeDiscount, new { @class = "md-input mask-currency", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8 inter-branch">
+                            <label>@Stock.TaxableAmount</label>
+                            @Html.TextBoxFor(m => m.TaxableAmount, new { @class = "md-input mask-currency", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8 inter-branch">
+                            <label>@Stock.SGSTAmount</label>
+                            @Html.TextBoxFor(m => m.SGSTAmount, new { @class = "md-input mask-currency", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8 inter-branch">
+                            <label>@Stock.CGSTAmount</label>
+                            @Html.TextBoxFor(m => m.CGSTAmount, new { @class = "md-input mask-currency", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8 inter-branch">
+                            <label>@Stock.IGSTAmount</label>
+                            @Html.TextBoxFor(m => m.IGSTAmount, new { @class = "md-input mask-currency", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8 inter-branch">
+                            <label>@Stock.RoundOff</label>
+                            @Html.TextBoxFor(m => m.RoundOff, new { @class = "md-input mask-currency" })
+                        </div>
+                        <div class="uk-width-medium-1-8 inter-branch">
+                            <label>@Stock.Remarks</label>
+                            @Html.TextBoxFor(m => m.Remark, new { @class = "md-input" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10 inter-branch">
+                <label>@Stock.NetAmount</label>
+                @Html.TextBoxFor(m => m.NetAmount, new { @class = "md-input mask-sales-currency label-fixed x-large", @readonly = "readonly" })
+            </div>
+
+        </div>
+    </div>
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-1-10">
+                <label>@Stock.ItemCategory</label>
+                @Html.DropDownListFor(Model => Model.ItemCategoryID, Model.ItemCategoryList, "Select", new { @class = "md-input label-fixed", @id = "ItemCategoryID" })
+            </div>
+            <div class="uk-width-medium-1-10 uk-hidden" id="select_batch_type">
+                <label>@Stock.BatchType<span>*</span></label>
+                @Html.DropDownListFor(Model => Model.BatchTypeID, Model.BatchTypeList, "Select", new { @class = "md-input label-fixed", @id = "BatchType" })
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-autocomplete " id="item-autocomplete">
+                    <div class="uk-input-group">
+
+                        <label>@Stock.Item<span>*</span></label>
+                        @Html.TextBox("ItemName", "", new { @class = "md-input label-fixed" })
+                        <span class="uk-input-group-addon">
+                            <a data-uk-modal="{target:'#select-item', center:false}">
+                                <i class="uk-input-group-icon uk-icon-search"></i>
+                            </a>
+                        </span>
+                        <script type="text/autocomplete">
+                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                {{~items}}
+                                <li class="{{$item.BatchTypeName}}" data-value="{{ $item.Name }}"
+                                    data-id="{{$item.ID}}"
+                                    data-batch-type-id="{{$item.BatchTypeID}}"
+                                    data-primary-unit="{{$item.PrimaryUnit}}"
+                                    data-inventory-unit="{{$item.InventoryUnit}}"
+                                    data-inventory-unit-id="{{$item.InventoryUnitID}}"
+                                    data-primary-unit-id="{{$item.PrimaryUnitID}}"
+                                    data-category="{{$item.ItemCategory}}">
+                                    <a>
+                                        {{ $item.Name }}
+                                        <div>{{{ $item.Code }}}</div>
+                                    </a>
+                                </li>
+                                {{/items}}
+                            </ul>
+                        </script>
+                    </div>
+                </div>
+                @Html.Hidden("ItemID")
+                @Html.Hidden("Category")
+                @Html.Hidden("PrimaryUnit")
+                @Html.Hidden("PrimaryUnitID")
+                @Html.Hidden("InventoryUnit")
+                @Html.Hidden("InventoryUnitID")
+                @*@Html.Hidden("BatchTypeID")*@
+                <input type="hidden" value=@Model.IssuePremiseID id="WarehouseID" />
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Sales.Unit </label>
+                @Html.DropDownListFor(Model => Model.UnitID, Model.UnitList, "Select", new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Stock.RequiredQuantity<span>*</span></label>
+                <input type="text" id="txtRequiredQty" min="0" class="md-input label-fixed uk-text-right mask-production-qty " />
+            </div>
+
+            <div class="uk-width-medium-1-10">
+                <div class="md-input-wrapper md-input-filled">
+                    <label>&nbsp;</label>
+                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddProduct">@Common.Add</button>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="md-input-wrapper md-input-filled">
+                    <label></label>
+                    <div class="uk-form-file v1">
+                        <label id="selected-file">
+                            Upload XLS File
+                        </label>
+                        <label class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                            <i class="uk-icon-upload"></i>
+                        </label>
+                        <input id="select-file" type="file" tabindex="-1">
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="md-input-wrapper md-input-filled">
+                    <label>&nbsp;</label>
+                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btn-download-template">@Common.Template</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="section-group">
+    <div class="uk-grid">
+        <div class="uk-width-1-1">
+            <ul class="uk-tab" data-uk-tab="{connect:'#tabs-issue-content',animation:'slide-horizontal'}" id="tabs-issue">
+                <li class="uk-active" id="item-tab"><a>@Sales.ItemDetails</a></li>
+
+                <li id="packing-tab"><a>@Sales.PackingDetails</a></li>
+            </ul>
+            <ul id="tabs-issue-content" class="uk-switcher uk-margin">
+                <li>
+                    <table id="stock-issue-items-list" class="uk-table">
+                        <thead>
+                            <tr>
+                                <th class="width-20">@Common.SerialNo</th>
+                                <th class="width-80">@Stock.ItemCode</th>
+                                <th class="width-150">@Stock.ItemName</th>
+                                <th class="width-150">@Masters.PartsNo</th>
+                                <th class="width-150">@Masters.Model</th>
+                                <th class="width-40">@Stock.Unit</th>
+                                <th class="width-80">@Stock.Batch</th>
+                                <th class="width-60">@Stock.RequestQty</th>
+                                <th class="width-60">@Stock.IssueQty</th>
+                                <th data-inter-branch="true" class="width-50 inter-branch">@Stock.BasicPrice</th>
+                                <th data-inter-branch="true" class="width-80 inter-branch">@Stock.GrossAmount</th>
+                                <th data-inter-branch="true" class="width-40 inter-branch">@Stock.TradeDiscountPer</th>
+                                <th data-inter-branch="true" class="width-60 inter-branch">@Stock.TradeDiscount</th>
+                                <th data-inter-branch="true" class="width-80 inter-branch">@Stock.TaxableAmount</th>
+                                <th data-inter-branch="true" class="width-40 inter-branch">@Stock.GSTPercentage</th>
+                                <th data-inter-branch="true" class="width-60 inter-branch">@Stock.GSTAmount</th>
+                                <th data-inter-branch="true" class="width-80 inter-branch">@Stock.NetAmount</th>
+                                <th class="width-100">@Stock.Remarks</th>
+                                <th class="width-20"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody">
+                            @foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+            {
+                                <tr>
+                                    <td class="uk-text-center serial-no">
+                                        @item.i
+                                    </td>
+                                    <td class="Unit">@item.value.Code</td>
+                                    <td class="ItemName">
+                                        @item.value.Name
+                                        <input type="hidden" class="ItemID" value="@item.value.ItemID" />
+                                        <input type="hidden" class="BatchID" value="@item.value.BatchID">
+                                        <input type="hidden" class="BatchTypeID" value="@item.value.BatchTypeID">
+                                        <input type="hidden" class="Stock" value="@item.value.Stock">
+                                        <input type="hidden" class="RequestTransID" value="@item.value.StockRequestTransID">
+                                        <input type="hidden" class="RequestID" value="@item.value.StockRequestID">
+                                        <input type="hidden" class="Rate" value="@item.value.Rate">
+                                        <input type="hidden" class="CGSTPercentage" value="@item.value.CGSTPercentage">
+                                        <input type="hidden" class="SGSTPercentage" value="@item.value.SGSTPercentage">
+                                        <input type="hidden" class="IGSTPercentage" value="@item.value.IGSTPercentage">
+                                        <input type="hidden" class="CGSTAmount" value="@item.value.CGSTAmount">
+                                        <input type="hidden" class="SGSTAmount" value="@item.value.SGSTAmount">
+                                        <input type="hidden" class="IGSTAmount" value="@item.value.IGSTAmount">
+                                        <input type="hidden" class="UnitID" value="@item.value.UnitID">
+                                        <input type="hidden" class="PrimaryUnit" value="@item.value.PrimaryUnit">
+                                        <input type="hidden" class="PrimaryUnitID" value="@item.value.PrimaryUnitID">
+                                        <input type="hidden" class="PackSize" value="@item.value.PackSize">
+                                        <input type="hidden" class="SecondaryUnitSize" value="@item.value.SecondaryUnitSize" />
+                                        <input type="hidden" class="StockRequisitionNo" value="@item.value.StockRequisitionNo">
+                                    </td>
+                                    <td class="Unit">@item.value.PartsNumber</td>
+                                    <td class="Unit">@item.value.Model</td>
+                                    <td class="Unit uk-hidden">@item.value.Unit</td>
+                                    <td class="SecondaryUnit">@item.value.SecondaryUnit</td>
+                                    <td class="BatchName">@item.value.BatchName</td>
+                                    <td class="mask-production-qty RequestedQty uk-hidden">@item.value.RequestedQty</td>
+                                    <td class="mask-production-qty SecondaryQty">@item.value.SecondaryQty</td>
+                                    <td class="uk-hidden">
+                                        <input type="text" min="0" class="md-input mask-production-qty IssueQty" readonly="readonly" value="@item.value.IssueQty" />
+                                    </td>
+                                    <td>
+                                        <input type="text" min="0" class="md-input mask-production-qty SecondaryIssueQty" readonly="readonly" value="@item.value.SecondaryIssueQty" />
+                                    </td>
+                                    <td class="inter-branch">
+                                        <input type="text" class="md-input mask-currency BasicPrice" disabled="" value="@item.value.BasicPrice" />
+                                    </td>
+                                    <td class="inter-branch">
+                                        <input type="text" class="md-input mask-currency GrossAmount" disabled="" value="@item.value.GrossAmount" />
+                                    </td>
+                                    <td class="inter-branch">
+                                        <input type="text" class="md-input mask-currency TradeDiscountPercentage" disabled="" value="@item.value.TradeDiscountPercentage" />
+                                    </td>
+                                    <td class="inter-branch">
+                                        <input type="text" class="md-input mask-currency TradeDiscount" disabled="" value="@item.value.TradeDiscount" />
+                                    </td>
+                                    <td class="inter-branch">
+                                        <input type="text" class="md-input mask-currency TaxableAmount" disabled="" value="@item.value.TaxableAmount" />
+                                    </td>
+                                    <td class="inter-branch">
+                                        <input type="text" class="md-input mask-currency GSTPercentage" disabled="" value="@item.value.GSTPercentage" />
+                                    </td>
+                                    <td class="inter-branch">
+                                        <input type="text" class="md-input mask-currency GSTAmount" disabled="" value="@item.value.GSTAmount">
+                                    </td>
+                                    <td class="inter-branch">
+                                        <input type="text" class="md-input mask-currency NetAmount" disabled="" value="@item.value.NetAmount">
+                                    </td>
+                                    <td class="action">
+                                        <input type="text" class="md-input Remarks" value="@item.value.Remark">
+                                    </td>
+                                    <td class="uk-text-center">
+                                        <a class="remove-item">
+                                            <i class="uk-icon-remove"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+
+                    <input type="hidden" id="item-count" value="@Model.Items.Count()" />
+                </li>
+                <li>
+
+                    <table id="packing-detail-list" class="uk-table" width="50" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="width-10">@Common.SerialNo</th>
+                                <th class="width-100">@Sales.PackSize</th>
+                                <th class="width-100">@Sales.Unit</th>
+                                <th class="width-100">@Sales.Nos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model.PackingDetails.Select((value, i) => new { i = (i + 1), value }))
+                            {
+
+                                <tr>
+                                    <td class="uk-text-center">@item.i</td>
+                                    <td class="PackSize uk-text-center">
+                                        @item.value.PackSize
+                                        <input type="hidden" class="PackUnitID" value="@item.value.PackUnitID">
+                                    </td>
+                                    <td class="PackUnit uk-text-center">@item.value.PackUnit</td>
+                                    <td class="mask-numeric Quantity">@item.value.Quantity</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

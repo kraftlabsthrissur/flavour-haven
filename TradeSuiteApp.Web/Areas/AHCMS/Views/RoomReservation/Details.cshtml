@@ -1,0 +1,81 @@
+﻿
+@model TradeSuiteApp.Web.Areas.AHCMS.Models.RoomAllocationModel
+@{
+    ViewBag.Title = AHCMS.RoomReservationDetails;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@AHCMS.RoomReservation</h1>
+            <span class="uk-text-upper uk-text-small">@AHCMS.RoomReservationDetails</span>
+        </div>
+        <div class="heading_actions">
+            @if(Model.IPID==0)
+            {
+                @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "Edit", "RoomReservation", new { Area = "AHCMS", id = (Model != null) ? Model.ID : 0 }, new { @class = "md-btn " }))
+            }
+            @Html.HiddenFor(m => m.ID)
+            @Html.HiddenFor(m=>m.IPID)
+            @Html.ActionLink(Common.Close, "Index", "RoomReservation", new { Area = "AHCMS" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="details-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@AHCMS.Date</label>
+                                            @Html.TextBoxFor(m => m.Date, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-5">
+                                            <label>@AHCMS.Patient</label>
+                                            @Html.TextBoxFor(m => m.PatientName, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@AHCMS.FromDate</label>
+                                            @Html.TextBoxFor(m => m.FromDate, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@AHCMS.ToDate</label>
+                                            @Html.TextBoxFor(m => m.ToDate, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@AHCMS.RoomType</label>
+                                            @Html.TextBoxFor(m => m.RoomType, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@AHCMS.Room</label>
+                                            @Html.TextBoxFor(m => m.RoomName, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-10">
+                                            <label>@AHCMS.Rate</label>
+                                            @Html.TextBoxFor(m => m.Rate, new { @class = "md-input mask-positive-currency", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/RoomReservation")
+
+
+
+

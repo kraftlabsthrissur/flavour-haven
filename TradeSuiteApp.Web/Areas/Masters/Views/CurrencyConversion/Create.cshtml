@@ -1,0 +1,101 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.CurrencyConversionModel
+@{
+    ViewBag.Title = @Masters.CreateCurrencyConversion;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.CurrencyConversion</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.CreateNewCurrencyConversion</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSave'>" + Common.Save + "</a>")
+
+            @Html.ActionLink(Common.Close, "Index", "CurrencyConversion", new { Area = "Masters" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-3">
+                                            <div class="uk-autocomplete " id="item-autocomplete">
+                                                <label>@Masters.BaseCurrency<span>*</span></label>
+                                                @Html.TextBoxFor(m => m.BaseCurrencyCode, "", new { @class = "md-input label-fixed" })
+                                                <span class="uk-input-group-addon">
+                                                    <a data-uk-modal="{target:'#select-Base-Currency'}">
+                                                        <i class="uk-input-group-icon uk-icon-search"></i>
+                                                    </a>
+                                                </span>
+                                            </div>
+
+                                            @Html.Hidden("BaseCurrencyID")
+                                        </div>
+                                        <div class="uk-width-medium-1-3">
+                                            <div class="uk-autocomplete " id="item-autocomplete">
+                                                <label>@Masters.ConverionCurrency<span>*</span></label>
+                                                @Html.TextBoxFor(m => m.ConversionCurrencyCode, "", new { @class = "md-input label-fixed" })
+                                                <span class="uk-input-group-addon">
+                                                    <a data-uk-modal="{target:'#select-Conversion-Currency'}">
+                                                        <i class="uk-input-group-icon uk-icon-search"></i>
+                                                    </a>
+                                                </span>
+                                            </div>
+
+                                            @Html.Hidden("ConversionCurrencyID")
+                                        </div>
+                                        <div class="uk-width-medium-1-3">
+                                            <div class="uk-input-group">
+                                                <label>@Masters.FromDate<span>*</span></label>
+                                                @Html.TextBoxFor(m => m.FromDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-2-5">
+                                            <label>@Masters.Description</label>
+                                            @Html.TextAreaFor(m => m.Description, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-3-5">
+                                            <label class="uk-form-label" for="form-label-inline"> @Masters.ExchangeRate<b>*&nbsp;&nbsp;One <span class="BaseCurrency"></span> = </b></label>
+                                            @Html.TextBoxFor(m => m.ExchangeRate, new { @class = "uk-input" })&nbsp;&nbsp;<b><span class="ConversionCurrency"></span></b>
+                                            <br />
+                                            <label class="uk-form-label" for="form-label-inline">@Masters.InverseRate<b><span>*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;One </span><span class="ConversionCurrency"></span> = </b></label>
+                                            @Html.TextBoxFor(m => m.InverseExchangeRate, new { @class = "uk-input " })&nbsp;&nbsp;<b><span class="BaseCurrency"></span></b>
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Html.Partial("~/Areas/Masters/Views/Currency/BaseCurrencyList.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Currency/ConversionCurrencyList.cshtml")
+@Scripts.Render("~/Js/Page/CurrencyConversion")
+

@@ -1,0 +1,174 @@
+﻿@{
+    var OfficialName = System.Configuration.ConfigurationManager.AppSettings["OfficialName"];
+}
+<header id="header_main">
+    <div class="header_main_content">
+        <nav class="uk-navbar">
+            <div class="uk-navbar-left">
+                <div class="header_main_search_form">
+                    <form class="uk-form uk-autocomplete" data-uk-autocomplete="{source:'data/search_data.json'}">
+                        <button class="header_main_search_btn uk-button-link"><i class="md-icon material-icons">&#xE8B6;</i></button>
+                        <input type="text" class="header_main_search_input" placeholder="Search Documents...." />
+                        <script type="text/autocomplete">
+                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                {{~items}}
+                                <li data-value="{{ $item.value }}">
+                                    <a href="{{ $item.url }}" class="needsclick">
+                                        {{ $item.value }}<br>
+                                        <span class="uk-text-muted uk-text-small">{{{ $item.text }}}</span>
+                                    </a>
+                                </li>
+                                {{/items}}
+                            </ul>
+                        </script>
+                    </form>
+                </div>
+            </div>
+            <div class="uk-navbar-middle">
+                @if(OfficialName == "ERP Astra - Test Version") {
+                    <div style="text-align:center;color:red;font-size: 22px;"> THIS IS A TEST INSTANCE ! </div>
+                }
+            </div>
+            <div class="uk-navbar-right">
+                <div class="uk-navbar-flip">
+                    <ul class="uk-navbar-nav user_actions">
+                        <li>
+                            <div id="current-location">
+                                <select class="md-input" >
+                                    @if (ViewBag.VBLocations != null)
+                                    {
+                                        foreach (var location in ViewBag.VBLocations)
+                                        {
+                                            <option value="@location.Value" @(ViewBag.VBCurrentLocationID == Convert.ToInt16(location.Value) ? "selected" : "")>@location.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </li>
+                        <li class="uk-hidden"><a id="full_screen_toggle" class="user_action_icon"><i class="v-icon-android-expand"></i></a></li>
+                        <li class="uk-hidden" data-uk-dropdown="{mode:'click',pos:'bottom-right'}">
+                            <a class="user_action_icon"><i class="v-icon-bell-o"></i><span class="uk-badge">16</span></a>
+                            <div class="uk-dropdown uk-dropdown-xlarge">
+                                <div class="md-card-content">
+                                    <ul class="uk-tab uk-tab-grid" data-uk-tab="{connect:'#header_alerts',animation:'slide-horizontal'}">
+                                        <li class="uk-width-1-2 uk-active"><a class="js-uk-prevent uk-text-small">Messages (12)</a></li>
+                                        <li class="uk-width-1-2"><a class="js-uk-prevent uk-text-small">Alerts (4)</a></li>
+                                    </ul>
+                                    <ul id="header_alerts" class="uk-switcher uk-margin">
+                                        <li>
+                                            <ul class="md-list md-list-addon">
+                                                <li>
+                                                    <div class="md-list-addon-element">
+                                                        <span class="md-user-letters md-bg-cyan"></span>
+                                                    </div>
+                                                    <div class="md-list-content">
+                                                        <span class="md-list-heading">
+                                                            <a href="page_mailbox.html"></a>
+                                                        </span>
+                                                        <span class="uk-text-small uk-text-muted"></span>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                            <div class="uk-text-center uk-margin-top uk-margin-small-bottom">
+                                                <a href="page_mailbox.html" class="md-btn md-btn-flat md-btn-flat-primary js-uk-prevent">Show All</a>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <ul class="md-list md-list-addon">
+                                                <li>
+                                                    <div class="md-list-addon-element">
+                                                        <i class="md-list-addon-icon material-icons uk-text-warning">&#xE8B2;</i>
+                                                    </div>
+                                                    <div class="md-list-content">
+                                                        <span class="md-list-heading"></span>
+                                                        <span class="uk-text-small uk-text-muted uk-text-truncate"></span>
+                                                    </div>
+                                                </li>
+
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li data-uk-dropdown="{mode:'click',pos:'bottom-right'}">
+                            <a class="user_action_image">
+                                <img class="md-user-image" src="~/Assets/img/avatars/user.png" alt="" />
+                                @try
+                                {
+                                    @Session["EmployeeName"].ToString()
+                                }
+                                catch (Exception)
+                                {
+                                }
+
+                                <i class="v-icon-angle-down"></i>
+                            </a>
+                            <div class="uk-dropdown uk-dropdown-small">
+                                <ul class="dropdown-menu user-menu">
+                                    <!-- User image -->
+                                    <li class="user-header">
+                                        <div class="user_avatar"></div>
+                                        @try
+                                        {
+                                            <div class="name">
+                                                @Session["EmployeeName"].ToString()
+                                                <br />
+                                                <span>@Session["Designation"].ToString().ToLower()</span>
+                                            </div>
+                                        }
+                                        catch (Exception)
+                                        {
+
+                                        }
+                                    </li>
+
+                                    <li class="user-footer">
+                                        <div class="uk-form-row">
+                                            <div class="pull-left">
+                                                <a href="/Manage/ChangePassword" class="md-btn md-btn-default ">Change Password</a>
+                                            </div>
+                                            <div class="pull-right">
+                                                <a href="/Account/LogOff" class="md-btn md-btn-default strict">Sign out</a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav-item Description-div uk-hidden">
+                            <div id="style_switcher">
+                                <div id="style_switcher_toggle">
+
+                                    <i class="material-icons">&#9655;</i>
+                                </div>
+                                <div class="uk-margin-medium-bottom Descriptiondetails main-div ">
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item batch-description-div uk-hidden">
+                            <div id="style_switcher_horizontal">
+                                <div id="style_switcher_horizontal_toggle">
+
+                                    <i class="material-icons">&#9655;</i>
+                                </div>
+                                <div class="uk-margin-medium-bottom Descriptiondetails main-div ">
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item batch-invoice-description-div uk-hidden">
+                            <div id="style_switcher_batch">
+                                <div id="style_switcher_batch_toggle">
+
+                                    <i class="material-icons">&#9655;</i>
+                                </div>
+                                <div class="uk-margin-medium-bottom Descriptiondetails main-div ">
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</header>

@@ -1,0 +1,46 @@
+﻿@model List<TradeSuiteApp.Web.Areas.Manufacturing.Models.ProductionScheduleItemModel>
+
+
+@foreach (var item in Model.Select((value, i) => new { i = i + 1, value }))
+            {
+                string dynName = "requiredDate_" + item.i;
+    <tr>
+        <td>
+            <input type="hidden" class="hdnID" value="@item.value.ID" />
+            <input type="hidden" class="hdnProductID" value="@item.value.ProductID" />
+            <input type="hidden" class="ProductDefinitionTransID" value="@item.value.ProductDefinitionTransID" />
+            <input type="hidden" class="hdnItemID" value="@item.value.ItemID" />
+            <input type="hidden" class="hdnItemName" value="@item.value.ItemName" />
+            <input type="hidden" class="hdnUnit" value="@item.value.Unit" />
+            <input type="hidden" class="hdnUnitID" value="@item.value.UnitID" />
+            <input type="hidden" class="hdnYogamQty" value="@item.value.YogamQty" />
+            <input type="hidden" class="hdnStandardBatchSize" value="@item.value.StandardBatchSize" />
+            <input type="hidden" class="StandardOutputQty" value="@item.value.StandardOutputQty" />
+            @item.i
+        </td>
+        <td>@item.value.ItemName</td>
+        <td>@item.value.Unit</td>
+        <td class="mask-production-qty tdYogamQty uk-text-right">@item.value.YogamQty</td>
+        <td class="">
+            <input type="text" class="md-input label-fixed txtRequiredQty mask-production-qty uk-text-right" value="@item.value.RequiredQty" readonly />
+        </td>
+        <td class="uk-text-right">
+            <div>
+                <div class="uk-input-group">
+                    <input type="text" class="md-input label-fixed future-date date txtRequiredDate mask-date" value="@item.value.RequiredDateStr" />
+                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                </div>
+            </div>
+        </td>
+        <td>
+            <input type="text" class="md-input label-fixed txtRemarks" value="@item.value.Remarks" />
+        </td>
+
+        <td class="uk-text-center" onclick="$(this).parent().remove()">
+            <a data-uk-tooltip="{pos:" bottom"}">
+                <i class="md-btn-icon-small uk-icon-remove"></i>
+            </a>
+        </td>
+    </tr>
+}
+

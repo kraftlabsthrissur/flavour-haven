@@ -1,0 +1,118 @@
+﻿@model IEnumerable<TradeSuiteApp.Web.Areas.Masters.Models.ChartOfAccountsModel>
+@{
+    ViewBag.Title = "Index";
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.ChartOfAccounts</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.ChartOfAccountsList</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Create", Html.ActionLink(Common.Create, "Create", "ChartOfAccounts", new { Area = "Masters" }, new { @class = "md-btn" }))
+
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="list-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+
+                <table id="Accounts-list" class="uk-table">
+                    <thead>
+                        <tr>
+                            <th width="20">
+                                @Common.SerialNo
+                            </th>
+                            <th class="width-40">
+                                @Masters.AccountCode
+                            </th>
+                            <th>
+                                @Masters.AccountName
+                            </th>
+                            <th>
+                                @Masters.ParentAccountName
+                            </th>
+                            <th class="width-80">
+                                @Masters.ParentAccountCode
+                            </th>
+                            <th class="width-80">
+                                @Masters.Level
+                            </th>
+                            <th class="width-80">
+                                @Masters.OpeningAmount
+                            </th>
+                        </tr>
+                    </thead>
+                    <thead class="search">
+                        <tr>
+                            <th>
+                                @Common.SerialNo
+                            </th>
+                            <th>
+                                @Masters.AccountCode
+                            </th>
+                            <th>
+                                @Masters.AccountName
+                            </th>
+                            <th>
+                                @Masters.ParentAccountName
+                            </th>
+                            <th>
+                                @Masters.ParentAccountCode
+                            </th>
+                            <th>
+                                @Masters.Level
+                            </th>
+                            <th>
+                                @Masters.OpeningAmount
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Select((value, i) => new { i = (i + 1), value }))
+                        {
+                            <tr>
+                                <td>
+                                    @item.i
+                                    @Html.HiddenFor(a => item.value.ID, new { @class = "ID" })
+                                </td>
+                                <td>
+                                    @item.value.AccountID
+                                </td>
+                                <td>
+                                    @item.value.AccountName
+                                </td>
+                                <td>
+                                    @item.value.ParentName
+                                </td>
+                                <td>
+                                    @item.value.ParentAccountCode
+                                </td>
+                                <td>
+                                    @item.value.Level
+                                </td>
+                                <td>
+                                    @item.value.OpeningAmount
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/Js/Page/ChartOfAccounts")
+<script type="text/javascript">
+    ChartOfAccounts.list();
+</script>
+

@@ -1,0 +1,60 @@
+  
+ALTER PROCEDURE [Sales].[SpGetCounterSalesReturnTrans]  
+(  
+@ID int,  
+@FinYear int,  
+@LocationID int,  
+@ApplicationID int  
+)  
+AS  
+ BEGIN   
+ Declare @PriceListID int,@LocationHeadID int,@BasePriceListID int,@StateID int  
+  
+ SELECT @LocationHeadID = LocationHeadID FROM Location WHERE ID = @LocationID  
+ SELECT @StateID =StateID from location where id=@LocationID   
+ if @StateID=32  
+  begin  
+  select @PriceListID=id from pricelist where name='ISK'  
+  end  
+ else  
+  begin  
+  select @PriceListID=id from pricelist where name='OSK'  
+  end  
+ set @BasePriceListID=dbo.FnGetBasePriceListID(@LocationID,@ApplicationID)  
+  
+  SELECT CS.ID,CST.WarehouseID,CounterSalesReturnID,  
+   CounterSalesTransID,CST.FullOrLoose, I.ID as ItemID,B.ID as BatchID,  
+   IsNull(dbo.FnConvertUnit(I.ID,(c.Quantity- isnull(c.ReturnQtyMet,0)),C.UnitID,CST.UnitID),0)   as Quantity,  
+   CSt.Rate,CST.MRP,CST.SGSTAmount,CST.CGSTAmount, CST.IGSTAmount,CST.NetAmount,W.Name AS warehouseName ,I.IGSTPercent,I.CGSTPercent,  
+   I.SGSTPercent,CST.TaxableAmount,I.Name AS ItemName,I.Code, B.BatchNo,CST.BatchTypeID,b.ExpiryDate,CST.GrossAmount,U.UOM as  Unit,  
+   ReturnQty,CST.UnitID,I.UnitID as PrimaryUnitID,I.SalesUnitID,I.Unit as PrimaryUnit,I.SalesUnit ,  
+   ISNULL(B.RetailLooseRate,0) AS FullRate,  
+   ISNULL(B.RetailLooseRate,0) LooseRate ,  
+   case when C.UnitID<>I.SalesUnitID then   
+   dbo.FnConvertUnit(I.ID,(c.Quantity- isnull(ReturnQtyMet,0)),I.UnitID,I.SalesUnitID)    
+   else dbo.FnConvertUnit(I.ID,(c. Quantity- isnull(ReturnQtyMet,0)),I.SalesUnitID,I.UnitID) end as ConvertedQuantity,  
+    (c.Quantity- isnull(c.ReturnQtyMet,0))   as CounterSalesQuantity,c.UnitID as CounterSalesTransUnitID ,  
+    ISNULL(CST.CessPercentage  ,0)CessPercentage,ISNULL(CST.CessAmount,0) CessAmount,CST.SecondaryRate,CST.SecondaryReturnQty,CST.SecondaryUnit,CST.SecondaryUnitSize  
+
+  FROM Sales.CounterSalesReturnTrans CST  
+   INNER JOIN sales.CounterSalesReturn CS ON CS.ID=CST.CounterSalesReturnID  
+   INNER JOIN WareHouse W ON W.ID = CST.WareHouseID  
+   INNER JOIN viSalesItem I ON I.ID = CST.ItemID  
+   inner join BatchType BT on BT.ID=CST.BatchTypeID  
+   Inner join Batch B on B.ID=CST.BatchID  
+   inner join Unit U on U.ID=CST.UnitID  
+   LEFT JOIN PriceListDetails PD on PD.ItemID = I.ID AND PD.PriceListID = @PriceListID and PD.BasePriceListID=@BasePriceListID  
+   LEFT JOIN ItemwiseCostHistory IC ON IC.ItemID = I.ID AND IC.IsActive = 1 AND IC.LocationHeadID = @LocationHeadID  
+   inner join sales.CounterSalesTrans C on C.ID=CST.CounterSalesTransID and C.ItemID=CST.ItemID  
+  
+   
+  WHERE CS.ID = @ID  AND CS.LocationID=@LocationID AND CS.ApplicationID = @ApplicationID --AND CS.FinYear = @FinYear  
+  group by CS.ID,CST.WareHouseID,CST.CounterSalesReturnID,CST.FullOrLoose,I.ID,B.ID,CST.Quantity,CST.Rate,CST.MRP,  
+  CST.SGSTAmount,CST.IGSTAmount,CST.CGSTAmount,CST.NetAmount,W.Name,I.IGSTPercent,I.SGSTPercent,I.CGSTPercent,I.Name,  
+  I.Code,B.BatchNo,CST.BatchTypeID,B.ExpiryDate,CST.GrossAmount,U.UOM,CST.TaxableAmount,CST.CounterSalesTransID,CST.ReturnQty,  
+  CST.UnitID,I.Unit,I.UnitID,I.SalesUnit,I.SalesUnitID,PD.MRP,PD.LoosePrice,IC.TransferPrice,C.Quantity,C.UnitID,c.ReturnQtyMet,CST.CessPercentage,  
+  CST.CessAmount,RetailLooseRate,CST.SecondaryRate,CST.SecondaryReturnQty,CST.SecondaryUnit,CST.SecondaryUnitSize   
+  
+END  
+  
+  

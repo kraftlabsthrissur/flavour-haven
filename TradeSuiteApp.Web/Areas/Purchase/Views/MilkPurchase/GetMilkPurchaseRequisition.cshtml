@@ -1,0 +1,59 @@
+﻿@model TradeSuiteApp.Web.Areas.Purchase.Models.MilkPurchaseModel
+@{
+    ViewBag.Title = "Get Milk Purchase Requisition ";
+
+}
+<div class="uk-modal " id="select-milk-pr" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Select Milk Purchase Requisition <i class="material-icons" data-uk-tooltip="{pos:'top'}" title="headline tooltip"></i></h3>
+        </div>
+        <table id="purchase-requisition-list" class="uk-table" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-10"></th>
+                    <th class="width-60">@Purchase.PRNo</th>
+                    <th class="width-50">@Purchase.PRDate</th>
+                    <th class="width-30"> @Purchase.Qty</th>
+                    <th class="width-100">@Purchase.FromDepartment</th>
+                </tr>
+            </thead>
+            <thead class="search">
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-10"></th>
+                    <th class="width-60">@Purchase.PRNo</th>
+                    <th class="width-50">@Purchase.PRDate</th>
+                    <th class="width-30"> @Purchase.Qty</th>
+                    <th class="width-100">@Purchase.FromDepartment</th>
+                </tr>
+            </thead>
+            <tbody class="unPrTbody">
+                @if (Model != null)
+                {
+                    if (Model.UnProcessedPrList != null)
+
+                    {
+                        foreach (var itm in Model.UnProcessedPrList.Select((value, i) => new { i = (i + 1), value }))
+                        {
+                            <tr class="rowUnPr">
+                                <td class="uk-text-center clId">@itm.i<input type="hidden" class="clprIdItem" value="@itm.value.ID" /></td>
+                                <td class="uk-text-center checked clChk" data-md-icheck><input type="checkbox" class="clChkItem" /></td>
+                                <td class="prnumber">@itm.value.PrNumber</td>
+                                <td>@itm.value.ExpectedDate</td>
+                                <td class="quantity">@itm.value.Qty</td>
+                                <td>@itm.value.FromDept</td>
+                            </tr>
+
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn uk-modal-close">Close</button>
+            <button type="button" class="md-btn md-btn-primary uk-modal-close" id="btnOkPrList">Ok</button>
+        </div>
+    </div>
+</div>

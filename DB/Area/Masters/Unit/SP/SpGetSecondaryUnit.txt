@@ -1,0 +1,18 @@
+ALTER PROCEDURE [Master].[SpGetSecondaryUnit]  
+(@SecondaryUnitID int)  
+AS  
+BEGIN  
+ SELECT S.ID,S.Name,S.UnitGroupID,g.Name UnitGroupName,S.UnitID,s.Name UnitName,S.PackSize FROM SecondaryUnit S
+ join  Unit u on  u.ID =s.UnitID
+ join UnitGroup G on G.ID=S.UnitGroupID
+ WHERE S.ID = @SecondaryUnitID  
+END  
+
+
+  
+  
+  
+  
+  
+  
+  

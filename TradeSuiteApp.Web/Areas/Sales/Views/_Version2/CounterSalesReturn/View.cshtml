@@ -1,0 +1,106 @@
+﻿@model TradeSuiteApp.Web.Areas.Sales.Models.CounterSalesReturnModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.ReturnNo</label>
+                            @Html.TextBoxFor(model => model.ReturnNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Sales.ReturnDate</label>
+                            @Html.TextBoxFor(model => model.ReturnDate, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.RoundOff</label>
+                            @Html.TextBoxFor(model => model.RoundOff, new { @class = "md-input mask-sales-currency label-fixed", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-1">
+                            <label>@Sales.NetAmount</label>
+                            @Html.TextBoxFor(model => model.NetAmount, new { @class = "md-input mask-sales-currency label-fixed x-large", @tabindex = "-1", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <table id="sales-return-items-list" class="uk-table" cellspacing="0" style="width:100%;">
+        <thead>
+
+
+            <tr>
+                <th class="width-10">@Common.SerialNo</th>
+                <th class="width-50">@Sales.ItemCode</th>
+                <th class="width-250">@Sales.ItemName</th>
+                <th class="width-10">@Sales.Unit</th>
+                <th class="width-250">@Sales.Batch</th>
+                <th class="width-100">@Sales.MRP</th>
+                <th class="width-100">@Sales.Qty</th>
+                <th class="width-100">@Sales.ReturnQty</th>
+                <th class="width-100">@Sales.GrossAmt</th>
+                <th class="width-100">@Sales.GST</th>
+                <th class="width-100">@Sales.CGST</th>
+                <th class="width-100">@Sales.SGST</th>
+                <th class="width-100">@Sales.IGST</th>
+                <th class="width-100">@Sales.NetAmount</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            @if (Model.Items != null)
+            {
+                foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                {
+                    var GST = item.value.SGSTPercentage + item.value.CGSTPercentage;
+                    <tr>
+                        <td class="uk-text-center">
+                            @item.i
+                            <input type="hidden" class="ItemID" value="@item.value.ItemID" readonly="readonly" />
+                            <input type="hidden" class="UnitID" value="@item.value.UnitID" />
+                            <input type="hidden" class="IGSTPercentage" value="@item.value.IGSTPercentage" />
+                            <input type="hidden" class="CGSTPercentage" value="@item.value.CGSTPercentage" />
+                            <input type="hidden" class="SGSTPercentage" value="@item.value.SGSTPercentage" />
+                            <input type="hidden" class="BatchTypeID" value="@item.value.BatchTypeID" />
+                            <input type="hidden" class="BatchID" value="@item.value.BatchID" />
+                            <input type="hidden" class="WareHouseID" value="@item.value.WareHouseID" />
+                            <input type="hidden" class="TaxableAmount" value="@item.value.TaxableAmount" />
+                            <input type="hidden" class="Stock" value="@item.value.Stock" />
+                            <input type="hidden" class="CounterSalesTransID" value="@item.value.CounterSalesTransID" />
+                        </td>
+                        <td class="" readonly="readonly">@item.value.ItemCode</td>
+                        <td class="ItemName" readonly="readonly"> @item.value.Name  </td>
+                        <td class="" readonly="readonly"> @item.value.Unit </td>
+                        <td class="" readonly="readonly">@item.value.BatchNo</td>
+                        <td class=""><input type="text" class="md-input uk-text-right mask-sales-currency Rate" value="@item.value.MRP" readonly="readonly" /></td>
+                        <td class="action"><input type="text" class="md-input uk-text-right mask-qty Qty" value="@item.value.Qty" readonly="readonly" /></td>
+                        <td class="action"><input type="text" class="md-input uk-text-right mask-qty ReturnQty" value="@item.value.ReturnQty" readonly="readonly"/></td>
+                        <td class=""><input type="text" class="md-input uk-text-right mask-sales-currency GrossAmount" value='@item.value.GrossAmount' readonly="readonly" /></td>
+                        <td class=""><input type="text" class="md-input uk-text-right mask-sales-currency GST" value="@GST" readonly="readonly" /></td>
+                        <td class=""><input type="text" class="md-input uk-text-right mask-sales-currency CGST" value="@item.value.CGSTAmount" readonly="readonly" /></td>
+                        <td class=""><input type="text" class="md-input uk-text-right mask-sales-currency SGST" value="@item.value.SGSTAmount" readonly="readonly" /></td>
+                        <td class=""><input type="text" class="md-input uk-text-right mask-sales-currency IGST" value="@item.value.IGSTAmount" readonly="readonly" /></td>
+                        <td class=""><input type="text" class="md-input uk-text-right mask-sales-currency NetAmount" value="@item.value.NetAmount" readonly="readonly" /></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+</div>
+

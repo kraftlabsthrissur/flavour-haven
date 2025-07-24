@@ -1,0 +1,1318 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="AssetModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AyurwareDevelopment.Asset.Asset' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Asset">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TransNo" Type="varchar" MaxLength="20" />
+          <Property Name="TransDate" Type="datetime" />
+          <Property Name="ItemID" Type="int" />
+          <Property Name="SupplierID" Type="int" />
+          <Property Name="AssetCode" Type="varchar" MaxLength="20" />
+          <Property Name="GrossBlockAssetValue" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="CurrentValueOnCompanyDepreciationRate" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="CurrentValueOnIncomeTaxDepreciationRate" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="AssetQty" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="AssetName" Type="varchar" MaxLength="100" />
+          <Property Name="AssetUniqueNo" Type="varchar" MaxLength="50" />
+          <Property Name="PurchaseDocumentNo" Type="varchar" MaxLength="50" />
+          <Property Name="PurchaseDocumentDate" Type="datetime" />
+          <Property Name="IsRepairable" Type="bit" />
+          <Property Name="FinancialAssetName" Type="varchar" MaxLength="50" />
+          <Property Name="NewItemName" Type="varchar" MaxLength="50" />
+          <Property Name="CompanyDepreciationRate" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="IncomeTaxDepreciationRate" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="LifeInYears" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="ResidualValue" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="SRNID" Type="int" />
+          <Property Name="AdditionToAssetNumber" Type="varchar" MaxLength="50" />
+          <Property Name="Remark" Type="varchar" MaxLength="200" />
+          <Property Name="DepartmentID" Type="int" />
+          <Property Name="EmployeeID" Type="int" />
+          <Property Name="AssetLocationID" Type="int" />
+          <Property Name="ProjectID" Type="int" />
+          <Property Name="InitialGrossBlockValue" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="InitialAssetQty" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="FirstDateCapitalisation" Type="datetime" />
+          <Property Name="Status" Type="varchar" MaxLength="20" />
+          <Property Name="IsDepreciation" Type="bit" />
+          <Property Name="IsDraft" Type="bit" />
+          <Property Name="CreatedUserID" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="FinYear" Type="int" />
+          <Property Name="ApplicationID" Type="int" />
+          <Property Name="LocationID" Type="int" />
+        </EntityType>
+        <EntityType Name="AssetCorrection">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TransNo" Type="varchar" MaxLength="20" />
+          <Property Name="TransDate" Type="datetime" />
+          <Property Name="AssetTransID" Type="int" />
+          <Property Name="AmountValue" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="DebitAcIDBeforeCorrection" Type="int" />
+          <Property Name="CreditAcIDBeforeCorrection" Type="int" />
+          <Property Name="DebitAcIDAfterCorrection" Type="int" />
+          <Property Name="CreditAcIDAfterCorrection" Type="int" />
+          <Property Name="CreditAccountID" Type="int" />
+          <Property Name="IsAdditionDuringYear" Type="bit" />
+          <Property Name="IsDepreciationForYear" Type="bit" />
+          <Property Name="GrossBlockValueBeforeCorrection" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="GrossBlockValueAfterCorrection" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="Remark" Type="varchar" MaxLength="200" />
+          <Property Name="CreatedUserID" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="FinYear" Type="int" />
+          <Property Name="LocationID" Type="int" />
+          <Property Name="ApplicationID" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AyurwareDevelopment.Asset.AssetRetirement' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="AssetRetirement">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TransNo" Type="varchar" MaxLength="20" />
+          <Property Name="TransDate" Type="datetime" />
+          <Property Name="AssetTransID" Type="int" />
+          <Property Name="ClosingGrossBlockValue" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="ClosingAccumulatedDepreciation" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="ClosingWDV" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="SaleQty" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="SaleValue" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="EndDate" Type="datetime" />
+          <Property Name="CreatedUserID" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="FinYear" Type="int" />
+          <Property Name="ApplicationID" Type="int" />
+          <Property Name="LocationID" Type="int" />
+        </EntityType>
+        <EntityType Name="AssetTrans">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AssetID" Type="int" />
+          <Property Name="CompaniesDepreciationRate" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="IncomeTaxDepreciationRate" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="ResidualValue" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="OpeningWDVOnCompanyDepreciationRate" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="DepreciationValueOnCompanyDepreciationRate" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="AccumulatedDepreciationValueOnCompanyDepreciationRate" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="CurrentValueOnCompanyDepreciationRate" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="OpeningWDVOnIncomeTaxDepreciationRate" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="DepreciationValueOnIncomeTaxDepreciationRate" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="AccumulatedDepreciationValueOnIncomeTaxDepreciationRate" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="CurrentValueOnIncomeTaxDepreciationRate" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="CurrentQty" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="DebitAcID" Type="int" />
+          <Property Name="CreditAcID" Type="int" />
+          <Property Name="LastDepreciationDate" Type="datetime" />
+          <Property Name="IsCompanyDepreciation" Type="int" />
+          <Property Name="IsIncomeTaxDepreciation" Type="int" />
+          <Property Name="Status" Type="varchar" MaxLength="20" />
+          <Property Name="isActive" Type="bit" />
+          <Property Name="StatusChangeDate" Type="datetime" />
+          <Property Name="DepreciationStartDate" Type="datetime" />
+          <Property Name="DepreciationEndDate" Type="datetime" />
+          <Property Name="AssetSubLedger" Type="varchar" MaxLength="20" />
+          <Property Name="Remarks" Type="varchar" MaxLength="200" />
+          <Property Name="CreatedUserID" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="Finyear" Type="int" />
+          <Property Name="LocationID" Type="int" />
+          <Property Name="ApplicationID" Type="int" />
+        </EntityType>
+        <Function Name="GetAccountCategoryForAsset" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Asset" />
+        <Function Name="SpCalculateDepreciation" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Asset">
+          <Parameter Name="statusdate" Type="datetime" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpChangeAssetStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Asset">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="Status" Type="varchar" Mode="In" />
+          <Parameter Name="StatusDate" Type="datetime" Mode="In" />
+          <Parameter Name="AssetNo" Type="varchar" Mode="In" />
+          <Parameter Name="DepreciationEndDate" Type="datetime" Mode="In" />
+          <Parameter Name="CreatedUserID" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpCreateAsset" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Asset">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="TransDate" Type="datetime" Mode="In" />
+          <Parameter Name="AssetNumber" Type="varchar" Mode="In" />
+          <Parameter Name="AssetName" Type="varchar" Mode="In" />
+          <Parameter Name="AssetUniqueNo" Type="varchar" Mode="In" />
+          <Parameter Name="IsRepairable" Type="bit" Mode="In" />
+          <Parameter Name="CompanyDepreciationRate" Type="numeric" Mode="In" />
+          <Parameter Name="IncomeTaxDepreciationRate" Type="numeric" Mode="In" />
+          <Parameter Name="LifeInYears" Type="numeric" Mode="In" />
+          <Parameter Name="AdditionToAssetNumber" Type="varchar" Mode="In" />
+          <Parameter Name="ResidualValue" Type="numeric" Mode="In" />
+          <Parameter Name="Remark" Type="varchar" Mode="In" />
+          <Parameter Name="Status" Type="varchar" Mode="In" />
+          <Parameter Name="StatusChangeDate" Type="datetime" Mode="In" />
+          <Parameter Name="DepreciationStartDate" Type="datetime" Mode="In" />
+          <Parameter Name="DepeciationEndDate" Type="datetime" Mode="In" />
+          <Parameter Name="IsDraft" Type="bit" Mode="In" />
+          <Parameter Name="CreatedUserID" Type="int" Mode="In" />
+          <Parameter Name="createdDate" Type="datetime" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpCreateAssetCorrection" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Asset">
+          <Parameter Name="TransNo" Type="varchar" Mode="In" />
+          <Parameter Name="TransDate" Type="datetime" Mode="In" />
+          <Parameter Name="AssetID" Type="int" Mode="In" />
+          <Parameter Name="AmountValue" Type="numeric" Mode="In" />
+          <Parameter Name="DebitAccountIDAfterCorrection" Type="int" Mode="In" />
+          <Parameter Name="CreditAccountIDAfterCorrection" Type="int" Mode="In" />
+          <Parameter Name="IsAdditionDuringYear" Type="bit" Mode="In" />
+          <Parameter Name="IsDepreciation" Type="bit" Mode="In" />
+          <Parameter Name="Remark" Type="varchar" Mode="In" />
+          <Parameter Name="CreatedUserID" Type="int" Mode="In" />
+          <Parameter Name="createdDate" Type="datetime" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpCreateAssetRetirement" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Asset">
+          <Parameter Name="AssetID" Type="int" Mode="In" />
+          <Parameter Name="TransNo" Type="varchar" Mode="In" />
+          <Parameter Name="TransDate" Type="datetime" Mode="In" />
+          <Parameter Name="ClosingGrossBlockValue" Type="numeric" Mode="In" />
+          <Parameter Name="ClosingAccumulatedDepreciation" Type="numeric" Mode="In" />
+          <Parameter Name="ClosingWDV" Type="numeric" Mode="In" />
+          <Parameter Name="SaleQty" Type="numeric" Mode="In" />
+          <Parameter Name="SaleValue" Type="numeric" Mode="In" />
+          <Parameter Name="EndDate" Type="datetime" Mode="In" />
+          <Parameter Name="Status" Type="varchar" Mode="In" />
+          <Parameter Name="CreatedUserID" Type="int" Mode="In" />
+          <Parameter Name="CreatedDate" Type="datetime" Mode="In" />
+          <Parameter Name="Finyear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetAsset" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Asset">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="Finyear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetAssetForCorrection" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Asset">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="Finyear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetAssetForRetirement" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Asset">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="Finyear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetAssetList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Asset">
+          <Parameter Name="Status" Type="varchar" Mode="In" />
+          <Parameter Name="FromTransID" Type="int" Mode="In" />
+          <Parameter Name="ToTransID" Type="int" Mode="In" />
+          <Parameter Name="FromDate" Type="datetime" Mode="In" />
+          <Parameter Name="ToDate" Type="datetime" Mode="In" />
+          <Parameter Name="FromSRNID" Type="int" Mode="In" />
+          <Parameter Name="ToSRNID" Type="int" Mode="In" />
+          <Parameter Name="AssetNameFromRange" Type="varchar" Mode="In" />
+          <Parameter Name="AssetNameToRange" Type="varchar" Mode="In" />
+          <Parameter Name="AssetName" Type="varchar" Mode="In" />
+          <Parameter Name="AccountCategoryFromRange" Type="varchar" Mode="In" />
+          <Parameter Name="AccountCategoryToRange" Type="varchar" Mode="In" />
+          <Parameter Name="AccountCategoryID" Type="int" Mode="In" />
+          <Parameter Name="SupplierNameFromRange" Type="varchar" Mode="In" />
+          <Parameter Name="SupplierNameToRange" Type="varchar" Mode="In" />
+          <Parameter Name="SupplierID" Type="int" Mode="In" />
+          <Parameter Name="TransNo" Type="varchar" Mode="In" />
+          <Parameter Name="AssetNo" Type="varchar" Mode="In" />
+          <Parameter Name="AssetNameHint" Type="varchar" Mode="In" />
+          <Parameter Name="ItemNameHint" Type="varchar" Mode="In" />
+          <Parameter Name="SupplierNameHint" Type="varchar" Mode="In" />
+          <Parameter Name="SortField" Type="varchar" Mode="In" />
+          <Parameter Name="SortOrder" Type="varchar" Mode="In" />
+          <Parameter Name="Offset" Type="int" Mode="In" />
+          <Parameter Name="Limit" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetAssetListForRetirement" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Asset">
+          <Parameter Name="FromDate" Type="datetime" Mode="In" />
+          <Parameter Name="ToDate" Type="datetime" Mode="In" />
+          <Parameter Name="AssetNameFromRange" Type="varchar" Mode="In" />
+          <Parameter Name="AssetNameToRange" Type="varchar" Mode="In" />
+          <Parameter Name="AssetName" Type="varchar" Mode="In" />
+          <Parameter Name="AssetCodeFrom" Type="varchar" Mode="In" />
+          <Parameter Name="AssetCodeTo" Type="varchar" Mode="In" />
+          <Parameter Name="TransNoHint" Type="varchar" Mode="In" />
+          <Parameter Name="AssetNoHint" Type="varchar" Mode="In" />
+          <Parameter Name="AssetNameHint" Type="varchar" Mode="In" />
+          <Parameter Name="ItemNameHint" Type="varchar" Mode="In" />
+          <Parameter Name="SupplierNameHint" Type="varchar" Mode="In" />
+          <Parameter Name="SortField" Type="varchar" Mode="In" />
+          <Parameter Name="SortOrder" Type="varchar" Mode="In" />
+          <Parameter Name="Offset" Type="int" Mode="In" />
+          <Parameter Name="Limit" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetAssetUniqueNoCount" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Asset">
+          <Parameter Name="Hint" Type="varchar" Mode="In" />
+          <Parameter Name="count" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="SpGetCapitalForRetirement" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Asset">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="Finyear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetCapitalList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Asset">
+          <Parameter Name="FromDate" Type="datetime" Mode="In" />
+          <Parameter Name="ToDate" Type="datetime" Mode="In" />
+          <Parameter Name="FromCompanyDepreciationRate" Type="numeric" Mode="In" />
+          <Parameter Name="ToCompanyDepreciationRate" Type="numeric" Mode="In" />
+          <Parameter Name="FromIncomeTaxDepreciationRate" Type="numeric" Mode="In" />
+          <Parameter Name="ToIncomeTaxDepreciationRate" Type="numeric" Mode="In" />
+          <Parameter Name="AssetNameHint" Type="varchar" Mode="In" />
+          <Parameter Name="ItemNameHint" Type="varchar" Mode="In" />
+          <Parameter Name="SupplierNameHint" Type="varchar" Mode="In" />
+          <Parameter Name="SortField" Type="varchar" Mode="In" />
+          <Parameter Name="SortOrder" Type="varchar" Mode="In" />
+          <Parameter Name="Offset" Type="int" Mode="In" />
+          <Parameter Name="Limit" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetCapitalListForCorrection" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Asset">
+          <Parameter Name="FromAssetCode" Type="varchar" Mode="In" />
+          <Parameter Name="ToAssetCode" Type="varchar" Mode="In" />
+          <Parameter Name="AssetNameFromRange" Type="varchar" Mode="In" />
+          <Parameter Name="AssetNameToRange" Type="varchar" Mode="In" />
+          <Parameter Name="AssetName" Type="varchar" Mode="In" />
+          <Parameter Name="TransNoHint" Type="varchar" Mode="In" />
+          <Parameter Name="AssetNoHint" Type="varchar" Mode="In" />
+          <Parameter Name="AssetNameHint" Type="varchar" Mode="In" />
+          <Parameter Name="ItemNameHint" Type="varchar" Mode="In" />
+          <Parameter Name="SupplierNameHint" Type="varchar" Mode="In" />
+          <Parameter Name="SortField" Type="varchar" Mode="In" />
+          <Parameter Name="SortOrder" Type="varchar" Mode="In" />
+          <Parameter Name="Offset" Type="int" Mode="In" />
+          <Parameter Name="Limit" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpCancelTransaction" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="TableName" Type="varchar" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpCreateBatch" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ItemType" Type="char" Mode="In" />
+          <Parameter Name="ItemID" Type="int" Mode="In" />
+          <Parameter Name="BatchNo" Type="varchar" Mode="In" />
+          <Parameter Name="CustomBatchNo" Type="varchar" Mode="In" />
+          <Parameter Name="ManufacturingDate" Type="datetime" Mode="In" />
+          <Parameter Name="ExpiryDate" Type="datetime" Mode="In" />
+          <Parameter Name="BatchTypeID" Type="int" Mode="In" />
+          <Parameter Name="CreatedUserID" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <Parameter Name="BatchID" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="SpGetConfigByUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ConfigName" Type="varchar" Mode="In" />
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetCurrentFinYear" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpIsCodeAlreadyExists" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="tableName" Type="varchar" Mode="In" />
+          <Parameter Name="FieldName" Type="varchar" Mode="In" />
+          <Parameter Name="Code" Type="varchar" Mode="In" />
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="IsExists" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="SpSuspendTransaction" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="TableName" Type="varchar" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <Parameter Name="RetValue" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="SpUpdateSerialNo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="FormName" Type="varchar" Mode="In" />
+          <Parameter Name="FieldName" Type="varchar" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <Parameter Name="SerialNo" Type="varchar" Mode="InOut" />
+        </Function>
+        <EntityContainer Name="AssetModelStoreContainer">
+          <EntitySet Name="AssetCorrection" EntityType="Self.AssetCorrection" Schema="Asset" store:Type="Tables" />
+          <EntitySet Name="AssetTrans" EntityType="Self.AssetTrans" Schema="Asset" store:Type="Tables" />
+          <EntitySet Name="Asset" EntityType="Self.Asset" store:Type="Tables" store:Schema="Asset">
+            <DefiningQuery>SELECT 
+    [Asset].[ID] AS [ID], 
+    [Asset].[TransNo] AS [TransNo], 
+    [Asset].[TransDate] AS [TransDate], 
+    [Asset].[ItemID] AS [ItemID], 
+    [Asset].[SupplierID] AS [SupplierID], 
+    [Asset].[AssetCode] AS [AssetCode], 
+    [Asset].[GrossBlockAssetValue] AS [GrossBlockAssetValue], 
+    [Asset].[CurrentValueOnCompanyDepreciationRate] AS [CurrentValueOnCompanyDepreciationRate], 
+    [Asset].[CurrentValueOnIncomeTaxDepreciationRate] AS [CurrentValueOnIncomeTaxDepreciationRate], 
+    [Asset].[AssetQty] AS [AssetQty], 
+    [Asset].[AssetName] AS [AssetName], 
+    [Asset].[AssetUniqueNo] AS [AssetUniqueNo], 
+    [Asset].[PurchaseDocumentNo] AS [PurchaseDocumentNo], 
+    [Asset].[PurchaseDocumentDate] AS [PurchaseDocumentDate], 
+    [Asset].[IsRepairable] AS [IsRepairable], 
+    [Asset].[FinancialAssetName] AS [FinancialAssetName], 
+    [Asset].[NewItemName] AS [NewItemName], 
+    [Asset].[CompanyDepreciationRate] AS [CompanyDepreciationRate], 
+    [Asset].[IncomeTaxDepreciationRate] AS [IncomeTaxDepreciationRate], 
+    [Asset].[LifeInYears] AS [LifeInYears], 
+    [Asset].[ResidualValue] AS [ResidualValue], 
+    [Asset].[SRNID] AS [SRNID], 
+    [Asset].[AdditionToAssetNumber] AS [AdditionToAssetNumber], 
+    [Asset].[Remark] AS [Remark], 
+    [Asset].[DepartmentID] AS [DepartmentID], 
+    [Asset].[EmployeeID] AS [EmployeeID], 
+    [Asset].[AssetLocationID] AS [AssetLocationID], 
+    [Asset].[ProjectID] AS [ProjectID], 
+    [Asset].[InitialGrossBlockValue] AS [InitialGrossBlockValue], 
+    [Asset].[InitialAssetQty] AS [InitialAssetQty], 
+    [Asset].[FirstDateCapitalisation] AS [FirstDateCapitalisation], 
+    [Asset].[Status] AS [Status], 
+    [Asset].[IsDepreciation] AS [IsDepreciation], 
+    [Asset].[IsDraft] AS [IsDraft], 
+    [Asset].[CreatedUserID] AS [CreatedUserID], 
+    [Asset].[CreatedDate] AS [CreatedDate], 
+    [Asset].[FinYear] AS [FinYear], 
+    [Asset].[ApplicationID] AS [ApplicationID], 
+    [Asset].[LocationID] AS [LocationID]
+    FROM [Asset].[Asset] AS [Asset]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="AssetRetirement" EntityType="Self.AssetRetirement" store:Type="Tables" store:Schema="Asset">
+            <DefiningQuery>SELECT 
+    [AssetRetirement].[ID] AS [ID], 
+    [AssetRetirement].[TransNo] AS [TransNo], 
+    [AssetRetirement].[TransDate] AS [TransDate], 
+    [AssetRetirement].[AssetTransID] AS [AssetTransID], 
+    [AssetRetirement].[ClosingGrossBlockValue] AS [ClosingGrossBlockValue], 
+    [AssetRetirement].[ClosingAccumulatedDepreciation] AS [ClosingAccumulatedDepreciation], 
+    [AssetRetirement].[ClosingWDV] AS [ClosingWDV], 
+    [AssetRetirement].[SaleQty] AS [SaleQty], 
+    [AssetRetirement].[SaleValue] AS [SaleValue], 
+    [AssetRetirement].[EndDate] AS [EndDate], 
+    [AssetRetirement].[CreatedUserID] AS [CreatedUserID], 
+    [AssetRetirement].[CreatedDate] AS [CreatedDate], 
+    [AssetRetirement].[FinYear] AS [FinYear], 
+    [AssetRetirement].[ApplicationID] AS [ApplicationID], 
+    [AssetRetirement].[LocationID] AS [LocationID]
+    FROM [Asset].[AssetRetirement] AS [AssetRetirement]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="AssetModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="AssetCorrection">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TransNo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="TransDate" Type="DateTime" Precision="3" />
+          <Property Name="AssetTransID" Type="Int32" />
+          <Property Name="AmountValue" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="DebitAcIDBeforeCorrection" Type="Int32" />
+          <Property Name="CreditAcIDBeforeCorrection" Type="Int32" />
+          <Property Name="DebitAcIDAfterCorrection" Type="Int32" />
+          <Property Name="CreditAcIDAfterCorrection" Type="Int32" />
+          <Property Name="CreditAccountID" Type="Int32" />
+          <Property Name="IsAdditionDuringYear" Type="Boolean" />
+          <Property Name="IsDepreciationForYear" Type="Boolean" />
+          <Property Name="GrossBlockValueBeforeCorrection" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="GrossBlockValueAfterCorrection" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="Remark" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedUserID" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="FinYear" Type="Int32" />
+          <Property Name="LocationID" Type="Int32" />
+          <Property Name="ApplicationID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="AssetTran">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AssetID" Type="Int32" />
+          <Property Name="CompaniesDepreciationRate" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="IncomeTaxDepreciationRate" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="ResidualValue" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="OpeningWDVOnCompanyDepreciationRate" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="DepreciationValueOnCompanyDepreciationRate" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="AccumulatedDepreciationValueOnCompanyDepreciationRate" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="CurrentValueOnCompanyDepreciationRate" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="OpeningWDVOnIncomeTaxDepreciationRate" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="DepreciationValueOnIncomeTaxDepreciationRate" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="AccumulatedDepreciationValueOnIncomeTaxDepreciationRate" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="CurrentValueOnIncomeTaxDepreciationRate" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="CurrentQty" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="DebitAcID" Type="Int32" />
+          <Property Name="CreditAcID" Type="Int32" />
+          <Property Name="LastDepreciationDate" Type="DateTime" Precision="3" />
+          <Property Name="IsCompanyDepreciation" Type="Int32" />
+          <Property Name="IsIncomeTaxDepreciation" Type="Int32" />
+          <Property Name="Status" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="isActive" Type="Boolean" />
+          <Property Name="StatusChangeDate" Type="DateTime" Precision="3" />
+          <Property Name="DepreciationStartDate" Type="DateTime" Precision="3" />
+          <Property Name="DepreciationEndDate" Type="DateTime" Precision="3" />
+          <Property Name="AssetSubLedger" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Remarks" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedUserID" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="Finyear" Type="Int32" />
+          <Property Name="LocationID" Type="Int32" />
+          <Property Name="ApplicationID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Asset">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TransNo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="TransDate" Type="DateTime" Precision="3" />
+          <Property Name="ItemID" Type="Int32" />
+          <Property Name="SupplierID" Type="Int32" />
+          <Property Name="AssetCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="GrossBlockAssetValue" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="CurrentValueOnCompanyDepreciationRate" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="CurrentValueOnIncomeTaxDepreciationRate" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="AssetQty" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="AssetName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="AssetUniqueNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PurchaseDocumentNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PurchaseDocumentDate" Type="DateTime" Precision="3" />
+          <Property Name="IsRepairable" Type="Boolean" />
+          <Property Name="FinancialAssetName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="NewItemName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CompanyDepreciationRate" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="IncomeTaxDepreciationRate" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="LifeInYears" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="ResidualValue" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="SRNID" Type="Int32" />
+          <Property Name="AdditionToAssetNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Remark" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="DepartmentID" Type="Int32" />
+          <Property Name="EmployeeID" Type="Int32" />
+          <Property Name="AssetLocationID" Type="Int32" />
+          <Property Name="ProjectID" Type="Int32" />
+          <Property Name="InitialGrossBlockValue" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="InitialAssetQty" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="FirstDateCapitalisation" Type="DateTime" Precision="3" />
+          <Property Name="Status" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="IsDepreciation" Type="Boolean" />
+          <Property Name="IsDraft" Type="Boolean" />
+          <Property Name="CreatedUserID" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="FinYear" Type="Int32" />
+          <Property Name="ApplicationID" Type="Int32" />
+          <Property Name="LocationID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="AssetRetirement">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TransNo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="TransDate" Type="DateTime" Precision="3" />
+          <Property Name="AssetTransID" Type="Int32" />
+          <Property Name="ClosingGrossBlockValue" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="ClosingAccumulatedDepreciation" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="ClosingWDV" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="SaleQty" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="SaleValue" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="EndDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedUserID" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="FinYear" Type="Int32" />
+          <Property Name="ApplicationID" Type="Int32" />
+          <Property Name="LocationID" Type="Int32" />
+        </EntityType>
+        <EntityContainer Name="AssetEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AssetCorrections" EntityType="Self.AssetCorrection" />
+          <EntitySet Name="AssetTrans" EntityType="Self.AssetTran" />
+          <EntitySet Name="Assets" EntityType="Self.Asset" />
+          <EntitySet Name="AssetRetirements" EntityType="Self.AssetRetirement" />
+          <FunctionImport Name="GetAccountCategoryForAsset" ReturnType="Collection(AssetModel.GetAccountCategoryForAsset_Result)" />
+          <FunctionImport Name="SpCalculateDepreciation">
+            <Parameter Name="statusdate" Mode="In" Type="DateTime" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpChangeAssetStatus">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="Status" Mode="In" Type="String" />
+            <Parameter Name="StatusDate" Mode="In" Type="DateTime" />
+            <Parameter Name="AssetNo" Mode="In" Type="String" />
+            <Parameter Name="DepreciationEndDate" Mode="In" Type="DateTime" />
+            <Parameter Name="CreatedUserID" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpCreateAsset">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="TransDate" Mode="In" Type="DateTime" />
+            <Parameter Name="AssetNumber" Mode="In" Type="String" />
+            <Parameter Name="AssetName" Mode="In" Type="String" />
+            <Parameter Name="AssetUniqueNo" Mode="In" Type="String" />
+            <Parameter Name="IsRepairable" Mode="In" Type="Boolean" />
+            <Parameter Name="CompanyDepreciationRate" Mode="In" Type="Decimal" />
+            <Parameter Name="IncomeTaxDepreciationRate" Mode="In" Type="Decimal" />
+            <Parameter Name="LifeInYears" Mode="In" Type="Decimal" />
+            <Parameter Name="AdditionToAssetNumber" Mode="In" Type="String" />
+            <Parameter Name="ResidualValue" Mode="In" Type="Decimal" />
+            <Parameter Name="Remark" Mode="In" Type="String" />
+            <Parameter Name="Status" Mode="In" Type="String" />
+            <Parameter Name="StatusChangeDate" Mode="In" Type="DateTime" />
+            <Parameter Name="DepreciationStartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="DepeciationEndDate" Mode="In" Type="DateTime" />
+            <Parameter Name="IsDraft" Mode="In" Type="Boolean" />
+            <Parameter Name="CreatedUserID" Mode="In" Type="Int32" />
+            <Parameter Name="createdDate" Mode="In" Type="DateTime" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpCreateAssetCorrection">
+            <Parameter Name="TransNo" Mode="In" Type="String" />
+            <Parameter Name="TransDate" Mode="In" Type="DateTime" />
+            <Parameter Name="AssetID" Mode="In" Type="Int32" />
+            <Parameter Name="AmountValue" Mode="In" Type="Decimal" />
+            <Parameter Name="DebitAccountIDAfterCorrection" Mode="In" Type="Int32" />
+            <Parameter Name="CreditAccountIDAfterCorrection" Mode="In" Type="Int32" />
+            <Parameter Name="IsAdditionDuringYear" Mode="In" Type="Boolean" />
+            <Parameter Name="IsDepreciation" Mode="In" Type="Boolean" />
+            <Parameter Name="Remark" Mode="In" Type="String" />
+            <Parameter Name="CreatedUserID" Mode="In" Type="Int32" />
+            <Parameter Name="createdDate" Mode="In" Type="DateTime" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpCreateAssetRetirement">
+            <Parameter Name="AssetID" Mode="In" Type="Int32" />
+            <Parameter Name="TransNo" Mode="In" Type="String" />
+            <Parameter Name="TransDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ClosingGrossBlockValue" Mode="In" Type="Decimal" />
+            <Parameter Name="ClosingAccumulatedDepreciation" Mode="In" Type="Decimal" />
+            <Parameter Name="ClosingWDV" Mode="In" Type="Decimal" />
+            <Parameter Name="SaleQty" Mode="In" Type="Decimal" />
+            <Parameter Name="SaleValue" Mode="In" Type="Decimal" />
+            <Parameter Name="EndDate" Mode="In" Type="DateTime" />
+            <Parameter Name="Status" Mode="In" Type="String" />
+            <Parameter Name="CreatedUserID" Mode="In" Type="Int32" />
+            <Parameter Name="CreatedDate" Mode="In" Type="DateTime" />
+            <Parameter Name="Finyear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetAsset" ReturnType="Collection(AssetModel.SpGetAsset_Result)">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="Finyear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetAssetForCorrection" ReturnType="Collection(AssetModel.SpGetAssetForCorrection_Result)">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="Finyear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetAssetForRetirement" ReturnType="Collection(AssetModel.SpGetAssetForRetirement_Result)">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="Finyear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetAssetList" ReturnType="Collection(AssetModel.SpGetAssetList_Result)">
+            <Parameter Name="Status" Mode="In" Type="String" />
+            <Parameter Name="FromTransID" Mode="In" Type="Int32" />
+            <Parameter Name="ToTransID" Mode="In" Type="Int32" />
+            <Parameter Name="FromDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ToDate" Mode="In" Type="DateTime" />
+            <Parameter Name="FromSRNID" Mode="In" Type="Int32" />
+            <Parameter Name="ToSRNID" Mode="In" Type="Int32" />
+            <Parameter Name="AssetNameFromRange" Mode="In" Type="String" />
+            <Parameter Name="AssetNameToRange" Mode="In" Type="String" />
+            <Parameter Name="AssetName" Mode="In" Type="String" />
+            <Parameter Name="AccountCategoryFromRange" Mode="In" Type="String" />
+            <Parameter Name="AccountCategoryToRange" Mode="In" Type="String" />
+            <Parameter Name="AccountCategoryID" Mode="In" Type="Int32" />
+            <Parameter Name="SupplierNameFromRange" Mode="In" Type="String" />
+            <Parameter Name="SupplierNameToRange" Mode="In" Type="String" />
+            <Parameter Name="SupplierID" Mode="In" Type="Int32" />
+            <Parameter Name="TransNo" Mode="In" Type="String" />
+            <Parameter Name="AssetNo" Mode="In" Type="String" />
+            <Parameter Name="AssetNameHint" Mode="In" Type="String" />
+            <Parameter Name="ItemNameHint" Mode="In" Type="String" />
+            <Parameter Name="SupplierNameHint" Mode="In" Type="String" />
+            <Parameter Name="SortField" Mode="In" Type="String" />
+            <Parameter Name="SortOrder" Mode="In" Type="String" />
+            <Parameter Name="Offset" Mode="In" Type="Int32" />
+            <Parameter Name="Limit" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetAssetListForRetirement" ReturnType="Collection(AssetModel.SpGetAssetListForRetirement_Result)">
+            <Parameter Name="FromDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ToDate" Mode="In" Type="DateTime" />
+            <Parameter Name="AssetNameFromRange" Mode="In" Type="String" />
+            <Parameter Name="AssetNameToRange" Mode="In" Type="String" />
+            <Parameter Name="AssetName" Mode="In" Type="String" />
+            <Parameter Name="AssetCodeFrom" Mode="In" Type="String" />
+            <Parameter Name="AssetCodeTo" Mode="In" Type="String" />
+            <Parameter Name="TransNoHint" Mode="In" Type="String" />
+            <Parameter Name="AssetNoHint" Mode="In" Type="String" />
+            <Parameter Name="AssetNameHint" Mode="In" Type="String" />
+            <Parameter Name="ItemNameHint" Mode="In" Type="String" />
+            <Parameter Name="SupplierNameHint" Mode="In" Type="String" />
+            <Parameter Name="SortField" Mode="In" Type="String" />
+            <Parameter Name="SortOrder" Mode="In" Type="String" />
+            <Parameter Name="Offset" Mode="In" Type="Int32" />
+            <Parameter Name="Limit" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetAssetUniqueNoCount">
+            <Parameter Name="Hint" Mode="In" Type="String" />
+            <Parameter Name="count" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetCapitalForRetirement" ReturnType="Collection(AssetModel.SpGetCapitalForRetirement_Result)">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="Finyear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetCapitalList" ReturnType="Collection(AssetModel.SpGetCapitalList_Result)">
+            <Parameter Name="FromDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ToDate" Mode="In" Type="DateTime" />
+            <Parameter Name="FromCompanyDepreciationRate" Mode="In" Type="Decimal" />
+            <Parameter Name="ToCompanyDepreciationRate" Mode="In" Type="Decimal" />
+            <Parameter Name="FromIncomeTaxDepreciationRate" Mode="In" Type="Decimal" />
+            <Parameter Name="ToIncomeTaxDepreciationRate" Mode="In" Type="Decimal" />
+            <Parameter Name="AssetNameHint" Mode="In" Type="String" />
+            <Parameter Name="ItemNameHint" Mode="In" Type="String" />
+            <Parameter Name="SupplierNameHint" Mode="In" Type="String" />
+            <Parameter Name="SortField" Mode="In" Type="String" />
+            <Parameter Name="SortOrder" Mode="In" Type="String" />
+            <Parameter Name="Offset" Mode="In" Type="Int32" />
+            <Parameter Name="Limit" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetCapitalListForCorrection" ReturnType="Collection(AssetModel.SpGetCapitalListForCorrection_Result)">
+            <Parameter Name="FromAssetCode" Mode="In" Type="String" />
+            <Parameter Name="ToAssetCode" Mode="In" Type="String" />
+            <Parameter Name="AssetNameFromRange" Mode="In" Type="String" />
+            <Parameter Name="AssetNameToRange" Mode="In" Type="String" />
+            <Parameter Name="AssetName" Mode="In" Type="String" />
+            <Parameter Name="TransNoHint" Mode="In" Type="String" />
+            <Parameter Name="AssetNoHint" Mode="In" Type="String" />
+            <Parameter Name="AssetNameHint" Mode="In" Type="String" />
+            <Parameter Name="ItemNameHint" Mode="In" Type="String" />
+            <Parameter Name="SupplierNameHint" Mode="In" Type="String" />
+            <Parameter Name="SortField" Mode="In" Type="String" />
+            <Parameter Name="SortOrder" Mode="In" Type="String" />
+            <Parameter Name="Offset" Mode="In" Type="Int32" />
+            <Parameter Name="Limit" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpCancelTransaction">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="TableName" Mode="In" Type="String" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpCreateBatch">
+            <Parameter Name="ItemType" Mode="In" Type="String" />
+            <Parameter Name="ItemID" Mode="In" Type="Int32" />
+            <Parameter Name="BatchNo" Mode="In" Type="String" />
+            <Parameter Name="CustomBatchNo" Mode="In" Type="String" />
+            <Parameter Name="ManufacturingDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ExpiryDate" Mode="In" Type="DateTime" />
+            <Parameter Name="BatchTypeID" Mode="In" Type="Int32" />
+            <Parameter Name="CreatedUserID" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+            <Parameter Name="BatchID" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetConfigByUser" ReturnType="Collection(AssetModel.SpGetConfigByUser_Result)">
+            <Parameter Name="ConfigName" Mode="In" Type="String" />
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetCurrentFinYear" ReturnType="Collection(AssetModel.SpGetCurrentFinYear_Result)">
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpIsCodeAlreadyExists">
+            <Parameter Name="tableName" Mode="In" Type="String" />
+            <Parameter Name="FieldName" Mode="In" Type="String" />
+            <Parameter Name="Code" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="IsExists" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpSuspendTransaction">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="TableName" Mode="In" Type="String" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+            <Parameter Name="RetValue" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpUpdateSerialNo">
+            <Parameter Name="FormName" Mode="In" Type="String" />
+            <Parameter Name="FieldName" Mode="In" Type="String" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+            <Parameter Name="SerialNo" Mode="InOut" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="GetAccountCategoryForAsset_Result">
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="ID" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="SpGetAsset_Result">
+          <Property Type="String" Name="TransNo" Nullable="true" MaxLength="20" />
+          <Property Type="DateTime" Name="TransDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="ItemName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="SupplierName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="AssetCode" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="AssetName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="AssetUniqueNo" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="PurchaseDocumentNo" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="PurchaseDocumentDate" Nullable="true" Precision="23" />
+          <Property Type="Boolean" Name="IsRepairable" Nullable="true" />
+          <Property Type="String" Name="FinancialAssetName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="NewItemName" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="LifeInYears" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="ResidualValue" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="String" Name="Status" Nullable="true" MaxLength="20" />
+          <Property Type="Decimal" Name="CurrentValue" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Boolean" Name="IsDraft" Nullable="true" />
+          <Property Type="Decimal" Name="CompaniesDepreciationRate" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="IncomeTaxDepreciationRate" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="DateTime" Name="DepreciationEndDate" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="DepreciationStartDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="EmployeeName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="ProjectName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="AssetLocationName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="DepartmentName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ItemAccountCategory" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="AdditionToAssetNumber" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Remarks" Nullable="true" MaxLength="200" />
+          <Property Type="Decimal" Name="AssetQty" Nullable="true" Precision="18" Scale="4" />
+        </ComplexType>
+        <ComplexType Name="SpGetAssetForCorrection_Result">
+          <Property Type="String" Name="ItemName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="AssetCode" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="AssetName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="ItemAccountCategory" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="AssetUniqueNo" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="GrossBlockAssetValue" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="String" Name="DebitAcCode" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="DebitAcName" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="CreditAcCode" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="CreditAcName" Nullable="true" MaxLength="200" />
+          <Property Type="Int32" Name="DebitAcID" Nullable="false" />
+          <Property Type="Int32" Name="CreditAcID" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="SpGetAssetForRetirement_Result">
+          <Property Type="String" Name="ItemName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="AssetCode" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="AssetName" Nullable="true" MaxLength="100" />
+          <Property Type="Decimal" Name="ResidualValue" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="ClosingWDV" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="AccumulatedDepreciationValue" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="ClosingGrossBlockValue" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="String" Name="AssetLocationName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ItemAccountCategory" Nullable="false" MaxLength="50" />
+          <Property Type="DateTime" Name="CapitalisationDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="AssetUniqueNo" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="CurrentQty" Nullable="true" Precision="18" Scale="4" />
+        </ComplexType>
+        <ComplexType Name="SpGetAssetList_Result">
+          <Property Type="Int64" Name="RowNum" Nullable="true" />
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="AssetName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="SupplierName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="ItemName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="TransNo" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="AssetCode" Nullable="true" MaxLength="20" />
+          <Property Type="Decimal" Name="GrossBlockAssetValue" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Int32" Name="totalRecords" Nullable="true" />
+          <Property Type="Int32" Name="recordsFiltered" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SpGetAssetListForRetirement_Result">
+          <Property Type="Int64" Name="RowNum" Nullable="true" />
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="AssetName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="SupplierName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="ItemName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="TransNo" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="AssetCode" Nullable="true" MaxLength="20" />
+          <Property Type="Decimal" Name="GrossBlockAssetValue" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Int32" Name="totalRecords" Nullable="true" />
+          <Property Type="Int32" Name="recordsFiltered" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SpGetCapitalForRetirement_Result">
+          <Property Type="String" Name="AssetCode" Nullable="true" MaxLength="20" />
+          <Property Type="DateTime" Name="CapitalizationDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="ItemName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="AssetName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="AssetUniqueNo" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="ResidualValue" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="String" Name="AssetLocationName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ItemAccountCategory" Nullable="false" MaxLength="50" />
+          <Property Type="Decimal" Name="closingGrossBlockValue" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="ClosingAccumulatedValue" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="ClosingWDV" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="DateTime" Name="Column1" Nullable="true" Precision="23" />
+        </ComplexType>
+        <ComplexType Name="SpGetCapitalList_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="AssetName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="SupplierName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="ItemName" Nullable="false" MaxLength="100" />
+          <Property Type="Decimal" Name="CurrentValue" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="CompaniesDepreciationRate" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="OpeningWDVOnCompanyDepreciationRate" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="AccumulatedDepreciationValueOnCompanyDepreciationRate" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="DepreciationValueOnCompanyDepreciationRate" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="GrossBlockAssetValue" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Int32" Name="totalRecords" Nullable="true" />
+          <Property Type="Int32" Name="recordsFiltered" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SpGetCapitalListForCorrection_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="AssetName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="SupplierName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="ItemName" Nullable="false" MaxLength="100" />
+          <Property Type="Decimal" Name="CurrentValue" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="String" Name="TransNo" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="AssetCode" Nullable="true" MaxLength="20" />
+          <Property Type="Decimal" Name="GrossBlockAssetValue" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Int32" Name="totalRecords" Nullable="true" />
+          <Property Type="Int32" Name="recordsFiltered" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SpGetConfigByUser_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="ConfigValue" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Description" Nullable="true" MaxLength="255" />
+          <Property Type="Boolean" Name="IsBoolean" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SpGetCurrentFinYear_Result">
+          <Property Type="Int32" Name="FinancialYearID" Nullable="false" />
+          <Property Type="DateTime" Name="StartDate" Nullable="false" Precision="23" />
+          <Property Type="DateTime" Name="EndDate" Nullable="false" Precision="23" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="100" />
+          <Property Type="Int32" Name="Year" Nullable="false" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="AssetModelStoreContainer" CdmEntityContainer="AssetEntities">
+          <EntitySetMapping Name="AssetCorrections">
+            <EntityTypeMapping TypeName="AssetModel.AssetCorrection">
+              <MappingFragment StoreEntitySet="AssetCorrection">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="TransNo" ColumnName="TransNo" />
+                <ScalarProperty Name="TransDate" ColumnName="TransDate" />
+                <ScalarProperty Name="AssetTransID" ColumnName="AssetTransID" />
+                <ScalarProperty Name="AmountValue" ColumnName="AmountValue" />
+                <ScalarProperty Name="DebitAcIDBeforeCorrection" ColumnName="DebitAcIDBeforeCorrection" />
+                <ScalarProperty Name="CreditAcIDBeforeCorrection" ColumnName="CreditAcIDBeforeCorrection" />
+                <ScalarProperty Name="DebitAcIDAfterCorrection" ColumnName="DebitAcIDAfterCorrection" />
+                <ScalarProperty Name="CreditAcIDAfterCorrection" ColumnName="CreditAcIDAfterCorrection" />
+                <ScalarProperty Name="CreditAccountID" ColumnName="CreditAccountID" />
+                <ScalarProperty Name="IsAdditionDuringYear" ColumnName="IsAdditionDuringYear" />
+                <ScalarProperty Name="IsDepreciationForYear" ColumnName="IsDepreciationForYear" />
+                <ScalarProperty Name="GrossBlockValueBeforeCorrection" ColumnName="GrossBlockValueBeforeCorrection" />
+                <ScalarProperty Name="GrossBlockValueAfterCorrection" ColumnName="GrossBlockValueAfterCorrection" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="CreatedUserID" ColumnName="CreatedUserID" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="FinYear" ColumnName="FinYear" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="ApplicationID" ColumnName="ApplicationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AssetTrans">
+            <EntityTypeMapping TypeName="AssetModel.AssetTran">
+              <MappingFragment StoreEntitySet="AssetTrans">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="AssetID" ColumnName="AssetID" />
+                <ScalarProperty Name="CompaniesDepreciationRate" ColumnName="CompaniesDepreciationRate" />
+                <ScalarProperty Name="IncomeTaxDepreciationRate" ColumnName="IncomeTaxDepreciationRate" />
+                <ScalarProperty Name="ResidualValue" ColumnName="ResidualValue" />
+                <ScalarProperty Name="OpeningWDVOnCompanyDepreciationRate" ColumnName="OpeningWDVOnCompanyDepreciationRate" />
+                <ScalarProperty Name="DepreciationValueOnCompanyDepreciationRate" ColumnName="DepreciationValueOnCompanyDepreciationRate" />
+                <ScalarProperty Name="AccumulatedDepreciationValueOnCompanyDepreciationRate" ColumnName="AccumulatedDepreciationValueOnCompanyDepreciationRate" />
+                <ScalarProperty Name="CurrentValueOnCompanyDepreciationRate" ColumnName="CurrentValueOnCompanyDepreciationRate" />
+                <ScalarProperty Name="OpeningWDVOnIncomeTaxDepreciationRate" ColumnName="OpeningWDVOnIncomeTaxDepreciationRate" />
+                <ScalarProperty Name="DepreciationValueOnIncomeTaxDepreciationRate" ColumnName="DepreciationValueOnIncomeTaxDepreciationRate" />
+                <ScalarProperty Name="AccumulatedDepreciationValueOnIncomeTaxDepreciationRate" ColumnName="AccumulatedDepreciationValueOnIncomeTaxDepreciationRate" />
+                <ScalarProperty Name="CurrentValueOnIncomeTaxDepreciationRate" ColumnName="CurrentValueOnIncomeTaxDepreciationRate" />
+                <ScalarProperty Name="CurrentQty" ColumnName="CurrentQty" />
+                <ScalarProperty Name="DebitAcID" ColumnName="DebitAcID" />
+                <ScalarProperty Name="CreditAcID" ColumnName="CreditAcID" />
+                <ScalarProperty Name="LastDepreciationDate" ColumnName="LastDepreciationDate" />
+                <ScalarProperty Name="IsCompanyDepreciation" ColumnName="IsCompanyDepreciation" />
+                <ScalarProperty Name="IsIncomeTaxDepreciation" ColumnName="IsIncomeTaxDepreciation" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="isActive" ColumnName="isActive" />
+                <ScalarProperty Name="StatusChangeDate" ColumnName="StatusChangeDate" />
+                <ScalarProperty Name="DepreciationStartDate" ColumnName="DepreciationStartDate" />
+                <ScalarProperty Name="DepreciationEndDate" ColumnName="DepreciationEndDate" />
+                <ScalarProperty Name="AssetSubLedger" ColumnName="AssetSubLedger" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="CreatedUserID" ColumnName="CreatedUserID" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="Finyear" ColumnName="Finyear" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="ApplicationID" ColumnName="ApplicationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Assets">
+            <EntityTypeMapping TypeName="AssetModel.Asset">
+              <MappingFragment StoreEntitySet="Asset">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="TransNo" ColumnName="TransNo" />
+                <ScalarProperty Name="TransDate" ColumnName="TransDate" />
+                <ScalarProperty Name="ItemID" ColumnName="ItemID" />
+                <ScalarProperty Name="SupplierID" ColumnName="SupplierID" />
+                <ScalarProperty Name="AssetCode" ColumnName="AssetCode" />
+                <ScalarProperty Name="GrossBlockAssetValue" ColumnName="GrossBlockAssetValue" />
+                <ScalarProperty Name="CurrentValueOnCompanyDepreciationRate" ColumnName="CurrentValueOnCompanyDepreciationRate" />
+                <ScalarProperty Name="CurrentValueOnIncomeTaxDepreciationRate" ColumnName="CurrentValueOnIncomeTaxDepreciationRate" />
+                <ScalarProperty Name="AssetQty" ColumnName="AssetQty" />
+                <ScalarProperty Name="AssetName" ColumnName="AssetName" />
+                <ScalarProperty Name="AssetUniqueNo" ColumnName="AssetUniqueNo" />
+                <ScalarProperty Name="PurchaseDocumentNo" ColumnName="PurchaseDocumentNo" />
+                <ScalarProperty Name="PurchaseDocumentDate" ColumnName="PurchaseDocumentDate" />
+                <ScalarProperty Name="IsRepairable" ColumnName="IsRepairable" />
+                <ScalarProperty Name="FinancialAssetName" ColumnName="FinancialAssetName" />
+                <ScalarProperty Name="NewItemName" ColumnName="NewItemName" />
+                <ScalarProperty Name="CompanyDepreciationRate" ColumnName="CompanyDepreciationRate" />
+                <ScalarProperty Name="IncomeTaxDepreciationRate" ColumnName="IncomeTaxDepreciationRate" />
+                <ScalarProperty Name="LifeInYears" ColumnName="LifeInYears" />
+                <ScalarProperty Name="ResidualValue" ColumnName="ResidualValue" />
+                <ScalarProperty Name="SRNID" ColumnName="SRNID" />
+                <ScalarProperty Name="AdditionToAssetNumber" ColumnName="AdditionToAssetNumber" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
+                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+                <ScalarProperty Name="AssetLocationID" ColumnName="AssetLocationID" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="InitialGrossBlockValue" ColumnName="InitialGrossBlockValue" />
+                <ScalarProperty Name="InitialAssetQty" ColumnName="InitialAssetQty" />
+                <ScalarProperty Name="FirstDateCapitalisation" ColumnName="FirstDateCapitalisation" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="IsDepreciation" ColumnName="IsDepreciation" />
+                <ScalarProperty Name="IsDraft" ColumnName="IsDraft" />
+                <ScalarProperty Name="CreatedUserID" ColumnName="CreatedUserID" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="FinYear" ColumnName="FinYear" />
+                <ScalarProperty Name="ApplicationID" ColumnName="ApplicationID" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AssetRetirements">
+            <EntityTypeMapping TypeName="AssetModel.AssetRetirement">
+              <MappingFragment StoreEntitySet="AssetRetirement">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="TransNo" ColumnName="TransNo" />
+                <ScalarProperty Name="TransDate" ColumnName="TransDate" />
+                <ScalarProperty Name="AssetTransID" ColumnName="AssetTransID" />
+                <ScalarProperty Name="ClosingGrossBlockValue" ColumnName="ClosingGrossBlockValue" />
+                <ScalarProperty Name="ClosingAccumulatedDepreciation" ColumnName="ClosingAccumulatedDepreciation" />
+                <ScalarProperty Name="ClosingWDV" ColumnName="ClosingWDV" />
+                <ScalarProperty Name="SaleQty" ColumnName="SaleQty" />
+                <ScalarProperty Name="SaleValue" ColumnName="SaleValue" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="CreatedUserID" ColumnName="CreatedUserID" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="FinYear" ColumnName="FinYear" />
+                <ScalarProperty Name="ApplicationID" ColumnName="ApplicationID" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetAccountCategoryForAsset" FunctionName="AssetModel.Store.GetAccountCategoryForAsset">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AssetModel.GetAccountCategoryForAsset_Result">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpCalculateDepreciation" FunctionName="AssetModel.Store.SpCalculateDepreciation" />
+          <FunctionImportMapping FunctionImportName="SpChangeAssetStatus" FunctionName="AssetModel.Store.SpChangeAssetStatus" />
+          <FunctionImportMapping FunctionImportName="SpCreateAsset" FunctionName="AssetModel.Store.SpCreateAsset" />
+          <FunctionImportMapping FunctionImportName="SpCreateAssetCorrection" FunctionName="AssetModel.Store.SpCreateAssetCorrection" />
+          <FunctionImportMapping FunctionImportName="SpCreateAssetRetirement" FunctionName="AssetModel.Store.SpCreateAssetRetirement" />
+          <FunctionImportMapping FunctionImportName="SpGetAsset" FunctionName="AssetModel.Store.SpGetAsset">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AssetModel.SpGetAsset_Result">
+                <ScalarProperty Name="TransNo" ColumnName="TransNo" />
+                <ScalarProperty Name="TransDate" ColumnName="TransDate" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="SupplierName" ColumnName="SupplierName" />
+                <ScalarProperty Name="AssetCode" ColumnName="AssetCode" />
+                <ScalarProperty Name="AssetName" ColumnName="AssetName" />
+                <ScalarProperty Name="AssetUniqueNo" ColumnName="AssetUniqueNo" />
+                <ScalarProperty Name="PurchaseDocumentNo" ColumnName="PurchaseDocumentNo" />
+                <ScalarProperty Name="PurchaseDocumentDate" ColumnName="PurchaseDocumentDate" />
+                <ScalarProperty Name="IsRepairable" ColumnName="IsRepairable" />
+                <ScalarProperty Name="FinancialAssetName" ColumnName="FinancialAssetName" />
+                <ScalarProperty Name="NewItemName" ColumnName="NewItemName" />
+                <ScalarProperty Name="LifeInYears" ColumnName="LifeInYears" />
+                <ScalarProperty Name="ResidualValue" ColumnName="ResidualValue" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="CurrentValue" ColumnName="CurrentValue" />
+                <ScalarProperty Name="IsDraft" ColumnName="IsDraft" />
+                <ScalarProperty Name="CompaniesDepreciationRate" ColumnName="CompaniesDepreciationRate" />
+                <ScalarProperty Name="IncomeTaxDepreciationRate" ColumnName="IncomeTaxDepreciationRate" />
+                <ScalarProperty Name="DepreciationEndDate" ColumnName="DepreciationEndDate" />
+                <ScalarProperty Name="DepreciationStartDate" ColumnName="DepreciationStartDate" />
+                <ScalarProperty Name="EmployeeName" ColumnName="EmployeeName" />
+                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+                <ScalarProperty Name="AssetLocationName" ColumnName="AssetLocationName" />
+                <ScalarProperty Name="DepartmentName" ColumnName="DepartmentName" />
+                <ScalarProperty Name="ItemAccountCategory" ColumnName="ItemAccountCategory" />
+                <ScalarProperty Name="AdditionToAssetNumber" ColumnName="AdditionToAssetNumber" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="AssetQty" ColumnName="AssetQty" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetAssetForCorrection" FunctionName="AssetModel.Store.SpGetAssetForCorrection">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AssetModel.SpGetAssetForCorrection_Result">
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="AssetCode" ColumnName="AssetCode" />
+                <ScalarProperty Name="AssetName" ColumnName="AssetName" />
+                <ScalarProperty Name="ItemAccountCategory" ColumnName="ItemAccountCategory" />
+                <ScalarProperty Name="AssetUniqueNo" ColumnName="AssetUniqueNo" />
+                <ScalarProperty Name="GrossBlockAssetValue" ColumnName="GrossBlockAssetValue" />
+                <ScalarProperty Name="DebitAcCode" ColumnName="DebitAcCode" />
+                <ScalarProperty Name="DebitAcName" ColumnName="DebitAcName" />
+                <ScalarProperty Name="CreditAcCode" ColumnName="CreditAcCode" />
+                <ScalarProperty Name="CreditAcName" ColumnName="CreditAcName" />
+                <ScalarProperty Name="DebitAcID" ColumnName="DebitAcID" />
+                <ScalarProperty Name="CreditAcID" ColumnName="CreditAcID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetAssetForRetirement" FunctionName="AssetModel.Store.SpGetAssetForRetirement">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AssetModel.SpGetAssetForRetirement_Result">
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="AssetCode" ColumnName="AssetCode" />
+                <ScalarProperty Name="AssetName" ColumnName="AssetName" />
+                <ScalarProperty Name="ResidualValue" ColumnName="ResidualValue" />
+                <ScalarProperty Name="ClosingWDV" ColumnName="ClosingWDV" />
+                <ScalarProperty Name="AccumulatedDepreciationValue" ColumnName="AccumulatedDepreciationValue" />
+                <ScalarProperty Name="ClosingGrossBlockValue" ColumnName="ClosingGrossBlockValue" />
+                <ScalarProperty Name="AssetLocationName" ColumnName="AssetLocationName" />
+                <ScalarProperty Name="ItemAccountCategory" ColumnName="ItemAccountCategory" />
+                <ScalarProperty Name="CapitalisationDate" ColumnName="CapitalisationDate" />
+                <ScalarProperty Name="AssetUniqueNo" ColumnName="AssetUniqueNo" />
+                <ScalarProperty Name="CurrentQty" ColumnName="CurrentQty" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetAssetList" FunctionName="AssetModel.Store.SpGetAssetList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AssetModel.SpGetAssetList_Result">
+                <ScalarProperty Name="RowNum" ColumnName="RowNum" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="AssetName" ColumnName="AssetName" />
+                <ScalarProperty Name="SupplierName" ColumnName="SupplierName" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="TransNo" ColumnName="TransNo" />
+                <ScalarProperty Name="AssetCode" ColumnName="AssetCode" />
+                <ScalarProperty Name="GrossBlockAssetValue" ColumnName="GrossBlockAssetValue" />
+                <ScalarProperty Name="totalRecords" ColumnName="totalRecords" />
+                <ScalarProperty Name="recordsFiltered" ColumnName="recordsFiltered" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetAssetListForRetirement" FunctionName="AssetModel.Store.SpGetAssetListForRetirement">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AssetModel.SpGetAssetListForRetirement_Result">
+                <ScalarProperty Name="RowNum" ColumnName="RowNum" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="AssetName" ColumnName="AssetName" />
+                <ScalarProperty Name="SupplierName" ColumnName="SupplierName" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="TransNo" ColumnName="TransNo" />
+                <ScalarProperty Name="AssetCode" ColumnName="AssetCode" />
+                <ScalarProperty Name="GrossBlockAssetValue" ColumnName="GrossBlockAssetValue" />
+                <ScalarProperty Name="totalRecords" ColumnName="totalRecords" />
+                <ScalarProperty Name="recordsFiltered" ColumnName="recordsFiltered" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetAssetUniqueNoCount" FunctionName="AssetModel.Store.SpGetAssetUniqueNoCount" />
+          <FunctionImportMapping FunctionImportName="SpGetCapitalForRetirement" FunctionName="AssetModel.Store.SpGetCapitalForRetirement">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AssetModel.SpGetCapitalForRetirement_Result">
+                <ScalarProperty Name="AssetCode" ColumnName="AssetCode" />
+                <ScalarProperty Name="CapitalizationDate" ColumnName="CapitalizationDate" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="AssetName" ColumnName="AssetName" />
+                <ScalarProperty Name="AssetUniqueNo" ColumnName="AssetUniqueNo" />
+                <ScalarProperty Name="ResidualValue" ColumnName="ResidualValue" />
+                <ScalarProperty Name="AssetLocationName" ColumnName="AssetLocationName" />
+                <ScalarProperty Name="ItemAccountCategory" ColumnName="ItemAccountCategory" />
+                <ScalarProperty Name="closingGrossBlockValue" ColumnName="closingGrossBlockValue" />
+                <ScalarProperty Name="ClosingAccumulatedValue" ColumnName="ClosingAccumulatedValue" />
+                <ScalarProperty Name="ClosingWDV" ColumnName="ClosingWDV" />
+                <ScalarProperty Name="Column1" ColumnName="Column1" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetCapitalList" FunctionName="AssetModel.Store.SpGetCapitalList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AssetModel.SpGetCapitalList_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="AssetName" ColumnName="AssetName" />
+                <ScalarProperty Name="SupplierName" ColumnName="SupplierName" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="CurrentValue" ColumnName="CurrentValue" />
+                <ScalarProperty Name="CompaniesDepreciationRate" ColumnName="CompaniesDepreciationRate" />
+                <ScalarProperty Name="OpeningWDVOnCompanyDepreciationRate" ColumnName="OpeningWDVOnCompanyDepreciationRate" />
+                <ScalarProperty Name="AccumulatedDepreciationValueOnCompanyDepreciationRate" ColumnName="AccumulatedDepreciationValueOnCompanyDepreciationRate" />
+                <ScalarProperty Name="DepreciationValueOnCompanyDepreciationRate" ColumnName="DepreciationValueOnCompanyDepreciationRate" />
+                <ScalarProperty Name="GrossBlockAssetValue" ColumnName="GrossBlockAssetValue" />
+                <ScalarProperty Name="totalRecords" ColumnName="totalRecords" />
+                <ScalarProperty Name="recordsFiltered" ColumnName="recordsFiltered" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetCapitalListForCorrection" FunctionName="AssetModel.Store.SpGetCapitalListForCorrection">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AssetModel.SpGetCapitalListForCorrection_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="AssetName" ColumnName="AssetName" />
+                <ScalarProperty Name="SupplierName" ColumnName="SupplierName" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="CurrentValue" ColumnName="CurrentValue" />
+                <ScalarProperty Name="TransNo" ColumnName="TransNo" />
+                <ScalarProperty Name="AssetCode" ColumnName="AssetCode" />
+                <ScalarProperty Name="GrossBlockAssetValue" ColumnName="GrossBlockAssetValue" />
+                <ScalarProperty Name="totalRecords" ColumnName="totalRecords" />
+                <ScalarProperty Name="recordsFiltered" ColumnName="recordsFiltered" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpCancelTransaction" FunctionName="AssetModel.Store.SpCancelTransaction" />
+          <FunctionImportMapping FunctionImportName="SpCreateBatch" FunctionName="AssetModel.Store.SpCreateBatch" />
+          <FunctionImportMapping FunctionImportName="SpGetConfigByUser" FunctionName="AssetModel.Store.SpGetConfigByUser">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AssetModel.SpGetConfigByUser_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ConfigValue" ColumnName="ConfigValue" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsBoolean" ColumnName="IsBoolean" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetCurrentFinYear" FunctionName="AssetModel.Store.SpGetCurrentFinYear">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AssetModel.SpGetCurrentFinYear_Result">
+                <ScalarProperty Name="FinancialYearID" ColumnName="FinancialYearID" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Year" ColumnName="Year" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpIsCodeAlreadyExists" FunctionName="AssetModel.Store.SpIsCodeAlreadyExists" />
+          <FunctionImportMapping FunctionImportName="SpSuspendTransaction" FunctionName="AssetModel.Store.SpSuspendTransaction" />
+          <FunctionImportMapping FunctionImportName="SpUpdateSerialNo" FunctionName="AssetModel.Store.SpUpdateSerialNo" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

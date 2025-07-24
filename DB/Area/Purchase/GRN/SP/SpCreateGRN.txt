@@ -1,0 +1,72 @@
+ALTER PROCEDURE [Purchase].[SpCreateGRN]      
+(@GrnNo VARCHAR(20),      
+@GrnDate DATETIME,      
+@SupplierID INT,      
+@ReceiptDate DATETIME,      
+@DeliveryChallanNo VARCHAR(20),      
+@DeliveryChallanDate DATETIME,      
+@WarehouseID INT,      
+@PurchaseCompleted BIT,      
+@Cancelled BIT,      
+@CancelledDate DATETIME,      
+@CreatedUserID INT,      
+@CreatedDate DATETIME,      
+@IGSTAmt numeric(18,2),    
+@SGSTAmt numeric(18,2),    
+@CGSTAmt numeric(18,2),    
+@RoundOff numeric(18,2),    
+@DiscountAmt numeric(18,2),    
+@GrossAmt numeric(18,2),  
+@VATAmount numeric(18,2),  
+@SuppDocAmount numeric(18,2),  
+@SuppOtherCharge numeric(18,2),  
+@SuppShipAmount numeric(18,2),
+@CurrencyExchangeRate numeric(18,2),
+@PackingForwarding numeric(18,2),
+@SuppFreight numeric(18,2),
+@LocalCustomsDuty numeric(18,2),
+@LocalFreight numeric(18,2),
+@LocalMiscCharge numeric(18,2),
+@LocalOtherCharges numeric(18,2),
+@Remarks VARCHAR(1000),    
+@NetAmount numeric(18,2),    
+@IsCheckedDirectInvoice bit,    
+@FinYear INT,      
+@LocationID INT,      
+@ApplicationID INT,      
+@GoodsReceiptNoteID INT OUTPUT,    
+@IsDraft BIT)      
+AS      
+BEGIN      
+
+SET NOCOUNT ON;      
+ INSERT INTO GoodsReceiptNote(Code,Date,SupplierID,ReceiptDate,DeliveryChallanNo,DeliveryChallanDate,WarehouseID,PurchaseCompleted,Cancelled,    
+ CancelledDate,CreatedUserID,CreatedDate,FinYear,LocationID,ApplicationID,IsDraft,IGSTAmt,SGSTAmt,CGSTAmt,RoundOff,DiscountAmount,GrossAmount,  
+ VATAmount,SuppDocAmount,SuppOtherCharge,SuppShipAmount,NetAmount,CurrencyExchangeRate,PackingForwarding,SuppFreight,LocalCustomsDuty,LocalFreight,
+ LocalMiscCharge,LocalOtherCharges,Remarks)      
+ VALUES(@GrnNo,@GrnDate,@SupplierID,@ReceiptDate,@DeliveryChallanNo,@DeliveryChallanDate,@WarehouseID,@PurchaseCompleted,@Cancelled,@CancelledDate,    
+ @CreatedUserID,@CreatedDate,@FinYear,@LocationID,@ApplicationID,@IsDraft,@IGSTAmt,@SGSTAmt,@CGSTAmt,@RoundOff,@DiscountAmt,@GrossAmt,  
+ @VATAmount,@SuppDocAmount,@SuppOtherCharge,@SuppShipAmount,@NetAmount,@CurrencyExchangeRate,@PackingForwarding,@SuppFreight,@LocalCustomsDuty,@LocalFreight,
+ @LocalMiscCharge,@LocalOtherCharges,@Remarks)      
+ SET @GoodsReceiptNoteID = SCOPE_IDENTITY()      
+    
+ DECLARE @IsDirectPurchaseInvoice bit    
+  SELECT @IsDirectPurchaseInvoice =ConfigValue FROM Configuration WHERE ConfigName='IsDirectPurchaseInvoiceFromGRN'    
+    
+  IF @IsCheckedDirectInvoice=1    
+  BEGIN    
+   DECLARE @SerialNo VARCHAR(100),@PurchaseInvoiceID int    
+    
+   EXEC [Common].[SpUpdateSerialNo] 'PurchaseInvoice','Code',@FinYear,@LocationID,@ApplicationID,@SerialNo Out    
+    
+   EXEC [Purchase].[SpCreatePurchaseInvoiceMaster]  @SerialNo,@GrnDate,@SupplierID,'',@DeliveryChallanNo,@DeliveryChallanDate,@GrossAmt,      
+    @GrossAmt,0,@SGSTAmt,@CGSTAmt,@IGSTAmt,@DiscountAmt,0,0,0,0,0,0, 0,0,@RoundOff,@NetAmount,@NetAmount,0,  0,  null, @CreatedUserID,     
+    @CreatedDate,'Approved',0, 0,0,0,@GrossAmt,0,@DiscountAmt,0,0,0,'DirectPurchaseInvoicce',@GrnNo,@FinYear,  @LocationID,  @ApplicationID,      
+    @PurchaseInvoiceID out    
+  END    
+END      
+      
+     
+    
+     
+    

@@ -1,0 +1,25 @@
+﻿@model TradeSuiteApp.Web.Areas.Purchase.Models.GRNModel
+@if (Model.grnItems != null)
+{
+    foreach (var item in Model.grnItems)
+    {
+        <tr class="included">
+            <td class="serial-no">
+                @(1 + @Model.grnItems.IndexOf(item))
+                <input type="hidden" class="BatchID" value="@item.BatchID" />
+                <input type="hidden" class="Batch" value="@item.Batch" />
+                <input type="hidden" class="ItemID" value="@item.ItemID" />
+                <input type="hidden" class="ItemName" value="@item.ItemName" />
+                <input type="hidden" class="ItemCode" value="@item.ItemCode" />
+                <input type="hidden" class="RetailMRP" value="@item.RetailMRP" />
+            </td>
+            <td class="uk-text-center checked chkValid" data-md-icheck>
+                <input type="checkbox" class="include-print-item" checked />
+            </td>
+            <td>@item.Batch</td>
+            <td class="ExpiryDate">@item.ExpiryDate</td>
+            <td class="Stock mask-currency">@item.Stock</td>
+            <td><input type="text" class="md-input label-fixed  mask-currency PrintingQty" value="@item.PrintingQty" /></td>
+        </tr>
+    }
+}

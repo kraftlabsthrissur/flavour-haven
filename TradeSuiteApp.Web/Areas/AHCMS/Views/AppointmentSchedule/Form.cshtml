@@ -1,0 +1,182 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.AppointmentScheduleModel
+@{
+    ViewBag.Title = "_form";
+}
+
+<div class="md-card uk-margin-medium-bottom">
+    <div class="md-card-content">
+        <form id="TransactionForm">
+            <div class="section-group">
+                <div class="uk-width-medium-1-1">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-2-10">
+                                <div class="uk-autocomplete " id="employee-autocomplete">
+                                    <div class="uk-input-group">
+                                        <label for="uk_dp_start">@AHCMS.Doctor<span>*</span></label>
+                                        @Html.TextBoxFor(m => m.DoctorName, new { @class = "md-input label-fixed" })
+                                        <span class="uk-input-group-addon">
+                                            <a data-uk-modal="{target:'#select-employee',center:false}">
+                                                <i class="uk-input-group-icon uk-icon-search"></i>
+                                            </a>
+                                        </span>
+                                        <script type="text/autocomplete">
+                                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                {{~items}}
+                                                <li data-value="{{ $item.Name}}"
+                                                    data-id="{{$item.ID}}"
+                                                    data-EmployeeCode="{{$item.Code}}"
+                                                    data-placement="{{$item.Location}}">
+                                                    <a>
+                                                        {{ $item.Name }}
+                                                        <div>{{ $item.Code }}</div>
+                                                    </a>
+                                                </li>
+                                                {{/items}}
+                                            </ul>
+                                        </script>
+                                    </div>
+                                </div>
+                                @*@Html.HiddenFor(m => m.DoctorID)*@
+                            </div>
+                            @Html.HiddenFor(m => m.DoctorID)
+                            <div class="uk-width-medium-1-10">
+                                <div class="uk-input-group">
+                                    <label for="uk_dp_start">@AHCMS.Date</label>
+                                    @Html.TextBoxFor(model => model.FromDateStringEdit, new { @class = "md-input label-fixed current-date date", Name = "FromDateString" })
+                                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-1-8 uk-hidden">
+                                <div class="md-input-wrapper md-input-filled">
+                                    <label>&nbsp;</label>
+                                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAdd">View</button>
+                                </div>
+                            </div>
+                            @if (Model.IsAllowConsultationSchedule == 1)
+                            {                                
+                                <div class="uk-width-medium-1-10">
+                                    <label>@AHCMS.ConsultationTime<span>*</span></label>
+                                    @Html.DropDownListFor(m => m.ConsultationTime, Enumerable.Empty<SelectListItem>(), "Select", new { @class = "md-input label-fixed" })
+                                </div>
+                                <div class="uk-width-medium-1-10">
+                                    <label>@AHCMS.Slots<span>*</span></label>
+                                    @Html.DropDownListFor(m => m.SlotName, Enumerable.Empty<SelectListItem>(), "Select", new { @class = "md-input label-fixed" })
+                                </div>                              
+                            }
+                            
+                        </div>
+                        <br />
+                    </div>
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            @*<div class="uk-width-medium-2-8">
+                                <label>@AHCMS.Patient</label>
+                                <div class="uk-autocomplete " id="patient-autocomplete">
+                                    <div class="uk-input-group">
+                                        @Html.TextBoxFor(model => model.PatientName, new { @class = "md-input label-fixed" })
+                                        <span class="uk-input-group-addon">
+                                            <a data-uk-modal="{target:'#select-patient',center:false}">
+                                                <i class="uk-input-group-icon uk-icon-search"></i>
+                                            </a>
+                                        </span>
+                                    </div>
+                                    </div>
+                                    @Html.HiddenFor(model => model.PatientID)
+                                </div>*@
+                            <div class="uk-width-medium-2-10">
+                                <label>@AHCMS.Patient<span>*</span></label>
+                                <div class="uk-autocomplete " id="patient-autocomplete">
+                                    <div class="uk-input-group">
+                                        @Html.TextBoxFor(model => model.PatientName, new { @class = "md-input label-fixed" })
+                                        <span class="uk-input-group-addon">
+                                            <a data-uk-modal="{target:'#select-patient',center:false}">
+                                                <i class="uk-input-group-icon uk-icon-search"></i>
+                                            </a>
+                                        </span>
+                                    </div>
+                                </div>
+                                @*@Html.HiddenFor(model => model.PatientID)*@
+                                @Html.HiddenFor(model=>model.AppointmentScheduleItemID)
+                            </div>
+                            @Html.HiddenFor(model => model.PatientID)
+                            <div class="uk-width-medium-1-10">
+                                <div class="md-input-wrapper md-input-filled">
+                                    <label>&nbsp;</label>
+                                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddPatient">@Masters.AddPatient</button>
+                                </div>
+                            </div>
+                            @if (Model.IsReferenceThroughRequired == 1)
+                            {
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.ReferenceThrough</label>
+                                    @Html.DropDownListFor(Model => Model.ReferenceThroughID, new SelectList(Model.ReferenceThroughList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                    @Html.HiddenFor(model => model.ReferenceThrough)
+                                    @Html.Hidden("ConsultingMode")
+                                    @Html.Hidden("PatientReferencedBy")
+                                </div>
+                            }                         
+                            @if (Model.IsAllowConsultationSchedule == 1)
+                            {                                
+                                <div class="uk-width-medium-1-10">
+                                    <label for="uk_dp_start">@AHCMS.Time</label>
+                                    @Html.TextBoxFor(model => model.Time, new { @class = "md-input label-fixed",@disabled="disabled" })
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="uk-width-medium-1-10">
+                                    <label for="uk_dp_start">@AHCMS.Time</label>
+                                    @Html.TextBoxFor(model => model.Time, new { @class = "md-input label-fixed time15" })
+                                </div>
+                            }                           
+                            <div class="uk-width-medium-1-10">
+                                <label for="uk_dp_start">@AHCMS.TokenNo</label>
+                                @Html.TextBoxFor(model => model.TokenNo, new { @class = "md-input label-fixed mask-numeric" })
+                            </div>
+                            <div class="uk-width-medium-1-10">
+                                <label>@Common.Department<span>*</span></label>
+                                @Html.DropDownListFor(Model => Model.DepartmentID, Model.DepartmentList,"Select", new { @class = "md-input label-fixed" })
+                            </div>
+                            <div class="uk-width-medium-1-10">
+                                <div class="md-input-wrapper md-input-filled">
+                                    <label>&nbsp;</label>
+                                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="saveAndconfirm">Save&Confirm</button>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-1-10">
+                                <div class="md-input-wrapper md-input-filled">
+                                    <label>&nbsp;</label>
+                                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddItems">@Common.Add</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <table id="appointment-schedule-list" class="uk-table" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="width-10">@Common.SerialNo</th>
+                                <th>@AHCMS.Patient</th>
+                                <th class="width-200">@AHCMS.Time</th>
+                                <th class="width-200">@AHCMS.TokenNo</th>
+                                <th class="width-200">@AHCMS.Department</th>
+                                <th class="width-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                    <input type="hidden" id="item-count" value="" />
+                    <input type="hidden" id="count" value="" />
+                    <input type="hidden" id="is-save_confirm" value="" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

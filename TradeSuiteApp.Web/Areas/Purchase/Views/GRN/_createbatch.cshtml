@@ -1,0 +1,168 @@
+﻿@model TradeSuiteApp.Web.Areas.Purchase.Models.GRNModel
+<input type="button" id="show-add-batch" data-uk-modal="{target:'#add-batch', center:false}" />
+<div class="uk-modal" id="add-batch" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Create Batch<i class="material-icons"></i></h3>
+        </div>
+        <div class="uk-modal-content">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-2-5">
+                        <label>@Masters.Item</label>
+                        @Html.TextBox("ItemName", "", new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                    </div>
+                    @Html.Hidden("ItemID")
+                    <div class="uk-width-medium-2-5">
+                        <label>@Masters.Batch<span>*</span></label>
+                        @Html.TextBox("BatchName", "", new { @class = "md-input label-fixed" })
+                    </div>
+
+                    <div class="uk-width-medium-1-5">
+                        <label>@Masters.Unit</label>
+                        <select id="UnitID" class="md-input label-fixed">
+                            <option value="0">Select</option>
+                            @foreach (var unit in Model.UOMList)
+                            {
+                                <option @(Model.UnitID == unit.ID ? "selected='selected'" : "") value="@unit.ID" data-packsize="@unit.PackSize" data-unit="@unit.UOM">@unit.UOM</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            @Html.Hidden("ProfitPrice")
+            @Html.Hidden("BatchID")
+            @Html.Hidden("POTransID")
+            @Html.Hidden("Unit")
+            @Html.Hidden("PackSize")
+            @Html.Hidden("PrimaryUnit")
+            @Html.Hidden("PrimaryUnitID")
+            @Html.Hidden("InventoryUnit")
+            @Html.Hidden("InventoryUnitID")
+            @Html.Hidden("ConversionFactorPtoI")
+            @Html.Hidden("Category")
+            <br />
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-2-5">
+                        <div class="uk-input-group">
+                            <label for="uk_dp_start">@Masters.ManufacturerDate</label>
+                            <input class="md-input label-fixed past-date date" type="text" id="manufacture-date">
+                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                        </div>
+                    </div>
+                    <div class="uk-width-medium-2-5">
+                        <div class="uk-input-group">
+                            <label for="uk_dp_start">@Masters.ExpairyDate</label>
+                            <input class="md-input label-fixed future-date date" type="text" id="expiry-date">
+                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-4-5 ">
+                        <label id="unitSelected" class="red"></label>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="uk-form-row">
+                <div class="panel">
+                    <div class="uk-grid" data-uk-grid-margin="">
+
+
+                        <div class="uk-width-medium-1-5">
+                            <label for="uk_dp_start">@Masters.RetailPrice</label>
+
+                        </div>
+                        <div class="uk-width-medium-1-5">
+                            <label for="uk_dp_start">@Masters.MRP</label>
+                            @Html.TextBox("RetailMRP", "", new { @class = "md-input label-fixed mask-currency" })
+                        </div>
+                        <div class="uk-width-medium-1-5">
+
+                            <label for="uk_dp_start">@Masters.Loose</label>
+                            @Html.TextBox("RetailLooseRate", "", new { @class = "md-input label-fixed mask-currency ", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-form-row">
+
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-1-5">
+                        <label for="uk_dp_start">@Masters.PurchasePrice</label>
+
+                    </div>
+                    <div class="uk-width-medium-1-5">
+                        <label for="uk_dp_start">@Masters.Full</label>
+                        @Html.TextBox("PurchaseMRP", "", new { @class = "md-input label-fixed mask-currency" })
+                    </div>
+                    <div class="uk-width-medium-1-5">
+
+                        <label for="uk_dp_start">@Masters.Loose</label>
+                        @Html.TextBox("PurchaseLooseRate", "", new { @class = "md-input label-fixed mask-currency ", @disabled = "disabled" })
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+            <div class="uk-form-row md-bg-blue-grey-50">
+                <div class="panel">
+                    <div class="uk-form-row ">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-1-1">
+                                <label for="uk_dp_start">@Masters.LatestBatchEntryDetails</label>
+
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="uk-grid " data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-5">
+                            <label for="uk_dp_start">@Masters.RetailPrice</label>
+
+                        </div>
+                        <div class="uk-width-medium-1-5">
+                            <label for="uk_dp_start">@Masters.MRP</label>
+                            @Html.TextBox("LatestRetailMRP", "", new { @class = "md-input label-fixed mask-currency", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-5">
+
+                            <label for="uk_dp_start">@Masters.Loose</label>
+                            @Html.TextBox("LatestRetailLooseRate", "", new { @class = "md-input label-fixed mask-currency ", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-form-row md-bg-blue-grey-50">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-1-5">
+                        <label for="uk_dp_start">@Masters.PurchasePrice</label>
+
+                    </div>
+                    <div class="uk-width-medium-1-5">
+                        <label for="uk_dp_start">@Masters.Full</label>
+                        @Html.TextBox("LatestPurchaseMRP", "", new { @class = "md-input label-fixed mask-currency", @disabled = "disabled" })
+                    </div>
+                    <div class="uk-width-medium-1-5">
+
+                        <label for="uk_dp_start">@Masters.Loose</label>
+                        @Html.TextBox("LatestPurchaseLooseRate", "", new { @class = "md-input label-fixed mask-currency ", @disabled = "disabled" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn  uk-modal-close batch-close">@Common.Close</button>
+            <button type="button" class="md-btn md-btn-primary" id="btnCreateBatch">@Common.CreateBatch</button>
+        </div>
+    </div>
+</div>

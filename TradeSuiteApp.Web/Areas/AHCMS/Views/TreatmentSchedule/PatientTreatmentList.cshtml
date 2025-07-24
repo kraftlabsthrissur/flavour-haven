@@ -1,0 +1,59 @@
+﻿
+    @model List<TradeSuiteApp.Web.Areas.AHCMS.Models.TreatmentScheduleModel>
+
+@if (Model != null && Model.Count() > 0)
+{
+    foreach (var item in Model.Select((value, i) => new { i = i + 1, value }))
+    {
+            <tr>
+                <td class="uk-text-center">
+                    @item.i
+                </td>
+                <td class="uk-text-center"><input type="checkbox" name="items" data-md-icheck class="md-input check-box" checked /></td>
+                <td>
+                    <input type="hidden" class="PatientID" value="@item.value.PatientID" />
+                    @item.value.PatientName
+                </td>
+                <td>
+                    <input type="hidden" class="TreatmentID" value="@item.value.TreatmentID" />
+                    @item.value.TreatmentName
+                </td>
+                <td>
+                    @item.value.StartDate
+                </td>
+                <td>
+                    @item.value.NoOfTreatment
+                </td>
+                <td>
+                    <input type="hidden" class="" value="@item.value.TreatmentRoomID" />
+                    @item.value.TreatmentRoom
+                </td>
+                <td>
+                    <div class="uk-autocomplete" id="SelectTreatmentRoom-autocomplete@(item.i)">
+                        <div class="uk-input-group">
+
+                            @Html.TextBoxFor(m => item.value.TreatmentName, new { @class = "md-input label-fixed" })
+                        </div>
+
+                    </div>
+                </td>
+                <td>
+                    @item.value.StartTime
+                </td>
+                <td>
+                    @item.value.Duration
+                </td>
+                <td>
+                    <input type="hidden" class="" value="@item.value.TherapistID" />
+                    @item.value.TherapistName
+                </td>
+                <td>
+                    <input type="hidden" class="" value="@item.value.TherapistID" />
+                    @item.value.TherapistName
+                </td>
+                <td>
+                    <a class="remove-item"><i class="uk-icon-remove"></i></a>
+                </td>
+            </tr>
+        }
+    }

@@ -1,0 +1,201 @@
+ALTER PROCEDURE [Sales].[SpCreateSalesReturnTrans]        
+(@SalesReturnID int,        
+@InvoiceID int,        
+@TransNo varchar(20),        
+@ItemID int,
+@Qty Numeric(18,4),        
+@Rate Numeric(18,4),        
+@MRP Numeric(18,4),
+@SecondaryQty Numeric(18,4),
+@SecondaryUnit varchar(200), 
+@SecondaryUnitSize Numeric(18,4),
+@SecondaryMRP Numeric(18,4),
+@BasicPrice Numeric(18,4),        
+@OfferQty Numeric(18,4),        
+@GrossAmount Numeric(18,4),        
+@DiscountID int,        
+@DiscountPercentage Numeric(18,4),        
+@DiscountAmount Numeric(18,4),        
+@TaxableAmount Numeric(18,4),        
+@SGSTPercent Numeric(18,2),        
+@CGSTPercent Numeric(18,2),        
+@IGSTPercent Numeric(18,2),        
+@SGSTAmount Numeric(18,4),        
+@CGSTAmount Numeric(18,4),        
+@IGSTAmount Numeric(18,4),        
+@NetAmount  Numeric(18,4),        
+@ReturnQty numeric(18,4),        
+@ReturnOfferQty numeric(18,4),        
+@BatchTypeID int,        
+@BatchID int,        
+@Batch varchar(25),        
+@UnitID int,        
+@SalesInvoiceTransID int,       
+@LogicCodeID INT,       
+@FinYear int,        
+@LocationID int,        
+@ApplicationID int)         
+         
+AS      
+begin        
+      
+declare @IsDraft bit, @TransDate datetime,@Quantity numeric(18,4),@WareHouseID int,@InvoiceNo VARCHAR(20),@CustomerID INT ,@SLARemarks varchar(100) ='',@SalesUnitID int  
+select  @WareHouseID= ConfigValue from configuration where ConfigName='DefaultFGStore' and LocationID=@LocationID and ApplicationID=@ApplicationID  
+  
+    
+select @IsDraft= IsDraft,@TransDate=TranDate,@InvoiceNo = Code,@CustomerID = CustomerID  from Sales.SalesReturn       
+where ID=@SalesReturnID and LocationID=@LocationID and ApplicationID=@ApplicationID and FinYear=@FinYear        
+  if @BatchID=0        
+ begin        
+  declare @Date DateTime = Current_Timestamp,@ExpDate DateTime =  Current_Timestamp + 365         
+  exec  [Common].[SpCreateBatch] 'RM',@ItemID,@Batch,@Batch,@Date,@ExpDate,0 ,1,@LocationID ,@ApplicationID,@BatchID OUT        
+  end     
+        
+ INSERT INTO Sales.SalesReturnTrans(SalesReturnID , TransNo ,ItemID ,Qty ,Rate,MRP,BasicPrice,OfferQty ,GrossAmount,DiscountID ,        
+ DiscountPercentage ,DiscountAmount,TaxableAmount ,SGSTPercentage,CGSTPercentage,IGSTPercentage,SGSTAmt,CGSTAmt,IGSTAmt,NetAmt,ReturnQty,        
+ ReturnOfferQty,BatchID,BatchTypeID,UnitID,InvoiceTransID, FinYear,LocationID ,ApplicationID,LogicCodeID,
+ SecondaryQty,SecondaryUnit,SecondaryUnitSize,SecondaryMRP)         
+ VALUES(@SalesReturnID,@TransNo,@ItemID,@Qty,@Rate,@MRP,@BasicPrice,@OfferQty,@GrossAmount,@DiscountID,        
+ @DiscountPercentage,@DiscountAmount,@TaxableAmount,@SGSTPercent,@CGSTPercent,@IGSTPercent,@SGSTAmount,@CGSTAmount,@IGSTAmount,        
+ @NetAmount,@ReturnQty,@ReturnOfferQty,@BatchID,@BatchTypeID,@UnitID,@SalesInvoiceTransID,@FinYear,@LocationID,@ApplicationID,@LogicCodeID,
+ @SecondaryQty,@SecondaryUnit,@SecondaryUnitSize,@SecondaryMRP)        
+        
+ Set @SLARemarks = 'SalesReturn :'+CAST(@SalesReturnID AS varchar(10))   
+ Declare @BatchPrefix int  
+  
+ if @IsDraft=0        
+  Begin      
+          
+     
+        
+  set @Quantity=@ReturnQty+@ReturnOfferQty        
+  Select @BatchPrefix = dbo.FnGetLocationHeadIDFromBatch(@ItemID,@BatchID,@LocationID)  
+  ----------------------------------SLA----------------------------------      
+  ---------------------------------Gross---------------------------------        
+     --INSERT INTO SLAMappingItem(TrnType,KeyValue,Remarks,Amount,TableName,MasterTableName,TransNo,TransID,      
+     --CreatedDate,FinYear,LocationID,ApplicationID,SupplierID,CustomerID,Batch,DepartmentCategoryID,ItemID,      
+     --IsApprovalPending,Quantity,Rate,TransLocationID,DepartmentID,EmployeeID,InterCompanyID,ProjectID,      
+     --TreasuryID,PatientID,AssetID,CostComponent,Capitalisation,PaymentModeID,TransDate)          
+     --VALUES('SRI_Approve','GrossTransValue','SalesReturn :'+CAST(@SalesReturnID AS varchar(10)),        
+     --@GrossAmount,'SalesReturnTrans','SalesReturn',@InvoiceNo,@SalesReturnID,Current_TimeStamp,        
+     --@FinYear,@LocationID,@ApplicationID,-2,@CustomerID,-2,-2,@ItemID,0,@Quantity,@BasicPrice,0,0,0,0,0,0,0,0,0,0,0,@TransDate)  
+    
+  exec SpInsertSLAMappingItem 'SRI_Approve','GrossTransValue'  
+   ,@SLARemarks,@GrossAmount,'SalesReturnTrans','SalesReturn',@InvoiceNo,@SalesReturnID  
+   ,@FinYear ,@LocationID ,@ApplicationID ,-2 ,@CustomerID,@BatchPrefix,  
+   -2,@ItemID,0,@Quantity,@BasicPrice,0,0,0,0,0,0,0,0,0,0,0,@TransDate,1    
+  ---------------------------------DiscAmt---------------------------------        
+  IF @DiscountAmount > 0      
+      
+  BEGIN      
+     IF(SELECT COUNT(ID) FROM SLAMappingItem WHERE TrnType = 'SRI_Approve'     
+     AND KeyValue = 'DiscAmount' AND TransID = @SalesReturnID) = 0    
+         
+     BEGIN    
+         
+     --INSERT INTO SLAMappingItem(TrnType,KeyValue,Remarks,Amount,TableName,MasterTableName,TransNo,TransID,      
+     --CreatedDate,FinYear,LocationID,ApplicationID,SupplierID,CustomerID,Batch,DepartmentCategoryID,ItemID,      
+     --IsApprovalPending,Quantity,Rate,TransLocationID,DepartmentID,EmployeeID,InterCompanyID,ProjectID,      
+     --TreasuryID,PatientID,AssetID,CostComponent,Capitalisation,PaymentModeID,TransDate)          
+     --VALUES('SRI_Approve','DiscAmount','SalesReturn :'+CAST(@SalesReturnID AS varchar(10)),        
+     --@DiscountAmount,'SalesReturnTrans','SalesReturn',@InvoiceNo,@SalesReturnID,Current_TimeStamp,        
+     --@FinYear,@LocationID,@ApplicationID,-2,@CustomerID,-2,-2,-2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,@TransDate)    
+     
+   exec SpInsertSLAMappingItem 'SRI_Approve','DiscAmount'  
+   ,@SLARemarks,@DiscountAmount,'SalesReturnTrans','SalesReturn',@InvoiceNo,@SalesReturnID  
+   ,@FinYear ,@LocationID ,@ApplicationID ,-2 ,@CustomerID,-2,  
+   -2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,@TransDate,1    
+         
+     END    
+         
+     ELSE    
+         
+     BEGIN    
+         
+     UPDATE SLAMappingItem SET Amount += @DiscountAmount WHERE TrnType = 'SRI_Approve' AND KeyValue = 'DiscAmount'     
+     AND TransID = @SalesReturnID     
+         
+     END    
+      
+  END       
+  ------------------------GST--------------------------        
+  IF @CGSTAmount > 0      
+      
+  BEGIN      
+    Declare @KeyValue varchar(100)  
+ Set @KeyValue = 'CGST_'+CAST(cast(@CGSTPercent * 2 as int) AS Varchar)+'%'  
+  
+     --INSERT INTO SLAMappingItem(TrnType,KeyValue,Remarks,Amount,TableName,MasterTableName,TransNo,TransID,      
+     --CreatedDate,FinYear,LocationID,ApplicationID,SupplierID,CustomerID,Batch,DepartmentCategoryID,ItemID,      
+     --IsApprovalPending,Quantity,Rate,TransLocationID,DepartmentID,EmployeeID,InterCompanyID,ProjectID,      
+     --TreasuryID,PatientID,AssetID,CostComponent,Capitalisation,PaymentModeID,TransDate)          
+     --VALUES('SRI_Approve','CGST_'+CAST(cast(@CGSTPercent * 2 as int) AS Varchar)+'%',    
+     --'CGST_SalesReturn:'+CAST(@SalesReturnID AS varchar(10)),        
+     --@CGSTAmount,'SalesReturnTrans','SalesReturn',@InvoiceNo,@SalesReturnID,Current_TimeStamp,    
+     --@FinYear,@LocationID,@ApplicationID,-2,@CustomerID,-2,-2,-2,0,-2,-2,0,0,0,0,0,0,0,0,0,0,0,@TransDate)    
+    
+  exec SpInsertSLAMappingItem 'SRI_Approve',@KeyValue  
+   ,@SLARemarks,@CGSTAmount,'SalesReturnTrans','SalesReturn',@InvoiceNo,@SalesReturnID  
+   ,@FinYear ,@LocationID ,@ApplicationID ,-2 ,@CustomerID,-2,  
+   -2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,@TransDate,1      
+      
+     --INSERT INTO SLAMappingItem(TrnType,KeyValue,Remarks,Amount,TableName,MasterTableName,TransNo,TransID,      
+     --CreatedDate,FinYear,LocationID,ApplicationID,SupplierID,CustomerID,Batch,DepartmentCategoryID,ItemID,      
+     --IsApprovalPending,Quantity,Rate,TransLocationID,DepartmentID,EmployeeID,InterCompanyID,ProjectID,      
+     --TreasuryID,PatientID,AssetID,CostComponent,Capitalisation,PaymentModeID,TransDate)          
+     --VALUES('SRI_Approve','SGST_'+CAST(cast(@SGSTPercent * 2 as int) AS Varchar)+'%',    
+     --'SGST_SalesReturn:'+CAST(@SalesReturnID AS varchar(10)),        
+     --@SGSTAmount,'SalesReturnTrans','SalesReturn',@InvoiceNo,@SalesReturnID,Current_TimeStamp,      
+     --@FinYear,@LocationID,@ApplicationID,-2,@CustomerID,-2,-2,-2,0,-2,-2,0,0,0,0,0,0,0,0,0,0,0,@TransDate  
+   
+   Set @KeyValue = 'SGST_'+CAST(cast(@SGSTPercent * 2 as int) AS Varchar)+'%'  
+   
+   exec SpInsertSLAMappingItem 'SRI_Approve',@KeyValue  
+   ,@SLARemarks,@SGSTAmount,'SalesReturnTrans','SalesReturn',@InvoiceNo,@SalesReturnID  
+   ,@FinYear ,@LocationID ,@ApplicationID ,-2 ,@CustomerID,-2,  
+   -2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,@TransDate,1      
+         
+     END      
+      
+  IF @IGSTAmount > 0      
+      
+  BEGIN      
+      
+ Set @KeyValue = 'IGST_'+CAST(cast(@IGSTPercent as int) AS Varchar)+'%'  
+   
+     --INSERT INTO SLAMappingItem(TrnType,KeyValue,Remarks,Amount,TableName,MasterTableName,TransNo,TransID,      
+     --CreatedDate,FinYear,LocationID,ApplicationID,SupplierID,CustomerID,Batch,DepartmentCategoryID,ItemID,      
+     --IsApprovalPending,Quantity,Rate,TransLocationID,DepartmentID,EmployeeID,InterCompanyID,ProjectID,      
+     --TreasuryID,PatientID,AssetID,CostComponent,Capitalisation,PaymentModeID,TransDate)          
+     --VALUES('SRI_Approve','IGST_'+CAST(cast(@SGSTPercent * 2 as int) AS Varchar)+'%',    
+     --'IGST_SalesReturn:'+CAST(@SalesReturnID AS varchar(10)),        
+     --@IGSTAmount,'SalesReturnTrans','SalesReturn',@InvoiceNo,@SalesReturnID,Current_TimeStamp,      
+     --@FinYear,@LocationID,@ApplicationID,-2,@CustomerID,-2,-2,-2,0,-2,-2,0,0,0,0,0,0,0,0,0,0,0,@TransDate)      
+      
+ exec SpInsertSLAMappingItem 'SRI_Approve',@KeyValue  
+   ,@SLARemarks,@IGSTAmount,'SalesReturnTrans','SalesReturn',@InvoiceNo,@SalesReturnID  
+   ,@FinYear ,@LocationID ,@ApplicationID ,-2 ,@CustomerID,-2,  
+   -2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,@TransDate,1   
+  
+  END      
+          
+  --------------------------------------------------------------        
+          
+  select @Qty=dbo.FnConvertStockToInventoryUnit(@ItemID,@Quantity,@UnitID);            
+  ----------------------------------------------        
+  ---------------------update Sales.SalesInvoicetrans set ReturnQty=@Quantity where ID=@SalesInvoiceTransID        
+  exec SpStockUpdate @TransDate,'F',@ItemID,@BatchID,@WareHouseID ,@Qty,0,'SalesReturn',@LocationID,@FinYear,5,@ApplicationID,'IssueReturns',1,@BatchTypeID,@InvoiceNo        
+  
+  --Convert unit  
+select @SalesUnitID=UnitID From [Sales].[SalesInvoiceTrans] where ID=@SalesInvoiceTransID        
+select @ReturnQty= dbo.FnConvertUnit(@ItemID,@ReturnQty,@UnitID,@SalesUnitID)   
+select @ReturnOfferQty=dbo.FnConvertUnit(@ItemID,@ReturnOfferQty,@UnitID,@SalesUnitID)   
+   update Sales.SalesInvoiceTrans set ReturnQtyMet = ISNULL(ReturnQtyMet,0)+@ReturnQty,ReturnOfferQtyMet=ISNULL(ReturnOfferQtyMet,0)+@ReturnOfferQty where ID = @SalesInvoiceTransID and ItemID = @ItemID
+ if(Select Count(*) from Sales.SalesInvoiceTrans where ID = @SalesInvoiceTransID  and ((Quantity > Isnull(ReturnQtyMet,0) )or (OfferQty > Isnull(ReturnOfferQtyMet,0)))) < 1      
+ begin      
+  update Sales.SalesInvoice set ReturnMet = 1 where ID = @InvoiceID -- AND FinYear = @FinYear  and ApplicationID = @ApplicationID     
+ end        
+  End         
+    end        
+  
+ 

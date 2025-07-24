@@ -1,0 +1,213 @@
+﻿@model TradeSuiteApp.Web.Areas.Reports.Models.SalesInvoiceReportModel
+@{
+    ViewBag.ReportTitle = "Sales Invoice Report";
+}
+<div id="page_content_inner" class="sales-invoice-report">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-2-10 ">
+                            <form action="/Reports/Sales/SalesInvoice" id="report-filter-form" method="POST" data-name="SalesInvoice">
+                                @*@Html.HiddenFor(m => m.LocationID)*@
+                                @Html.HiddenFor(m => m.UserID)
+                                <div class="filters uk-form-row Summary Detail">
+                                    <div class="panel">
+                                        <label>Report Type</label>
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-1-2">
+                                                <input type="radio" name="reportType" class="report_type" data-md-icheck checked="" value="Summary" /> @Html.Label("Summary")
+                                            </div>
+                                            <div class="uk-width-medium-1-2">
+                                                <input type="radio" name="reportType" class="report_type" data-md-icheck value="Detail" /> @Html.Label("Detail")
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="filters uk-form-row Summary">
+                                    <div class="panel">
+                                        <label>Payment Type</label>
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-1-2">
+                                                <input type="radio" name="PaymentType" class="Payment_Type" data-md-icheck checked="" value="Cash" /> @Html.Label("Cash")
+                                            </div>
+                                            <div class="uk-width-medium-1-2">
+                                                <input type="radio" name="PaymentType" class="Payment_Type" data-md-icheck value="Credit" /> @Html.Label("Credit")
+                                            </div>
+                                            <div class="uk-width-medium-1-2">
+                                                <input type="radio" name="PaymentType" class="Payment_Type" data-md-icheck value="Credit" /> @Html.Label("All")
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="uk-form-row uk-hidden">
+                                    <div class="panel">
+                                        <label>Item Type</label>
+                                    </div>
+                                    <div class="uk-grid uk-hidden" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <input type="radio" name="ItemType" class="ItemType" data-md-icheck value="All" /> @Html.Label("All")
+                                        </div>
+                                    </div>
+                                </div>
+                                @*<div class="uk-form-row uk-hidden">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-1-2">
+                    <input type="radio" name="ItemType" class="ItemType" data-md-icheck value="Stock" /> @Html.Label("Stock Items")
+                </div>
+            </div>
+        </div>
+        <div class="uk-form-row uk-hidden">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-1-2">
+                    <input type="radio" name="ItemType" class="ItemType" data-md-icheck checked="" value="Service" /> @Html.Label("Service Items")
+                </div>
+            </div>
+        </div>*@
+                                <div class="filters uk-form-row  Summary Detail">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.Fromdate</label>
+                                                @Html.TextBoxFor(model => model.FromDateString, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.Todate</label>
+                                                @Html.TextBoxFor(model => model.ToDateString, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="filters uk-form-row Summary Detail">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.Location</label>
+                                                @Html.DropDownListFor(Model => Model.ItemLocationID, Model.LocationList, "Select", new { @class = "md-input label-fixed" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="filters uk-form-row Summary Detail ">
+                                    <div class="uk-grid " data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1  ">
+                                            <div class="uk-autocomplete " id="customer-autocomplete">
+                                                <label>@Reports.CustomerName</label>
+                                                @Html.TextBox("CustomerName", "", new { @class = "md-input label-fixed" })
+                                                <span></span>
+                                            </div>
+                                            @Html.HiddenFor(m => m.CustomerID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="filters uk-form-row uk-hidden ">
+                                    <div class="uk-grid " data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-autocomplete " id="customer-code-autocomplete">
+                                                <label>@Reports.CustomerCode</label>
+                                                @Html.TextBox("CustomerCode", "", new { @class = "md-input label-fixed", @id = "CustomerCodeFrom" })
+                                                <span></span>
+                                            </div>
+                                            @Html.HiddenFor(m => m.CustomerID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="filters uk-form-row invoice uk-hidden">
+                                    <div class="uk-grid " data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-autocomplete " id="invoice-no-from-autocomplete">
+                                                <label>@Reports.InvoiceNOFrom</label>
+                                                @Html.TextBox("InvoiceNoFrom", "", new { @class = "md-input label-fixed" })
+                                                <span></span>
+                                            </div>
+                                            @Html.HiddenFor(m => m.InvoiceNoFromID)
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-autocomplete " id="invoice-no-to-autocomplete">
+                                                <label>@Reports.InvoiceNOTo</label>
+                                                @Html.TextBox("InvoiceNoTo", "", new { @class = "md-input label-fixed" })
+                                                <span></span>
+                                            </div>
+                                            @Html.HiddenFor(m => m.InvoiceNoToID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="filters uk-form-row  uk-hidden">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start" class="item-category">@Reports.Itemcategory</label>
+                                                @Html.DropDownListFor(Model => Model.ItemCategoryID, Model.ItemCategoryList, "Select", new { @class = "md-input label-fixed", @id = "ItemCategoryID" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @*<div class="uk-form-row filters detail">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-1-2 ">
+                    <div class="uk-autocomplete " id="item-code-from-autocomplete">
+                        <label for="uk_dp_start">@Reports.ItemCodeFrom</label>
+                        @Html.TextBox("ItemCodeFrom", "", new { @class = "md-input label-fixed" })
+                        <span></span>
+                    </div>
+                    @Html.HiddenFor(m => m.ItemCodeFromID)
+                </div>
+
+            </div>
+        </div>
+        <div class="uk-form-row filters detail">
+            <div class="uk-grid ">
+                <div class="uk-width-medium-1-1  ">
+                    <div class="uk-autocomplete " id="item-name-autocomplete">
+                        <label>@Stock.Item</label>
+                        @Html.TextBox("ItemName", "", new { @class = "md-input label-fixed" })
+                        <span></span>
+                    </div>
+                    @Html.HiddenFor(m => m.ItemID)
+                </div>
+            </div>
+        </div>*@
+                                <div class="filters uk-form-row uk-hidden">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start" class="batch-type">@Reports.BatchType</label>
+                                                @Html.DropDownListFor(Model => Model.BatchTypeID, Model.BatchTypeList, "select", new { @class = "md-input label-fixed" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="filters uk-form-row Summary">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start" class="batch-type">@Reports.State</label>
+                                                @Html.DropDownListFor(Model => Model.StateID, Model.StateList, "select", new { @class = "md-input label-fixed" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @{Html.RenderPartial("/Areas/Reports/Views/ReportControls.cshtml"); }
+                            </form>
+                        </div>
+                        <div class="uk-width-medium-8-10 ">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="" id="report-viewer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/SalesInvoiceReport")
+

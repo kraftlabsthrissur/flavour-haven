@@ -1,0 +1,61 @@
+﻿@model TradeSuiteApp.Web.Areas.User.Models.DashboardModel
+<div class="md-card" data-uk-grid-margin="">
+    <div class="md-card-content uk-row-first">
+        <div class="uk-width-medium-10-10">
+            <div class="uk-grid" data-uk-grid-margin>
+                <div class="uk-width-medium-8-10 heading_a uk-margin-bottom">
+                    <label>@Masters.CategorywiseSales</label>
+                </div>
+                <div class="uk-width-medium-2-10">
+                    @Html.DropDownListFor(Model => Model.BatchType, new SelectList(Model.BatchTypeList, "Value", "Text"), new { @class = "md-input label-fixed", @id = "category-wise-sales-batchtype" })
+                </div>
+                </div>
+            </div>
+            <div class="Category-Wise">
+                <div class="uk-width-1-1">
+                    <ul class="uk-tab" data-uk-tab="{connect:'#category-wise-sales-month-year'}" id="category-wise-sales-tab">
+                        <li class="uk-active" data-tab="month-wise" id="category-wise-sales-month-tab"><a>@DateTime.Now.ToString("MMMM")</a></li>
+                        <li data-tab="year-wise" id="category-wise-sales-year-tab"><a>YTD - @DateTime.Now.ToString("yyyy")</a></li>
+                    </ul>
+                    <ul id="category-wise-sales-month-year" class="uk-switcher uk-margin">
+                        <li aria-hidden="false" class="uk-active">
+                            <div>
+                                <table id="category-wise-sales-month-table" class="uk-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="uk-text-center serial-no width-20">@Common.SerialNo</th>
+                                            <th>@Masters.SalesCategory</th>
+                                            <th class="width-80">@Masters.Budget {Kgs}</th>
+                                            <th class="width-80">@Masters.Actual {Kgs}</th>
+                                            <th class="width-80">@Masters.Budget {Lacs}</th>
+                                            <th class="width-80">@Masters.Actual {Lacs}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </li>
+                        <li aria-hidden="true" class="">
+                            <div>
+                                <table id="category-wise-sales-year-table" class="uk-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="uk-text-center serial-no width-20">@Common.SerialNo</th>
+                                            <th>@Masters.SalesCategory</th>
+                                            <th class="width-80">@Masters.Budget {Kgs}</th>
+                                            <th class="width-80">@Masters.Actual {Kgs}</th>
+                                            <th class="width-80">@Masters.Budget {Lacs}</th>
+                                            <th class="width-80">@Masters.Actual {Lacs}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+</div>
+

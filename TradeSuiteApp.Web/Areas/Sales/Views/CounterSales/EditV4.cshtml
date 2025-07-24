@@ -1,0 +1,134 @@
+﻿@model TradeSuiteApp.Web.Areas.Sales.Models.CounterSalesModel
+@{
+    ViewBag.Title = @Sales.EditCounterSalesInvoice;
+}
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Sales.CounterSalesInvoice</h1>
+            <span class="uk-text-upper uk-text-small">@Sales.EditCounterSalesInvoice</span>
+        </div>
+        <div class="uk-width-medium-1-8">
+            <label>@Sales.PrintWithItemCode</label>&nbsp;&nbsp;
+
+            @if (Model.PrintWithItemCode == true)
+            {
+                <input type="checkbox" id="PrintWithItemCode" data-md-icheck checked />
+            }
+            else
+            {
+                <input type="checkbox" id="PrintWithItemCode" data-md-icheck />
+            }
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSave'>" + Common.Save + "</a>")
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSaveAndPrint'>" + Common.SaveAndPrint + "</a>")
+            @ActionAuthorization.IsAuthorized("SaveAsDraft", "<a class='md-btn btnSaveASDraft'>" + Common.SaveAsDraft + "</a>")
+            @ActionAuthorization.IsAuthorized("cancel", "<a class='md-btn cancel'>" + Common.Cancel + "</a>")
+            @Html.HiddenFor(m => m.ID)
+
+            @Html.ActionLink(Common.Close, "IndexV4", "CounterSales", new { Area = "Sales" }, new { @class = "md-btn btnClose" })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="sales form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                @{Html.RenderPartial("Form4", Model); }
+            </div>
+        </div>
+    </div>
+
+    @Html.HiddenFor(model => model.IsThermalPrint)
+    @Html.HiddenFor(model => model.IsDotMatrixPrint)
+    <div class="uk-hidden">
+        <div class="uk-form-row" id="dvContainer">
+            <div id="invoice-POS">
+
+
+                <center id="top">
+                    <div class="logo"></div>
+                    <div class="info" style="font-size:70%;">
+                        <h4>@Model.CompanyName</h4>
+                        <span>@Model.Address1,@Model.Address2</span>
+                        <span>GSTNO:@Model.GSTNo</span>
+                        <span>@Model.PhoneNo</span>
+                        <h4>CASH BILL</h4>
+                    </div>
+                </center>
+
+                <div id="mid" style="font-size:70%;">
+                    <div class="info">
+                        <span id="trans-no"></span>
+
+                    </div>
+                    <div class="info">
+                        <span>Date:@Model.TransDate</span>
+
+                    </div>
+                    <div class="info">
+                        <span>-------------------------------------------------------------------</span>
+                    </div>
+                </div>
+
+                <div id="bot" style="padding: 0px; margin: 0px;">
+                    <div id="table" style="padding: 0px; margin: 0px;">
+                        <table id="tbl-thermal-print">
+                            <thead>
+                                <tr>
+                                    <th class="width-10 thermalth">@Common.SerialNo</th>
+                                    <th class="thermalth">@Sales.ItemName</th>
+                                    <th class="width-20 thermalth">@Sales.Rate</th>
+                                    <th class="width-20 thermalth">@Sales.Qty</th>
+                                    <th class="width-30 thermalth">@Sales.Amount</th>
+                                </tr>
+                            </thead>
+                            <tr>
+                                <td colspan="5">----------------------------------------------</td>
+                            </tr>
+
+                            <tbody class="thermal-tbody"></tbody>
+                        </table>
+                    </div><!--End Table-->
+                    @*<div id="legalcopy">
+                            <p class="legal">
+                                <strong>Thank you for your business!</strong>
+                            </p>
+                        </div>*@
+
+                </div><!--End InvoiceBot-->
+            </div><!--End Invoice-->
+        </div>
+    </div>
+</div>
+
+@Html.Partial("~/Areas/Sales/Views/CounterSales/_batchWithStock.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Item/PartialList.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Doctor/DoctorPartialList.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Patient/PatientPartialList.cshtml")
+@Html.Partial("~/Areas/Sales/Views/CounterSales/_addPatient.cshtml", Model)
+@Html.Partial("~/Areas/Masters/Views/Employee/PartialList.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Customer/CustomerPartialList.cshtml")
+@Html.Partial("~/Areas/Sales/Views/CounterSales/HistoryList.cshtml")
+
+@Scripts.Render("~/Js/Page/Item")
+@Scripts.Render("~/Js/Page/Supplier")
+@Scripts.Render("~/Js/Page/Patient")
+@Scripts.Render("~/Js/Page/Employee")
+@Scripts.Render("~/Js/Page/CounterSalesV4")
+@Scripts.Render("~/Js/Page/Sales")
+@Scripts.Render("~/Js/SignalR")
+<script src="~/signalr/Hubs"></script>
+
+<script type="text/javascript">
+    CounterSales.init();
+    SignalRClient.init();
+</script>

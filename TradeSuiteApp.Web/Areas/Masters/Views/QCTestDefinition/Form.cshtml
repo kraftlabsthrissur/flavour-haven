@@ -1,0 +1,156 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.QCTestDefinitionModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-grid" data-uk-grid-margin="">
+        <div class="uk-width-medium-8-10">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-2-8">
+                        <div class="uk-autocomplete " id="item-autocomplete">
+                            <div class="uk-input-group">
+                                <label for="uk_dp_start">@Masters.Item</label>
+                                @Html.TextBoxFor(m => m.ItemName, "", new { maxlength = 10,  @class = "md-input ItemName"})
+                                @Html.HiddenFor(m => m.ItemID)
+                                <span class="uk-input-group-addon">
+                                    <a data-uk-modal="{target:'#select-item',center:false}">
+                                        <i class="uk-input-group-icon uk-icon-search"></i>
+                                    </a>
+                                </span>
+                                <script type="text/autocomplete">
+                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                        {{~items}}
+                                        <li data-value="{{ $item.Name }}"
+                                            data-id="{{$item.ID}}"
+                                            data-unit="{{$item.Unit}}"
+                                            data-unitid="{{$item.UnitID}}">
+                                            <a>
+                                                {{ $item.Name }} ({{{ $item.Code }}})
+                                            </a>
+                                        </li>
+                                        {{/items}}
+                                    </ul>
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                    @Html.Hidden("ItemID")
+                    @Html.Hidden("Code")
+                    @Html.Hidden("Unit")
+                    @Html.Hidden("UnitID")
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-1-5">
+                <label>@Masters.QCTest</label>
+                @Html.DropDownListFor(Model => Model.QCTestID, new SelectList(Model.QCTestList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                @Html.HiddenFor(m => m.QCTestID)
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Masters.FromLimit</label>
+                @Html.TextBoxFor(m => m.RangeFrom, "", new { maxlength = 10, @class = "md-input label-fixed mask-production-qty" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Masters.ToLimit </label>
+                @Html.TextBoxFor(m => m.RangeTo, "", new { maxlength = 10, @class = "md-input label-fixed mask-production-qty" })
+            </div>
+            <div class="uk-width-medium-1-6">
+                <label>@Masters.Result </label>
+                @Html.TextBoxFor(m => m.Result, new { @class = "md-input" })
+            </div>
+         
+            <div class="uk-width-medium-1-10">
+                <div class="uk-input-group">
+                    <label for="uk_dp_start">@Masters.StartDate <span>*</span></label>
+                    <input class="md-input label-fixed all-date date " id="StartDate">
+                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar all-date"></i></span>
+                </div>
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="uk-input-group">
+                    <label for="uk_dp_start">@Masters.EndDate <span>*</span></label>
+                    <input class="md-input label-fixed all-date date " id="EndDate">
+                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar all-date"></i></span>
+                </div>
+            </div>
+            <div class="uk-width-medium-1-10 item-align-icheck">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <label>&nbsp;</label>
+                </div>
+                @Html.HiddenFor(m => m.IsMandatory)
+                <input type="checkbox" class="icheckbox IsMandatory" data-md-icheck />&nbsp;@Html.Label("Is Mandatory")
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="md-input-wrapper md-input-filled">
+                    <label>&nbsp;</label>
+                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAdd">@Common.Add</button>
+                </div>
+            </div>
+          
+        </div>
+    </div>
+    <br />
+    <div class="uk-form-row">
+        <div>
+            <table id="QCTestDefinitionlist" class="uk-table " cellspacing="0" width=100">
+                <thead>
+                    <tr>
+                        <th class="width-10">@Common.SerialNo</th>
+                        <th class="width-20"></th>
+                        <th class="width-200">@Masters.QCTest</th>
+                        <th class="width-100">@Masters.FromLimit</th>
+                        <th class="width-100">@Masters.ToLimit</th>
+                        <th class="width-100">@Masters.Result</th>
+                        <th class="width-100">@Masters.IsMandatory </th>
+                        <th class="width-100">@Masters.StartDate</th>
+                        <th class="width-100">@Masters.EndDate </th>
+                      
+                    </tr>
+                </thead>
+                <tbody>
+                    @if(Model.Items!=null){
+                    foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                    <tr class="included">
+                        <td class="uk-text-center">
+                            @item.i
+                            <input type="hidden" class="ItemID" value="@item.value.ItemID" />
+                            <input type="hidden" class="ID" value="@item.value.ID" />
+                        </td>
+                        <td class="uk-text-center"><input type="checkbox" name="items" data-md-icheck class="md-input  check-box" checked/></td>
+                        <td>
+                            <input type="hidden" class="QCTestID" value="@item.value.QCTestID" />
+                            @item.value.TestName
+                        </td>
+                        <td class="uk-text-right"><input type="text" value="@item.value.RangeFrom" class="md-input RangeFrom mask-production-qty" /> </td>
+                        <td class="uk-text-right"><input type="text" value="@item.value.RangeTo" class="md-input RangeTo mask-production-qty"  /></td>
+                        <td><input type="text" value="@item.value.Result" class="md-input Result"  /> </td>
+                        <td class="uk-text-center IsMandatory">@item.value.IsMandatory</td>
+                        <td>
+                            <div class="uk-input-group">
+                                <input class="md-input label-fixed all_date date startdate" type="text" value="@item.value.StartDate">
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar all-date"></i></span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="uk-input-group">
+                                <input class="md-input label-fixed all_date date enddate" type="text" value="@item.value.EndDate">
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar all-date"></i></span>
+                            </div>
+                        </td>
+                       
+                    </tr>
+                    }
+                    }
+                </tbody>
+            </table>
+            <input type="hidden" id="item-count" value="@Model.Items.Count()" />
+        </div>
+    </div>
+</div>
+

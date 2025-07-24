@@ -1,0 +1,61 @@
+ALTER PROCEDURE [Purchase].[SpCreateDirectPurchaseOrder]      
+(@PurchaseOrderNo VARCHAR(20),      
+@PurchaseOrderDate DATETIME,      
+@SupplierID INT,      
+@AdvancePercentage INT,      
+@AdvanceAmount NUMERIC(18,2),      
+@PaymentModeID INT,      
+@ShippingAddressID INT,      
+@BillingAddressID INT,      
+@InclusiveGST BIT,      
+@GstExtra BIT,      
+@SelectedQuotationID INT,      
+@OtherQuotationIDS  varchar(255),      
+@DeliveryWithin INT,      
+@PaymentWithinID INT,      
+@SGSTAmt NUMERIC(18,2),      
+@CGSTAmt NUMERIC(18,2),      
+@IGSTAmt NUMERIC(18,2),      
+@FreightAmt NUMERIC(18,2),      
+@VATAmount NUMERIC(18,2),   
+@OtherCharges NUMERIC(18,2),      
+@PackingShippingCharge NUMERIC(18,2),      
+@NetAmt NUMERIC(18,2),      
+@OrderMet BIT,      
+@IsDraft BIT,  
+@IsVAT int,  
+@IsGST int,  
+@Remarks VARCHAR(150),      
+@SupplierReferenceNo varchar(100),      
+@TermsOfPrice varchar(100),      
+@Cancelled BIT,      
+@CancelledDate DATETIME,      
+@CreatedUserID INT,      
+@CreatedDate DATETIME,      
+@SalesOrderLocationID int,      
+@StoreID INT,      
+@Discount numeric(18,4),      
+@OtherDeductions numeric(18,4),     
+@InvoiceNo varchar(20),    
+@InvoiceDate Datetime,    
+@FinYear INT,      
+@LocationID INT,      
+@ApplicationID INT,      
+@PurchaseOrderID INT OUTPUT)      
+AS      
+BEGIN      
+SET NOCOUNT ON      
+       
+ DECLARE @IsApproved int = 1      
+ INSERT INTO PurchaseOrder(PurchaseOrderNo,PurchaseOrderDate,SupplierID,AdvancePercentage,AdvanceAmount,PaymentModeID,ShippingAddressID,BillingAddressID,      
+  InclusiveGST,GstExtra,SelectedQuotationID,OtherQuotationIDS,DeliveryWithin,PaymentWithinID,SGSTAmt,CGSTAmt,IGSTAmt,FreightAmt,VATAmount,OtherCharges,      
+  PackingShippingCharge,NetAmt,OrderMet,FreightAmountMet,OtherChargesMet,PackingChargesMet,IsDraft,IsVAT,IsGST,Remarks,SupplierReferenceNo,TermsOfPrice,Cancelled,      
+  CancelledDate,CreatedUserID,CreatedDate,FinYear,LocationID,ApplicationID, IsApproved,SalesOrderLocationID,StoreID,Discount,OtherDeductions,InvoiceDate,InvoiceNo)      
+ VALUES (@PurchaseOrderNo,@PurchaseOrderDate,@SupplierID,@AdvancePercentage,@AdvanceAmount,@PaymentModeiD,@ShippingAddressID,@BillingAddressID,      
+  @InclusiveGST,  @GstExtra,@SelectedQuotationID,@OtherQuotationIDS,@DeliveryWithin,@PaymentWithinID,@SGSTAmt,@CGSTAmt,@IGSTAmt,@FreightAmt,@VATAmount,@OtherCharges,      
+  @PackingShippingCharge,@NetAmt,@OrderMet,0,0,0,@IsDraft,@IsVAT,@IsGST,@Remarks,@SupplierReferenceNo,@TermsOfPrice,@Cancelled,@CancelledDate,@CreatedUserID,      
+  Current_Timestamp,@FinYear,@LocationID,@ApplicationID, @IsApproved,@SalesOrderLocationID,@StoreID,@Discount,@OtherDeductions,@InvoiceDate,@InvoiceNo)      
+ SET @PurchaseOrderID = SCOPE_IDENTITY()      
+      
+ Update PurchaseOrder set Status= case When @IsDraft=1 Then 'Draft' Else Case When @IsApproved=1 Then 'Approved' Else 'ToBeApproved' End End where ID=@PurchaseOrderID      
+END      

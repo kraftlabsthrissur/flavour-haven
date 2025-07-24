@@ -1,0 +1,141 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.FundTransferModel
+@{
+    ViewBag.Title = @Accounts.FundTransfer;
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.TransactionNumber</label>
+                            @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input  label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Accounts.Date</label>
+                            <input class="md-input label-fixed current-date date" type="text" disabled="disabled" id="Date" value="@DateTime.Now.ToString("dd-MM-yyyy")">
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.FromLocation<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.FromLocationID, Model.FromLocationList, "Select", new { @class = "md-input label-fixed", @id = "FromLocation",@disabled="disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.ToLocation<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.ToLocationID, Model.ToLocationList, "Select", new { @class = "md-input label-fixed", @id = "ToLocation" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.FromBankDetails<span>*</span></label>
+                            @*@Html.DropDownListFor(Model => Model.FromBankID, Model.FromBankList, "Select", new { @class = "md-input label-fixed", @id = "FromBank" })*@
+                            <select id="FromBank" class="md-input label-fixed" >
+                                <option value="0">Select</option>
+                                @foreach (var bank in Model.FromBankList)
+                                {
+                                    <option @(Model.FromBankID == bank.ID ? "selected='selected'" : "") value="@bank.ID" data-creditbalance="@bank.CreditBalance">@bank.BankName</option>
+                                }
+                            </select>
+
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.ToBankDetails<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.ToBankID, Model.ToBankList, "Select", new { @class = "md-input label-fixed", @id = "ToBank" })
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.Amount<span>*</span></label>
+                            @Html.TextBoxFor(m => m.Amount, new { @class = "md-input  label-fixed mask-currency " })
+                        </div>
+                        <div class="uk-width-medium-1-8 uk-hidden">
+                            <label>@Accounts.ModeOfPayment<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.ModeOfPaymentID, Model.ModeOfPaymentList, "Select", new { @class = "md-input label-fixed", })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Accounts.InstrumentNumber<span>*</span></label>
+                            @Html.TextBoxFor(m => m.InstrumentNumber, new { @class = "md-input  label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label for="uk_dp_start">@Accounts.InstrumentDate<span>*</span></label>
+                                @Html.TextBoxFor(m => m.InstrumentDate, new { @class = "md-input label-fixed current-date date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-4">
+                            <label>@Accounts.Remarks</label>
+                            @Html.TextBoxFor(m => m.Remarks, new { @class = "md-input  label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-10">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label>&nbsp;</label>
+                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddItem">@Common.Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-1">
+                            <label>@Accounts.TotalAmount</label>
+                            @Html.TextBoxFor(m => m.TotalAmount, new { @class = "md-input label-fixed x-large mask-currency", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <table id="fund-transfer-item-list" class="uk-table" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th class="width-10">@Accounts.SerialNumber</th>
+                    <th class="width-100">@Accounts.FromLocation</th>
+                    <th class="width-100">@Accounts.ToLocation</th>
+                    <th class="width-120">@Accounts.FromBankDetails</th>
+                    <th class="width-120">@Accounts.ToBankDetails</th>
+                    <th class="width-80">@Accounts.Amount</th>
+                    <th class="width-40">@Accounts.ModeOfPayment</th>
+                    <th class="width-40">@Accounts.InstrumentNumber</th>
+                    <th class="width-40">@Accounts.InstrumentDate</th>
+                    <th class="width-200">@Accounts.Remarks</th>
+                    <th class="width-10"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items != null)
+                {
+                    foreach (var itm in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                        <tr>
+                            <td class="uk-text-center">@itm.i</td>
+                            <td class="FromLocation"><input type="hidden" class="FromLocationID" value=@itm.value.FromLocationID />@itm.value.FromLocation</td>
+                            <td class="ToLocation"><input type="hidden" class="ToLocationID" value=@itm.value.ToLocationID />@itm.value.ToLocation</td>
+                            <td class="FromBank"><input type="hidden" class="FromBankID" value=@itm.value.FromBankID />
+                            <input type="hidden" class="CreditBalance" value=@itm.value.CreditBalance />
+                            @itm.value.FromBank</td>
+                            <td class="ToBank"><input type="hidden" class="ToBankID" value=@itm.value.ToBankID /> @itm.value.ToBank </td>
+                            <td class="Amount mask-currency">@itm.value.Amount</td>
+                            <td class="ModeOfPayment"><input type="hidden" class="ModeOfPaymentID" value=@itm.value.ModeOfPaymentID />@itm.value.ModeOfPayment</td>
+                            <td class="InstrumentNumber">@itm.value.InstrumentNumber</td>
+                            <td class="InstrumentDate">@itm.value.InstrumentDate</td>
+                            <td class="Remarks">@itm.value.Remarks</td>
+                            <td class="uk-text-center"><a class="remove-item"><i class="uk-icon-remove"></i></a></td>
+
+                        </tr>;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

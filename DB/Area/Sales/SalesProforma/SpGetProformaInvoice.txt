@@ -1,0 +1,26 @@
+ 
+ALTER PROCEDURE [Sales].[SpGetProformaInvoice](      
+ @ProformaInvoiceID INT,      
+ @FinYear INT,       
+ @LocationID INT,      
+ @ApplicationID INT      
+)      
+AS      
+BEGIN      
+      
+ SET NOCOUNT ON;      
+ SELECT P.ID, TransNo, InvoiceDate, CustomerID, SalesOrders, P.SchemeID, GrossAmt, DiscountAmt, AdditionalDiscount, TaxableAmt,       
+  SGSTAmt, CGSTAmt, IGSTAmt, RoundOff, NetAmt, IsProcessed, IsDraft, IsCancelled, HoldStock, SalesTypeID, CA.Name AS SalesTypeName,       
+  C.Name AS CustomerName,C.CurrencyCode, C.CustomerCategory , C.CustomerCategoryID, C.PriceListID, C.StateID,      
+  BillingAddressID, B.AddressLine1 AS BillingAddress, ShippingAddressID, SH.AddressLine1 AS ShippingAddress,      
+  P.NoOfBags,P.NoOfBoxes,P.NoOfCans,P.CheckedBy,P.PackedBy ,P.CessAmount,ISNULL(P.FreightAmount,0.00) FreightAmount,C.MaxCreditLimit,    
+  dbo.FnGetCustomerOutstandingAmount(C.ID,@LocationID,@ApplicationID) as OutstandingAmount,ISNULL(P.Remarks,'')Remarks,C.IsGSTRegistered,  
+  P.PrintWithItemCode  
+ FROM Sales.ProformaInvoice P      
+ INNER JOIN viCustomer C ON C.ID = P.CustomerID      
+ INNER JOIN Category CA ON CA.ID = P.SalesTypeID      
+ LEFT JOIN Addresses B ON B.ID = BillingAddressID      
+ LEFT JOIN Addresses SH ON SH.ID = ShippingAddressID      
+ WHERE P.ID = @ProformaInvoiceID AND P.Finyear = @FinYear AND P.LocationID = @LocationID AND P.ApplicationID = @ApplicationID      
+END      
+    

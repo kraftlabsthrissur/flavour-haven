@@ -1,0 +1,65 @@
+﻿
+@model TradeSuiteApp.Web.Areas.AHCMS.Models.MedicineConsumptionModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-width-medium-1-1">
+            @Html.HiddenFor(m => m.StoreID)
+            <div class="uk-grid" data-uk-grid-margin="">
+                <div class="uk-width-medium-1-10">
+                    <div class="uk-input-group">
+                        <label for="uk_dp_start">@AHCMS.Date<span>*</span></label>
+                        @Html.TextBoxFor(m => m.Date, new { @class = "md-input label-fixed current-date date" })
+                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                    </div>
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@AHCMS.Room</label>
+                    @Html.DropDownListFor(m => m.RoomID, new SelectList(Model.RoomList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@AHCMS.Time</label>
+                    @Html.DropDownListFor(m => m.Time, new SelectList(Model.TimeList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <div class="md-input-wrapper md-input-filled">
+                        <label>&nbsp;</label>
+                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnShow">@Common.Show</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="uk-form-row">
+    <div>
+        <table id="medicine-consumption-list" class="uk-table" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-20"></th>
+                    <th class="width-80">@AHCMS.Patient</th>
+                    <th class="width-80">@AHCMS.Doctor</th>
+                    <th class="width-40">@AHCMS.Room</th>
+                    <th class="width-80">@AHCMS.Medicine</th>
+                    <th class="width-40">@AHCMS.ScheduledTime</th>
+                    <th class="width-40">@AHCMS.Time</th>
+                    <th class="width-40">@AHCMS.Date</th>
+                    <th class="width-40">@AHCMS.Status</th>
+                    <th class="width-40">@AHCMS.BeforeORAfterFood</th>
+                    <th class="width-40">@AHCMS.Remarks</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @Html.Partial("~/Areas/AHCMS/Views/MedicineConsumption/MedicineConsumptionList.cshtml", Model)
+            </tbody>
+        </table>
+
+        <input type="hidden" id="item-count" value="" />
+        <input type="hidden" id="patient-medicines-id" value="" />
+    </div>
+</div>

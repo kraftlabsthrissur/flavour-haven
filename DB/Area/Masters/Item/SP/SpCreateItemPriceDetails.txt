@@ -1,0 +1,14 @@
+      
+CREATE PROCEDURE [Master].[SpCreateItemPriceDetails](        
+@ItemID INT,     
+@LocationID INT,   
+@ApplicationID INT,  
+@SalesPrice Numeric(18,4),      
+@LoosePrice Numeric(18,4)    
+)        
+AS        
+BEGIN   
+  
+INSERT INTO PriceListDetails(PriceListID,BasePriceListID,ItemID,MRP,LoosePrice,LocationID,ApplicationID,CurrencyID)   
+values(1,1,@ItemID,@SalesPrice,@LoosePrice,@LocationID,@ApplicationID,(select l.CurrencyID from Location l WHERE l.ID=@LocationID))        
+END

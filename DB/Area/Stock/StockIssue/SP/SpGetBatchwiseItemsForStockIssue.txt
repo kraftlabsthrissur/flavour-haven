@@ -1,0 +1,126 @@
+ALTER PROCEDURE [Stock].[SpGetBatchwiseItemsForStockIssue](    
+ @ItemID int,    
+ @BatchTypeID int,    
+ @WarehouseID int,    
+ @Qty Numeric(18,4),    
+ @UnitID int,    
+ @FinYear int,     
+ @LocationID int,     
+ @ApplicationID int    
+) AS    
+BEGIN    
+ SET NOCOUNT ON;    
+    
+ DECLARE @LocationHeadID int, @DiscountPercentageForST numeric(5,2), @DefaultBasePriceListID int    
+    
+ SELECT @LocationHeadID = LocationHeadID FROM Location WHERE ID = @LocationID      
+    
+ IF 1 = 2    
+ BEGIN    
+  SELECT cast(null as int) ItemID, '' ItemName, cast(null as int) BatchID, '' BatchNo, cast(null as int) BatchTypeID,     
+  '' BatchTypeName,cast(null as numeric(18,4))  Stock,     
+  cast(null as numeric(18,4)) RequestedQty, cast(null as numeric(18,4)) IssueQty, cast(null as numeric(18,4)) Rate,     
+  cast(null as numeric(18,4)) IGSTPercentage, cast(null as numeric(18,4)) CGSTPercentage, cast(null as numeric(18,4))     
+  SGSTPercentage, '' Unit , cast(null as numeric(18,4)) TradeDiscountPercentage , cast (null as numeric(18,2)) PackSize, '' PrimaryUnit ,    
+  cast(null as int) PrimaryUnitID     
+ END    
+    
+ IF (OBJECT_ID('tempdb..#temp') IS NOT NULL)    
+ BEGIN    
+  DROP TABLE #temp    
+ END    
+    
+ IF @BatchTypeID = 0    
+ BEGIN     
+  SET @BatchTypeID = NULL    
+ END    
+    
+ DECLARE @Stock Numeric(18,4) = 10000, @BatchTypeName varchar(10), @BatchID int, @BatchNo VARCHAR(30),     
+ @CumulativeStock Numeric(18,4) = 0, @IssueQty Numeric(18,4), @BasePriceListID int, @DiscountPercentage Numeric(5,2)    
+     
+ CREATE TABLE #temp (    
+  ID int PRIMARY KEY IDENTITY(1,1),    
+  ItemID int,       
+  BatchID int,    
+  BatchNo varchar(30),    
+  BasePriceListID int,     
+  Stock Numeric(18,4),     
+  IssueQty Numeric(18,4)      
+ )    
+ WHILE (@CumulativeStock < @Qty AND @Stock <> 0 )    
+ BEGIN    
+     
+  SET @Stock = 0    
+  SELECT TOP 1 @BatchID = B.BatchID, @BatchNo = BatchNo ,     
+  @Stock=CASE     
+    WHEN B.CategoryID = 222     
+    THEN FLOOR(dbo.FnConvertStockFromInventoryUnit(B.ItemID, SUM(Value),@UnitID))    
+    ELSE dbo.FnConvertStockFromInventoryUnit(B.ItemID, SUM(Value),@UnitID)    
+   END ,    
+  @BasePriceListID = B.BasePriceListID     
+  FROM viActiveBatches B     
+  INNER JOIN Stock S ON B.ItemID = S.ItemID AND B.BatchID = S.BatchID -- AND ISNULL(S.BatchTypeID,0)  = ISNULL(B.BatchType,0)    
+  WHERE S.WareHouseID = @WarehouseID     
+  AND B.ItemID = @ItemID     
+  AND B.BatchID NOT IN (SELECT BatchID FROM #temp)    
+  AND ISNULL(S.BatchTypeID,0) = ISNULL(@BatchTypeID,0)    
+  AND S.FinYear = @FinYear    
+  AND S.LocationID = @LocationID    
+  AND S.ApplicationID = @ApplicationID    
+  GROUP BY B.ItemID, B.BatchID, BatchNo, B.BasePriceListID, B.ExpiryDate , B.CategoryID      
+  HAVING (CASE     
+    WHEN B.CategoryID = 222     
+    THEN FLOOR(dbo.FnConvertStockFromInventoryUnit(B.ItemID, SUM(Value),@UnitID))    
+    ELSE dbo.FnConvertStockFromInventoryUnit(B.ItemID, SUM(Value),@UnitID)    
+   END) > 0 ORDER BY B.ExpiryDate ASC, B.BatchID ASC    
+    
+  IF @Stock <> 0     
+  BEGIN    
+   IF @Stock >= @Qty - @CumulativeStock     
+   BEGIN    
+    SET @IssueQty = @Qty - @CumulativeStock    
+   END    
+   ELSE    
+   BEGIN    
+    SET @IssueQty = @Stock    
+   END    
+   SET @CumulativeStock = @CumulativeStock + @Stock    
+   INSERT INTO #temp SELECT @ItemID, @BatchID, @BatchNo, @BasePriceListID, @Stock,  @IssueQty    
+  END    
+ END     
+    
+ SELECT @DiscountPercentageForST = dbo.FnGetDiscountPercentageForST(@ApplicationID)    
+ SELECT @DefaultBasePriceListID = dbo.FnGetBasePriceListID(@LocationID, @ApplicationID)    
+    
+ IF (SELECT CategoryID FROM Item WHERE ID = @ItemID) = 222     
+ BEGIN      
+  SELECT I.ID ItemID,I.Code, I.Name ItemName,I.Description PartsNo,I.Make,I.Model,  ISNULL(T.BatchID,0) BatchID,  ISNULL(T.BatchNo,'') BatchNo,  
+  BT.ID BatchTypeID, BT.Name BatchTypeName, ISNULL(T.Stock,0.0) Stock, @Qty RequestedQty, ISNULL(T.IssueQty,0.0) IssueQty,     
+  Case When I.InventoryUnitID=@UnitID Then PD.MRP  Else PD.LoosePrice End Rate, I.IGSTPercent IGSTPercentage,
+  ISNULL((SELECT STRING_AGG(Name+'|'+CAST(PackSize AS varchar(10)), ',') FROM SecondaryUnit su where su.UnitID=I.UnitID),'')SecondaryUnits,
+  I.CGSTPercent CGSTPercentage, I.SGSTPercent SGSTPercentage, I.Unit, I.PackSize,I.Unit as PrimaryUnit ,ISNULL(I.UnitID,0) as PrimaryUnitID,    
+   @DiscountPercentageForST TradeDiscountPercentage    
+  FROM viItem I    
+  INNER JOIN BatchType BT ON BT.ID = @BatchTypeID      
+  INNER JOIN PriceList P ON P.Name = BT.Name     
+  LEFT JOIN #temp T ON T.ItemID = I.ID    
+  LEFT JOIN PriceListDetails PD ON  PD.BasePriceListID = ISNULL(T.BasePriceListID,@DefaultBasePriceListID)     
+   AND PD.PriceListID = P.ID AND PD.ItemID = I.ID    
+  WHERE I.ID = @ItemID AND PD.MRP <> 0    
+      
+ END    
+ ELSE    
+ BEGIN    
+  SELECT I.ID ItemID,I.Code, I.Name ItemName,I.Description PartsNo,I.Make,I.Model,  ISNULL(T.BatchID,0) BatchID,  ISNULL(T.BatchNo,'') BatchNo,  
+  0 BatchTypeID, '' BatchTypeName, ISNULL(T.Stock,0.0) Stock, @Qty RequestedQty, ISNULL(T.IssueQty,0.0) IssueQty,     
+    Case When I.InventoryUnitID=@UnitID Then ISNULL(IC.TransferPrice,0) Else    
+   ISNULL(IC.TransferPrice,0)*dbo.FnConvertUnit(I.ID,1,I.UnitID,I.InventoryUnitID) End Rate,
+   ISNULL((SELECT STRING_AGG(Name+'|'+CAST(PackSize AS varchar(10)), ',') FROM SecondaryUnit su where su.UnitID=I.UnitID),'')SecondaryUnits,
+   I.IGSTPercent IGSTPercentage,I.CGSTPercent CGSTPercentage, I.SGSTPercent SGSTPercentage, I.Unit,I.PackSize,I.Unit as PrimaryUnit ,    
+   ISNULL(I.UnitID,0) as PrimaryUnitID,0.0 AS TradeDiscountPercentage    
+  FROM viItem I      
+  LEFT JOIN #temp T ON T.ItemID = I.ID    
+  LEFT JOIN ItemwiseCostHistory IC ON IC.ItemID = I.ID AND IC.IsActive = 1 AND IC.LocationHeadID = @LocationHeadID    
+  WHERE I.ID = @ItemID    
+ END    
+END    

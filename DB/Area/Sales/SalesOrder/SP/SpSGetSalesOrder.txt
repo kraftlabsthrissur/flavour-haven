@@ -1,0 +1,22 @@
+        
+                   
+ALTER PROCEDURE [Sales].[SpSGetSalesOrder](@ID int =NULL,@FinYear int,@LocationID int,@ApplicationID int)AS                  
+BEGIN                  
+ SELECT S.ID, SalesOrderNo, OrderDate, S.CustomerID, C.Name AS Customer, NetAmt,S.PrintWithItemName,    
+ s.QuotationExpiry,PaymentTerms,CustomerEnquiryNumber,SchemeAllocationID, DespatchDate, GrossAmt, DiscountAmt, TaxableAmt, SGSTAmt, CGSTAmt,                  
+  IGSTAmt,VATAmount,IsGST,IsVat,CurrencyExchangeRate,s.EnquiryDate,s.Remarks,s.CurrencyID,ISNULL(Cu.Code,'')CurrencyCode,ISNULL(Cu.Name,'')Currencyname, RoundOff,           
+  IsProcessed, S.IsDraft, IsCancelled, CategoryID AS CustomerCategoryID, '' AS CustomerCategory,                   
+  C.PriceListID, C.IsGSTRegistered, B.StateID, S.PurchaseOrderID, S.Source, S.FsoID,                  
+   BillingAddressID,Case when C.IsInterCompany = 1 then B.Place else B.AddressLine1 end AS BillingAddress,                 
+   ShippingAddressID, Case when C.IsInterCompany = 1 then SH.Place else  SH.AddressLine1  end AS ShippingAddress,                
+  ISNULL(IsApproved,0) AS IsApproved, CessAmount,ISNULL(S.FreightAmount,0) FreightAmount ,s.QuotationNo             
+ FROM Sales.SalesOrder S           
+ INNER JOIN Customer C on C.ID = S.CustomerID                  
+ INNER JOIN Addresses B ON B.ID = BillingAddressID                  
+ INNER JOIN Addresses SH ON SH.ID = ShippingAddressID              
+ LEFT JOIN Currency Cu on Cu.ID=S.CurrencyID              
+ WHERE S.ID = ISNULL(@ID,S.ID)                   
+ AND S.FinYear = @FinYear                   
+ AND S.LocationID = @LocationID                   
+ AND S.ApplicationID = @ApplicationID                  
+END 

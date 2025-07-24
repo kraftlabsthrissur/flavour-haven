@@ -1,0 +1,74 @@
+  
+ALTER procedure [Purchase].[SpCreatePurchaseReturnOrder](    
+@Code varchar(20),    
+@Date DateTime,    
+@SupplierID int,    
+@SGSTAmount Numeric(18,4),    
+@CGSTAmount Numeric(18,4),    
+@IGSTAmount Numeric(18,4),    
+@FreightAmount Numeric(18,4),    
+@OtherCharge Numeric(18,4),    
+@PackingCahrge Numeric(18,4),    
+@NetAmount Numeric(18,4),    
+@Discount numeric(18,4),
+@VATPercentage numeric(18,4),
+@CurrencyID int,
+@IsGST int,
+@IsVat int,
+@CurrencyExchangeRate numeric(18,4),
+@DocumentCharges numeric(18,4),
+@SupplierOtherCharges numeric(18,4),
+@IsDraft bit,    
+@IsCancelled bit,    
+@CancelledDate DateTime,    
+@CreatedUserID int,    
+@CreatedDate DateTime,    
+@FinYear int,    
+@LocationID int,    
+@ApplicationID int,    
+@PurchaseReturnOrderID int output,    
+@PurchaseReturnID int output)     
+AS     
+BEGIN    
+    
+DECLARE @DebitNoteSerialNo VARCHAR(25),@CreditAccountID INT,@DebitAccountID INT,@DebitNoteID INT,@DebitAccountCode VARCHAR(25),@GSTAmount numeric(18,4),@TaxableAmount numeric(18,4)    
+insert into PurchaseReturnOrder([Code] ,[Date],[SupplierID],[SGSTAmount] ,[CGSTAmount] ,[IGSTAmount] ,[FreightAmount] ,[OtherCharge] ,[PackingCahrge]     
+ ,[NetAmount] ,[IsDraft],[IsCancelled]  ,[CreatedUserID] ,[CreatedDate] ,[FinYear] ,[LocationID] ,[ApplicationID],PurchaseReturnDiscount,
+ VATPercentage,CurrencyID,IsGST,IsVat,CurrencyExchangeRate,DocumentCharges,SupplierOtherCharges)    
+  Values (@Code,@Date,@SupplierID,@SGSTAmount,@CGSTAmount,@IGSTAmount,@FreightAmount,@OtherCharge,@PackingCahrge    
+ ,@NetAmount,@IsDraft,0,@CreatedUserID,current_timestamp,@FinYear,@LocationID,@ApplicationID,@Discount,
+ @VATPercentage,@CurrencyID,@IsGST,@IsVat,@CurrencyExchangeRate,@DocumentCharges,@SupplierOtherCharges)    
+    
+SET @PurchaseReturnOrderID=SCOPE_IDENTITY();    
+insert into PurchaseReturn([Code] ,[Date],[SupplierID],[SGSTAmount] ,[CGSTAmount] ,[IGSTAmount] ,[FreightAmount] ,[OtherCharge] ,[PackingCahrge]     
+ ,[NetAmount] ,[IsDraft],[IsCancelled]  ,[CreatedUserID] ,[CreatedDate] ,[FinYear] ,[LocationID] ,[ApplicationID],PurchaseReturnDiscount)    
+Values (@Code,@Date,@SupplierID,@SGSTAmount,@CGSTAmount,@IGSTAmount,@FreightAmount,@OtherCharge,@PackingCahrge    
+  ,@NetAmount,@IsDraft,0,@CreatedUserID,current_timestamp,@FinYear,@LocationID,@ApplicationID,@Discount)    
+set @PurchaseReturnID=SCOPE_IDENTITY();    
+UPDATE PurchaseReturnOrder SET IsProcessed=1 WHERE ID=@PurchaseReturnOrderID    
+IF @IsDraft=0    
+BEGIN    
+SELECT @DebitAccountCode=Code From Supplier Where ID=@SupplierID    
+SELECT @CreditAccountID= ID From AccountHead where AccountName ='Debit Note Account'  --Purchase Return  
+SELECT @DebitAccountID= ID From AccountHead where AccountID =@DebitAccountCode    
+SET @GSTAmount=@CGSTAmount+@SGSTAmount+@IGSTAmount    
+SET @TaxableAmount=@NetAmount-(@CGSTAmount+@SGSTAmount+@IGSTAmount)    
+EXEC [Common].[SpUpdateSerialNo] 'DebitNote','Code',@FinYear,@LocationID ,@ApplicationID ,@DebitNoteSerialNo  OUT      
+exec [Accounts].SpCreateDebitNote @DebitNoteSerialNo,@Date, @CreditAccountID,@DebitAccountID,@TaxableAmount,'Purchase Return',    
+@IsDraft,0,0,@TaxableAmount,@GSTAmount,@NetAmount,@CreatedUserID,@FinYear, @LocationID,@ApplicationID, @DebitNoteID    
+END    
+END    
+    
+/*    
+DECLARE @XMLParam xml = '<root><node    
+FilterLocationID="1"    
+FromDate="01-apr-2019"    
+ToDate="19-sep-2020"    
+UserID="616"    
+FinYear=""    
+LocationID=""    
+ApplicationID="1"/>    
+</root>'    
+ EXEC [Reports].[SpRptSalesGSTR] @XMLParam    
+ */    
+  

@@ -1,0 +1,13 @@
+      
+CREATE PROCEDURE [Master].[SpCreateItemWareHouse](        
+@ItemID INT,        
+@WareHouseID INT,      
+@BinID INT,      
+@LotID INT ,      
+@IsDefault INT,  
+@CreatedUserID INT  
+)        
+AS        
+BEGIN        
+INSERT INTO ItemWareHouse(ItemID,WareHouseID,BinID,LotID,Quantity,IsDefault,CreatedUserID) values(@ItemID,@WareHouseID,@BinID,@LotID,1,@IsDefault,@CreatedUserID)        
+END

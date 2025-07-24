@@ -1,0 +1,89 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Stock.Models.RateAdjustmentModel
+@{
+    ViewBag.Title = "_form";
+}
+<div class="uk-form-row">
+    <div class="uk-grid" data-uk-grid-margin>
+        <div class="uk-width-medium-1-1">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-10">
+                        <label>@Stock.TransNo</label>
+                        @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input", @disabled = "disabled", @id = "TransNo" })
+                    </div>
+                    <div class="uk-width-medium-1-10">
+                        <label for="uk_dp_start">@Stock.Date</label>
+                        @Html.TextBoxFor(m => m.Date, new { @class = "md-input", @id = "txtDate", @disabled = "disabled" })
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+        @Html.HiddenFor(m => m.ID)
+  
+
+
+   
+
+    </div>
+    <br />
+    <div class="uk-form-row">
+        <div>
+
+            <table id="rate-adjustment-items-list" class="uk-table " cellspacing="0" width=100">
+                <thead>
+                    <tr>
+
+                        <th class="width-50">@Common.SerialNo</th>
+                        
+                        <th class="width-200">@Stock.ItemName</th>
+                        <th class="width-200">@Stock.ItemCategory</th>
+                        @*<th  class="width-200">@Stock.DateFromEffect</th>*@
+                        <th class="width-100">@Stock.SystemStockQty</th>
+                        <th class="width-100">@Stock.SystemAvgCost</th>
+                        <th class="width-100">@Stock.ActualAvgCost</th>
+                        <th class="width-100">@Stock.DiffInAvgCost</th>
+                        <th class="width-100">@Stock.SystemStockValue</th>
+                        <th class="width-100">@Stock.ActualStockValue</th>
+                        <th class="width-100">@Stock.DifferenceInStockValue</th>
+                        <th class="width-100">@Stock.Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                        <tr class="included">
+                            <td class="uk-text-center">
+                                @(1 + @Model.Items.IndexOf(item.value))
+
+                            </td>
+                            @*<td class="uk-text-center" data-md-icheck>
+                                <input type="checkbox" class="check-box" checked />
+                                <input type="hidden" class="ItemID" value="@item.value.ItemID" />
+
+                            </td>*@
+                            <td>@item.value.ItemName</td>
+                            <td class="Category">@item.value.Category</td>
+                            @*<td class="effectdate">@item.value.EffectDate</td>*@
+                            <td class="mask-production-qty "> @item.value.SystemStockQty</td>
+                            <td class="mask-production-qty ">@item.value.SystemAvgCost</td>
+                            <td class="mask-production-qty "> @item.value.ActualAvgCost</td>
+                            <td class="mask-production-qty "> @item.value.DifferenceInAvgCost</td>
+                            <td class="mask-production-qty ">@item.value.SystemStockValue</td>
+                            <td class="mask-production-qty "> @item.value.ActualStockValue</td>
+                            <td class="mask-production-qty "> @item.value.DifferenceInStockValue</td>
+                            <td class=""> @item.value.Remark</td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <input type="hidden" id="item-count" value="@Model.Items.Count()" />
+        </div>
+
+    </div>
+</div>
+

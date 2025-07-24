@@ -1,0 +1,656 @@
+﻿@model BusinessObject.PurchaseOrderBO
+@{
+    ViewBag.Title = @Purchase.PurchaseOrderDetails;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Purchase.PurchseOrdersForStockItems</h1>
+            <span class="uk-text-upper uk-text-small">@Purchase.PurchaseOrderDetails</span>
+        </div>
+        <div class="heading_actions print-actions uk-hidden">
+
+            @ActionAuthorization.IsAuthorized("Print", "<a class='md-btn print'>" + @Common.Print + "</a>")
+
+            <a class="md-btn  ">@Common.Close</a>
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="heading_actions hidden-print-preview">
+
+
+            @if (Model.IsDraft && !Model.Cancelled && !Model.IsSuspended)
+            {
+                @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "Edit", "PurchaseOrder", new { Area = "Purchase", id = (Model != null) ? Model.ID : 0 }, new { @class = "md-btn" }))
+
+            }
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSendMail'>  Send Mail  </a>")
+            @ActionAuthorization.IsAuthorized("PurchaseOrderPrintPdf", " <a class='md-btn printpdf'>Print As PDF</a>")
+            @ActionAuthorization.IsAuthorized("PurchaseOrderItemCodePrintPdf", " <a class='md-btn ItemCode'>ItemCode</a>")
+
+            @ActionAuthorization.IsAuthorized("PurchaseOrderPartNoPrintPdf", " <a class='md-btn PartNo'>PartNO</a>")
+
+            @ActionAuthorization.IsAuthorized("PurchaseOrderExportIemCodePrintPdf", " <a class='md-btn ExportItemCode'>Export With ItemCode</a>")
+            @ActionAuthorization.IsAuthorized("PurchaseOrderExportPartNoPrintPdf", " <a class='md-btn ExportPartNo'>Export With PartNO</a>")
+
+            @Html.HiddenFor(m => m.ID)
+            @Html.HiddenFor(model => model.InterCompanyLocationID)
+            @if (ViewBag.CloseURL != null)
+            {
+                <a href='/Approvals/Approval/' class='md-btn'>@Common.Back</a>
+            }
+            else
+            {
+                @Html.ActionLink(Common.Back, "Index", "PurchaseOrder", new { Area = "Purchase" }, new { @class = "md-btn " })
+            }
+
+            @*<div data-uk-dropdown>
+            <i class="md-icon material-icons">&#xE5D4;</i>
+            <div class="uk-dropdown uk-dropdown-small">
+                <ul class="uk-nav">
+                    <li><a>Print</a></li>
+                </ul>
+            </div>
+        </div>*@
+
+        </div>
+    </div>
+    <div id="page_content_inner" class="details-view">
+        <div class="md-card uk-margin-medium-bottom" id="screen">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.PONumber</label>
+                                            @Html.TextBoxFor(model => model.PurchaseOrderNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label for="uk_dp_start">@Purchase.PODate</label>
+                                            @Html.TextBoxFor(model => model.PurchaseOrderDate, "{0:dd-MMM-yyyy}", new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.OrderType</label>
+                                            @Html.TextBoxFor(model => model.OrderType, new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                                        </div>
+                                        @*<div class="uk-width-medium-1-8 ">
+                                                <label>@Purchase.PaymentTerms<span>*</span></label>
+                                                @Html.DropDownList("PaymentModeID", new SelectList(Model.DDLPaymentMode, "Value", "Text"), new { @class = "md-input label-fixed" })
+                                            </div>*@
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.SuppQuotNo</label>
+                                            @Html.TextBoxFor(model => model.SuppQuotNo, new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.Shipment</label>
+                                            @Html.TextBoxFor(model => model.Shipment, new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.Remarks</label>
+                                            @Html.TextBoxFor(model => model.Remarks, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.SuppDocCode</label>
+                                            @Html.TextBoxFor(model => model.SuppDocCode, new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.PaymentTerms</label>
+                                            @Html.TextBoxFor(model => model.PaymentMode, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Purchase.Supplier</label>
+                                            @Html.TextBoxFor(model => model.SupplierName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                            @Html.HiddenFor(m => m.Email)
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.SuppShipCode</label>
+                                            @Html.TextBoxFor(model => model.SuppShipCode, new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.SuppOtherRemark </label>
+                                            @Html.TextBoxFor(model => model.SuppOtherRemark, new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                                        </div>
+                                        @Html.HiddenFor(Model => Model.IsInterCompany)
+
+                                        <div class="uk-width-medium-1-8 supplierLocation">
+                                            <label>@Purchase.SupplierLocation</label>
+                                            @Html.TextBoxFor(model => model.SupplierLocation, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 uk-hidden intercompanySupplierlocation">
+                                            <label>@Purchase.SupplierLocation</label>
+                                            @Html.DropDownListFor(Model => Model.SalesOrderLocationID, new SelectList(Model.DDLLocation, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @id = "LocationID", @disabled = "disabled" })
+
+
+                                        </div>
+
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.ShippingAddress</label>
+                                            @Html.TextBoxFor(model => model.ShipplingLocation, new { @class = "md-input label-fixed", @disabled = "disabled" })
+
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.BillingAddress</label>
+                                            @Html.TextBoxFor(model => model.BillingLocation, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.SupplyWithinDays</label>
+                                            @Html.TextBoxFor(model => model.DeliveryWithin, new { @class = "md-input label-fixed uk-text-right", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+
+
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.PaymentWithinDays</label>
+                                            @Html.TextBoxFor(model => model.PaymentWithin, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+
+
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.Advance</label>
+                                            @Html.TextBoxFor(model => model.AdvanceAmount, new { @class = "md-input uk-text-right label-fixed", @disabled = "disabled" })
+                                        </div>
+
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.GrossAmount</label>
+                                            @Html.TextBoxFor(model => model.GrossAmount, new { @class = "md-input label-fixed " + Model.normalclass, @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.DiscountPercentage</label>
+                                            @Html.TextBoxFor(model => model.DiscountPercentage, new { @class = "md-input label-fixed mask-sales2-currency", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.Discount</label>
+                                            @Html.TextBoxFor(model => model.Discount, new { @class = "md-input label-fixed " + Model.normalclass, @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.VATPercentage</label>
+                                            @Html.TextBoxFor(model => model.VATPercentage, new { @class = "md-input label-fixed mask-sales2-currency", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Purchase.VATAmount</label>
+                                            @Html.TextBoxFor(model => model.VATAmount, new { @class = "md-input label-fixed " + Model.normalclass, @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.CurrencyCode</label>
+                                            @Html.TextBoxFor(model => model.CurrencyCode, new { @class = "md-input label-fixed", @tabindex = "-1", @Disabled = "disabled" })
+                                        </div>
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="uk-width-medium-2-10">
+
+                                <div class="uk-form-row">
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="md-input-wrapper md-input-filled">
+                                            <label>@Purchase.SelectedQuotation</label>
+                                            <div class="uk-form-file v1">
+                                                <label id="selected-quotation">
+                                                    @foreach (var item in Model.SelectedQuotation)
+                                                    {
+                                                        <span class='view-file' data-id='@item.ID' data-url='@item.URL' data-path='@item.Path'>@item.Name</span>
+                                                    }
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="uk-form-row">
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="md-input-wrapper md-input-filled">
+                                            <label>@Purchase.OtherQuotation</label>
+                                            <div class="uk-form-file v1">
+                                                <div id="other-quotation-list">
+                                                    <div class="uk-button-dropdown" data-uk-dropdown>
+                                                        <a><span id="file-count">@Model.OtherQuotations.Count() Files</span> <i class="material-icons">&#xE313;</i></a>
+                                                        <div class="uk-dropdown">
+                                                            <ul class="uk-nav uk-nav-dropdown">
+                                                                @foreach (var item in Model.OtherQuotations)
+                                                                {
+                                                                    <li class='file-list'>
+                                                                        <span data-id='@item.ID' class='view-file' data-url='@item.URL' data-path='@item.Path'>
+                                                                            @item.Name
+                                                                        </span>
+                                                                    </li>
+                                                                }
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="uk-width-medium-1-1">
+                                        <label>@Purchase.NetAmount</label>
+                                        @Html.TextBoxFor(model => model.NetAmt, new { @class = "md-input label-fixed " + Model.normalclass, @disabled = "disabled" })
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <table id="purchase-order-items-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-10">@Common.SerialNo</th>
+                                    <th class="width-50">@Purchase.Code</th>
+                                    <th class="width-100">@Purchase.ItemName</th>
+                                    @*<th class="width-100">@Purchase.PartsNumber</th>*@
+                                    <th class="width-20">@Purchase.Unit</th>
+                                    <th class="width-30">@Purchase.Qty</th>
+                                    <th class="width-50">@Purchase.Rate</th>
+                                    <th class="width-50">@Purchase.GrossAmount</th>
+                                    <th class="width-30">@Purchase.DiscountPer</th>
+                                    <th class="width-50">@Purchase.Discount</th>
+                                    <th class="width-30">@Purchase.LastPR</th>
+                                    <th class="width-30">@Purchase.LowestPR</th>
+                                    <th class="width-30">@Purchase.QuantityOrdered</th>
+                                    <th class="width-30">@Purchase.QuantityAvailable</th>
+                                    <th class="width-30">@Purchase.VATPercentage</th>
+                                    <th class="width-50">@Purchase.VATAmount</th>
+                                    <th class="width-50">@Purchase.TaxableAmount</th>
+                                    <th class="width-50">@Purchase.NetAmount</th>
+                                    <th class="width-40"></th>
+
+                                </tr>
+                            </thead>
+                            <tbody class="poTbody">
+                                @foreach (var item in Model.items.Select((value, i) => new { i = (i + 1), value }))
+                                {
+                                    var GstPerscent = item.value.IGSTPercent;
+                                    var GstAmount = item.value.CGSTAmt + item.value.IGSTAmt + item.value.SGSTAmt;
+                                    var Suspended = item.value.IsSuspended == true ? "suspended" : "";
+                                    <tr class="rowPO @Suspended">
+                                        <td class="uk-text-center">@item.i</td>
+                                        <td>@item.value.ItemCode</td>
+                                        <td>
+                                            @item.value.Name
+                                            <input type="hidden" class="ItemID" value="@item.value.ItemID" />
+                                            <input type="hidden" class="POTransID" value="@item.value.ID" />
+                                        </td>
+                                        @*<td>@item.value.PartsNumber</td>*@
+                                        @*<td>@item.value.Unit</td>*@
+                                        <td>@item.value.SecondaryUnit</td>
+                                        <td class="uk-text-right mask-qty">@item.value.SecondaryQty</td>
+                                        @*<td class="uk-text-right mask-qty">@item.value.Quantity</td>*@
+                                        <td class="uk-text-right mask-qty">@item.value.SecondaryRate</td>
+                                        @*<td class="uk-text-right mask-qty">@item.value.Rate</td>*@
+                                        <td class="uk-text-right mask-qty">@item.value.GrossAmount</td>
+                                        <td class="uk-text-right mask-qty">@item.value.DiscountPercent</td>
+                                        <td class="uk-text-right mask-qty">@item.value.Discount</td>
+                                        <td class="uk-text-right mask-qty">@item.value.LastPurchaseRate</td>
+                                        <td class="uk-text-right mask-qty">@item.value.LowestPR</td>
+                                        <td class="uk-text-right mask-qty">@item.value.QtyOrdered</td>
+                                        <td class="uk-text-right mask-qty">@item.value.QtyAvailable</td>
+                                        <td class="uk-text-right mask-qty">@item.value.VATPercentage</td>
+                                        <td class="uk-text-right mask-qty">@item.value.VATAmount</td>
+                                        <td class="uk-text-right mask-qty">@item.value.TaxableAmount</td>
+                                        <td class="uk-text-right mask-qty">@item.value.NetAmount</td>
+                                        @if (Model.IsApproved && (item.value.Quantity > item.value.QtyMet) && !item.value.IsSuspended)
+                                        {
+                                            <td><button class='md-btn md-btn-primary btnitemsuspend'>@Purchase.Suspend</button></td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="print" class="uk-width-medium-6-10 uk-container-center reset-print" style="display:none;">
+            <div class="uk-grid uk-grid-collapse" data-uk-grid-margin="">
+                <div class="uk-width-large-1-1 uk-row-first">
+                    <div class="md-card md-card-single main-print" id="invoice" style="opacity: 1; transform: scale(1);">
+                        <div id="invoice_preview">
+                            <div class="md-card-toolbar">
+                                <div class="md-card-toolbar-actions hidden-print">
+                                    <i class="md-icon material-icons" id="invoice_print">&#xE8ad;</i>
+
+                                </div>
+                                <h3 class="md-card-toolbar-heading-text large" id="invoice_name">
+                                    @*@Model.HomeAddress.Name*@
+                                </h3>
+                            </div>
+                            <div class="md-card-content invoice_content print_bg">
+                                <div class="uk-margin-medium-bottom">
+                                    @*<span class="uk-text-muted uk-text-small uk-text-italic">Date:</span>@Model.PurchaseOrderDate.ToString("dd-MMM-yyyy")*@
+                                    <center>
+                                        <h4><b>VAIDYARATNAM OUSHADHASALA PVT LTD</b></h4>
+                                        VAIDYARATNAM ROAD, OLLUR - THAIKKATTUSSERY , THRISSUR , KERALA – 680 306<br />
+                                        Phone: 0487- 2432890 Fax: 0487-2355898.<br />
+                                        e-mail: vospurchase@gmail.com ; purchase@vaidyaratnammooss.com<br />
+                                        Purchase Order &nbsp; (To Ollur)
+                                    </center>
+                                </div>
+                                @*<div class="uk-grid" data-uk-grid-margin="">
+                                    <div class="uk-width-small-5-10 uk-row-first">
+                                    <div class="uk-margin-bottom">
+                                    <span class="uk-text-muted uk-text-small uk-text-italic">From:</span>
+                                    <address>
+                                    <p><strong>@Model.HomeAddress.Name</strong></p>
+                                    <p>@Model.HomeAddress.AddressLine1,</p>
+                                    <p>@Model.HomeAddress.AddressLine2</p>
+                                    <p>@Model.HomeAddress.AddressLine3</p>
+                                    <p>@Model.HomeAddress.MobileNo</p>
+                                    </address>
+                                    </div>
+                                    </div>
+                                    <div class="uk-width-small-5-10">
+                                    <div class="uk-margin-medium-bottom">
+                                    <span class="uk-text-muted uk-text-small uk-text-italic">To:</span>
+                                    <address>
+                                    <p><strong>@Model.SupplierAddress.Name</strong></p>
+                                    <p>@Model.SupplierAddress.AddressLine1,</p>
+                                    <p>@Model.SupplierAddress.AddressLine2</p>
+                                    <p>@Model.SupplierAddress.AddressLine3</p>
+                                    <p>@Model.SupplierAddress.MobileNo</p>
+                                    </address>
+                                    </div>
+                                    </div>
+                                    </div>*@
+                                <div class="uk-grid uk-margin-large-bottom">
+                                    <div class="uk-width-1-1">
+
+                                        <table class="uk-table" border="1" style="margin-bottom: 0px;">
+                                            <tr class="uk-text-upper">
+                                                <th>
+                                                    <b>
+                                                        GSTIN : 32AADCV8558N1ZP&nbsp;PAN: AADCV8558N<br />
+                                                        CIN: U24233KL2011PTC029939
+                                                    </b>
+                                                </th>
+                                                <th>
+                                                    Purchase Order No.:&nbsp; @Model.PurchaseOrderNo
+                                                    <br />Purchase Order Date:@Model.PurchaseOrderDate.ToString("dd-MMM-yyyy")
+                                                </th>
+                                            </tr>
+                                            <tr class="uk-text-upper">
+                                                <th>ECC: AADCV8558NEM001</th>
+                                                <th>Your Ref. No.:</th>
+                                            </tr>
+                                            <tr>
+                                                <th rowspan="2">
+                                                    <p>To&nbsp; M/s&nbsp;&nbsp;@Model.SupplierAddress.Name</p>
+                                                    <br />Ph:
+                                                    <br />Mob:@Model.SupplierAddress.MobileNo
+                                                    <br />Email:
+                                                </th>
+                                                <th></th>
+                                            </tr>
+                                            <tr>
+                                                <th>Terms Of price</th>
+                                            </tr>
+                                        </table>
+                                        <table class="uk-table po-items" style="margin-bottom: 0px; margin-top:-1px">
+                                            <thead>
+                                                <tr>
+                                                    <th>SlNo.</th>
+                                                    <th width="350px">Description</th>
+                                                    <th>Unit</th>
+                                                    <th>Quantity</th>
+                                                    <th>Unit Price(Rs)</th>
+                                                    <th>Total Price(Rs)</th>
+                                                </tr>
+                                                @{
+                                                    var Sum = 0.0;
+                                                    var Gst = 0.0;
+                                                }
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.items.Select((value, i) => new { i = (i + 1), value }))
+                                                {
+                                                    var GstPerscent = item.value.IGSTPercent == 0 ? item.value.CGSTPercent + item.value.SGSTPercent : item.value.IGSTPercent;
+                                                    var GstAmount = item.value.CGSTAmt + item.value.IGSTAmt + item.value.SGSTAmt;
+
+                                                    Sum += (double)item.value.Amount;
+                                                    Gst += (double)GstAmount;
+                                                    <tr>
+                                                        <td>@item.i</td>
+                                                        <td>@item.value.Name <br />@item.value.Remarks</td>
+                                                        <td>@item.value.Unit</td>
+                                                        <td>@String.Format("{0:#,##0.00}", item.value.Quantity)</td>
+                                                        <td>@String.Format("{0:#,##0.00}", item.value.Rate)</td>
+                                                        <td>@String.Format("{0:#,##0.00}", item.value.Amount)</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                        <table class="uk-table" border="1" style="margin-bottom: 0px; margin-top:-1px">
+                                            <tr class="uk-text-upper">
+                                                <th width="193px">DELIVERY SCHEDULE </th>
+                                                <th width="193px">Important Note</th>
+                                                <th width="100px">Mode of Dispath</th>
+                                                <th width="100px">Total</th>
+                                                <th>@String.Format("{0:#,##0.00}", Sum)</th>
+                                            </tr>
+                                            <tr>
+                                                <th>@Purchase.SupplyWithinDays:@Model.DeliveryWithin Days</th>
+                                                <th rowspan="2"></th>
+                                                <th rowspan="2"></th>
+                                                <th>GST Amt:</th>
+                                                <th>@String.Format("{0:#,##0.00}", Gst)</th>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    Payment Terms :
+                                                    <br />@Purchase.PaymentWithinDays:@Model.PaymentWithin
+                                                    <br />@Purchase.PaymentTerms:@Model.PaymentMode
+                                                </th>
+                                                <th>Grand Total</th>
+                                                <th>@String.Format("{0:#,##0.00}", Model.NetAmt)</th>
+                                            </tr>
+                                        </table>
+                                        <table class="uk-table" border="1" style="margin-top: -1px;">
+                                            <tr>
+                                                <th width="420px">
+                                                    Special Note: Please send your Order Acceptance or duplicate copy of this order duly signed
+                                                    at this space separately on receipt of the order indicating firm delivery schedule.<br /><br />
+                                                    E -DECLARATION PASSWARD ID : FW8M8BGY
+                                                </th>
+                                                <th>
+                                                    For VAIDYARATNAM OUSHADHASALA PVT. LTD<br />
+                                                    <br />M.P. RAJAN (Sr. MANAGER – PURCHASE)
+                                                </th>
+                                            </tr>
+
+                                        </table>
+                                    </div>
+                                </div>
+                                @*<div class="uk-grid">
+                                        <div class="uk-width-small-2-5">
+                                        <table>
+                                        <tbody>
+                                        <tr>
+                                        <td>@Purchase.SupplyWithinDays</td>
+                                        <td><strong>@Model.DeliveryWithin Days</strong></td>
+                                        </tr>
+                                        <tr>
+                                        <td>@Purchase.PaymentWithinDays</td>
+                                        <td><strong>@Model.PaymentWithin</strong></td>
+                                        </tr>
+                                        <tr>
+                                        <td>@Purchase.PaymentTerms</td>
+                                        <td><strong>@Model.PaymentMode</strong></td>
+                                        </tr>
+                                        <tr>
+                                        <td>@Purchase.Advance</td>
+                                        <td><strong>@String.Format("{0:#,##0.00}", Model.AdvanceAmount)</strong></td>
+                                        </tr>
+                                        </tbody>
+                                        </table>
+                                        </div>
+                                        <div class="uk-width-small-1-5">
+                                        </div>
+                                        <div class="uk-width-small-2-5">
+                                        <table style="width:100%">
+                                        <tbody>
+                                        <tr>
+                                        <td>@Purchase.SGSTAmt </td>
+                                        <td class="uk-text-right"><strong>@String.Format("{0:#,##0.00}", Model.SGSTAmt)</strong></td>
+                                        </tr>
+                                        <tr>
+                                        <td>@Purchase.CGSTAmt</td>
+                                        <td class="uk-text-right"><strong>@String.Format("{0:#,##0.00}", Model.CGSTAmt)</strong></td>
+                                        </tr>
+                                        <tr>
+                                        <td>@Purchase.IGSTAmt</td>
+                                        <td class="uk-text-right bold"><strong>@String.Format("{0:#,##0.00}", Model.IGSTAmt)</strong></td>
+                                        </tr>
+                                        <tr>
+                                        <td>@Purchase.Freight</td>
+                                        <td class="uk-text-right"><strong>@String.Format("{0:#,##0.00}", Model.FreightAmt)</strong></td>
+                                        </tr>
+                                        <tr>
+                                        <td>@Purchase.PackingShippingCharges</td>
+                                        <td class="uk-text-right"><strong>@String.Format("{0:#,##0.00}", Model.PackingShippingCharge)</strong></td>
+                                        </tr>
+                                        <tr>
+                                        <td>@Purchase.OtherCharges</td>
+                                        <td class="uk-text-right"><strong>@String.Format("{0:#,##0.00}", Model.OtherCharges)</strong></td>
+                                        </tr>
+                                        <tr>
+                                        <td>@Purchase.NetAmount</td>
+                                        <td class="uk-text-right"><strong>@String.Format("{0:#,##0.00}", Model.NetAmt)</strong></td>
+                                        </tr>
+                                        </tbody>
+                                        </table>
+                                        </div>
+                                        </div>
+                                    <div class="uk-grid">
+                                        <div class="uk-width-1-1">
+                                            <span class="uk-text-muted uk-text-small uk-text-italic">Delivery Terms:</span>
+                                            <p class="uk-margin-top-remove">
+                                                @Model.TermsOfPrice
+                                            </p>
+                                        </div>
+                                        <div class="uk-width-1-1">
+                                            <span class="uk-text-muted uk-text-small uk-text-italic">Remarks:</span>
+                                            <p class="uk-margin-top-remove">
+                                                @Model.Remarks
+                                            </p>
+                                        </div>
+                                    </div>*@
+                            </div>
+                            <div class="uk-grid uk-margin-large-bottom">
+                                <div class="uk-width-1-1">
+                                    <center>
+                                        <h4><b>SCHEUDLE OF GENERAL CONDITONS & INSTRUCTIONS</b></h4>
+                                    </center>
+                                    <p>
+                                        1. “Buyer” in these conditions of Purchase means “VAIDYARATNAM OUSHADHASALA PVT. LTD” on whose behalf this order
+                                        is placed and “SELLER” means such person, firm, company or other bodies as may supply or agree to supply materials to the
+                                        buyer.
+                                    </p>
+                                    <p>
+                                        2. The seller should acknowledge receipt of this order immediately and in the absence of any advice to the contrary within a week, the
+                                        order will be deemed to have been accepted by the seller.
+                                    </p>
+                                    <p>
+                                        3. Goods ordered herein should be securely packed to avoid breakage/damage in transit. When dispatched by rail the packing should
+                                        conform to the appropriate regulations laid down by the railways. The seller shall be liable for all breakages, loss or damages
+                                        resulting from defective packing.
+                                    </p>
+                                    <p>
+                                        4. The order No. and the case/package serial number should be marked in a prominent place outside each case/package. A packing
+                                        list should be enclosed in each case/package to enable verification on arrival of the consignments at buyer’s godown or when taken
+                                        open delivery from the carriers. Any loss resulting from the seller’s failure to adhere to these instructions will be to the seller’s
+                                        account.
+                                    </p>
+                                    <p>
+                                        5. All consignments should be booked to “BUYER” and NOT SELF. The copy of R.R/L.R. and two copies of relative challan giving
+                                        all the relevant details should be sent immediately to the buyer, after booking the consignment.
+                                    </p>
+                                    <p>
+                                        6. When claiming GST, the seller should indicate the GST Registration No.
+                                    </p>
+                                    <p>
+                                        7. The price shown in the order will be treated as firm and unless otherwise specially agreed to, no variation in price will be
+                                        entertained during the tenure of supply against this order.
+                                    </p>
+                                    <p>
+                                        8. Any reduction in price due to revision of statutory levies from the date of placement of order till the date of dispatch will be to
+                                        buyers’ account.
+                                    </p>
+                                    <p>
+                                        9 If the seller insist of negotiating documents through bank, it shall be sent through our specified Branch of Dhanalakshmi Bank
+                                        ………………………………………. No overdue interest, discounting charges, or other payments other than the authorised
+                                        branch of normal bank charges to our bankers will be paid by us.
+                                    </p>
+                                    <p>
+                                        10. An advance copy of the documents being negotiated through bank should be sent to us for early retirement of the documents.
+                                    </p>
+                                    <p>
+                                        11. No variation in the specification or other terms given in this order shall be valid without the written consent of both the parties.
+                                        All agreed variation will be covered by the issue of amendment to the original order. The buyer shall not be bound by any
+                                        provisions, in the sellers, quotations/offer/forms of acknowledgement of order or contract/invoices/packing lists/or other
+                                        documents/which purport to impose any condition at variance with or contradictory to this order, unless there is a specific written
+                                        acceptance on this matter from their side.
+                                    </p>
+                                    <p>
+                                        12. The delivery schedule should be strictly adhered to. If the deliveries are not maintained and if on that account the buyer is forced
+                                        to buy the materials from elsewhere any loss or damage that the Buyer may sustain thereby, will be recovered from the seller.
+                                    </p>
+                                    <p>
+                                        13. In addition to the above, the Buyer reserves the right if deemed fit to accept the delayed delivery and to recover, any loss or
+                                        damage sustained due to such delayed delivery.
+                                    </p>
+                                    <p>
+                                        14. If the materials supplied are not of contracted specification or otherwise not satisfactory for any reason, the buyer
+                                        shall be entitled to reject the supplies, cancel the order and buy the requirements from elsewhere, at the risk and cost
+                                        of the seller.
+                                    </p>
+                                    <p>
+                                        15. Goods rejected by the Buyer will lie in the Buyer’s premises at the seller’s risk and the removal of the goods will be
+                                        sellers’ sole responsibility. The buyer shall in no way, be for a maximum of 14 days responsible for any deterioration
+                                        of or damage to the rejected goods under any circumstances whatsoever. After 14 days, the buyer has got the rights to
+                                        destroy the goods as seems fit accordingly to the buyer and he need now show document or justify the deterioration
+                                        of the goods.
+                                    </p>
+                                    <p>
+                                        16. The contract shall be deemed to hae been entered into Vaidyaratnam Oushadhasala Pvt. Ltd, Ollur-Thrissur Distt on
+                                        whose behalf the order has been placed. All cases of any nature arising out or incidental to this contract, if any, will
+                                        therefore be deemed to have arisen within the jurisdiction of Court or Courts which Thrissur District Headquarters is
+                                        subject to.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render(System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/Js/Page/PurchaseOrder"))
+<script type="text/javascript">
+    purchase_order.details();
+    purchase_order.bind_events();
+</script>

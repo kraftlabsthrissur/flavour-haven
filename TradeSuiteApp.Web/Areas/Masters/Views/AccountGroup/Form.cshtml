@@ -1,0 +1,59 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.AccountGroupModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-1-1">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.Code</label>
+                            @Html.TextBoxFor(model => model.Code, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Masters.Name<span>*</span></label>
+                            @Html.TextBoxFor(model => model.AccountGroupName, new { @class = "md-input  label-fixed " })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-autocomplete " id="account-group-parent-autocomplete">
+                                <div class="uk-input-group">
+                                    <label for="uk_dp_start">@Masters.ParentGroup</label>
+                                    @Html.TextBoxFor(model => model.ParentGroup, new { @class = "md-input  label-fixed" })
+                                    <script type="text/autocomplete">
+                                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                            {{~items}}
+                                            <li data-value="{{ $item.AccountName }}"
+                                                data-id="{{$item.ID}}">
+                                                <a>
+                                                    {{ $item.ID }} ({{{ $item.AccountName }}})
+                                                </a>
+                                            </li>
+                                            {{/items}}
+                                        </ul>
+                                    </script>
+                                </div>
+                            </div>
+                            @Html.HiddenFor(model => model.ParentGroupID);
+                        </div>
+
+                        <div class="uk-width-medium-1-8 ">
+                            <label>@Masters.AccountHeadCodePrefix<span>*</span></label>
+                           @if (Model.ID > 0)
+                           {
+                                @Html.TextBoxFor(model => model.AccountHeadCodePrefix, new { @class = "md-input  label-fixed", @disabled = "disabled" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(model => model.AccountHeadCodePrefix, new { @class = "md-input  label-fixed" })
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

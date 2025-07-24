@@ -1,0 +1,294 @@
+          
+-- =============================================          
+-- Author:  ajith@kraftlabs.com, prama@kraftlabs.com          
+-- Create date: 19-Feb-2019          
+-- Description: Get batchwise items for selected sales orders          
+-- =============================================          
+          
+ALTER  PROCEDURE [Sales].[SpGetBatchwiseSalesOrderItems](           
+ @SalesOrderIDs varchar(max),          
+ @StoreID int,          
+ @CustomerID int,          
+ @SchemeID int,          
+ @FinYear int,           
+ @LocationID int,           
+ @ApplicationID int          
+) AS          
+BEGIN          
+ SET NOCOUNT ON;          
+ --exec [Sales].[SpGetBatchwiseSalesOrderItems] '11806',57,11831,1,2019,6,1          
+ -- For generation of result object in entity framework          
+ DECLARE @LocationHeadID int          
+          
+ SELECT @LocationHeadID = LocationHeadID FROM Location WHERE ID = @LocationID            
+ IF 1 = 2          
+ BEGIN          
+  SELECT cast(null as int) ItemID, '' ItemName, cast(null as int) BatchID, '' BatchNo, cast(null as int) BatchTypeID,           
+  '' BatchTypeName,cast(null as numeric(18,2))  Stock, cast(null as numeric(18,2)) Qty, cast(null as numeric(18,2)) OfferQty,          
+  cast(null as numeric(18,2)) InvoiceQty, cast(null as numeric(18,2)) InvoiceOfferQty, cast(null as numeric(18,2)) Rate,           
+  cast(null as numeric(18,2)) IGSTPercentage, cast(null as numeric(18,2)) CGSTPercentage, cast(null as numeric(18,2)) SGSTPercentage,          
+  '' Unit, cast(null as int) SalesOrderID, cast(null as int) SalesOrderTransID, cast(null as numeric(18,2)) DiscountPercentage,          
+  '' SalesOrderNo, '' FullOrLoose, cast(null as int) CategoryID, '' Code, cast(null as int) UnitID, cast(null as numeric(18,2)) ActualOfferQty,          
+  cast(null as int) SalesUnitID, cast(null as numeric(18,2)) LooseRate,cast(null as numeric(6,2)) CessPercentage,          
+   cast(null as numeric(18,2)) CessAmount, cast(null as numeric(18,2)) FreightAmount,'' CategoryName,cast(null as numeric(18,2)) PackSize,'' PrimaryUnit          
+ END          
+          
+ DECLARE @GCursor CURSOR, @ICursor CURSOR, @ItemID int, @BatchTypeID int, @TotalQty Numeric(18,2),@TotalQtyForOffer Numeric(18,2),           
+ @Qty Numeric(18,2), @OfferQty Numeric(18,2), @Stock Numeric(18,2),@ActualStock Numeric(18,2), @BatchID int, @BatchNo VARCHAR(30),           
+ @TempID int, @CumulativeStock Numeric(18,2) = 0, @InvoiceQty Numeric(18,2), @InvoiceOfferQty Numeric(18,2),@BasePriceListID int,          
+ @SalesOrderID int, @SalesOrderTransID int, @SalesOrderNo varchar(30), @OfferQtyMet Numeric(18,2), @ActualOfferQty  Numeric(18,2),          
+ @DefaultBasePriceListID int,@UnitID int, @SalesUnitID int          
+          
+ Declare @Count int          
+          
+ IF (OBJECT_ID('tempdb..#temp') IS NOT NULL)          
+ BEGIN          
+  DROP TABLE #temp          
+ END          
+          
+ IF (OBJECT_ID('tempdb..#temp1') IS NOT NULL)          
+ BEGIN          
+  DROP TABLE #temp1          
+ END          
+ --to store total qty (qty+Offer qty)  of same item in different SO          
+ CREATE TABLE #temp (          
+  ID int PRIMARY KEY IDENTITY(1,1),          
+  ItemID int,             
+  BatchID int,          
+  BatchNo varchar(30),           
+  BasePriceListID int,            
+  BatchTypeID int,          
+  Stock Numeric(18,2),           
+  Qty Numeric(18,2),           
+  OfferQty Numeric(18,2),           
+  InvoiceQty Numeric(18,2),             
+  InvoiceOfferQty Numeric(18,2),          
+  IsProcessed BIT,          
+  UnitID int          
+ )          
+ --to allocate qty for each order from temp table          
+ CREATE TABLE #temp1 (          
+  ID int PRIMARY KEY IDENTITY(1,1),          
+  ItemID int,             
+  BatchID int,          
+  BatchNo varchar(30),          
+  BasePriceListID int,            
+  BatchTypeID int,          
+  Stock Numeric(18,2),           
+  Qty Numeric(18,2),           
+  OfferQty Numeric(18,2),           
+  InvoiceQty Numeric(18,2),             
+  InvoiceOfferQty Numeric(18,2),    
+  SalesOrderID int,          
+  SalesOrderTransID int,          
+  SalesOrderNo varchar(30),          
+  IsProcessed BIT,          
+  ActualOfferQty Numeric(18,2), -- Actual offer qty may differ while combining more than one orders          
+  UnitID int           
+ )           
+           
+ SET @GCursor = CURSOR FOR SELECT ItemID, BatchTypeID, SUM(SOT.Quantity - QtyMet) TotalQty,          
+   SUM(dbo.FnConvertUnit(I.ID, SOT.Quantity - QtyMet, SOT.UnitID, I.SalesUnitID)) TotalQtyForOffer,  I.SalesUnitID,SOT.UnitID UnitID          
+  FROM Sales.SalesOrder SO           
+  INNER JOIN Sales.SalesOrderTrans SOT ON SO.ID = SOT.SalesOrderID          
+  INNER JOIN Item I ON I.ID = SOT.ItemID           
+  WHERE SO.ID IN (Select * from dbo.fnSplitString(@SalesOrderIDs,','))           
+  GROUP BY ItemID, BatchTypeID, SOT.UnitID,I.SalesUnitID HAVING SUM(SOT.Quantity - QtyMet) > 0          
+          
+ ----insertion of total qty to temp table by checking stock availability          
+ OPEN @GCursor           
+ FETCH NEXT FROM @GCursor INTO @ItemID, @BatchTypeID, @TotalQty,@TotalQtyForOffer,@SalesUnitID,@UnitID          
+          
+ WHILE @@FETCH_STATUS = 0           
+    BEGIN          
+  SET @Stock = 1000000          
+  SET @CumulativeStock = 0;            
+  SET @OfferQty = dbo.FnGetOfferQty(@SchemeID, @ItemID, @TotalQtyForOffer, @ApplicationID)          
+  SET @OfferQty = dbo.FnConvertUnit(@ItemID, ISNULL(@OfferQty,0), @SalesUnitID, @UnitID)           
+  SET @TotalQty = @TotalQty + @OfferQty            
+          
+  WHILE (@CumulativeStock < @TotalQty AND @Stock <> 0 )          
+  BEGIN           
+   SET @Stock = 0          
+   SET @BatchID = 0          
+          
+   SELECT TOP 1  @BatchID = B.BatchID, @BatchNo = BatchNo , @BasePriceListID = B.BasePriceListID,           
+   @Stock =           
+   CASE           
+    WHEN B.CategoryID = 222           
+    THEN FLOOR(dbo.FnConvertStockFromInventoryUnit(@ItemID, SUM(Value), @UnitID))          
+    ELSE dbo.FnConvertStockFromInventoryUnit(@ItemID, SUM(Value), @UnitID)          
+   END          
+   FROM viActiveBatches B           
+   INNER JOIN Stock S ON B.ItemID = S.ItemID AND B.BatchID = S.BatchID           
+   WHERE S.WareHouseID = @StoreID           
+   AND B.ItemID = @ItemID           
+   AND B.BatchID NOT IN (SELECT BatchID FROM #temp WHERE ItemID = @ItemID AND UnitID = @UnitID)          
+   AND (@BatchTypeID IS NULL OR @BatchTypeID=0 OR ISNULL(S.BatchTypeID,0) = ISNULL(@BatchTypeID,0))          
+   AND S.LocationID = @LocationID          
+   AND S.ApplicationID = @ApplicationID          
+   GROUP BY B.BatchID, BatchNo, B.BasePriceListID, B.ExpiryDate, B.CategoryID           
+   HAVING FLOOR(dbo.FnConvertStockFromInventoryUnit(@ItemID, SUM(Value), @UnitID)) > 0           
+   ORDER BY B.ExpiryDate ASC, B.BatchID ASC          
+             
+   print @Stock            
+   print 'Stock'          
+   IF @Stock <> 0           
+   BEGIN          
+    IF @Stock >= @TotalQty - @CumulativeStock           
+    BEGIN          
+     SET @InvoiceQty = @TotalQty - @CumulativeStock          
+    END          
+    ELSE          
+    BEGIN          
+     SET @InvoiceQty = @Stock          
+    END          
+              
+    SET @CumulativeStock = @CumulativeStock + @Stock          
+    INSERT INTO #temp SELECT @ItemID, @BatchID, @BatchNo, @BasePriceListID, @BatchTypeID, @Stock, @TotalQty, @OfferQty, @InvoiceQty, @OfferQty,0,@UnitID          
+   END          
+  END          
+  FETCH NEXT FROM @GCursor INTO @ItemID, @BatchTypeID, @TotalQty,@TotalQtyForOffer, @SalesUnitID,@UnitID          
+ END            
+          
+ CLOSE @GCursor;          
+    DEALLOCATE @GCursor;          
+          
+ SET @ICursor = CURSOR FOR SELECT SO.ID AS SalesOrderID, SOT.ID AS SalesOrderTransID, SOT.ItemID, SOT.BatchTypeID, SalesOrderNo,           
+   Quantity - QtyMet AS Qty, SOT.OfferQty - OfferMet AS OfferQty, I.SalesUnitID UnitID           
+ FROM Sales.SalesOrder SO           
+ INNER JOIN Sales.SalesOrderTrans SOT ON SO.ID = SOT.SalesOrderID          
+ INNER JOIN Item I ON I.ID = SOT.ItemID      
+ WHERE SO.ID IN (Select * from dbo.fnSplitString(@SalesOrderIDs,',')) AND (Quantity - QtyMet) > 0          
+ --group by SOT.UnitID,SO.ID,SOT.ID,SOT.ITemID,SOt.BatchTypeID,SalesOrderNo,Quantity,QtyMet,OfferQty,OfferMet          
+ ---- assign qty for each sales order on the basis of qty of that item in SOTrans          
+    
+ OPEN @ICursor           
+ FETCH NEXT FROM @ICursor INTO @SalesOrderID, @SalesOrderTransID, @ItemID, @BatchTypeID, @SalesOrderNo, @Qty, @OfferQty,@UnitID          
+ SELECT TOP 1 @InvoiceOfferQty = InvoiceOfferQty FROM #temp WHERE ItemID = @ItemID          
+ SET @Qty = @Qty + @InvoiceOfferQty;          
+ UPDATE #temp SET InvoiceOfferQty = 0 WHERE ItemID = @ItemID          
+ WHILE @@FETCH_STATUS = 0           
+    BEGIN          
+  SET @Stock = 1000000          
+  SET @CumulativeStock = 0;          
+  WHILE (@CumulativeStock < @Qty AND @Stock <> 0 )          
+  BEGIN             
+   SET @Stock = 0          
+   SET @TempID = 0          
+   SET @BatchID = 0          
+   SET @BatchNo = ''          
+   SET @Stock= 0.0          
+   SELECT TOP 1 @TempID = ID, @BatchID = BatchID, @BatchNo = BatchNo ,  @Stock=InvoiceQty, @BasePriceListID = BasePriceListID,          
+   @ActualStock = Stock, @ActualOfferQty = OfferQty            
+   FROM #temp           
+   WHERE InvoiceQty > 0 AND ItemID = @ItemID AND ISNULL(BatchTypeID,0) = ISNULL(@BatchTypeID,0) --AND UnitID = @UnitID          
+          
+   IF @Stock <> 0           
+   BEGIN          
+          
+    IF @Stock >=@Qty - @CumulativeStock           
+    BEGIN          
+     SET @InvoiceQty = @Qty - @CumulativeStock          
+    END          
+    ELSE          
+    BEGIN          
+     SET @InvoiceQty = @Stock          
+    END          
+                  
+    INSERT INTO #temp1 SELECT @ItemID,  @BatchID, @BatchNo, @BasePriceListID, @BatchTypeID,           
+      @ActualStock, @Qty, @OfferQty, @InvoiceQty, 0, @SalesOrderID, @SalesOrderTransID, @SalesOrderNo,0, @ActualOfferQty,@UnitID          
+          
+    UPDATE #temp SET InvoiceQty = InvoiceQty - @InvoiceQty WHERE ID = @TempID           
+    SET @CumulativeStock = @CumulativeStock + @Stock          
+   END          
+  END          
+          
+  FETCH NEXT FROM @ICursor INTO @SalesOrderID, @SalesOrderTransID, @ItemID, @BatchTypeID, @SalesOrderNo, @Qty, @OfferQty,@unitID          
+  SELECT TOP 1 @InvoiceOfferQty = InvoiceOfferQty FROM #temp WHERE ItemID = @ItemID          
+  SET @Qty = @Qty + @InvoiceOfferQty;          
+  UPDATE #temp SET InvoiceOfferQty = 0 WHERE ItemID = @ItemID          
+ END            
+ CLOSE @ICursor;          
+    DEALLOCATE @ICursor;           
+          
+ -- distributing offer qty to batches  on FIFO method          
+ WHILE (SELECT COUNT(*) FROM #temp WHERE IsProcessed = 0) > 0          
+ BEGIN          
+          
+  SELECT TOP 1 @ItemID = ItemID, @TotalQty = Qty FROM #temp WHERE IsProcessed = 0 ORDER BY ItemID ASC          
+          
+  WHILE (SELECT COUNT(*) FROM #temp1 WHERE IsProcessed = 0 AND ItemID = @ItemID) > 0          
+  BEGIN          
+   SET @OfferQtyMet = 0          
+   SELECT @OfferQtyMet = ISNULL(SUM(InvoiceOfferQty),0), @ActualOfferQty = ActualOfferQty, @InvoiceQty = SUM(InvoiceQty)           
+   FROM #temp1 WHERE ItemID = @ItemID group by ActualOfferQty          
+             
+   UPDATE TOP (1) #temp1 SET IsProcessed = 1, InvoiceOfferQty = CASE           
+    WHEN @TotalQty = @InvoiceQty THEN          
+     CASE WHEN InvoiceQty >= @ActualOfferQty - @OfferQtyMet THEN           
+      @ActualOfferQty - @OfferQtyMet          
+     ELSE          
+      InvoiceQty          
+     END          
+    ELSE             
+     CASE WHEN InvoiceQty >= @ActualOfferQty - (@InvoiceQty - @TotalQty) - @OfferQtyMet THEN           
+      CASE WHEN @ActualOfferQty - (@TotalQty - @InvoiceQty) - @OfferQtyMet >= 0          
+      THEN @ActualOfferQty - (@TotalQty - @InvoiceQty) - @OfferQtyMet          
+      ELSE 0 END          
+     ELSE                
+      CASE WHEN @ActualOfferQty - (@TotalQty - @InvoiceQty) - @OfferQtyMet >= 0          
+      THEN @ActualOfferQty - (@TotalQty - @InvoiceQty) - @OfferQtyMet          
+      ELSE 0 END               
+     END          
+    END          
+   WHERE IsProcessed = 0 AND ItemID = @ItemID           
+   print @ActualOfferQty - (@InvoiceQty - @TotalQty) - @OfferQtyMet          
+   IF (SELECT COUNT(*) FROM #temp1 WHERE IsProcessed = 0 AND ItemID = @ItemID) = 0          
+   BEGIN          
+    UPDATE #temp SET IsProcessed = 1 WHERE ItemID = @ItemID          
+   END          
+  END           
+ END          
+          
+ SELECT @DefaultBasePriceListID = dbo.FnGetBasePriceListID(@LocationID, @ApplicationID)          
+          
+;WITH CTESalesOrder AS (SELECT SOT.ID, SOT.ItemID,  I.ItemName,SOT.PartsNumber,SOT.Remarks,SOT.Model,  ISNULL(BatchID,0) BatchID,  ISNULL(BatchNo,'') BatchNo,           
+  ISNULL(SOT.BatchTypeID,0) BatchTypeID,          
+  I.BatchType BatchTypeName,           
+  ISNULL(Stock,0.0) Stock,           
+  (SOT.Quantity - QtyMet) Qty,           
+  (SOT.OfferQty - OfferMet) OfferQty,           
+  ISNULL(InvoiceQty,0) InvoiceQty,           
+  ISNULL(InvoiceOfferQty,0) InvoiceOfferQty,            
+  SOT.MRP Rate,           
+  I.IGSTPercentage, I.CGSTPercentage, I.SGSTPercentage,I.VATPercentage,SO.IsGST,SO.IsVat,SO.CurrencyID,ISNULL(Cu.Name,'')CurrencyName, U.UOM as  Unit, U.ID as UnitID,           
+  SOT.SalesOrderID, SOT.ID SalesOrderTransID, DiscountPercentage, SO.SalesOrderNo, FullOrLoose, I.CategoryID,           
+  I.ItemCode Code, I.SalesUnitID, SOT.CessPercentage, SOT.CessAmount,           
+  ISNULL(T.ActualOfferQty,0.0) ActualOfferQty,           
+  CASE WHEN I.LoosePrice = 0 THEN SOT.MRP * dbo.FnConvertUnit(I.ItemID,1,I.PrimaryUnitID,I.SalesUnitID) ELSE I.LoosePrice END LooseRate,          
+  ISNULL(SO.FreightAmount,0.00) as  FreightAmount,CA.Name AS CategoryName,I.PackSize,US.UOM AS PrimaryUnit          
+ FROM Sales.SalesOrder SO           
+ INNER JOIN Sales.SalesOrderTrans SOT ON SO.ID = SOT.SalesOrderID          
+ INNER JOIN viItemCostWithoutBatch I ON I.ItemID = SOT.ItemID AND I.LocationID = SO.LocationID --AND SOT.BatchTypeID = I.BatchTypeID     
+ Inner join Unit U On U.ID=SOT.UnitID     
+ LEFT JOIN Currency Cu on Cu.ID=SO.CurrencyID    
+ LEFT JOIN Unit US ON US.ID = I.PrimaryUnitID   -- INNER JOIN changed        
+ LEFT JOIN Category CA ON CA.ID = I.CategoryID   -- INNER JOIN changed        
+ LEFT JOIN #temp1 T ON T.ItemID = SOT.ItemID AND SOT.ID = T.SalesOrderTransID          
+ WHERE SO.LocationID=@LocationID AND  SO.ID IN (Select * from dbo.fnSplitString(@SalesOrderIDs,','))           
+ ---AND I.BasePriceListID = CASE WHEN I.CategoryID = 222 THEN ISNULL(T.BasePriceListID,@DefaultBasePriceListID) ELSE 0 END    commented        
+ AND SOT.Quantity - QtyMet > 0          
+ AND SO.ApplicationID = @ApplicationID)    
+ SELECT ItemID,ItemName,PartsNumber,Remarks,Model,BatchID,BatchNo,BatchTypeID,BatchTypeName,Stock,Qty,OfferQty,InvoiceQty,InvoiceOfferQty,Rate,IGSTPercentage,CGSTPercentage,SGSTPercentage,    
+ VATPercentage,IsGST,IsVat,CurrencyID,CurrencyName,Unit,UnitID,SalesOrderID,SalesOrderTransID,DiscountPercentage,SalesOrderNo,FullOrLoose,CategoryID,Code,SalesUnitID,    
+ CessPercentage,CessAmount,ActualOfferQty,LooseRate,FreightAmount,CategoryName,PackSize,PrimaryUnit FROM CTESalesOrder    
+ORDER BY ID ASC, BatchID ASC    
+          
+END          
+--exec Sales.SpGetBatchwiseSalesOrderItems '664',2,72,2,2019,1,1          
+--exec [Sales].[SpGetBatchwiseSalesOrderItems] '11806',57,11831,1,2019,6,1          
+--select * from sales.SalesOrderTrans where salesorderid in (2080,2079)          
+          
+          
+--viitemcostwithoutbatch

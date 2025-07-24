@@ -1,0 +1,130 @@
+﻿@model List<TradeSuiteApp.Web.Areas.Purchase.Models.PurchaseOrderTransModel>
+
+
+@if (Model != null && Model.Count() > 0)
+{
+    foreach (var poItem in Model.Select((value, i) => new { i = i + 1, value }))
+    {
+        var GSTPercentage = @poItem.value.GSTPercentage ;
+        <tr class="included">
+            <td class="uk-text-center serial-no">@poItem.i </td>
+            <td class="uk-text-center checked " data-md-icheck><input type="checkbox" class="chkCheck  include-item" checked /></td>
+
+
+            <td class="ItemName">
+                @poItem.value.Name
+                <input type="hidden" class="hdnPOID" value="@poItem.value.PurchaseOrderID" />
+                <input type="hidden" class="item-id" value="@poItem.value.ItemID" />
+                <input type="hidden" class="purchase-order-trans-id" value="@poItem.value.ID" />
+                <input type="hidden" class="UnitID" value="@poItem.value.UnitID" />
+                @*<input type="hidden" class="Unit" value="@poItem.value.Unit" />*@
+                <input type="hidden" class="PackSize" value="@poItem.value.PackSize" />
+                <input type="hidden" id="@String.Format("hdnItemID{0}", poItem.i)" class="hdnItemID" />
+                <input type="hidden" class="POTransID" value="@poItem.value.ID" />
+                @*<input type="hidden" class="BatchID" value="0" />*@
+                <input type="hidden" class="SGSTPercent" value="@poItem.value.SGSTPercent" />
+                <input type="hidden" class="CGSTPercent" value="@poItem.value.CGSTPercent" />
+                <input type="hidden" class="IGSTPercent" value="@poItem.value.IGSTPercent" />
+                <input type="hidden" class="Batch" value="@poItem.value.Batch" />
+                <input type="hidden" class="BatchID" value="@poItem.value.BatchID" />
+                <input type="hidden" class="Rate" value="@poItem.value.Rate" />
+                <input type="hidden" class="MRP" value="@poItem.value.MRP" />
+                <input type="hidden" class="Toleranceper" value="@poItem.value.QtyTolerancePercent" />
+            </td>
+            <td class="width-150">
+                <input type="text" class="md-input Unit" value="@poItem.value.Unit" readonly />
+            </td>
+            <td class="batch@(poItem.i)">
+                <div class="uk-autocomplete" id="batch-autocomplete@(poItem.i)">
+
+                    @Html.TextBox("Batch", "", new { @class = "md-input label-fixed batch", id = "Batch" })
+                    <script type="text/autocomplete">
+                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                            {{~items}}
+                            <li data-value="{{ $item.BatchNo }}"
+                                data-id="{{$item.ID}}"
+                                data-purchase-rate="{{$item.PurchaseMRP}}"
+                                data-mrp="{{$item.RetailMRP}}"
+                                data-packsize="{{$item.PackSize}}"
+                                data-UnitID="{{$item.UnitID}}"
+                                data-Unit="{{$item.Unit}}"
+                                data-expiry-date="{{$item.ExpiryDateStr}}">
+                                <a>
+                                    {{ $item.BatchNo }}
+                                </a>
+                            </li>
+                            {{/items}}
+                        </ul>
+                    </script>
+                    @Html.Hidden("BatchID")
+                </div>
+
+            </td>
+            <td>
+                <input type="text" class="md-input uk-text-right poqty mask-currency" value="@poItem.value.PendingPOQty" readonly />
+            </td>
+
+            <td>
+                <input type="text" class="md-input uk-text-right purchaserate mask-currency" value="@poItem.value.Rate" readonly />
+
+            </td>
+            <td>
+                <input type="text" class="md-input uk-text-right mrp mask-currency" value="@poItem.value.MRP" readonly />
+
+            </td>
+            <td>
+                <input type="text" class="md-input uk-text-right receivedqty mask-numeric" value="@poItem.value.PendingPOQty" />
+            </td>
+            <td>
+                <input type="text" class="md-input uk-text-right offerQty mask-numeric" value="" />
+            </td>
+            <td style="display:none">
+                <select id="DiscountID" class="md-input label-fixed">
+                    <option value="0">Select</option>
+                    @foreach (var discount in poItem.value.DiscountList)
+                    {
+                        <option @( poItem.value.DiscountID == discount.ID ? "selected='selected'" : "") value="@discount.ID" data-percent="@discount.DiscountPercentage">@discount.DiscountCategory</option>
+                    }
+                </select>
+            </td>
+            <td>
+                <input type="text" class="md-input uk-text-right DiscPer mask-positive-currency" value="" />
+            </td>
+
+            <td>
+                <input type="text" class="md-input uk-text-right discountAmt mask-positive-currency" value="" />
+            </td>
+            <td>
+                <select id="gstPercentage" class="md-input label-fixed">
+                    <option value="0">Select</option>
+                    @foreach (var gst in poItem.value.GSTPercentageList)
+                    {
+                        <option @( poItem.value.GSTPercentage == gst.IGSTPercent ? "selected='selected'" : "") value="@gst.IGSTPercent" data-percent="@gst.IGSTPercent">@gst.IGSTPercent</option>
+                    }
+                </select>
+                @*@Html.DropDownList("gstPercentage", new SelectList(ViewBag.TaxPercentages, "IGSTPercentage", "GSTPercentage", @GSTPercentage), new { @class = "md-input uk-text uk-text-right gstPercentage" })*@
+            </td>            
+            <td>
+                <input type="text" class="md-input uk-text-right SGSTAmt mask-positive-currency" value="" />
+            </td>
+
+            <td>
+                <input type="text" class="md-input uk-text-right CGSTAmt mask-positive-currency" value="" />
+            </td>
+
+            <td>
+                <input type="text" class="md-input uk-text-right IGSTAmt mask-positive-currency" value="" />
+            </td>
+            <td class="looseqty mask-numeric">
+                <input type="text" class="md-input uk-text-right looseqty mask-numeric" value="" />
+
+            </td>
+
+            <td class="expirydate"></td>
+            <td><input type="text" class="md-input remarks" /></td>
+
+        </tr>
+    }
+
+
+}           

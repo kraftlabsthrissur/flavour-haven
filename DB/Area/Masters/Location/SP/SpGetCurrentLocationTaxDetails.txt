@@ -1,0 +1,14 @@
+ALTER Procedure [Master].[SpGetCurrentLocationTaxDetails](               
+ @LocationID int 
+)                  
+AS                        
+BEGIN                                 
+ SELECT l.ID,l.Name,l.CountryID,l.CurrencyID,co.Name Country,cu.Name Currency,
+ cu.Code CurrencyCode,cu.DecimalPlaces,tx.Name TaxType,Tx.ID TaxTypeID,      
+ (CASE WHEN tx.Name like '%gst%' THEN 1 ELSE 0 END)IsGST,
+ (CASE WHEN tx.Name like '%vat%' THEN 1 ELSE 0 END)IsVat                     
+ FROM Currency cu join Country co on cu.CountryID=co.ID  
+ join Location l on l.CurrencyID=cu.ID
+ join TaxType tx on l.ID= tx.LocationID      
+ WHERE l.ID= @LocationID          
+End 

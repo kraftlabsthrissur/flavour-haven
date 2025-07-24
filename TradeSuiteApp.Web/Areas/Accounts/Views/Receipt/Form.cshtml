@@ -1,0 +1,190 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.ReceiptVoucherModel
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-1-10">
+                <label>@Accounts.VoucherNumber</label>
+                @Html.TextBoxFor(model => model.ReceiptNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Accounts.VoucherDate</label>
+                @Html.TextBoxFor(model => model.ReceiptDate, new { @class = "md-input label-fixed", @disabled = "disabled" })
+            </div>
+            @Html.HiddenFor(Model => Model.ID)
+            @if (Model.ID == 0)
+            {
+                <div class="uk-width-medium-1-10">
+                    <label for="uk_dp_start">@Sales.CustomerType</label>
+                    @Html.DropDownListFor(model => model.CustomerCategoryID, Model.CustomerCategoryList, "Select", new { @class = "md-input label-fixed" })
+                </div>
+                <div class="uk-width-medium-2-10">
+                    <div class="uk-autocomplete " id="customer-autocomplete">
+                        <div class="uk-input-group">
+                            <label>@Sales.CustomerName<span>*</span></label>
+                            @Html.TextBoxFor(model => model.CustomerName, new { @class = "md-input label-fixed" })
+                            <span class="uk-input-group-addon">
+                                <a data-uk-modal="{target:'#select-customer',center:false}">
+                                    <i class="uk-input-group-icon uk-icon-search"></i>
+                                </a>
+                            </span>
+                            <script type="text/autocomplete">
+                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                    {{~items}}
+                                    <li data-value="{{ $item.Name }}"
+                                        data-id="{{$item.ID}}"
+                                        data-code="{{$item.Code}}"
+                                        data-location="{{$item.Location}}"
+                                        data-state-id="{{$item.StateID}}"
+                                        data-price-list-id="{{$item.PriceListID}}"
+                                        data-isblocked-for-cheque-receipt="{{$item.IsBlockedForChequeReceipt}}"
+                                        data-is-gst-registered="{{$item.IsGSTRegistered}}">
+                                        <a>
+                                            {{ $item.Name }} ({{{ $item.Code }}})
+                                            <div>{{{ $item.Location }}}</div>
+                                        </a>
+                                    </li>
+                                    {{/items}}
+                                </ul>
+                            </script>
+                        </div>
+                    </div>
+                   
+                </div>
+                
+            }
+            else
+            {
+                <div class="uk-width-medium-2-10">
+                    <label for="uk_dp_start">@Sales.CustomerName</label>
+                    @Html.TextBoxFor(model => model.CustomerName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                </div>
+            }
+            @Html.HiddenFor(model => model.IsBlockedForChequeReceipt)
+            @Html.HiddenFor(Model => Model.CustomerID)
+            <div class="uk-width-medium-1-10">
+                <label>@Accounts.ReceiptAmount<span>*</span></label>
+                @Html.TextBoxFor(model => model.ReceiptAmount, new { @class = "md-input label-fixed mask-positive-currency" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="md-input-wrapper md-input-filled">
+                    <label>&nbsp;</label>
+                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddReceipt">@Common.Process</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-1-10">
+                <label>@Accounts.ModeOfReceipt<span>*</span></label>
+                @Html.DropDownListFor(Model => Model.PaymentTypeID, Model.PaymentTypeList, "Select", new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-2-10">
+                <label for="uk_dp_start">@Accounts.BankName<span>*</span></label>
+                @Html.DropDownListFor(Model => Model.BankID, Model.BankList, "Select", new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="uk-input-group">
+                    <label for="uk_dp_start">@Accounts.Date<span>*</span></label>
+                    <input class="md-input label-fixed date future-date" type="text" id="Date" data-relaxation="-90" value="@Model.Date">
+                    <span class="uk-input-group-addon"><i data-relaxation="-90" class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <label>@Accounts.ReferenceNumber</label>
+                @Html.TextBoxFor(model => model.BankReferanceNumber, new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-2-10">
+                <label>Customer Bank Name/ Remarks</label>
+                @Html.TextBoxFor(model => model.Remarks, new { @class = "md-input label-fixed" })
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <table id="invoice-list" class="uk-table" cellspacing="0">
+        <thead>
+            <tr>
+                <th class="width-20">@Common.SerialNo</th>
+                <th class="width-20"></th>
+                <th class="width-100">@Common.DocumentType</th>
+                <th class="width-100">@Common.DocumentNo</th>
+                <th class="width-80">@Accounts.InvoiceDate</th>
+                <th class="width-80">@Accounts.PendingDays</th>
+                <th class="width-100">@Accounts.BillAmount</th>
+                <th class="width-100">@Accounts.BalanceToBePaid</th>      
+                <th class="width-100">@Accounts.AmountMatched</th>
+                <th class="width-100">@Accounts.RemainingAmount</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model.Item)
+            {
+                var ClassName = item.Status == "" ? "" : "included";
+                decimal AmountToBeMatched = 0;
+                var DocumentType = item.DocumentType.Replace(" ","").ToUpper();
+                if (DocumentType == "INVOICE" || DocumentType == "DEBITNOTE" || DocumentType == "CUSTOMERCHARGES" || DocumentType == "CUSTOMERRETURN")
+                {
+                    AmountToBeMatched = item.Balance - item.AmountToBeMatched;
+                }
+                else
+                {
+                    AmountToBeMatched = item.Balance + item.AmountToBeMatched;
+                }
+                <tr class="@ClassName">
+                    <td class="uk-text-center">
+                        @(1 + @Model.Item.IndexOf(item))
+                        <input type="hidden" class="InvoiceID" value="@item.ReceivableID" />
+                        <input type="hidden" class="Status" value="@item.Status" />
+                        <input type="hidden" class="CreditNoteID" value="@item.CreditNoteID" />
+                        <input type="hidden" class="DebitNoteID" value="@item.DebitNoteID" />
+                        <input type="hidden" class="AdvanceID" value="@item.AdvanceID" />
+                        <input type="hidden" class="SalesReturnID" value="@item.SalesReturnID" />
+                        <input type="hidden" class="CustomerReturnVoucherID" value="@item.CustomerReturnVoucherID" />
+                        <input type="hidden" class="BalanceHidden" value="@item.Balance" />
+                        <input type="hidden" class="SettledAmount" value="@item.AmountToBeMatched" />
+                    </td>
+                    <td>
+                        @if (Math.Abs(item.AmountToBeMatched) > 0)
+                        {
+                            <input type="checkbox" data-md-icheck checked class="included @DocumentType" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" data-md-icheck class="included @DocumentType"/>
+                        }
+
+                    </td>
+                    <td class="DocumentType">@item.DocumentType</td>
+                    <td class="DocumentNo">@item.DocumentNo</td>
+                    <td class="InvoiceDate">@item.ReceivableDate</td>
+                    <td class="PendingDays">@item.PendingDays</td>
+                    <td class="Amount mask-currency">@item.Amount</td>
+                    <td class="Balance mask-currency">@item.Balance</td>
+                   
+                    @if (DocumentType == "INVOICE" || DocumentType == "DEBITNOTE" || DocumentType == "CUSTOMERCHARGES" || DocumentType == "CUSTOMERRETURN")
+                    {
+                        <td><input type="text" class="md-input BalanceToBePaid mask-currency" disabled value="@item.AmountToBeMatched" /></td>
+                    }
+                    else if (DocumentType == "ADVANCERECEIVED")
+                    {
+                        <td><input type="text" class="md-input BalanceToBePaid Sum mask-currency" disabled value="@item.AmountToBeMatched" /></td>
+                    }
+                    else
+                    {
+                        <td>
+                            <input type="text" class="md-input BalanceToBePaid mask-negative-currency" disabled value="@item.AmountToBeMatched">
+                        </td>
+                    }
+                    <td>
+                        <input type="text" class="md-input RemainingAmount mask-currency" disabled value="@item.AmountToBeMatched">
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input type="hidden" id="item-count" value="@Model.Item.Count()" />
+</div>
+@Html.Partial("~/Areas/Masters/Views/Customer/PartialList.cshtml")

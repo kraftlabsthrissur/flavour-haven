@@ -1,0 +1,44 @@
+﻿
+@{
+    ViewBag.Title = "PartialView";
+}
+
+
+<div class="uk-modal" id="select-all-employee" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog uk-modal-dialog-large" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">@Purchase.SelectEmployee<i class="material-icons" data-uk-tooltip="{pos:'top'}" title="headline tooltip"></i></h3>
+        </div>
+        <table id="employees-list" class="uk-table" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th class="width-30">@Common.SerialNo</th>
+                    <th class="width-10"></th>
+                    <th class="width-60">@Purchase.Code</th>
+                    <th class="">@Purchase.Employee</th>
+                    <th class="width-120">@Purchase.EmployeeDepartment</th>
+                    <th class="">@Purchase.EmployeeLocation</th>
+
+                </tr>
+            </thead>
+            <thead class="search">
+                <tr>
+                    <th>@Common.SerialNo</th>
+                    <th></th>
+                    <th>@Purchase.Code</th>
+                    <th>@Purchase.Employee</th>
+                    <th>@Purchase.EmployeeDepartment</th>
+                    <th>@Purchase.EmployeeLocation</th>
+
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn uk-modal-close" id="btnCloseEmployee">Close</button>
+            <button type="button" class="md-btn md-btn-primary uk-modal-close" id="btnOKEmployees">Ok</button>
+        </div>
+    </div>
+</div>
+
+

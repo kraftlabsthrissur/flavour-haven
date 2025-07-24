@@ -1,0 +1,472 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.OutPatientModel
+<div id="page_content_inner" class="form-view">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="section-group">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-8-10">
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin="">
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.HIN</label>
+                                    @Html.TextBoxFor(m => m.Code, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                </div>
+                                <div class="uk-width-medium-1-4">
+                                    <label>@Masters.FirstName<span>*</span></label>
+                                    @Html.TextBoxFor(m => m.Name, new { @class = "md-input label-fixed" })
+                                </div>
+                                <div class="uk-width-medium-1-4">
+                                    <label>@Masters.MiddleName</label>
+                                    @Html.TextBoxFor(m => m.MiddleName, new { @class = "md-input label-fixed" })
+                                </div>
+                                <div class="uk-width-medium-1-4">
+                                    <label>@Masters.LastName</label>
+                                    @Html.TextBoxFor(m => m.LastName, new { @class = "md-input label-fixed" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin="">
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.Gender <span>*</span></label>
+                                    @Html.DropDownListFor(Model => Model.Gender, new SelectList(Model.GenderList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                </div>
+                                <div class="uk-width-medium-2-8">
+                                    <div class="uk-autocomplete " id="employee-autocomplete">
+                                        <div class="uk-input-group">
+                                            <label for="uk_dp_start">@AHCMS.Doctor</label>
+                                            @Html.TextBoxFor(m => m.DoctorName, new { @class = "md-input label-fixed" })
+                                            <span class="uk-input-group-addon">
+                                                <a data-uk-modal="{target:'#select-employee',center:false}">
+                                                    <i class="uk-input-group-icon uk-icon-search"></i>
+                                                </a>
+                                            </span>
+                                            <script type="text/autocomplete">
+                                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                    {{~items}}
+                                                    <li data-value="{{ $item.Name}}"
+                                                        data-id="{{$item.UserID}}"
+                                                        data-EmployeeCode="{{$item.Code}}"
+                                                        data-placement="{{$item.Location}}">
+                                                        <a>
+                                                            {{ $item.Name }}
+                                                            <div>{{ $item.Code }}</div>
+                                                        </a>
+                                                    </li>
+                                                    {{/items}}
+                                                </ul>
+                                            </script>
+                                        </div>
+                                    </div>
+                                    @Html.HiddenFor(m => m.DoctorID)
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.DiscountCategory</label>
+                                    @Html.DropDownListFor(Model => Model.DiscountTypeID, new SelectList(Model.DiscountTypeList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                </div>
+
+                                <div class="uk-width-medium-1-8">
+                                    <div class="uk-input-group">
+                                        <label>@Masters.DOB<span>*</span></label>
+                                        @Html.TextBoxFor(m => m.DOB, new { @class = "md-input label-fixed  past-date date" })
+                                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                    </div>
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.Age<span>*</span></label>
+                                    @Html.TextBoxFor(m => m.Age, new { @class = "md-input label-fixed" })
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.Month</label>
+                                    @Html.TextBoxFor(m => m.Month, new { @class = "md-input label-fixed", type = "number" })
+                                </div>
+                                <div class="uk-width-medium-1-4">
+                                    <label>@Masters.GuardianName</label>
+                                    @Html.TextBoxFor(m => m.GuardianName, new { @class = "md-input label-fixed" })
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.MaritalStatus </label>
+                                    @Html.DropDownListFor(Model => Model.MartialStatus, new SelectList(Model.MartialStatusList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.BloodGroup</label>
+                                    @Html.DropDownListFor(Model => Model.BloodGroupID, new SelectList(Model.BloodGroupList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.CountryCode</label>
+                                    <input type="text" id ="CountryCode" value="+91" class="md-input label-fixed"/>
+                                </div>
+                                <div class="uk-width-medium-1-4">
+                                    <label>@Masters.MobileNo<span>*</span></label>
+                                    @Html.TextBoxFor(m => m.MobileNumber, new { @class = "md-input label-fixed", @maxlength = "10" })
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.Place<span>*</span></label>
+                                    @Html.TextBoxFor(m => m.Place, new { @class = "md-input label-fixed" })
+                                </div>
+                               
+                       
+                            </div>
+                        </div>
+
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin="">
+                              
+                                <div class="uk-width-medium-1-4">
+                                    <label>@Masters.AddressLine1<span>*</span></label>
+                                    @Html.TextBoxFor(m => m.AddressLine1, new { @class = "md-input label-fixed" })
+                                </div>
+                                <div class="uk-width-medium-1-4">
+                                    <label>@Masters.AddressLine2</label>
+                                    @Html.TextBoxFor(m => m.AddressLine2, new { @class = "md-input label-fixed" })
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.Country</label>
+                                    @Html.DropDownListFor(Model => Model.CountryID, Model.CountryList, new { @class = "md-input label-fixed" })
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.States</label>
+                                    @Html.DropDownListFor(Model => Model.StateID, Model.StateList, "Select", new { @class = "md-input label-fixed" })
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.District</label>
+                                    <select id="DistrictID" class="md-input label-fixed District">
+                                        <option>Select</option>
+                                    </select>
+                                </div>
+                              
+                            </div>
+                        </div>
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin="">
+                      
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.PIN</label>
+                                    <input type="number" id="PinCode" class="md-input label-fixed"/>
+                                </div>
+                              
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.ReferenceThrough</label>
+                                    @Html.DropDownListFor(Model => Model.PatientReferedByID, new SelectList(Model.PatientReferedList, "Value", "Text"), new { @class = "md-input label-fixed" })
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.ReferalName</label>
+                                    @Html.TextBoxFor(m => m.ReferalName, new { @class = "md-input label-fixed" })
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.ReferalContactNo</label>
+                                    @Html.TextBoxFor(m => m.ReferalContactNo, new { @class = "md-input label-fixed", @maxlength = "30" })
+                                </div>
+                                <div class="uk-width-medium-1-4">
+                                    <label>@Masters.EmergencyContactNo.<span>*</span></label>
+                                    @Html.TextBoxFor(m => m.EmergencyContactNo, new { @class = "md-input label-fixed", @maxlength = "30" })
+                                </div>
+                                <div class="uk-width-medium-1-8">
+                                    <label>@Masters.Occupation</label>
+                                    @Html.DropDownListFor(Model => Model.OccupationID, Model.OccupationList, "Select", new { @class = "md-input label-fixed" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin="">
+                          
+                                <div class="uk-width-medium-1-4">
+                                    <label>@Masters.Email</label>
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "md-input label-fixed" })
+                                </div>
+                                <div class="uk-width-medium-1-4">
+                                    <label>@Masters.Landline</label>
+                                    @Html.TextBoxFor(m => m.LandLine, new { @class = "md-input label-fixed", @maxlength = "30" })
+                                </div>
+                                </div>
+                            </div>
+                                <hr class="international" />
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-4 international">
+                                            <label>@Masters.Purposeofvisit</label>
+                                            @Html.TextBoxFor(m => m.PurposeOfVisit, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-4 international">
+                                            <label>@Masters.PassportNo</label>
+                                            @Html.TextBoxFor(m => m.PassportNo, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 international">
+                                            <label>@Masters.PlaceOfIssue</label>
+                                            @Html.TextBoxFor(m => m.PlaceOfIssue, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 international">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Masters.DateOfIssue</label>
+                                                @Html.TextBoxFor(m => m.DateOfIssuePassport, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-8 international">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Masters.DateOfExpiry</label>
+                                                @Html.TextBoxFor(m => m.DateOfExpiry, new { @class = "md-input label-fixed  future-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-8 international">
+                                            <label>@Masters.EmployedInIndia </label>
+                                            @Html.DropDownListFor(Model => Model.EmployedIn, new SelectList(Model.EmployedInIndia, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-4 international">
+                                            <label>@Masters.VisaNo</label>
+                                            @Html.TextBoxFor(m => m.VisaNo, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 international">
+                                            <div class="uk-input-group">
+                                                <label>@Masters.DateOfIssue (Visa)</label>
+                                                @Html.TextBoxFor(m => m.DateOfIssueVisa, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-8 international">
+                                            <div class="uk-input-group">
+                                                <label>@Masters.DateOfExpiry (Visa)</label>
+                                                @Html.TextBoxFor(m => m.DateOfExpiryVisa, new { @class = "md-input label-fixed  future-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-4 international">
+                                            <label>@Masters.ArrivedFrom</label>
+                                            @Html.TextBoxFor(m => m.ArrivedFrom, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-4 international">
+                                            <label>@Masters.ProceedingTo</label>
+                                            @Html.TextBoxFor(m => m.ProceedingTo, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 international">
+                                            <label>@Masters.DurationOfStay (days)</label>
+                                            @Html.TextBoxFor(m => m.DurationOfStay, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 international">
+                                            <div class="uk-input-group">
+                                                <label>@Masters.DateOfArrival</label>
+                                                @Html.TextBoxFor(m => m.DateOfArrival, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        @if (Model.ID == 0)
+                                        {
+                                            <div class="uk-width-medium-1-4">
+                                                <div class="md-input-wrapper md-input-filled">
+                                                    <label>@Masters.Photo</label>
+                                                    <div class="uk-form-file v1">
+                                                        <label id="selected-photo">
+                                                        </label>
+                                                        <label for="select-photo" class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                                                            <i class="uk-icon-upload"></i>
+                                                        </label>
+                                                        <input id="select-photo" type="file" tabindex="-1">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="uk-width-medium-1-4">
+                                                <div class="md-input-wrapper md-input-filled">
+                                                    <label>@Masters.OtherDocuments</label>
+                                                    <div class="uk-form-file v1">
+                                                        <div id="other-quotation-list">
+                                                            <div class="uk-button-dropdown" data-uk-dropdown>
+                                                                <a><span id="file-count">0 File(s)</span> <i class="material-icons">&#xE313;</i></a>
+                                                                <div class="uk-dropdown">
+                                                                    <ul class="uk-nav uk-nav-dropdown"></ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <label for="other-quotations" class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                                                            <i class="uk-icon-upload"></i>
+                                                        </label>
+                                                        <input id="other-quotations" type="file" multiple tabindex="-1">
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="uk-width-medium-1-4 international">
+                                                <div class="md-input-wrapper md-input-filled">
+                                                    <label>@Masters.PassportCopy</label>
+                                                    <div class="uk-form-file v1">
+                                                        <label id="selected-passport">
+                                                        </label>
+                                                        <label for="select-passport" class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                                                            <i class="uk-icon-upload"></i>
+                                                        </label>
+                                                        <input id="select-passport" type="file" tabindex="-1">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="uk-width-medium-1-4 international">
+                                                <div class="md-input-wrapper md-input-filled">
+                                                    <label>@Masters.VisaCopy</label>
+                                                    <div class="uk-form-file v1">
+                                                        <label id="selected-visa">
+                                                        </label>
+                                                        <label for="select-visa" class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                                                            <i class="uk-icon-upload"></i>
+                                                        </label>
+                                                        <input id="select-visa" type="file" tabindex="-1">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="uk-width-medium-1-4">
+                                                <div class="md-input-wrapper md-input-filled">
+                                                    <label>@Masters.Photo</label>
+                                                    <div class="uk-form-file v1">
+                                                        <label id="selected-photo">
+                                                            @foreach (var item in Model.SelectedPhoto)
+                                                            {
+                                                                <span>
+                                                                    <span class='view-file' data-id='@item.ID' data-url='@item.URL' data-path='@item.Path'>@item.Name</span>
+                                                                    <a class='remove-quotation'>X</a>
+                                                                </span>
+                                                            }
+                                                        </label>
+                                                        <label for="select-photo" class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                                                            <i class="uk-icon-upload"></i>
+                                                        </label>
+                                                        <input id="select-photo" type="file" tabindex="-1">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="uk-width-medium-1-4">
+                                                <div class="md-input-wrapper md-input-filled">
+                                                    <label>@Purchase.OtherQuotation</label>
+                                                    <div class="uk-form-file v1">
+                                                        <div id="other-quotation-list">
+                                                            <div class="uk-button-dropdown" data-uk-dropdown>
+                                                                <a><span id="file-count">@Model.OtherQuotation.Count() Files</span> <i class="material-icons">&#xE313;</i></a>
+                                                                <div class="uk-dropdown">
+                                                                    <ul class="uk-nav uk-nav-dropdown">
+                                                                        @foreach (var item in Model.OtherQuotation)
+                                                                        {
+                                                                            <li class='file-list'>
+                                                                                <span data-id='@item.ID' class='view-file' data-url='@item.URL' data-path='@item.Path'>
+                                                                                    @item.Name
+                                                                                </span>
+                                                                            </li>
+                                                                        }
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="uk-width-medium-1-4 international">
+                                                <div class="md-input-wrapper md-input-filled">
+                                                    <label>@Masters.PassportCopy</label>
+                                                    <div class="uk-form-file v1">
+                                                        <label id="selected-passport">
+                                                            @foreach (var item in Model.SelectedPassport)
+                                                            {
+                                                                <span>
+                                                                    <span class='view-file' data-id='@item.ID' data-url='@item.URL' data-path='@item.Path'>@item.Name</span>
+                                                                    <a class='remove-quotation'>X</a>
+                                                                </span>
+                                                            }
+                                                        </label>
+                                                        <label for="select-passport" class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                                                            <i class="uk-icon-upload"></i>
+                                                        </label>
+                                                        <input id="select-passport" type="file" tabindex="-1">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="uk-width-medium-1-4 international">
+                                                <div class="md-input-wrapper md-input-filled">
+                                                    <label>@Masters.VisaCopy</label>
+                                                    <div class="uk-form-file v1">
+                                                        <label id="selected-visa">
+                                                            @foreach (var item in Model.SelectedVisa)
+                                                            {
+                                                                <span>
+                                                                    <span class='view-file' data-id='@item.ID' data-url='@item.URL' data-path='@item.Path'>@item.Name</span>
+                                                                    <a class='remove-visa'>X</a>
+                                                                </span>
+                                                            }
+                                                        </label>
+                                                        <label for="select-visa" class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                                                            <i class="uk-icon-upload"></i>
+                                                        </label>
+                                                        <input id="select-visa" type="file" tabindex="-1">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                        <hr class="Discount-Tab" />
+                        <div class="uk-form-row Discount-Tab">
+                            <div class="uk-grid" data-uk-grid-margin="">
+                                <div class="uk-width-medium-1-8 Discount-Tab">
+                                    <div class="uk-input-group">
+                                        <label for="uk_dp_start">@Masters.FromDate</label>
+                                        @Html.TextBoxFor(m => m.DiscountStartDate, new { @class = "md-input label-fixed  future-date date" })
+                                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                    </div>
+                                </div>
+                                <div class="uk-width-medium-1-8 Discount-Tab">
+                                    <div class="uk-input-group">
+                                        <label for="uk_dp_start">@Masters.ToDate</label>
+                                        @Html.TextBoxFor(m => m.DiscountEndDate, new { @class = "md-input label-fixed  future-date date" })
+                                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                    </div>
+                                </div>
+                                <div class="uk-width-medium-1-8 Employee">
+                                    <label>Max.Discount</label>
+                                    @Html.TextBoxFor(model => model.MaxDisccountAmount, new { @class = "md-input mask-sales-currency label-fixed " })
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="uk-width-medium-1-10 uk-hidden">
+                            <label>@Masters.Discount</label>
+                            <select id="DiscountPercentageList">
+                                @foreach (var item in Model.DiscountPercentageList)
+                                {
+                                    <option value="@item.ID" data-value="@item.Value">@item.Name</option>
+                                }
+                            </select>
+                        </div>
+
+
+                        <br>
+                        <div class="uk-form-row Discount-Tab">
+                            <div class="uk-grid" data-uk-grid-margin="">
+                                <table id="tbl-discount-list" class="uk-table" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="width-10">@Common.SerialNo</th>
+                                            <th class="width-10"></th>
+                                            <th>@Masters.ItemCategory</th>
+                                            <th>@Masters.DiscountCategory</th>
+                                            <th>@Masters.DiscountPercentage</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                            </div>
+                        </div>
+                    </div>
+        </div>
+    </div>
+</div>

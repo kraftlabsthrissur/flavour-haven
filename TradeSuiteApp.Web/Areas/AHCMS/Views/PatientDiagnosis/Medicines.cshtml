@@ -1,0 +1,68 @@
+﻿
+@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+
+
+@if (Model.Medicines != null)
+{
+    foreach (var item in Model.Medicines.Select((value, i) => new { i = (i + 1), value }))
+    {
+        var Medicine = ""; var Quantity = "";
+        if (@item.value.Medicine == "")
+        {
+            Medicine = @item.value.MedicineInstruction;
+        }
+        else
+        {
+            Medicine = @item.value.Medicine;
+        }
+        if (@item.value.Qty == "")
+        {
+            Quantity = @item.value.QuantityInstruction;
+        }
+        else
+        {
+            Quantity = @item.value.Qty;
+        }
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+                <input type="hidden" class="UnitID" value="@item.value.UnitID" />
+                <input type="hidden" class="Quantity" value="@item.value.Quantity" />
+                <input type="hidden" class="GroupID" value="0" />
+                <input type="hidden" class="PatientMedicinesID" value="@item.value.PatientMedicinesID" />
+            </td>
+            <td class="Medicine">
+                @Medicine
+            </td>
+            <td class="Quantity">
+                @Quantity
+            </td>
+            <td class="Prescription">
+                @item.value.Prescription
+            </td>
+            <td class="uk-text-center">
+                @if (@item.value.Status == "Stopped")
+                {
+                    <button class="edit_medicines uk-hidden"><i class="material-icons">create</i></button>
+                }
+                else if (!@item.value.IsCompleted)
+                {
+                    <button class="edit_medicines"><i class="material-icons">create</i></button>
+                }
+                else
+                {
+                    <button class="edit_medicines uk-hidden"><i class="material-icons">create</i></button>
+                }
+            </td>
+            <td class="Status">@item.value.Status</td>
+            <td>@item.value.DoctorName</td>
+            <td>
+                <a class="remove-medicine_ongrid"><i class="uk-icon-remove"></i></a>
+            </td>
+           
+        </tr>
+    }
+}
+
+
+

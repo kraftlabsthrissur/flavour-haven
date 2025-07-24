@@ -1,0 +1,154 @@
+  
+    
+ALTER  PROCEDURE [Stock].[SpCreateStockReceiptTrans](    
+@StockReceiptID int,    
+@StockIssueTransID int,    
+@StockIssueID int,    
+@ReceiptLocationID int,    
+@ReceiptPremisesID int,    
+@IssueLocationID int,    
+@IssuePremisesID int,    
+@ItemID int,    
+@BatchID int,    
+@BatchTypeID int,    
+@ReceiptQty numeric(18,4),    
+@IssueQty numeric(18,4),
+@SecondaryIssueQty numeric(18,4),
+@SecondaryUnit varchar(200),
+@SecondaryUnitSize numeric(18,4),
+@SecondaryReceiptQty numeric(18,4),
+@Rate numeric(18,2),    
+@NetAmount numeric(18,2),    
+@BasicPrice numeric(18,2),    
+@GrossAmount numeric(18,2),    
+@TradeDiscountPercentage numeric(18,2),    
+@TradeDiscount numeric(18,2),    
+@TaxableAmount numeric(18,2),    
+@SGSTPercent numeric(18,2),    
+@CGSTPercent numeric(18,2),    
+@IGSTPercent numeric(18,2),    
+@SGSTAmount numeric(18,2),    
+@CGSTAmount numeric(18,2),    
+@IGSTAmount numeric(18,2),    
+@UnitID int,    
+@FinYear Int,    
+@LocationID Int,    
+@ApplicationID Int,  
+@RetValue int out  
+)    
+AS    
+Begin    
+SET NOCOUNT ON    
+ Declare @ReceiptDate DateTime,@ReceiptNo varchar(20),@ReceiptTransID int,@ReceiptStateID int, @IssueStateID int  ,@FullyProcessed int  
+ Select @ReceiptDate =ReceiptDate,@ReceiptNo = ReceiptNo  from StockReceipt where ID = @StockReceiptID    
+    
+ Select @IssueStateID=StateID from Location where ID = @IssueLocationID    
+ Select @ReceiptStateID=StateID from Location where ID = @ReceiptLocationID    
+    
+ Insert Into StockReceiptTrans(StockReceiptID,StockIssueTransID,StockIssueID,ReceiptLocationID,ReceiptPremisesID,IssueLocationID,    
+ IssuePremisesID, ItemID,BatchID,BatchTypeID,IssueQty,ReceiptQty,FinYear,LocationID,ApplicationID,Rate,NetAmount,    
+ BasicPrice,GrossAmount,TradeDiscountPercentage,TradeDiscount,TaxableAmount,SGSTPercentage,CGSTPercentage,IGSTPercentage,    
+ SGSTAmount,CGSTAmount,IGSTAmount,UnitID,SecondaryIssueQty,SecondaryUnit,SecondaryUnitSize,SecondaryReceiptQty)    
+ Values(@StockReceiptID,@StockIssueTransID,@StockIssueID,@ReceiptLocationID,@ReceiptPremisesID,@IssueLocationID,@IssuePremisesID,@ItemID,    
+ @BatchID,@BatchTypeID,@IssueQty,@ReceiptQty,@FinYear,@LocationID,@ApplicationID,@Rate,@NetAmount,    
+ @BasicPrice,@GrossAmount,@TradeDiscountPercentage,@TradeDiscount,@TaxableAmount,@SGSTPercent,@CGSTPercent,@IGSTPercent,    
+ @SGSTAmount,@CGSTAmount,@IGSTAmount,@UnitID,@SecondaryIssueQty,@SecondaryUnit,@SecondaryUnitSize,@SecondaryReceiptQty)    
+    
+ Select @ReceiptTransID = Scope_Identity();    
+  
+  
+ Select   @FullyProcessed=case when SIT.IssueQty=SIT.ReceiptedQty then 1 else 0 end   
+  from StockIssueTrans SIT    
+  WHERE ID=@StockIssueTransID   
+    
+  
+ IF @FullyProcessed = 1  
+ BEGIN  
+  SET @RetValue = -1  
+ END    
+ ELSE  
+ BEGIN  
+  SET @RetValue = 1  
+ END    
+    -------------------------------------------------------------------------------------------------    
+   select @ReceiptQty=dbo.FnConvertStockToInventoryUnit(@ItemID,@ReceiptQty,@UnitID);    
+       
+  --------------------------------------------------------------------------------------------------------------------------------------    
+     
+     
+ exec SpStockUpdate @ReceiptDate ,'F',@ItemID,@BatchID,@ReceiptPremisesID ,@ReceiptQty,0,'StockReceipt',@ReceiptLocationID,@FinYear,5,@ApplicationID,'Receipts',1,@BatchTypeID,@ReceiptNo      
+    
+  
+  Declare @SLARemarks varchar(100)   = 'Stock Receipt-'+CAST(@StockReceiptID AS varchar(5))  
+   Declare @SupplierID int = dbo.FnGetSupplierIDfromBatch(@ItemID,@BatchID)  
+   Declare @BatchPref  varchar(10)  
+   Select @BatchPref = case when @BatchTypeID > 0 then case when (select LocationID from Batch where ID = @BatchID) = 1 then 1 else 2 end else -2 end  
+   
+ --set @SI=(select StockissueID from stockissuetrans where ID=@StockIssueTransID )    
+    
+ update stockissuetrans set ReceiptedQty=ReceiptedQty+@ReceiptQty where ID=@StockIssueTransID    
+    
+ if(Select Count(*) from stockissuetrans where StockIssueID = @StockIssueID and IssueQty<ReceiptedQty ) = 0    
+  begin    
+   update stockissue set IsProcessed = 1 where ID = @StockIssueID      
+  end    
+ if @IssueStateID  = @ReceiptStateID    
+  Begin    
+  if(@TaxableAmount > 0)    
+  begin    
+   --Insert into SLAMappingItem (TrnType,KeyValue,Remarks,Amount,TableName,MasterTableName,TransNo,TransID,CreatedDate,FinYear,
+   --LocationID,ApplicationID,SupplierID,CustomerID,Batch,DepartmentCategoryID,ItemID,IsApprovalPending,Quantity,Rate,TransLocationID,   
+   --DepartmentID,EmployeeID,InterCompanyID,ProjectID)      
+   --Select 'SRW_Approve','TaxableAmount','Stock Receipt-'+CAST(@StockReceiptID AS varchar(5)),@TaxableAmount,'StockReceiptTrans','StockReceipt',@ReceiptNo,@ReceiptTransID,    
+   --CURRENT_TIMESTAMP,@FinYear, @LocationID, @ApplicationID,    
+   --dbo.FnGetSupplierIDfromBatch(@ItemID,@BatchID),-2,case when @BatchTypeID > 0 then case when (select LocationID from Batch where ID = @BatchID) = 1 then 1 else 2 end else -2 end,-2,  
+   --@ItemID,0,@ReceiptQty,@Rate,@ReceiptLocationID,0,0,0,0    
+   --from Location L where L.ID = @ReceiptLocationID    
+   exec SpInsertSLAMappingItem 'SRW_Approve','TaxableAmount'  
+  ,@SLARemarks,@TaxableAmount,'StockReceiptTrans','StockReceipt',--@ReceiptNo,@ReceiptTransID  
+  @ReceiptNo,@ReceiptTransID,@FinYear ,@LocationID ,@ApplicationID ,@SupplierID     
+  ,-2,@BatchPref,  
+  -2,@ItemID,0,@ReceiptQty,@Rate,@ReceiptLocationID,0,0,0,0,0,0,0,0,0,0,@ReceiptDate,1   
+  end    
+ End    
+ Else    
+ Begin    
+  if(@TaxableAmount > 0)    
+  begin    
+      
+   --Insert into SLAMappingItem (TrnType,KeyValue,Remarks,Amount,TableName,MasterTableName,TransNo,TransID,CreatedDate,
+   --FinYear,LocationID,ApplicationID,SupplierID,CustomerID,Batch,DepartmentCategoryID,ItemID,IsApprovalPending,Quantity,Rate,TransLocationID,   
+   
+   --DepartmentID,EmployeeID,InterCompanyID,ProjectID)      
+   --Select 'SRO_Approve','TaxableAmount','Stock Receipt-'+CAST(@StockReceiptID AS varchar(5)),@TaxableAmount,'StockReceiptTrans','StockReceipt',@ReceiptNo,@ReceiptTransID,    
+   --CURRENT_TIMESTAMP,@FinYear, @LocationID, @ApplicationID,    
+   --dbo.FnGetSupplierIDfromBatch(@ItemID,@BatchID),-2,case when @BatchTypeID > 0 then case when (select LocationID from Batch where ID = @BatchID) = 1 then 1 else 2 end else -2 end,-2,@ItemID,0,@ReceiptQty,@Rate,@ReceiptLocationID,0,0,0,0    
+   --from  Location L Where L.ID = @ReceiptLocationID  
+     
+    exec SpInsertSLAMappingItem 'SRO_Approve','TaxableAmount'  
+  ,@SLARemarks,@TaxableAmount,'StockReceiptTrans','StockReceipt',--@ReceiptNo,@ReceiptTransID  
+  @ReceiptNo,@ReceiptTransID,@FinYear ,@LocationID ,@ApplicationID ,@SupplierID     
+  ,-2,@BatchPref,  
+  -2,@ItemID,0,@ReceiptQty,@Rate,@ReceiptLocationID,0,0,0,0,0,0,0,0,0,0,@ReceiptDate,1  
+       
+   if @IGSTAmount > 0     
+    Begin    
+--     Insert into SLAMappingItem (TrnType,KeyValue,Remarks,Amount,TableName,MasterTableName,TransNo,TransID,CreatedDate,
+    ---FinYear,LocationID,ApplicationID,SupplierID,CustomerID,Batch,DepartmentCategoryID,ItemID,IsApprovalPending,Quantity,Rate,TransLocationID  
+--,    
+--     DepartmentID,EmployeeID,InterCompanyID,ProjectID)      
+--     Select 'SRO_Approve','GSTAmount','Stock Receipt-'+CAST(@StockReceiptID AS varchar(5)),@IGSTAmount,'StockReceiptTrans','StockReceipt',@ReceiptNo,@ReceiptTransID,    
+--     CURRENT_TIMESTAMP,@FinYear, @LocationID, @ApplicationID,    
+--     -2,-2,-2,-2,@ItemID,0,0,0,@ReceiptLocationID,0,0,0,0    
+  exec SpInsertSLAMappingItem 'SRO_Approve','GSTAmount'  
+  ,@SLARemarks,@IGSTAmount,'StockReceiptTrans','StockReceipt',--@ReceiptNo,@ReceiptTransID  
+  @ReceiptNo,@ReceiptTransID,@FinYear ,@LocationID ,@ApplicationID ,-2     
+  ,-2,-2,  
+  -2,@ItemID,0,0,0,@ReceiptLocationID,0,0,0,0,0,0,0,0,0,0,@ReceiptDate,1  
+    End    
+  end    
+ End    
+    
+ end    
+  
+  

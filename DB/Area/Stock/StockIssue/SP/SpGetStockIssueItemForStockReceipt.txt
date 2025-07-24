@@ -1,0 +1,17 @@
+ALTER PROCEDURE [Stock].[SpGetStockIssueItemForStockReceipt](  
+ @ID INT,  
+ @FinYear INT,  
+ @LocationID INT,  
+ @ApplicationID INT  
+)AS  
+BEGIN  
+SET NOCOUNT ON  
+ select I.Name,I.ID as ItemID,U.UOM as Unit,SIT.UnitID,SIT.IssueQty,Isnull(BT.Name,'') as BatchTypeName,isnull(BT.ID,0) as BatchTypeID,SIT.ID as StockIssueTransID,SIT.StockIssueID,B.BatchNo,  
+  SIT.RequestedQty,SIT.BatchID,SIT.Rate,SIT.NetAmount,SIT.BasicPrice,SIT.GrossAmount, SIT.TradeDiscountPercentage,SIT.TradeDiscount,SIT.TaxableAmount,SIT.SGSTPercentage,
+  SIT.SecondaryIssueQty,SIT.SecondaryQty,SIT.SecondaryUnit,SIT.SecondaryUnitSize,SIT.CGSTPercentage,SIT.IGSTPercentage,SIT.SGSTAmount,SIT.CGSTAmount,SIT.IGSTAmount    
+ from stockissueTrans SIT  inner join StockIssue S on S.ID = SIT.StockIssueID   
+ Inner Join viItem I on I.ID=SIT.ItemID  Left Join BatchType BT on BT.ID=SIT.BatchTypeID  
+ Left join Batch B on B.ID=SIT.BatchID  inner join Unit U on U.ID=SIT.UnitID  
+ where SIT.StockIssueID=@ID  And  SIT.FinYear=@FinYear   
+ And S.ReceiptLocationID=@LocationID  and SIT.ApplicationID=@ApplicationID   
+End  

@@ -1,0 +1,160 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.PaymentVoucherModel
+
+@{
+    ViewBag.Title = "Payment Voucher Detail";
+
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Accounts.PaymentVoucherTitle</h1>
+            <span class="uk-text-upper uk-text-small">@Accounts.PaymentVoucherDetail</span>
+        </div>
+        <div class="heading_actions">
+            @Html.HiddenFor(m => m.ID)
+            @if (Model.IsDraft)
+            {
+                @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "Edit", "PaymentVoucher", new { Area = "Accounts", id = Model.ID }, new { @class = "md-btn edit ", }))
+            }
+            @ActionAuthorization.IsAuthorized("Print", " <a class='md-btn print'>Print</a>")
+            @ActionAuthorization.IsAuthorized("PaymentVoucherPrintPdf", " <a class='md-btn printpdf'>Print As PDF</a>")
+            @Html.ActionLink(Common.Back, "Index", "PaymentVoucher", new { Area = "Accounts" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="details-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Accounts.VoucherNumber</label>
+                                            <input type="text" class="md-input label-fixed" id="txtVoucherNo" value="@Model.VoucherNumber" disabled="disabled" />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label for="uk_dp_start">@Accounts.Date</label>
+                                            @Html.TextBoxFor(m => m.VoucherDate, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Accounts.Supplier</label>
+                                            @Html.TextBoxFor(m => m.SupplierName, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8" style="display:none">
+                                            <label>@Accounts.VoucherAmount</label>
+                                            @Html.TextBoxFor(m => m.VoucherAmt, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Accounts.ModeOfPayment</label>
+                                            @Html.TextBoxFor(m => m.PaymentTypeName, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label for="uk_dp_start">@Accounts.BankName</label>
+                                            @Html.TextBoxFor(m => m.BankName, new { @class = "md-input label-fixed uk-text-right", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Accounts.ReferenceNumber</label>
+                                            @Html.TextBoxFor(m => m.ReferenceNumber, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Accounts.Remarks</label>
+                                            @Html.TextBoxFor(m => m.Remark, new { @class = "md-input label-fixed uk-text-right", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1">
+                                            <label>@Sales.NetAmount</label>
+                                            @Html.TextBoxFor(model => model.VoucherAmt, new { @class = "md-input mask-sales-currency label-fixed x-large", @id = "NetAmt", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-group">
+                    <table id="payment-voucher-items-list" class="uk-table " cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="width-100">@Common.SerialNo</th>
+                                <th class="width-250">@Accounts.DocumentType</th>
+                                <th class="width-250">@Accounts.Narration</th>
+                                <th class="width-250">@Accounts.InvoiceNo</th>
+                                <th class="width-250">@Accounts.Date</th>
+                                <th class="width-250">@Accounts.OriginalAmount</th>
+                                <th class="width-250">@Accounts.BalancePayable</th>
+                                <th class="width-250">@Accounts.PaidAmount</th>
+
+                            </tr>
+                        </thead>
+                        <tbody class="prTbody">
+                            @if (Model != null)
+                            {
+                                if (Model.List != null)
+                                {
+                                    foreach (var itm in Model.List.Select((value, i) => new { i = (i + 1), value }))
+                                    {
+                                        <tr class="rowPr">
+                                            <td>@itm.i</td>
+                                            <td>@itm.value.DocumentType</td>
+                                            <td>@itm.value.InvoiceNo</td>
+                                            <td>@itm.value.Narration</td>
+                                            <td>@itm.value.Date</td>
+                                            <td class="mask-currency">@itm.value.OrginalAmount</td>
+                                            <td class="mask-currency"> @itm.value.Balance </td>
+                                            <td class="mask-currency">@itm.value.PaidAmount</td>
+                                        </tr>
+                                    }
+                                    <tr>
+                                        <td colspan="5"><b>Total :</b> </td>
+                                        <td class="mask-currency">@Model.List.Sum(a => a.OrginalAmount)</td>
+                                        <td class="mask-currency">@Model.List.Sum(a => a.Balance)</td>
+                                        <td class="mask-currency">@Model.List.Sum(a => a.PaidAmount)</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="uk-modal " id="select_supplier" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Select Supplier <i class="material-icons" data-uk-tooltip="{pos:'top'}" title="headline tooltip"></i></h3>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn md-btn-flat uk-modal-close">Close</button>
+            <button type="button" class="md-btn md-btn-flat uk-modal-close" id="btnOKSupplierList">Ok</button>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/Supplier")
+@Scripts.Render("~/Js/Page/Voucher")
+@Scripts.Render("~/Js/SignalR")
+<script src="~/signalr/Hubs"></script>
+
+<script type="text/javascript">
+    voucherCRUD.details();
+    SignalRClient.init();
+</script>

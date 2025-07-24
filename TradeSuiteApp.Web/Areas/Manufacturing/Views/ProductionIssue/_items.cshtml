@@ -1,0 +1,49 @@
+﻿@model List<TradeSuiteApp.Web.Areas.Manufacturing.Models.ProductionIssueItemModel>
+
+<table id="tbl-productionissue-item" class="uk-table" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th class="width-30">@Common.SerialNo</th>
+            <th class="width-10"></th>
+            <th class="width-60">@Manufacturing.Item</th>
+            <th class="width-20">@Manufacturing.UOM</th>
+            <th class="width-120">@Manufacturing.Batchsize</th>
+        </tr>
+    </thead>
+    <thead class="search">
+        <tr>
+            <th>@Common.SerialNo</th>
+            <th></th>
+            <th>@Manufacturing.Item</th>
+            <th>@Manufacturing.UOM</th>
+            <th>@Manufacturing.Batchsize</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count() > 0)
+        {
+            foreach (var item in Model.Select((value, i) => new { i = i + 1, value }))
+            {
+                <tr>
+                    <td>@item.i</td>
+                    <td>
+                        <input type="hidden" class="hdnItemID" value="@item.value.ItemID" />
+                        <input type="hidden" class="hdnUOM" value="@item.value.UOM" />
+                        <input type="hidden" class="hdnProductionGroupID" value="@item.value.ProductionGroupId" />
+                        <input type="hidden" class="hdnProductionSequence" value="@item.value.ProductionSequence" />
+                        <input type="hidden" class="hdnProductName" value="@item.value.ProductName" />
+                        <input type="hidden" class="hdnBatchSize" value="@item.value.BatchSize" />
+                        <input type="radio" name="radProductionIssueItem" />
+                    </td>
+                    <td>@item.value.ProductName</td>
+                    <td>@item.value.UOM</td>
+                    <td>@item.value.BatchSize</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+
+

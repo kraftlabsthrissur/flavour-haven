@@ -1,0 +1,319 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E5AF9DC2-C5F0-47FC-A5D5-F86759805B67}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PresentationContractLayer</RootNamespace>
+    <AssemblyName>PresentationContractLayer</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc">
+      <HintPath>..\..\Ayurware\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="IAccountContract.cs" />
+    <Compile Include="IAccountGroupContract.cs" />
+    <Compile Include="IAccountHeadContract.cs" />
+    <Compile Include="IAgeingBucketContract.cs" />
+    <Compile Include="IAppContract.cs" />
+    <Compile Include="IAddressContract.cs" />
+    <Compile Include="IAdvancePayment.cs" />
+    <Compile Include="IAdvanceReceiptContract.cs" />
+    <Compile Include="IAdvanceReturnContract.cs" />
+    <Compile Include="IAppointmentScheduleContract.cs" />
+    <Compile Include="IApprovalContract.cs" />
+    <Compile Include="IAdvanceRequestContract.cs" />
+    <Compile Include="IApprovalFlowContract.cs" />
+    <Compile Include="IApprovalQueueContract.cs" />
+    <Compile Include="IAssetContract.cs" />
+    <Compile Include="IAssetCorrectionContract.cs" />
+    <Compile Include="IAttendanceContract.cs" />
+    <Compile Include="IBankExpensesContract.cs" />
+    <Compile Include="IBatchContract.cs" />
+    <Compile Include="IBatchTypeContract.cs" />
+    <Compile Include="IBillTypeContract.cs" />
+    <Compile Include="IBrandContract.cs" />
+    <Compile Include="IBRSContract.cs" />
+    <Compile Include="IChartOfAccountContract.cs" />
+    <Compile Include="IChequeStatusContract.cs" />
+    <Compile Include="IConfigurationContract.cs" />
+    <Compile Include="IConsultationSchedule.cs" />
+    <Compile Include="IContactContract.cs" />
+    <Compile Include="ICounterSalesReturn.cs" />
+    <Compile Include="ICurrencyConversionContract.cs" />
+    <Compile Include="ICurrencyContract.cs" />
+    <Compile Include="ICreditDaysContract.cs" />
+    <Compile Include="ICreditNoteContract.cs" />
+    <Compile Include="ICustomerCreditNoteContract.cs" />
+    <Compile Include="ICustomerDebitNoteContract.cs" />
+    <Compile Include="ICustomerReturnVoucherContract.cs" />
+    <Compile Include="IDamageEntryContract.cs" />
+    <Compile Include="IDamageTypeContract.cs" />
+    <Compile Include="IDashBoardContract.cs" />
+    <Compile Include="IDebitNoteContract.cs" />
+    <Compile Include="IDepartmentContract.cs" />
+    <Compile Include="IDepreciationContract.cs" />
+    <Compile Include="IDesignationContract.cs" />
+    <Compile Include="IDiagnosisContract.cs" />
+    <Compile Include="IDirectPurchaseInvoiceContract.cs" />
+    <Compile Include="IDirectSalesInvoiceContract.cs" />
+    <Compile Include="IDischargeContract.cs" />
+    <Compile Include="IDiscountCategoryContract.cs" />
+    <Compile Include="IDiscountContract.cs" />
+    <Compile Include="IDoctorContract.cs" />
+    <Compile Include="IDriverContract.cs" />
+    <Compile Include="IEmployeeContract.cs" />
+    <Compile Include="IEmployeeFreeMedicineCreditLimitContract.cs" />
+    <Compile Include="IFleetContract.cs" />
+    <Compile Include="IFSOContract.cs" />
+    <Compile Include="IFundTransferContract.cs" />
+    <Compile Include="IFundTransferReceiptContract.cs" />
+    <Compile Include="IGatePassContract.cs" />
+    <Compile Include="IGeneralContract.cs" />
+    <Compile Include="IGenericNameContract.cs" />
+    <Compile Include="ICostingMethodContract.cs" />
+    <Compile Include="ISalesGoodsReceiptNote.cs" />
+    <Compile Include="ISalesInquiry.cs" />
+    <Compile Include="ITaxTypeContract.cs" />
+    <Compile Include="IGSTCategoryContract.cs" />
+    <Compile Include="IGSTContract.cs" />
+    <Compile Include="IGSTSubCategoryContract.cs" />
+    <Compile Include="IIncentiveCalculationContract.cs" />
+    <Compile Include="IInterCompanyContract.cs" />
+    <Compile Include="IInterCompanyPurchaseInvoiceContract.cs" />
+    <Compile Include="IInternationalPatientContract.cs" />
+    <Compile Include="IIPCaseSheetContract.cs" />
+    <Compile Include="IIRGContract.cs" />
+    <Compile Include="IJobWorkIssueContrtact.cs" />
+    <Compile Include="IJobWorkReceiptContract.cs" />
+    <Compile Include="IJournalContract.cs" />
+    <Compile Include="ILaboratoryTestContract.cs" />
+    <Compile Include="ILaboratoryTestResultContract.cs" />
+    <Compile Include="ILabTestContract.cs" />
+    <Compile Include="ILeaveTypeContract.cs" />
+    <Compile Include="ILocalPurchaseInvoiceContract.cs" />
+    <Compile Include="ILocationContract.cs" />
+    <Compile Include="ILocationGroupContract.cs" />
+    <Compile Include="ILocationHeadContract.cs" />
+    <Compile Include="ILogicCodeContract.cs" />
+    <Compile Include="IMachineContract.cs" />
+    <Compile Include="IManufacturerContract.cs" />
+    <Compile Include="IMedicineConsumptionContract.cs" />
+    <Compile Include="IPatientDiagnosisContract.cs" />
+    <Compile Include="IMaterialPurificationContract.cs" />
+    <Compile Include="IMaterialRequirementPlanContract.cs" />
+    <Compile Include="IMilkSupplierContract.cs" />
+    <Compile Include="ICounterSalesContract.cs" />
+    <Compile Include="IMouldContract.cs" />
+    <Compile Include="IMouldsettingsContract.cs" />
+    <Compile Include="IOpeningStockContract.cs" />
+    <Compile Include="IOutPatientContract.cs" />
+    <Compile Include="IPatientContract.cs" />
+    <Compile Include="IPaymentDaysContract.cs" />
+    <Compile Include="IPaymentGroupContract.cs" />
+    <Compile Include="IPaymentModeContract.cs" />
+    <Compile Include="IPaymentReturnVoucherContract.cs" />
+    <Compile Include="IPaymentTypeContract.cs" />
+    <Compile Include="IPaymentVoucher.cs" />
+    <Compile Include="IPeriodClosingContract.cs" />
+    <Compile Include="IPhysiotherapyContract.cs" />
+    <Compile Include="IPlacesContract.cs" />
+    <Compile Include="IPowerConsumptionContract.cs" />
+    <Compile Include="IPremisesContract.cs" />
+    <Compile Include="IPreprocessIssueReceipt.cs" />
+    <Compile Include="IPreprocessIssue.cs" />
+    <Compile Include="IPrescriptionFormatContract.cs" />
+    <Compile Include="IPriceListContract.cs" />
+    <Compile Include="IPrivilegeCardContract.cs" />
+    <Compile Include="IProcessContract.cs" />
+    <Compile Include="IProductionDefinitionContract.cs" />
+    <Compile Include="IProductionIssue.cs" />
+    <Compile Include="IProductionPackingContract.cs" />
+    <Compile Include="IProductionPackingScheduleContract.cs" />
+    <Compile Include="IProductionSchedule.cs" />
+    <Compile Include="IProformaInvoice.cs" />
+    <Compile Include="IProjectContract.cs" />
+    <Compile Include="IPurchaseReturnContract.cs" />
+    <Compile Include="IPurchaseReturnOrderContract.cs" />
+    <Compile Include="IPurchaseReturnProcessingContract.cs" />
+    <Compile Include="IQCProductionContract.cs" />
+    <Compile Include="IQCTestContract.cs" />
+    <Compile Include="IQcTestDefinitionContract.cs" />
+    <Compile Include="IRateAdjustmentContract.cs" />
+    <Compile Include="IReceiptVoucher.cs" />
+    <Compile Include="IReceivablesContract.cs" />
+    <Compile Include="IReOrderContract.cs" />
+    <Compile Include="IRepakingContract.cs" />
+    <Compile Include="IReportContract.cs" />
+    <Compile Include="IRetirementContract.cs" />
+    <Compile Include="IRoleContract.cs" />
+    <Compile Include="IRolePermissionContract.cs" />
+    <Compile Include="ICategoryContract.cs" />
+    <Compile Include="ICustomerContract.cs" />
+    <Compile Include="IDistrictContract.cs" />
+    <Compile Include="IFileContract.cs" />
+    <Compile Include="IMilkPurchase.cs" />
+    <Compile Include="IPayment.cs" />
+    <Compile Include="IPurchaseInvoice.cs" />
+    <Compile Include="IPurchaseReturn.cs" />
+    <Compile Include="IQualityCheckContract.cs" />
+    <Compile Include="ICountryContract.cs" />
+    <Compile Include="IGoodsReceiptNoteContract.cs" />
+    <Compile Include="IItemMasterService.cs" />
+    <Compile Include="IDropdownContract.cs" />
+    <Compile Include="IPurchaseOrder.cs" />
+    <Compile Include="IPurchaseRequisition.cs" />
+    <Compile Include="IRoomAllocationContract.cs" />
+    <Compile Include="IRoomChangeContract.cs" />
+    <Compile Include="IRoomContract.cs" />
+    <Compile Include="IRoomReservationContract.cs" />
+    <Compile Include="ISalesBudgetContract.cs" />
+    <Compile Include="ISalesForecastContract.cs" />
+    <Compile Include="ISalesInvoice.cs" />
+    <Compile Include="ISalesOrder.cs" />
+    <Compile Include="ISalesRepresentativeContract.cs" />
+    <Compile Include="ISalesReturn.cs" />
+    <Compile Include="ISchemeAllocationContract.cs" />
+    <Compile Include="IScreeningContract.cs" />
+    <Compile Include="ISerialNo.cs" />
+    <Compile Include="IServiceItemIssueContract.cs" />
+    <Compile Include="IServiceItemReceiptContract.cs" />
+    <Compile Include="IServicePurchaseInvoice.cs" />
+    <Compile Include="IServicePurchaseOrderContract.cs" />
+    <Compile Include="IServicePurchaseRequisition.cs" />
+    <Compile Include="IServiceRecieptNote.cs" />
+    <Compile Include="IServiceSalesInvoiceContract.cs" />
+    <Compile Include="IServiceSalesOrderContract.cs" />
+    <Compile Include="ISLAContract.cs" />
+    <Compile Include="ISpecimenContract.cs" />
+    <Compile Include="IstateContract.cs" />
+    <Compile Include="IStatusContract.cs" />
+    <Compile Include="IStockAdjustmentContract.cs" />
+    <Compile Include="IStockAdjustmentReasonsContract.cs" />
+    <Compile Include="IStockAdjustmentScheduleContract.cs" />
+    <Compile Include="IStockConsumptionContract.cs" />
+    <Compile Include="IStockIssueContract.cs" />
+    <Compile Include="IStockReceiptContract.cs" />
+    <Compile Include="IStockRequestContract.cs" />
+    <Compile Include="IStockValueContract.cs" />
+    <Compile Include="ISubmasterContract.cs" />
+    <Compile Include="ISupplierAccountsCategoryContract.cs" />
+    <Compile Include="ISupplierCategoryContract.cs" />
+    <Compile Include="ISupplierContract.cs" />
+    <Compile Include="ISupplierCreditNoteContract.cs" />
+    <Compile Include="ISupplierDebitNoteContract.cs" />
+    <Compile Include="ITDSContract.cs" />
+    <Compile Include="ItemContract.cs" />
+    <Compile Include="ITransportPermitContract.cs" />
+    <Compile Include="ITreasuryContract.cs" />
+    <Compile Include="ITreatmentContract.cs" />
+    <Compile Include="ITreatmentProcessContract.cs" />
+    <Compile Include="ITreatmentRoomContract.cs" />
+    <Compile Include="ITreatmentScheduleContract.cs" />
+    <Compile Include="ITurnOverDiscountContract.cs" />
+    <Compile Include="IABCCodeContract.cs" />
+    <Compile Include="IBinContract.cs" />
+    <Compile Include="ILotContract.cs" />
+    <Compile Include="IBuyerContract.cs" />
+    <Compile Include="IUnitGroupContract.cs" />
+    <Compile Include="IUnitContract.cs" />
+    <Compile Include="IUserContract.cs" />
+    <Compile Include="IUserLocationsContract.cs" />
+    <Compile Include="IUserRolesContract.cs" />
+    <Compile Include="IWareHouseContract.cs" />
+    <Compile Include="IXrayContract.cs" />
+    <Compile Include="IXrayTestContract.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BusinessObject\BusinessObject.csproj">
+      <Project>{36bdf876-796d-4516-b6a2-a410892d8485}</Project>
+      <Name>BusinessObject</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Debug\DLL\" />
+    <Folder Include="bin\Release\" />
+    <Folder Include="obj\Debug\TempPE\" />
+    <Folder Include="obj\Release\TempPE\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

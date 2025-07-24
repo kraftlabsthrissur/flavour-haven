@@ -1,0 +1,589 @@
+      
+--exec Master.SpGetSuppliersList 'Payment',null,null,null,null,null,null,null,null,'asc',0,1000,1,1      
+ALTER  PROCEDURE [Master].[SpGetSuppliersList]                  
+(                  
+ @Type VARCHAR(50),                  
+ @CodeHint VARCHAR(20),                   
+ @NameHint VARCHAR(100),                  
+ @LocationHint VARCHAR(100),                  
+ @ItemCategoryHint VARCHAR(100),                 
+ @SupplierCategoryHint VARCHAR(100),            
+ @OldCodeHint VARCHAR(100),         
+ @GSTRegisteredHint VARCHAR(100),
+ @LandLine VARCHAR(100),
+ @MobileNo VARCHAR(100),
+ @SortField VARCHAR(100),                  
+ @SortOrder VARCHAR(10),                  
+ @Offset INT = 0,                  
+ @Limit INT = 20,                   
+ @LocationID INT,                  
+ @ApplicationID INT                  
+)                  
+AS                  
+BEGIN                  
+ SET @Offset = @Offset + 1                  
+ DECLARE @totalRecords int = 0,@BaseCurrencyID INT;    
+   set @BaseCurrencyID = (select top 1 CurrencyID from Location WHERE ID=@LocationID)      
+ IF @Type = 'Service'                  
+ Begin                  
+  SELECT @totalRecords =  Count(ID) FROM viServiceSupplier    where LocationID IN(@LocationID)  AND Name NOT LIKE '%LOCAL PURCHASE%'               
+  ;With Supplier_CTE AS (                  
+  SELECT Distinct top 10000  Count(*) OVER(Partition By 1) AS recordsFiltered,                  
+  V.ID,V.Code,V.Name,ISNULL(V.OldSupplierCode,'') as OldCode,BillingPlace AS Location, V.StateID,V.IsGSTRegistered,V.ItemCategory, V.SupplierCategory,        
+  V.GSTNo,V.CreditDays, 0 as InterCompanyLocationID, '' AS BankACNo,'' BankName,'Service' Status,              
+   0  as IsInterCompany,V.GSTRegistered,Email,dbo.FnGetCurrencyConversionRate(@BaseCurrencyID,V.CurrencyID)CurrencyConversionRate,    
+   V.CurrencyName,V.CurrencyCode,V.CurrencyPrefix,V.DecimalPlaces,V.CurrencyID,V.LandLine1,V.LandLine2,V.MobileNo,    
+   ROW_NUMBER() OVER (                  
+  ORDER BY                   
+   CASE WHEN @SortField+@SortOrder = 'NameASC' THEN (CASE WHEN name = ISNULL(@NameHint,'A') THEN 1 WHEN name LIKE ISNULL(@NameHint,'A')+'%' THEN 2 ELSE 3 END) END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'NameASC' THEN Name End ASC,                
+   CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN (CASE WHEN name = ISNULL(@NameHint,'A') THEN 1 WHEN name LIKE ISNULL(@NameHint,'A')+'%' THEN 2 ELSE 3 END) END DESC,                   
+   CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN Name END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'LocationASC' THEN BillingPlace END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'LocationDESC' THEN BillingPlace END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'CodeASC' THEN Code END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'CodeDESC' THEN Code END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'SupplierCategoryASC' THEN SupplierCategory END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'SupplierCategoryDESC' THEN SupplierCategory END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'ItemCategoryASC' THEN ItemCategory END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'ItemCategoryDESC' THEN ItemCategory END DESC,        
+   CASE WHEN @SortField+@SortOrder = 'GSTRegisteredASC' THEN GSTRegistered END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'GSTRegisteredDESC' THEN GSTRegistered END DESC                    
+  ) AS RowNum --into #TempServiceSuppliers                   
+  FROM viServiceSupplier V               
+  Where                  
+  V.Code LIKE '%' + ISNULL(@CodeHint,'')+ '%'                   
+  AND V.Name LIKE '%' + ISNULL(@NameHint,'')+'%'            
+  --AND V.Name NOT LIKE '%LOCAL PURCHASE%'                  
+  AND V.BillingPlace LIKE '%' + ISNULL(@LocationHint,'')+'%'                   
+  AND V.SupplierCategory LIKE '%' + ISNULL(@SupplierCategoryHint,'')+'%'                  
+  AND V.ItemCategory LIKE '%' + ISNULL(@ItemCategoryHint,'')+'%'         
+  AND V.GSTRegistered LIKE '%' + ISNULL(@GSTRegisteredHint,'')+'%'           
+  AND V.LocationID IN(@LocationID)
+  AND (@MobileNo IS NULL OR @MobileNo ='' OR V.MobileNo Like '%' + @MobileNo+'%')
+  AND (@LandLine IS NULL OR @LandLine ='' OR V.LandLine1 Like '%' + @LandLine+'%' OR V.LandLine2 Like '%' + @LandLine+'%')
+  )              
+  SELECT  ID,Code,Name,Location,Oldcode,StateID,IsGSTRegistered,SupplierCategory,ItemCategory, GSTNo,Email, @totalRecords AS totalRecords ,    
+  recordsFiltered,CreditDays,IsInterCompany,GSTRegistered ,InterCompanyLocationID,BankACNo,BankName,Status,CurrencyConversionRate,    
+   CurrencyName,CurrencyCode,CurrencyPrefix,DecimalPlaces,CurrencyID,LandLine1,LandLine2,MobileNo               
+  FROM Supplier_CTE                  
+  WHERE RowNum >= @Offset                  
+  AND RowNum < @Offset + @Limit                  
+  Order by RowNum                
+ END                  
+ else if @Type = 'Stock'                  
+ Begin                  
+  SELECT @totalRecords =  Count(ID) FROM viStockSupplier where LocationID IN(@LocationID)  AND Name NOT LIKE '%LOCAL PURCHASE%'                        
+  ;With Supplier_CTE AS (                  
+  SELECT Distinct top 10000  Count(*) OVER(Partition By 1) AS recordsFiltered,               
+      V.ID,V.Code,V.Name,ISNULL(V.OldSupplierCode,'') as OldCode,BillingPlace AS Location, V.StateID,V.IsGSTRegistered,V.ItemCategory, V.SupplierCategory,V.GSTNo,V.CreditDays,                  
+      case when V.SupplierAccountsCategoryID=3 then 1 else 0 end as IsInterCompany,V.GSTRegistered, InterCompanyLocationID, '' AS BankACNo,'' AS BankName, 'Stock' Status,Email,    
+   dbo.FnGetCurrencyConversionRate(@BaseCurrencyID,V.CurrencyID)CurrencyConversionRate,    
+      V.CurrencyName,V.CurrencyCode,V.CurrencyPrefix,V.DecimalPlaces,V.CurrencyID,V.LandLine1,V.LandLine2,V.MobileNo,    
+   ROW_NUMBER() OVER (                  
+     ORDER BY                   
+    CASE WHEN @SortField+@SortOrder = 'NameASC' THEN (CASE WHEN name = ISNULL(@NameHint,'A') THEN 1 WHEN name LIKE ISNULL(@NameHint,'A')+'%' THEN 2 ELSE 3 END) END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'NameASC' THEN Name END ASC,                 
+    CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN (CASE WHEN name = ISNULL(@NameHint,'A') THEN 1 WHEN name LIKE ISNULL(@NameHint,'A')+'%' THEN 2 ELSE 3 END) END DESC,                   
+    CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN Name END DESC,                  
+    CASE WHEN @SortField+@SortOrder = 'LocationASC' THEN BillingPlace END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'LocationDESC' THEN BillingPlace END DESC,                  
+    CASE WHEN @SortField+@SortOrder = 'CodeASC' THEN Code END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'CodeDESC' THEN Code END DESC,                  
+    CASE WHEN @SortField+@SortOrder = 'SupplierCategoryASC' THEN SupplierCategory END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'SupplierCategoryDESC' THEN SupplierCategory END DESC,                  
+    CASE WHEN @SortField+@SortOrder = 'ItemCategoryASC' THEN ItemCategory END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'ItemCategoryDESC' THEN ItemCategory END DESC,        
+    CASE WHEN @SortField+@SortOrder = 'ItemCategoryASC' THEN ItemCategory END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'ItemCategoryDESC' THEN ItemCategory END DESC,        
+    CASE WHEN @SortField+@SortOrder = 'GSTRegisteredASC' THEN GSTRegistered END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'GSTRegisteredDESC' THEN GSTRegistered END DESC                       
+     ) AS RowNum                 
+  FROM viStockSupplier V                  
+  Where                  
+  V.Code LIKE '%' + ISNULL(@CodeHint,'')+ '%'                   
+  AND V.Name LIKE '%' + ISNULL(@NameHint,'')+'%'            
+  --AND V.Name NOT LIKE '%LOCAL PURCHASE%'                      
+  AND V.BillingPlace LIKE '%' + ISNULL(@LocationHint,'')+'%'                   
+  AND V.SupplierCategory LIKE '%' + ISNULL(@SupplierCategoryHint,'')+'%'                  
+  AND V.ItemCategory LIKE '%' + ISNULL(@ItemCategoryHint,'')+'%'         
+  AND V.GSTRegistered LIKE '%' + ISNULL(@GSTRegisteredHint,'')+'%'                 
+  AND V.LocationID IN(@LocationID) 
+  AND (@MobileNo IS NULL OR @MobileNo ='' OR V.MobileNo Like '%' + @MobileNo+'%')
+  AND (@LandLine IS NULL OR @LandLine ='' OR V.LandLine1 Like '%' + @LandLine+'%' OR V.LandLine2 Like '%' + @LandLine+'%')
+  )                  
+  SELECT  ID,Code,Name,Location,OldCode,StateID,IsGSTRegistered,SupplierCategory,ItemCategory, GSTNo,Email, @totalRecords AS totalRecords ,        
+  recordsFiltered,CreditDays,IsInterCompany,GSTRegistered ,InterCompanyLocationID ,BankACNo,BankName , Status,CurrencyConversionRate,    
+   CurrencyName,CurrencyCode,CurrencyPrefix,DecimalPlaces,CurrencyID,LandLine1,LandLine2,MobileNo                 
+  FROM Supplier_CTE                  
+  WHERE RowNum >= @Offset                  
+  AND RowNum < @Offset + @Limit                  
+  Order by RowNum                
+END                
+ else if @Type = 'Milk'                  
+Begin                 
+   SELECT @totalRecords =  Count(ID) FROM viMilkSupplier                
+   ;With Supplier_CTE AS (                  
+   SELECT Distinct top 10000  Count(*) OVER(Partition By 1) AS recordsFiltered,                  
+    V.ID,V.Code,V.Name,ISNULL(V.OldSupplierCode,'') as OldCode,BillingPlace AS Location, V.StateID,V.IsGSTRegistered,V.ItemCategory,         
+ V.SupplierCategory,V.GSTNo,V.CreditDays, 0 as InterCompanyLocationID,'' AS BankACNo, '' AS BankName,'Milk' Status,    
+ dbo.FnGetCurrencyConversionRate(@BaseCurrencyID,V.CurrencyID)CurrencyConversionRate,    
+    V.CurrencyName,V.CurrencyCode,V.CurrencyPrefix,V.DecimalPlaces,V.CurrencyID,V.LandLine1,V.LandLine2,V.MobileNo,    
+     0  as IsInterCompany,V.GSTRegistered,Email,ROW_NUMBER() OVER (                  
+    ORDER BY                   
+     CASE WHEN @SortField+@SortOrder = 'NameASC' THEN (CASE WHEN name = ISNULL(@NameHint,'A') THEN 1 WHEN name LIKE ISNULL(@NameHint,'A')+'%' THEN 2 ELSE 3 END) END ASC,                  
+     CASE WHEN @SortField+@SortOrder = 'NameASC' THEN Name END ASC,                 
+     CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN (CASE WHEN name = ISNULL(@NameHint,'A') THEN 1 WHEN name LIKE ISNULL(@NameHint,'A')+'%' THEN 2 ELSE 3 END) END DESC,                   
+     CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN Name END DESC,                  
+     CASE WHEN @SortField+@SortOrder = 'LocationASC' THEN BillingPlace END ASC,                  
+     CASE WHEN @SortField+@SortOrder = 'LocationDESC' THEN BillingPlace END DESC,                  
+     CASE WHEN @SortField+@SortOrder = 'CodeASC' THEN Code END ASC,                  
+     CASE WHEN @SortField+@SortOrder = 'CodeDESC' THEN Code END DESC,                  
+     CASE WHEN @SortField+@SortOrder = 'SupplierCategoryASC' THEN SupplierCategory END ASC,                  
+     CASE WHEN @SortField+@SortOrder = 'SupplierCategoryDESC' THEN SupplierCategory END DESC,                  
+     CASE WHEN @SortField+@SortOrder = 'ItemCategoryASC' THEN ItemCategory END ASC,                  
+     CASE WHEN @SortField+@SortOrder = 'ItemCategoryDESC' THEN ItemCategory END DESC,        
+     CASE WHEN @SortField+@SortOrder = 'GSTRegisteredASC' THEN GSTRegistered END ASC,                  
+     CASE WHEN @SortField+@SortOrder = 'GSTRegisteredDESC' THEN GSTRegistered END DESC                  
+   ) AS RowNum                 
+   FROM viMilkSupplier V                  
+   Where                  
+   V.Code LIKE '%' + ISNULL(@CodeHint,'')+ '%'                   
+   AND V.Name LIKE '%' + ISNULL(@NameHint,'')+'%'             
+  -- AND V.Name NOT LIKE '%LOCAL PURCHASE%'                     
+   AND V.BillingPlace LIKE '%' + ISNULL(@LocationHint,'')+'%'                   
+   AND V.SupplierCategory LIKE '%' + ISNULL(@SupplierCategoryHint,'')+'%'                  
+   AND V.ItemCategory LIKE '%' + ISNULL(@ItemCategoryHint,'')+'%'          
+   AND V.GSTRegistered LIKE '%' + ISNULL(@GSTRegisteredHint,'')+'%'               
+   AND V.LocationID IN(@LocationID)
+   AND (@MobileNo IS NULL OR @MobileNo ='' OR V.MobileNo Like '%' + @MobileNo+'%')
+   AND (@LandLine IS NULL OR @LandLine ='' OR V.LandLine1 Like '%' + @LandLine+'%' OR V.LandLine2 Like '%' + @LandLine+'%')
+   )                
+   SELECT  ID,Code,Name,Location,OldCode,StateID,IsGSTRegistered,SupplierCategory,ItemCategory, GSTNo,Email, @totalRecords AS totalRecords ,        
+   recordsFiltered,CreditDays,IsInterCompany,GSTRegistered  , InterCompanyLocationID,BankACNo,BankName, Status,CurrencyConversionRate,    
+   CurrencyName,CurrencyCode,CurrencyPrefix,DecimalPlaces,CurrencyID,LandLine1,LandLine2,MobileNo                  
+   FROM Supplier_CTE                  
+   WHERE RowNum >= @Offset                  
+   AND RowNum < @Offset + @Limit                  
+   Order by RowNum                
+ END                
+ else if @Type = 'Stock-and-Milk'                  
+ Begin                  
+   SELECT @totalRecords =  Count(ID) FROM viStockAndMilkSupplier                
+   ;With Supplier_CTE AS (                  
+   SELECT Distinct top 10000  Count(*) OVER(Partition By 1) AS recordsFiltered,                  
+    V.ID,V.Code,V.Name,ISNULL(V.OldSupplierCode,'') as OldCode,BillingPlace AS Location, V.StateID,V.IsGSTRegistered,V.ItemCategory,         
+ V.SupplierCategory,V.GSTNo,V.CreditDays,  0 as InterCompanyLocationID, '' AS BankACNo,'' AS BankName,'StockAndMilk' Status,    
+  dbo.FnGetCurrencyConversionRate(@BaseCurrencyID,V.CurrencyID)CurrencyConversionRate,    
+     V.CurrencyName,V.CurrencyCode,V.CurrencyPrefix,V.DecimalPlaces,V.CurrencyID,V.LandLine1,V.LandLine2,V.MobileNo,    
+     0 as IsInterCompany,V.GSTRegistered,Email, ROW_NUMBER() OVER (                  
+    ORDER BY                   
+     CASE WHEN @SortField+@SortOrder = 'NameASC' THEN (CASE WHEN name = ISNULL(@NameHint,'A') THEN 1 WHEN name LIKE ISNULL(@NameHint,'A')+'%' THEN 2 ELSE 3 END) END ASC,                  
+     CASE WHEN @SortField+@SortOrder = 'NameASC' THEN Name END ASC,                 
+     CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN (CASE WHEN name = ISNULL(@NameHint,'A') THEN 1 WHEN name LIKE ISNULL(@NameHint,'A')+'%' THEN 2 ELSE 3 END) END DESC,                   
+     CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN Name END DESC,                  
+     CASE WHEN @SortField+@SortOrder = 'LocationASC' THEN BillingPlace END ASC,                  
+     CASE WHEN @SortField+@SortOrder = 'LocationDESC' THEN BillingPlace END DESC,                  
+     CASE WHEN @SortField+@SortOrder = 'CodeASC' THEN Code END ASC,                  
+     CASE WHEN @SortField+@SortOrder = 'CodeDESC' THEN Code END DESC,                  
+     CASE WHEN @SortField+@SortOrder = 'SupplierCategoryASC' THEN SupplierCategory END ASC,                  
+     CASE WHEN @SortField+@SortOrder = 'SupplierCategoryDESC' THEN SupplierCategory END DESC,                  
+     CASE WHEN @SortField+@SortOrder = 'ItemCategoryASC' THEN ItemCategory END ASC,                  
+     CASE WHEN @SortField+@SortOrder = 'ItemCategoryDESC' THEN ItemCategory END DESC,        
+     CASE WHEN @SortField+@SortOrder = 'GSTRegisteredASC' THEN GSTRegistered END ASC,                  
+     CASE WHEN @SortField+@SortOrder = 'GSTRegisteredDESC' THEN GSTRegistered END DESC                  
+   ) AS RowNum                 
+   FROM viStockAndMilkSupplier V                  
+   Where                  
+   V.Code LIKE '%' + ISNULL(@CodeHint,'')+ '%'                   
+   AND V.Name LIKE '%' + ISNULL(@NameHint,'')+'%'               
+   --AND V.Name NOT LIKE '%LOCAL PURCHASE%'                         
+   AND V.BillingPlace LIKE '%' + ISNULL(@LocationHint,'')+'%'                   
+   AND V.SupplierCategory LIKE '%' + ISNULL(@SupplierCategoryHint,'')+'%'                  
+   AND V.ItemCategory LIKE '%' + ISNULL(@ItemCategoryHint,'')+'%'         
+   AND V.GSTRegistered LIKE '%' + ISNULL(@GSTRegisteredHint,'')+'%'                   
+   AND V.LocationID IN(@LocationID)
+   AND (@MobileNo IS NULL OR @MobileNo ='' OR V.MobileNo Like '%' + @MobileNo+'%')
+   AND (@LandLine IS NULL OR @LandLine ='' OR V.LandLine1 Like '%' + @LandLine+'%' OR V.LandLine2 Like '%' + @LandLine+'%')
+   )                
+   SELECT  ID,Code,Name,Location,OldCode,StateID,IsGSTRegistered,SupplierCategory,ItemCategory, GSTNo,Email, @totalRecords AS totalRecords ,        
+   recordsFiltered,CreditDays,IsInterCompany,GSTRegistered,  InterCompanyLocationID ,BankACNo,BankName, Status ,CurrencyConversionRate,    
+   CurrencyName,CurrencyCode,CurrencyPrefix,DecimalPlaces,CurrencyID,LandLine1,LandLine2,MobileNo                  
+   FROM Supplier_CTE                  
+   WHERE RowNum >= @Offset                  
+   AND RowNum < @Offset + @Limit                  
+   Order by RowNum                
+ END                  
+ else IF @Type = 'GRNWise'                  
+  Begin                 
+  SELECT @totalRecords =  Count(DISTINCT V.ID) FROM viGRNWiseSupplier V Inner join GoodsReceiptNote GRN on GRN.SupplierID = V.ID                  
+  ;With Supplier_CTE AS (                  
+   SELECT Distinct top 10000  Count(*) OVER(Partition By 1) AS recordsFiltered,                  
+     V.ID,V.Code,V.Name,ISNULL(V.OldSupplierCode,'') as OldCode,BillingPlace AS Location, V.StateID,V.IsGSTRegistered,V.ItemCategory,        
+   V.SupplierCategory,'' as GSTNo, 1 as CreditDays, 0 as InterCompanyLocationID, '' AS BankACNo, '' AS BankName,'GRNWise' Status,    
+    dbo.FnGetCurrencyConversionRate(@BaseCurrencyID,V.CurrencyID)CurrencyConversionRate,    
+    V.CurrencyName,V.CurrencyCode,V.CurrencyPrefix,V.DecimalPlaces,V.CurrencyID,V.LandLine1,V.LandLine2,V.MobileNo,    
+     0 as IsInterCompany,V.GSTRegistered,Email,ROW_NUMBER() OVER (                  
+     ORDER BY                   
+   CASE WHEN @SortField+@SortOrder = 'NameASC' THEN Name END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN Name END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'LocationASC' THEN BillingPlace END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'LocationDESC' THEN BillingPlace END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'CodeASC' THEN V.Code END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'CodeDESC' THEN V.Code END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'SupplierCategoryASC' THEN SupplierCategory END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'SupplierCategoryDESC' THEN SupplierCategory END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'ItemCategoryASC' THEN ItemCategory END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'ItemCategoryDESC' THEN ItemCategory END DESC,        
+   CASE WHEN @SortField+@SortOrder = 'GSTRegisteredASC' THEN GSTRegistered END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'GSTRegisteredDESC' THEN GSTRegistered END DESC                  
+     ) AS RowNum                   
+   FROM viGRNWiseSupplier V                  
+   Where V.Code LIKE '%' + ISNULL(@CodeHint,'')+ '%'                   
+   AND V.Name LIKE '%' + ISNULL(@NameHint,'')+'%'              
+   --AND V.Name NOT LIKE '%LOCAL PURCHASE%'                          
+   AND V.BillingPlace LIKE '%' + ISNULL(@LocationHint,'')+'%'                   
+   AND V.SupplierCategory LIKE '%' + ISNULL(@SupplierCategoryHint,'')+'%'                  
+   AND V.ItemCategory LIKE '%' + ISNULL(@ItemCategoryHint,'')+'%'        
+   AND V.GSTRegistered LIKE '%' + ISNULL(@GSTRegisteredHint,'')+'%'                     
+   AND V.LocationID IN(@LocationID) 
+   AND (@MobileNo IS NULL OR @MobileNo ='' OR V.MobileNo Like '%' + @MobileNo+'%')
+   AND (@LandLine IS NULL OR @LandLine ='' OR V.LandLine1 Like '%' + @LandLine+'%' OR V.LandLine2 Like '%' + @LandLine+'%')
+   )                  
+                  
+  SELECT  ID,Code,Name,Location,OldCode,StateID,IsGSTRegistered,SupplierCategory,ItemCategory, GSTNo,Email, @totalRecords AS totalRecords ,        
+  recordsFiltered,CreditDays  ,IsInterCompany,GSTRegistered , InterCompanyLocationID ,BankACNo, BankName ,Status,CurrencyConversionRate,    
+   CurrencyName,CurrencyCode,CurrencyPrefix,DecimalPlaces,CurrencyID,LandLine1,LandLine2,MobileNo             
+  FROM Supplier_CTE                  
+  WHERE RowNum >= @Offset                  
+  AND RowNum < @Offset + @Limit                 
+   Order by RowNum                 
+  END                 
+  Else IF @Type = 'Payment'                  
+ Begin                  
+            
+  SELECT @totalRecords =  Count(ID) FROM viPaymentSupplier where LocationID IN(@LocationID)                 
+  ;With Supplier_CTE AS (                    
+   SELECT Distinct top 10000  Count(*) OVER(Partition By 1) AS recordsFiltered,                  
+     V.ID,V.Code,V.Name,ISNULL(V.OldSupplierCode,'') as OldCode,BillingPlace AS Location, V.StateID,V.IsGSTRegistered,V.ItemCategory,        
+   V.SupplierCategory,V.GSTNo,V.CreditDays,  0 as InterCompanyLocationID,ISNULL(V.BankACNo,'') AS BankACNo,ISNULL(V.BankName,'') AS BankName, '' Status ,    
+      dbo.FnGetCurrencyConversionRate(@BaseCurrencyID,V.CurrencyID)CurrencyConversionRate,    
+      V.CurrencyName,V.CurrencyCode,V.CurrencyPrefix,V.DecimalPlaces,V.CurrencyID,V.LandLine1,V.LandLine2,V.MobileNo,    
+      0 as IsInterCompany,V.GSTRegistered,Email,ROW_NUMBER() OVER (                  
+     ORDER BY                   
+   CASE WHEN @SortField+@SortOrder = 'NameASC' THEN Name END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN Name END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'LocationASC' THEN BillingPlace END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'LocationDESC' THEN BillingPlace END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'CodeASC' THEN Code END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'CodeDESC' THEN Code END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'SupplierCategoryASC' THEN SupplierCategory END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'SupplierCategoryDESC' THEN SupplierCategory END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'ItemCategoryASC' THEN ItemCategory END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'ItemCategoryDESC' THEN ItemCategory END DESC,        
+   CASE WHEN @SortField+@SortOrder = 'GSTRegisteredASC' THEN GSTRegistered END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'GSTRegisteredDESC' THEN GSTRegistered END DESC                  
+     ) AS RowNum --into #TempSuppliers                   
+   FROM viPaymentSupplier V                  
+   Where                  
+   V.Code LIKE '%' + ISNULL(@CodeHint,'')+ '%'                   
+   AND V.Name LIKE '%' + ISNULL(@NameHint,'')+'%'            
+   AND V.BillingPlace LIKE '%' + ISNULL(@LocationHint,'')+'%'                   
+   AND V.SupplierCategory LIKE '%' + ISNULL(@SupplierCategoryHint,'')+'%'                  
+   AND ISNULL(V.ItemCategory,'') LIKE '%' + ISNULL(@ItemCategoryHint,'')+'%'           
+   AND V.GSTRegistered LIKE '%' + ISNULL(@GSTRegisteredHint,'')+'%'               
+   AND V.LocationID IN(@LocationID)
+   AND (@MobileNo IS NULL OR @MobileNo ='' OR V.MobileNo Like '%' + @MobileNo+'%')
+   AND (@LandLine IS NULL OR @LandLine ='' OR V.LandLine1 Like '%' + @LandLine+'%' OR V.LandLine2 Like '%' + @LandLine+'%')
+   )                  
+   SELECT  ID,Code,Name,Location,OldCode,StateID,IsGSTRegistered,SupplierCategory,ItemCategory, GSTNo,Email, @totalRecords AS totalRecords ,        
+   recordsFiltered,CreditDays ,IsInterCompany,GSTRegistered, InterCompanyLocationID ,BankACNo, BankName,Status,CurrencyConversionRate,    
+   CurrencyName,CurrencyCode,CurrencyPrefix,DecimalPlaces,CurrencyID,LandLine1,LandLine2,MobileNo        
+  FROM Supplier_CTE                  
+  WHERE RowNum >= @Offset                  
+  AND RowNum < @Offset + @Limit                
+   Order by RowNum                 
+ End         
+ Else IF @Type = 'PaymentReturnVoucher'                  
+ Begin                  
+            
+  SELECT @totalRecords =  Count(ID) FROM viPaymentSupplier where LocationID IN(@LocationID)                 
+  ;With Supplier_CTE AS (                    
+   SELECT Distinct top 10000  Count(*) OVER(Partition By 1) AS recordsFiltered,                  
+     V.ID,V.Code,V.Name,ISNULL(V.OldSupplierCode,'') as OldCode,BillingPlace AS Location, V.StateID,V.IsGSTRegistered,V.ItemCategory,        
+   V.SupplierCategory,V.GSTNo,V.CreditDays,  0 as InterCompanyLocationID,ISNULL(V.BankACNo,'') AS BankACNo,ISNULL(V.BankName,'') AS BankName, '' Status ,     
+       dbo.FnGetCurrencyConversionRate(@BaseCurrencyID,V.CurrencyID)CurrencyConversionRate,    
+       V.CurrencyName,V.CurrencyCode,V.CurrencyPrefix,V.DecimalPlaces,V.CurrencyID,V.LandLine1,V.LandLine2,V.MobileNo,    
+      0 as IsInterCompany,V.GSTRegistered,Email,ROW_NUMBER() OVER (                  
+     ORDER BY                   
+   CASE WHEN @SortField+@SortOrder = 'NameASC' THEN Name END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN Name END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'LocationASC' THEN BillingPlace END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'LocationDESC' THEN BillingPlace END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'CodeASC' THEN Code END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'CodeDESC' THEN Code END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'SupplierCategoryASC' THEN SupplierCategory END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'SupplierCategoryDESC' THEN SupplierCategory END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'ItemCategoryASC' THEN ItemCategory END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'ItemCategoryDESC' THEN ItemCategory END DESC,        
+   CASE WHEN @SortField+@SortOrder = 'GSTRegisteredASC' THEN GSTRegistered END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'GSTRegisteredDESC' THEN GSTRegistered END DESC                  
+     ) AS RowNum --into #TempSuppliers                   
+   FROM viPaymentSupplierReturnVoucher V       
+   Where                  
+   V.Code LIKE '%' + ISNULL(@CodeHint,'')+ '%'                   
+   AND V.Name LIKE '%' + ISNULL(@NameHint,'')+'%'        
+   AND V.BillingPlace LIKE '%' + ISNULL(@LocationHint,'')+'%'                   
+   AND V.SupplierCategory LIKE '%' + ISNULL(@SupplierCategoryHint,'')+'%'                  
+   AND ISNULL(V.ItemCategory,'') LIKE '%' + ISNULL(@ItemCategoryHint,'')+'%'           
+   AND V.GSTRegistered LIKE '%' + ISNULL(@GSTRegisteredHint,'')+'%'               
+   AND V.LocationID IN(@LocationID)
+   AND (@MobileNo IS NULL OR @MobileNo ='' OR V.MobileNo Like '%' + @MobileNo+'%')
+   AND (@LandLine IS NULL OR @LandLine ='' OR V.LandLine1 Like '%' + @LandLine+'%' OR V.LandLine2 Like '%' + @LandLine+'%')
+   )                  
+   SELECT  ID,Code,Name,Location,OldCode,StateID,IsGSTRegistered,SupplierCategory,ItemCategory, GSTNo,Email, @totalRecords AS totalRecords ,        
+   recordsFiltered,CreditDays ,IsInterCompany,GSTRegistered, InterCompanyLocationID ,BankACNo, BankName,Status,CurrencyConversionRate,    
+   CurrencyName,CurrencyCode,CurrencyPrefix,DecimalPlaces,CurrencyID,LandLine1,LandLine2,MobileNo        
+  FROM Supplier_CTE                  
+  WHERE RowNum >= @Offset                  
+  AND RowNum < @Offset + @Limit                
+   Order by RowNum                 
+ End                  
+  else if @Type = 'NotInterCompany'                  
+ Begin               
+             
+  SELECT @totalRecords =  Count(ID) FROM viStockSupplier   where LocationID IN(@LocationID)              
+  AND  SupplierAccountsCategoryID <> 3                 
+  ;With Supplier_CTE AS (                  
+  SELECT Distinct top 10000  Count(*) OVER(Partition By 1) AS recordsFiltered,                  
+      V.ID,V.Code,V.Name,ISNULL(V.OldSupplierCode,'') as OldCode,BillingPlace AS Location, V.StateID,V.IsGSTRegistered,        
+   V.ItemCategory, V.SupplierCategory,V.GSTNo,V.CreditDays,InterCompanyLocationID, '' AS BankACNo, '' AS BankName,''Status,    
+          dbo.FnGetCurrencyConversionRate(@BaseCurrencyID,V.CurrencyID)CurrencyConversionRate,    
+       V.CurrencyName,V.CurrencyCode,V.CurrencyPrefix,V.DecimalPlaces, V.CurrencyID,V.LandLine1,V.LandLine2,V.MobileNo,   
+      0  as IsInterCompany,V.GSTRegistered,Email,ROW_NUMBER() OVER (                  
+     ORDER BY                   
+    CASE WHEN @SortField+@SortOrder = 'NameASC' THEN (CASE WHEN name = ISNULL(@NameHint,'A') THEN 1 WHEN name LIKE ISNULL(@NameHint,'A')+'%' THEN 2 ELSE 3 END) END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'NameASC' THEN Name END ASC,                 
+    CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN (CASE WHEN name = ISNULL(@NameHint,'A') THEN 1 WHEN name LIKE ISNULL(@NameHint,'A')+'%' THEN 2 ELSE 3 END) END DESC,                   
+    CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN Name END DESC,                  
+    CASE WHEN @SortField+@SortOrder = 'LocationASC' THEN BillingPlace END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'LocationDESC' THEN BillingPlace END DESC,          
+    CASE WHEN @SortField+@SortOrder = 'CodeASC' THEN Code END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'CodeDESC' THEN Code END DESC,                  
+    CASE WHEN @SortField+@SortOrder = 'SupplierCategoryASC' THEN SupplierCategory END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'SupplierCategoryDESC' THEN SupplierCategory END DESC,                  
+    CASE WHEN @SortField+@SortOrder = 'ItemCategoryASC' THEN ItemCategory END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'ItemCategoryDESC' THEN ItemCategory END DESC,        
+    CASE WHEN @SortField+@SortOrder = 'GSTRegisteredASC' THEN GSTRegistered END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'GSTRegisteredDESC' THEN GSTRegistered END DESC                  
+     ) AS RowNum                 
+  FROM viStockSupplier V                  
+  Where                  
+  V.Code LIKE '%' + ISNULL(@CodeHint,'')+ '%'                   
+  AND V.Name LIKE '%' + ISNULL(@NameHint,'')+'%'              
+   --AND V.Name NOT LIKE '%LOCAL PURCHASE%'                    
+  AND V.BillingPlace LIKE '%' + ISNULL(@LocationHint,'')+'%'                   
+  AND V.SupplierCategory LIKE '%' + ISNULL(@SupplierCategoryHint,'')+'%'                  
+  AND V.ItemCategory LIKE '%' + ISNULL(@ItemCategoryHint,'')+'%'           
+  AND V.GSTRegistered LIKE '%' + ISNULL(@GSTRegisteredHint,'')+'%'               
+  AND V.LocationID IN(@LocationID)             
+  AND  V.SupplierAccountsCategoryID <> 3
+  AND (@MobileNo IS NULL OR @MobileNo ='' OR V.MobileNo Like '%' + @MobileNo+'%')
+  AND (@LandLine IS NULL OR @LandLine ='' OR V.LandLine1 Like '%' + @LandLine+'%' OR V.LandLine2 Like '%' + @LandLine+'%')
+  )                  
+  SELECT  ID,Code,Name,Location,OldCode,StateID,IsGSTRegistered,SupplierCategory,ItemCategory, GSTNo,Email, @totalRecords AS totalRecords ,        
+  recordsFiltered,CreditDays ,IsInterCompany,GSTRegistered ,InterCompanyLocationID ,BankACNo,BankName,''Status ,CurrencyConversionRate,    
+   CurrencyName,CurrencyCode,CurrencyPrefix,DecimalPlaces,CurrencyID,LandLine1,LandLine2,MobileNo              
+  FROM Supplier_CTE                  
+  WHERE RowNum >= @Offset                  
+  AND RowNum < @Offset + @Limit                  
+  Order by RowNum                
+ END              
+ else             
+              
+ IF @Type='NotInterCompanyAndMilk'                 
+ Begin                 
+            
+  SELECT @totalRecords =  Count(ID) FROM viStockAndMilkSupplier   where LocationID IN(@LocationID)                 
+  ;With Supplier_CTE AS (                  
+  SELECT Distinct top 10000  Count(*) OVER(Partition By 1) AS recordsFiltered,                  
+   V.ID,V.Code,V.Name,ISNULL(V.OldSupplierCode,'') as OldCode,BillingPlace AS Location, V.StateID,V.IsGSTRegistered,V.ItemCategory,        
+    V.SupplierCategory,V.GSTNo,V.CreditDays,   0 as InterCompanyLocationID,  '' AS BankACNo, '' AS BankName, ''Status,      
+         dbo.FnGetCurrencyConversionRate(@BaseCurrencyID,V.CurrencyID)CurrencyConversionRate,    
+      V.CurrencyName,V.CurrencyCode,V.CurrencyPrefix,V.DecimalPlaces,V.CurrencyID,V.LandLine1,V.LandLine2,V.MobileNo,    
+      0 as IsInterCompany,V.GSTRegistered,Email,ROW_NUMBER() OVER (                  
+   ORDER BY                   
+    CASE WHEN @SortField+@SortOrder = 'NameASC' THEN (CASE WHEN name = ISNULL(@NameHint,'A') THEN 1 WHEN name LIKE ISNULL(@NameHint,'A')+'%' THEN 2 ELSE 3 END) END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'NameASC' THEN Name END ASC,                 
+    CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN (CASE WHEN name = ISNULL(@NameHint,'A') THEN 1 WHEN name LIKE ISNULL(@NameHint,'A')+'%' THEN 2 ELSE 3 END) END DESC,                   
+    CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN Name END DESC,                  
+    CASE WHEN @SortField+@SortOrder = 'LocationASC' THEN BillingPlace END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'LocationDESC' THEN BillingPlace END DESC,                  
+    CASE WHEN @SortField+@SortOrder = 'CodeASC' THEN Code END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'CodeDESC' THEN Code END DESC,                  
+    CASE WHEN @SortField+@SortOrder = 'SupplierCategoryASC' THEN SupplierCategory END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'SupplierCategoryDESC' THEN SupplierCategory END DESC,                  
+    CASE WHEN @SortField+@SortOrder = 'ItemCategoryASC' THEN ItemCategory END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'ItemCategoryDESC' THEN ItemCategory END DESC,        
+    CASE WHEN @SortField+@SortOrder = 'GSTRegisteredASC' THEN GSTRegistered END ASC,                  
+    CASE WHEN @SortField+@SortOrder = 'GSTRegisteredDESC' THEN GSTRegistered END DESC                  
+  ) AS RowNum                 
+  FROM viStockAndMilkSupplier V                  
+  Where                  
+  V.Code LIKE '%' + ISNULL(@CodeHint,'')+ '%'                   
+  AND V.Name LIKE '%' + ISNULL(@NameHint,'')+'%'            
+  --AND V.Name NOT LIKE '%LOCAL PURCHASE%'                    
+  AND V.SupplierAccountsCategoryID <> 3                
+  AND V.BillingPlace LIKE '%' + ISNULL(@LocationHint,'')+'%'                   
+  AND V.SupplierCategory LIKE '%' + ISNULL(@SupplierCategoryHint,'')+'%'                  
+  AND V.ItemCategory LIKE '%' + ISNULL(@ItemCategoryHint,'')+'%'          
+  AND V.GSTRegistered LIKE '%' + ISNULL(@GSTRegisteredHint,'')+'%'                 
+  AND V.LocationID IN(@LocationID)              
+  AND (@MobileNo IS NULL OR @MobileNo ='' OR V.MobileNo Like '%' + @MobileNo+'%')
+  AND (@LandLine IS NULL OR @LandLine ='' OR V.LandLine1 Like '%' + @LandLine+'%' OR V.LandLine2 Like '%' + @LandLine+'%')           
+  )                
+  SELECT  ID,Code,Name,Location,OldCode,StateID,IsGSTRegistered,SupplierCategory,ItemCategory, GSTNo,Email, @totalRecords AS totalRecords ,        
+  recordsFiltered,CreditDays ,IsInterCompany,GSTRegistered,InterCompanyLocationID,BankACNo, BankName ,Status ,CurrencyConversionRate,    
+   CurrencyName,CurrencyCode,CurrencyPrefix,DecimalPlaces,CurrencyID,LandLine1,LandLine2,MobileNo              
+  FROM Supplier_CTE                  
+  WHERE RowNum >= @Offset                  
+  AND RowNum < @Offset + @Limit                  
+  Order by RowNum                
+ END               
+ else IF @type='Branch Doctor'          
+  Begin                  
+  SELECT @totalRecords =  Count(ID) FROM viServiceSupplier where  SupplierCategory=@type   AND LocationID IN(@LocationID)              
+  ;With Supplier_CTE AS (                  
+  SELECT Distinct top 10000  Count(*) OVER(Partition By 1) AS recordsFiltered,                  
+  V.ID,V.Code,V.Name,ISNULL(V.OldSupplierCode,'') as OldCode,BillingPlace AS Location, V.StateID,V.IsGSTRegistered,V.ItemCategory,         
+  V.SupplierCategory,V.GSTNo,V.CreditDays,0 as InterCompanyLocationID, '' AS BankACNo, '' AS BankName ,''Status  ,     
+           dbo.FnGetCurrencyConversionRate(@BaseCurrencyID,V.CurrencyID)CurrencyConversionRate,    
+      V.CurrencyName,V.CurrencyCode,V.CurrencyPrefix,V.DecimalPlaces,V.CurrencyID,V.LandLine1,V.LandLine2,V.MobileNo,    
+   0  as IsInterCompany,V.GSTRegistered,Email,ROW_NUMBER() OVER (                  
+  ORDER BY                   
+   CASE WHEN @SortField+@SortOrder = 'NameASC' THEN (CASE WHEN name = ISNULL(@NameHint,'A') THEN 1 WHEN name LIKE ISNULL(@NameHint,'A')+'%' THEN 2 ELSE 3 END) END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'NameASC' THEN Name End ASC,                
+   CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN (CASE WHEN name = ISNULL(@NameHint,'A') THEN 1 WHEN name LIKE ISNULL(@NameHint,'A')+'%' THEN 2 ELSE 3 END) END DESC,                   
+   CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN Name END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'LocationASC' THEN BillingPlace END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'LocationDESC' THEN BillingPlace END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'CodeASC' THEN Code END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'CodeDESC' THEN Code END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'SupplierCategoryASC' THEN SupplierCategory END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'SupplierCategoryDESC' THEN SupplierCategory END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'ItemCategoryASC' THEN ItemCategory END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'ItemCategoryDESC' THEN ItemCategory END DESC,        
+   CASE WHEN @SortField+@SortOrder = 'GSTRegisteredASC' THEN GSTRegistered END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'GSTRegisteredDESC' THEN GSTRegistered END DESC                  
+  ) AS RowNum --into #TempServiceSuppliers                   
+  FROM viServiceSupplier V                  
+  Where                  
+  V.Code LIKE '%' + ISNULL(@CodeHint,'')+ '%'                   
+  AND V.Name LIKE '%' + ISNULL(@NameHint,'')+'%'                
+  AND V.LocationID IN(@LocationID)           
+  AND V.SupplierCategory=@type
+  AND (@MobileNo IS NULL OR @MobileNo ='' OR V.MobileNo Like '%' + @MobileNo+'%')
+  AND (@LandLine IS NULL OR @LandLine ='' OR V.LandLine1 Like '%' + @LandLine+'%' OR V.LandLine2 Like '%' + @LandLine+'%')
+  )                  
+  SELECT  ID,Code,Name,Location,Oldcode,StateID,IsGSTRegistered,SupplierCategory,ItemCategory, GSTNo,Email, @totalRecords AS totalRecords ,recordsFiltered,        
+  CreditDays,IsInterCompany,GSTRegistered,InterCompanyLocationID ,BankACNo, BankName,''Status,CurrencyConversionRate,    
+   CurrencyName,CurrencyCode,CurrencyPrefix,DecimalPlaces,CurrencyID,LandLine1,LandLine2,MobileNo                
+  FROM Supplier_CTE                  
+  WHERE RowNum >= @Offset                  
+  AND RowNum < @Offset + @Limit               
+  Order by RowNum                
+ END         
+ else IF @type='draft'        
+  begin        
+  SELECT @totalRecords =  Count(ID) FROM viSupplier                 
+  ;With Supplier_CTE AS (                    
+   SELECT Distinct top 10000  Count(*) OVER(Partition By 1) AS recordsFiltered,                  
+     V.ID,V.Code,V.Name,ISNULL(V.OldSupplierCode,'') as OldCode,BillingPlace AS Location, V.StateID,V.IsGSTRegistered,V.ItemCategory,        
+  V.SupplierCategory,V.GSTNo,V.CreditDays, 0 as InterCompanyLocationID,'' AS BankACNo, '' AS BankName,'draft' Status,      
+            dbo.FnGetCurrencyConversionRate(@BaseCurrencyID,V.CurrencyID)CurrencyConversionRate,    
+      V.CurrencyName,V.CurrencyCode,V.CurrencyPrefix,V.DecimalPlaces,V.CurrencyID,V.LandLine1,V.LandLine2,V.MobileNo,    
+      0 as IsInterCompany,V.GSTRegistered,Email,ROW_NUMBER() OVER (                  
+     ORDER BY                   
+   CASE WHEN @SortField+@SortOrder = 'NameASC' THEN Name END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN Name END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'LocationASC' THEN BillingPlace END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'LocationDESC' THEN BillingPlace END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'CodeASC' THEN Code END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'CodeDESC' THEN Code END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'SupplierCategoryASC' THEN SupplierCategory END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'SupplierCategoryDESC' THEN SupplierCategory END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'ItemCategoryASC' THEN ItemCategory END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'ItemCategoryDESC' THEN ItemCategory END DESC,            
+   CASE WHEN @SortField+@SortOrder = 'OldCodeASC' THEN OldSupplierCode END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'OldCodeDESC' THEN OldSupplierCode END DESC,        
+   CASE WHEN @SortField+@SortOrder = 'GSTRegisteredASC' THEN GSTRegistered END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'GSTRegisteredDESC' THEN GSTRegistered END DESC                    
+     ) AS RowNum --into #TempSuppliers                   
+   FROM viDraftedSupplier V                  
+   Where                  
+   V.Code LIKE '%' + ISNULL(@CodeHint,'')+ '%'                   
+   AND V.Name LIKE '%' + ISNULL(@NameHint,'')+'%'                      
+   AND V.BillingPlace LIKE '%' + ISNULL(@LocationHint,'')+'%'                   
+   AND V.SupplierCategory LIKE '%' + ISNULL(@SupplierCategoryHint,'')+'%'                  
+   AND V.ItemCategory LIKE '%' + ISNULL(@ItemCategoryHint,'')+'%'         
+   AND V.GSTRegistered LIKE '%' + ISNULL(@GSTRegisteredHint,'')+'%'              
+   AND ISNULL(V.OldSupplierCode,'') LIKE '%' + ISNULL(@OldCodeHint,'')+'%'          
+   AND (@MobileNo IS NULL OR @MobileNo ='' OR V.MobileNo Like '%' + @MobileNo+'%')
+   AND (@LandLine IS NULL OR @LandLine ='' OR V.LandLine1 Like '%' + @LandLine+'%' OR V.LandLine2 Like '%' + @LandLine+'%')                 
+   )                  
+   SELECT  ID,Code,Name,Location,OldCode,StateID,IsGSTRegistered,SupplierCategory,ItemCategory, GSTNo,Email, @totalRecords AS totalRecords ,        
+   recordsFiltered,CreditDays ,IsInterCompany,GSTRegistered,InterCompanyLocationID,BankACNo,BankName,Status ,CurrencyConversionRate,    
+   CurrencyName,CurrencyCode,CurrencyPrefix,DecimalPlaces,CurrencyID,LandLine1,LandLine2,MobileNo              
+  FROM Supplier_CTE                  
+  WHERE RowNum >= @Offset                  
+  AND RowNum < @Offset + @Limit                
+   Order by RowNum                 
+ End                      
+ Else        
+ Begin                 
+            
+  SELECT @totalRecords =  Count(ID) FROM viSupplier                 
+  ;With Supplier_CTE AS (                    
+   SELECT Distinct top 10000  Count(*) OVER(Partition By 1) AS recordsFiltered,                  
+     V.ID,V.Code,V.Name,ISNULL(V.OldSupplierCode,'') as OldCode,BillingPlace AS Location, V.StateID,V.IsGSTRegistered,V.ItemCategory,        
+  V.SupplierCategory,V.GSTNo,V.CreditDays, 0 as InterCompanyLocationID,'' AS BankACNo, '' AS BankName, '' Status,     
+              dbo.FnGetCurrencyConversionRate(@BaseCurrencyID,V.CurrencyID)CurrencyConversionRate,    
+       V.CurrencyName,V.CurrencyCode,V.CurrencyPrefix,V.DecimalPlaces,V.CurrencyID,V.LandLine1,V.LandLine2,V.MobileNo,    
+      0 as IsInterCompany,V.GSTRegistered,Email,ROW_NUMBER() OVER (                  
+     ORDER BY                   
+   CASE WHEN @SortField+@SortOrder = 'NameASC' THEN Name END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'NameDESC' THEN Name END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'LocationASC' THEN BillingPlace END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'LocationDESC' THEN BillingPlace END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'CodeASC' THEN Code END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'CodeDESC' THEN Code END DESC,            
+   CASE WHEN @SortField+@SortOrder = 'SupplierCategoryASC' THEN SupplierCategory END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'SupplierCategoryDESC' THEN SupplierCategory END DESC,                  
+   CASE WHEN @SortField+@SortOrder = 'ItemCategoryASC' THEN ItemCategory END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'ItemCategoryDESC' THEN ItemCategory END DESC,            
+   CASE WHEN @SortField+@SortOrder = 'OldCodeASC' THEN OldSupplierCode END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'OldCodeDESC' THEN OldSupplierCode END DESC,        
+   CASE WHEN @SortField+@SortOrder = 'GSTRegisteredASC' THEN GSTRegistered END ASC,                  
+   CASE WHEN @SortField+@SortOrder = 'GSTRegisteredDESC' THEN GSTRegistered END DESC                    
+     ) AS RowNum --into #TempSuppliers                   
+   FROM viSupplier V                  
+   Where                  
+   V.Code LIKE '%' + ISNULL(@CodeHint,'')+ '%'                   
+   AND V.Name LIKE '%' + ISNULL(@NameHint,'')+'%'                      
+   AND V.BillingPlace LIKE '%' + ISNULL(@LocationHint,'')+'%'                   
+   AND V.SupplierCategory LIKE '%' + ISNULL(@SupplierCategoryHint,'')+'%'                  
+   AND V.ItemCategory LIKE '%' + ISNULL(@ItemCategoryHint,'')+'%'         
+   AND V.GSTRegistered LIKE '%' + ISNULL(@GSTRegisteredHint,'')+'%'              
+   AND ISNULL(V.OldSupplierCode,'') LIKE '%' + ISNULL(@OldCodeHint,'')+'%'          
+   AND (@MobileNo IS NULL OR @MobileNo ='' OR V.MobileNo Like '%' + @MobileNo+'%')
+   AND (@LandLine IS NULL OR @LandLine ='' OR V.LandLine1 Like '%' + @LandLine+'%' OR V.LandLine2 Like '%' + @LandLine+'%')                 
+   )                  
+   SELECT  ID,Code,Name,Location,OldCode,StateID,IsGSTRegistered,SupplierCategory,ItemCategory, GSTNo,Email, @totalRecords AS totalRecords ,        
+   recordsFiltered,CreditDays ,IsInterCompany,GSTRegistered,InterCompanyLocationID,BankACNo,BankName,Status,CurrencyConversionRate,    
+   CurrencyName,CurrencyCode,CurrencyPrefix,DecimalPlaces,CurrencyID,LandLine1,LandLine2,MobileNo    
+  FROM Supplier_CTE                  
+  WHERE RowNum >= @Offset                  
+  AND RowNum < @Offset + @Limit                
+   Order by RowNum                 
+ End                  
+END 

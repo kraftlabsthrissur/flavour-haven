@@ -1,0 +1,58 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.MedicineConsumptionModel
+
+@if (Model.Items != null)
+{
+    foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+            </td>
+            @if (item.value.Status == "Completed")
+            {
+                <td class="uk-text-center checked width-20" data-md-icheck><input type="checkbox" class="chkCheck" disabled="disabled"/></td>
+            }
+            else
+            {
+                <td class="uk-text-center checked width-20" data-md-icheck><input type="checkbox" class="chkCheck"  /></td>
+            }
+            <td>
+                <input type="hidden" class="PatientID" value="@item.value.PatientID" />
+                <input type="hidden" class="AppointmentProcessID" value="@item.value.AppointmentProcessID" />
+                <input type="hidden" class="PatientMedicinesID" value="@item.value.PatientMedicinesID" />
+                <input type="hidden" class="IPID" value="@item.value.IPID" />
+                <input type="hidden" class="MedicineConsumptionID" value="@item.value.MedicineConsumptionID" />
+                @item.value.PatientName
+            </td>
+            <td>
+                <input type="hidden" class="DoctorID" value="@item.value.DoctorID" />
+                @item.value.DoctorName
+            </td>
+            <td class="Room">
+                <input type="hidden" class="RoomID" value="@item.value.RoomID" />
+                @item.value.Room
+            </td>
+            <td class="Medicine">
+                @item.value.Medicine
+            </td>
+            <td>
+                <input type="text" value="@item.value.Time" class="md-input Time label-fixed" readonly />
+            </td>
+            <td class="action">
+                <input type="text" value="@item.value.ActiualTime" class="md-input ActiualTime label-fixed  time15" disabled />
+                <input type="hidden" value="" class="md-input EndTime label-fixed" disabled />
+            </td>
+            <td>
+                <input type="text" value="@item.value.Date" class="md-input Date label-fixed  time15" readonly />
+            </td>
+            
+            <td class="action">
+                @Html.DropDownListFor(m => item.value.Status, new SelectList(item.value.StatusList, "value", "text", item.value.Status), "Select", new { @class = "md-input label-fixed Status", @disabled = "disabled" })
+            </td>
+            <td>
+                @item.value.BeforeOrAfterFood
+            </td>
+        <td class="ModeOfAdminstration">@item.value.ModeOfAdminstration</td>
+    </tr>
+    }
+}

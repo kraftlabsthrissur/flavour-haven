@@ -1,0 +1,46 @@
+        
+ALTER VIEW [dbo].[viItem] AS                        
+                         
+select I.ID,I.Code,I.Name, I.BarCode, I.HSNCode,I.MalayalamName,I.SanskritName,I.BotanicalName                  
+  ,I.ItemTypeID,I.IsProprietary,I.CategoryID, I.PurchaseCategoryID,I.StorageCategoryID,I.ProductionCategoryID                        
+  ,I.SalesCategoryID,BC.ID BusinessCategoryID,I.AccountsCategoryID, I.AssetCategoryID ,C.Name AS Category,    
+  PC.Name AS PurchaseCategory,QC.Name AS QCCategory,ISNULL(SC.Name,'') AS SalesCategory,SA.Name As AccountsCategory,    
+  ISNULL(PRC.Name,'') AS ProductionCategory,I.SalesUnitID UnitID, I.SecondaryUnitID, I.InventoryUnitID, I.PurchaseUnitID                        
+  ,I.SalesUnitID,SU.UOM AS Unit,IU.UOM AS InventoryUnit,PU.UOM AS PurchaseUnit,SU.UOM AS SalesUnit   ,SaU.UOM as SecondaryUnit                                  
+  ,I.PatentNo,I.ReOrderLevel, I.ReOrderQty, I.QtyTolerancePercent,I.MinStockQty, I.MaxStockQty,I.MinSalesQtyLoose, I.MinSalesQtyFull,     
+  I.MaxSalesQty, I.MinPurchaseQty, I.MaxPurchaseQty,I.IsSeasonalPurchase, I.PurchaseLeadTime, I.IsQCRequired, I.QCLeadTime, I.ShelfLifeMonths                         
+ ,I.IsMrp, I.IsStockitem, I.IsPurchaseItem, I.IsPORequired,I.IsStockValue,I.GSTCategoryID ,ISNULL(G.SGSTPercent,0)SGSTPercent,ISNULL(G.CGSTPercent,0)CGSTPercent,ISNULL(G.IGSTPercent,0)IGSTPercent,    
+ ISNULL(G.Name,'') AS GSTCategory,ISNULL(G.VATPercentage,0)VATPercentage,ISNULL(TT.Name ,'')TaxType,ISNULL(IT.LocationID,0)LocationID,I.GSTSubCategoryID,GS.Percentage CessPercentage, GS.Name GSTSubCategory,                    
+ I.IsPhantomItem ,I.OldItemCode, I.IsDisContinued, I.DisContinuedDate,I.IsSaleable ,I.NormalLossQty, I.NormalLossPercent                             
+ ,I.ProdLeadTime, I.IsBulk,I.LossPercentage, I.ProductLeadDays, I.IsReProcessAllowed,I.IsQCRequiredForProduction                      
+ ,I.ConversionFactorPtoS,I.Isactive,I.ConversionFactorPtoSecondary,I.ConversionFactorPtoI,I.ConversionFactorPurchaseToInventory,            
+ I.ConversionFactorSalesToInventory ,I.PackSize ,I.MasterFormulaRefNo,I.HindiName,I.Description,ISNULL(CC.Name,'') AS CostingCategory,     
+ ISNULL(STC.Name,'') AS StorageCategory,ISNULL(ATC.Name ,'') AS AssetCategory,I.IsDemandPlanRequired,          
+ I.IsMaterialPlanRequired,I.Price, I.BirthDate,ISNULL(I.SeasonStarts,'') AS SeasonStarts,ISNULL(I.SeasonEnds,'') AS SeasonEnds,I.N2GActivity,I.OldItemCode2,I.IsAsset,            
+ I.IsProject,I.IsEmployee,I.IsDepartment,I.IsInterCompany,I.IsLocation,I.IsPriceListReference,I.QRCode,I.IsMasterFormula,I.isBatch,            
+ I.BatchSizeQty, ISNULL(SIC.Name,'') AS SalesIncentiveCategory,I.OldName,ISNULL(I.ProductionGroup,'') AS ProductionGroup,          
+ ISNULL(MF.Name,'') AS MasterFormulae,ISNULL(BC.Name,'') AS BusinessCategory,I.SeasonPurchaseStarts,          
+ I.SeasonPurchaseEnds,ISNULL(DT.Name,'') AS DrugSchedule,I.Make ,I.Model                   
+from item I                        
+LEFT JOIN ItemTax It on   It.ItemID=I.ID            
+LEFT JOIN TaxType TT on   It.TaxTypeID=TT.ID            
+LEFT JOIN GSTCategory G WITH (NOLOCK) on G.ID = IT.GSTCategoryID                        
+LEFT join Category C on C.ID = I.CategoryID                        
+Left outer join Category PC on PC.ID = I.PurchaseCategoryID                        
+Left outer join Category QC on QC.ID = I.QCCategoryID                        
+Left outer join Category SC on SC.ID = I.SalesCategoryID                        
+Left outer join Category SA on SA.ID = I.AccountsCategoryID                   
+Left outer join Category PRC on PRC.ID = I.ProductionCategoryID             
+Left outer join Category CC on CC.ID = I.CostingCategoryID             
+Left outer join Category STC on STC.ID = I.StorageCategoryID             
+Left outer join Category ATC on ATC.ID = I.AssetCategoryID            
+Left outer join Category SIC on SIC.ID = I.SalesIncentiveCategoryID               
+Left outer join Category BC on BC.ID = I.BusinessCategoryID                       
+LEFT join Unit U on U.ID = I.UnitID                        
+Left outer join Unit SU on SU.ID = I.SalesUnitID                        
+Left outer join Unit IU on IU.ID = I.InventoryUnitID                        
+Left outer join Unit PU on PU.ID = I.PurchaseUnitID                      
+Left outer join Unit SaU on SaU.ID = I.SecondaryUnitID                                  
+Left outer join GSTSubCategory GS on GS.ID = I.GSTSubCategoryID                    
+Left outer join MasterFormulae MF on MF.ID = I.MasterFormulaRefNo           
+Left outer join DrugScheduleType DT on DT.ID = I.DrugScheduleID           

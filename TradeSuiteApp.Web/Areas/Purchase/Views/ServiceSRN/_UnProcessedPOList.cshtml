@@ -1,0 +1,47 @@
+﻿@model List<TradeSuiteApp.Web.Areas.Purchase.Models.PurchaseOrderViewModel>
+
+<table id="purchase-order-list" class="uk-table" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th class="width-10">@Common.SerialNo</th>
+            <th class="width-10"></th>
+            <th class="width-40">@Purchase.TransNo</th>
+            <th class="width-40">@Purchase.PODate</th>
+            <th class="width-250">@Purchase.Supplier</th>
+            <th class="width-100">@Purchase.RequestedBy</th>
+        </tr>
+    </thead>
+    <thead class="search">
+        <tr>
+            <th class="width-10">@Common.SerialNo</th>
+            <th class="width-10"></th>
+            <th class="width-40">@Purchase.TransNo</th>
+            <th class="width-100">@Purchase.PODate</th>
+            <th class="width-250">@Purchase.Supplier</th>
+            <th class="width-100">@Purchase.RequestedBy</th>
+        </tr>
+    </thead>
+    @*<tbody class="unPoTbody">
+*@
+    <tbody>
+        @if (Model != null)
+        {
+            if (Model != null)
+            {
+                foreach (var po in Model.Select((value, i)=>new { i=i+1,value}))
+                {
+                        <tr class="rowUnPo">
+                            <td class="uk-text-center">@po.i <input type="hidden" class="clPOID" value="@po.value.ID" /></td>
+                            <td class="uk-text-center clChk" data-md-icheck><input type="checkbox" class="clChkItem" value="@po.value.ID"/></td>
+                            <td>@po.value.PurchaseOrderNo</td>
+                            <td>@po.value.PurchaseOrderDate</td>
+                            <td>@po.value.SupplierName</td>
+                            <td>@po.value.RequestedBy</td>
+                        </tr>
+
+                    }
+                }
+            }
+
+    </tbody>
+</table>

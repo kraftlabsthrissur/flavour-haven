@@ -1,0 +1,284 @@
+﻿@model  TradeSuiteApp.Web.Areas.Manufacturing.Models.PackingViewModel
+@{
+    ViewBag.Title = "Form";
+}
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Manufacturing.TransNo</label>
+                            @Html.TextBoxFor(model => model.TransNo, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Manufacturing.ItemName<span>*</span></label>
+                            @Html.TextBoxFor(model => model.ItemName, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Manufacturing.UOM</label>
+                            @Html.TextBoxFor(model => model.UOM, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Manufacturing.BatchNo</label>
+                            @Html.TextBoxFor(Model => Model.BatchNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-10">
+                            <label>@Manufacturing.AvailableStock</label>
+                            @Html.TextBoxFor(model => model.AvailableStock, new { @class = "md-input label-fixed mask-production-qty", @disabled = "disabled" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Manufacturing.PackedQty</label>
+                            @Html.TextBoxFor(model => model.PackedQty, new { @class = "md-input label-fixed uk-text-right mask-production-qty", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Manufacturing.BatchType</label>
+                            @Html.TextBoxFor(Model => Model.BatchType, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-2-10">
+                <label>@Manufacturing.Remarks</label>
+                @Html.TextBoxFor(model => model.Remarks, new { @class = "md-input label-fixed", @readonly = "readonly" })
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-1-1">
+                <ul class="uk-tab" data-uk-tab="{connect:'#tabs-packing-content',animation:'slide-horizontal'}" id="tabs-packing">
+                    <li class="uk-active" id="material-tab"><a>@Manufacturing.Material</a></li>
+                    <li id="process-tab"><a>@Manufacturing.Process</a></li>
+                </ul>
+                <ul id="tabs-packing-content" class="uk-switcher uk-margin">
+                    <li>
+                        <table id="production-packing-material-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th class="width-40">
+                                        @Manufacturing.ItemCode
+                                    </th>
+                                    <th class="width-200">
+                                        @Manufacturing.ItemName
+                                    </th>
+                                    <th class="width-10">
+                                        @Manufacturing.UOM
+                                    </th>
+                                    <th class="width-60 batch_type">
+                                        @Manufacturing.BatchType
+                                    </th>
+
+                                    <th class="width-80">
+                                        @Manufacturing.StandardQtyForStdBatch
+                                    </th>
+                                    <th class="width-80">
+                                        @Manufacturing.ActualQtyForActualBatch
+                                    </th>
+                                    <th class="width-60">
+                                        @Manufacturing.IssuedQty
+                                    </th>
+                                    <th class="width-20">
+                                        @Manufacturing.Varaince
+                                    </th>
+                                    <th class="width-20">
+                                        @Manufacturing.Remarks
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model.Materials != null)
+                                {
+                                    foreach (var item in Model.Materials)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @(1 + @Model.Materials.IndexOf(item) )
+                                                <input type="hidden" class="ItemID" value="@item.ItemID" />
+                                                <input type="hidden" class="AvailableStock" value="@item.AvailableStock" />
+                                                <input type="hidden" class="BatchTypeID" value="@item.BatchTypeID" />
+                                                <input type="hidden" class="UnitID" value="@item.UnitID" />
+                                            </td>
+                                            <td>@item.ItemCode</td>
+                                            <td>@item.ItemName</td>
+                                            <td>@item.UOM</td>
+                                            <td class="batch_type">@item.BatchType</td>
+                                            <td class="mask-production-qty StandardQty">@item.StandardQty</td>
+                                            <td class="mask-production-qty ActualQty">@item.ActualQty</td>
+                                            <td class="mask-production-qty IssueQty">@item.IssueQty</td>
+                                            <td class="mask-production-qty Variance">@item.Variance</td>
+                                            <td class="Remarks">@item.Remarks</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table id="production-packing-process-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th rowspan="2">
+                                        @Manufacturing.Stage
+                                    </th>
+                                    <th rowspan="2">
+                                        @Manufacturing.ProcessName
+                                    </th>
+                                    <th rowspan="2">
+                                        @Manufacturing.StartTime
+                                    </th>
+
+                                    <th rowspan="2">
+                                        @Manufacturing.EndTime
+                                    </th>
+                                    <th colspan="2">
+                                        @Manufacturing.SkilledLabour
+                                    </th>
+                                    <th colspan="2">
+                                        @Manufacturing.UnSkilledLabour
+                                    </th>
+                                    <th colspan="2">
+                                        @Manufacturing.MachineMinutes
+                                    </th>
+                                    <th rowspan="2">
+                                        @Manufacturing.DoneBy
+                                    </th>
+                                    <th rowspan="2">
+                                        @Manufacturing.Status
+                                    </th>
+
+                                </tr>
+                                <tr>
+                                    <th>@Manufacturing.Standard</th>
+                                    <th>@Manufacturing.Actual</th>
+                                    <th>@Manufacturing.Standard</th>
+                                    <th>@Manufacturing.Actual</th>
+                                    <th>@Manufacturing.Standard</th>
+                                    <th>@Manufacturing.Actual</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model.Process != null)
+                                {
+                                    foreach (var item in Model.Process)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @(1 + @Model.Process.IndexOf(item) )
+                                            </td>
+                                            <td>@Html.DisplayFor(a => item.Stage)</td>
+                                            <td>@Html.DisplayFor(a => item.ProcessName)</td>
+                                            <td>@Html.DisplayFor(a => item.StartTimeStr)</td>
+                                            <td>@Html.DisplayFor(a => item.EndTimeStr)</td>
+                                            <td class="mask-qty">@Html.DisplayFor(a => item.SkilledLaboursStandard)</td>
+                                            <td class="mask-qty">@Html.DisplayFor(a => item.SkilledLaboursActual)</td>
+                                            <td class="mask-qty">@Html.DisplayFor(a => item.UnSkilledLabourStandard)</td>
+                                            <td class="mask-qty">@Html.DisplayFor(a => item.UnSkilledLabourActual)</td>
+                                            <td class="mask-qty">@Html.DisplayFor(a => item.MachineHoursStandard)</td>
+                                            <td class="mask-qty">@Html.DisplayFor(a => item.MachineHoursActual)</td>
+                                            <td class="mask-qty">@Html.DisplayFor(a => item.DoneBy)</td>
+                                            <td>@Html.DisplayFor(a => item.Status)</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-1-1">
+                <div class="panel">
+                    <label class="large">Output</label>
+                    <div>
+                        <table id="production-issue-process-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @Manufacturing.TransDate
+                                    </th>
+                                    <th>
+                                        @Manufacturing.ItemName
+                                    </th>
+                                    <th>
+                                        @Manufacturing.BatchNo
+                                    </th>
+                                    <th>
+                                        @Manufacturing.QtyPacked
+                                    </th>
+                                    <th class="batch_type">
+                                        @Manufacturing.BatchType
+                                    </th>
+                                    <th class="uk-hidden">
+                                        @Manufacturing.QCCompleted
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model.Output != null)
+                                {
+                                    foreach (var item in Model.Output)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @(1 + @Model.Output.IndexOf(item) )
+                                            </td>
+                                            <td>@item.Date</td>
+                                            <td>
+                                                @Html.DisplayFor(a => item.ItemName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(a => item.BatchNo)
+                                            </td>
+                                            <td class="mask-production-qty">
+                                                @Html.DisplayFor(a => item.PackedQty)
+                                            </td>
+                                            <td class="batch_type">
+                                                @Html.DisplayFor(a => item.BatchType)
+                                            </td>
+                                            <td class="uk-hidden">
+                                                @(item.IsQCCompleted ? "Yes" : "No")
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,12 @@
+    
+CREATE PROCEDURE [Master].[SpCreateItemTax](      
+@ItemID INT,      
+@LocationID INT,    
+@TaxTypeID INT,    
+@GSTCategoryID INT,  
+@CreatedUserID INT  
+)      
+AS      
+BEGIN      
+ INSERT INTO ItemTax(ItemID,LocationID,TaxTypeID,GSTCategoryID,CreatedUserID) values(@ItemID,@LocationID,@TaxTypeID,@GSTCategoryID,@CreatedUserID)      
+END

@@ -1,0 +1,89 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.LabTestModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="uk-width-medium-8-10">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-1-10">
+                <div class="uk-input-group">
+                    <label for="uk_dp_start">@AHCMS.Date</label>
+                    @Html.TextBoxFor(model => model.Date, new { @class = "md-input label-fixed date future-date",@disabled="disable" })
+                </div>
+            </div>
+            <div class="uk-width-medium-1-8">
+                <label>@AHCMS.PatientCode </label>
+                @Html.TextBoxFor(model => model.PatientCode, new { @class = "md-input", @disabled = "disable" })
+            </div>
+            <div class="uk-width-medium-1-6">
+                <label>@AHCMS.Patient </label>
+                @Html.TextBoxFor(model => model.Patient, new { @class = "md-input", @disabled = "disable" })
+            </div>
+            <div class="uk-width-medium-1-6">
+                <label>@AHCMS.Doctor </label>
+                @Html.TextBoxFor(model => model.Doctor, new { @class = "md-input", @disabled = "disable" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@AHCMS.Age </label>
+                @Html.TextBoxFor(model => model.Age, new { @class = "md-input", @disabled = "disable" })
+            </div>
+            <div class="uk-width-medium-1-8">
+                <label>@AHCMS.Sex </label>
+                @Html.TextBoxFor(model => model.Sex, new { @class = "md-input", @disabled = "disable" })
+            </div>
+            <div class="uk-width-medium-1-6">
+                <label>@AHCMS.MobileNumber </label>
+                @Html.TextBoxFor(model => model.Mobile, new { @class = "md-input", @disabled = "disable" })
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="uk-form-row">
+    <div>
+        <table id="labtest_list" class="uk-table " cellspacing="0" width=100">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th></th>
+                    <th class="width-200">@AHCMS.LabTest</th>
+                    <th class="width-100">@AHCMS.ObservedValue</th>
+                    <th class="width-100">@AHCMS.Unit</th>
+                    <th class="width-100">@AHCMS.BiologicalReference </th>
+                    <th class="width-100">@AHCMS.Status </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items != null)
+                {
+                    foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                        <tr>
+                            <td class="uk-text-center">
+                                @item.i
+                                <input type="hidden" class="ItemID" value="@item.value.ItemID" />
+                                <input type="hidden" class="ID" value="@item.value.ID" />
+                            </td>
+                            @if (item.value.Status == "Completed")
+                            {
+                                <td class="uk-text-center checked width-20" data-md-icheck><input type="checkbox" class="chkCheck" disabled="disabled" /></td>
+                            }
+                            else
+                            {
+                                <td class="uk-text-center checked width-20" data-md-icheck><input type="checkbox" class="chkCheck" /></td>
+                            }
+                            
+                            <td>@item.value.ItemName</td>
+                            <td><input type="text" value="@item.value.ObserveValue" class="md-input ObserveValue" disabled /></td>
+                            <td>@item.value.Unit</td>
+                            <td>@item.value.BiologicalReference</td>
+                            <td class="action">
+                                @Html.DropDownListFor(m => item.value.Status, new SelectList(item.value.StatusList, "value", "text", item.value.Status), "Select", new { @class = "md-input label-fixed Status", @disabled = "disabled" })
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

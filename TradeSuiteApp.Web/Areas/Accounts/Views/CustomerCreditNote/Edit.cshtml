@@ -1,0 +1,47 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.CustomerCreditNoteModel
+
+@{
+    ViewBag.Title = Accounts.EditCustomerCreditNote;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Accounts.CustomerCreditNote</h1>
+            <span class="uk-text-upper uk-text-small">@Accounts.EditCustomerCreditNote</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSaveCn'>" + Common.Save + "</a>")
+            @ActionAuthorization.IsAuthorized("SaveAsDraft", "<a class='md-btn btnSaveAsDraft'>" + Common.SaveAsDraft + "</a>")
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSaveCnNew'>" + Common.SaveAndNew + "</a>")
+           
+            @Html.ActionLink(Common.Close, "Index", "CustomerCreditNote", new { Area = "Accounts" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="creditnote form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                @{Html.RenderPartial("/Areas/Accounts/Views/CustomerCreditNote/Form.cshtml", Model); }
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/CustomerCreditNote")
+@Scripts.Render("~/Js/Page/Customer")
+@Scripts.Render("~/Js/Page/Item")
+@Html.Partial("~/Areas/Masters/Views/Customer/PartialList.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Item/ItemList.cshtml")
+
+
+
+
+
+
+

@@ -1,0 +1,40 @@
+ALTER PROCEDURE [Purchase].[SpGetGRNTransDetails]                    
+(@ID INT,               
+@UserID INT,                   
+@FinYear INT,                    
+@LocationID INT,                    
+@ApplicationID INT                    
+)                    
+AS                     
+BEGIN                    
+Declare @LoginDeparmentID int,@IsGRNViewer int;              
+SELECT @LoginDeparmentID=DepartmentID from Employee WHERE UserID=@UserID              
+              
+SELECT @IsGRNViewer = CASE WHEN COUNT(*) = 0 THEN 0 ELSE 1 END                
+ FROM AspNetUsers U               
+ LEFT JOIN UserRoles UR ON U.ID = UR.UserID              
+ LEFT JOIN Roles R ON R.ID = UR.RoleID                
+ WHERE  ((R.Name LIKE 'GRN TRANSACTION VIEWER'AND UR.LocationID = @LocationID) OR (UserName LIKE 'admin') )              
+ AND U.ID = @UserID              
+              
+ SELECT GRNT.ItemID,I.Code ItemCode,GRNT.ItemName,GRNT.PartsNumber,GRNT.Model,GRNT.Remark,GRNT.IsGST,GRNT.IsVat,PT.CurrencyID,Cu.Name CurrencyName,          
+ GRNT.UnitID,U.UOM as Unit,ISNULL(B.Batchno,'') as Batch,GRNT.ExpiryDate,PT.SecondaryQty PurchaseOrderQty,                    
+ GRNT.ReceivedQty,P.ID AS PurchaseOrderID,GRNT.GrossAmount,GRNT.VATAmount,GRNT.TaxableAmount,GRNT.VATPercentage,GRNT.LooseRate,GRNT.LooseQty,GRNT.PurchaseRate,ISNULL(B.RetailMRP,0)RetailMRP,              
+ PT.ID AS PurchaseOrderTansID,GRNT.Remarks,GRNT.OfferQty  ,GRNT.DiscPercent,GRNT.DiscountAmount,GRNT.NetPurchasePrice,ISNULL(B.ID,0) as BatchID,GRNT.DiscountID,              
+ PT.Quantity-PT.QtyMet+GRNT.ReceivedQty as PendingQty,U.PackSize,GRNT.SGSTPercent,GRNT.CGSTPercent,GRNT.IGSTPercent,              
+ GRNT.SGSTPercent + GRNT.CGSTPercent + GRNT.IGSTPercent AS GSTPercentage,GRNT.SGSTAmt,GRNT.CGSTAmt,GRNT.IGSTAmt ,I.QtyTolerancePercent,      
+ GRNT.SecondaryUnit,GRNT.SecondaryUnitSize,GRNT.SecondaryRate    
+ FROM GoodsReceiptNoteTrans GRNT  Inner Join  GoodsReceiptNote GRN on GRN.ID=GRNT.GoodsReceiptNoteID              
+ inner join PurchaseOrderTrans PT on PT.ID = GRNT.POTransID and PT.ItemID = GRNT.ItemID                    
+ inner join PurchaseOrder P on P.ID = PT.PurchaseOrderID                     
+ INNER JOIN Item I ON GRNT.ItemID = I.ID                    
+ left join BatchType BT on BT.ID=PT.BatchTYpeID              
+ left join Currency Cu on Cu.ID=PT.CurrencyID              
+ inner join Unit U on U.ID=GRNT.UnitID                           
+ Left join Batch B on B.ID=GRNT.Batch                
+                     
+ WHERE GRNT.GoodsReceiptNoteID = @ID --AND GRNT.FinYear = @FinYear               
+--AND ((E.DepartmentID =@LoginDeparmentID AND GRN.LocationID=@LocationID) OR GRN.CreatedUserID=@UserID OR (@IsGRNViewer=1 AND GRN.LocationID=@LocationID ))               
+ AND GRNT.ApplicationID =@ApplicationID                    
+                     
+END 

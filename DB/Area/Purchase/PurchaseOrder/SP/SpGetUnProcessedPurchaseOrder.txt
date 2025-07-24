@@ -1,0 +1,23 @@
+    
+    
+ALTER PROCEDURE  [Purchase].[SpGetUnProcessedPurchaseOrder](@SupplierID int,@UserID int,@FinYear int,@LocationID int,@ApplicationID int)    
+AS    
+Begin    
+ --declare @ShippingLocationID int;    
+ --select @ShippingLocationID=ID from Addresses where PartyID=@LocationID and PartyType='Location'    
+ 
+ select p.ID,PurchaseOrderNo,PurchaseOrderDate,SupplierID,AdvancePercentage,AdvanceAmount,PaymentModeID,ShippingAddressID,    
+ BillingAddressID,InclusiveGST,GstExtra,SelectedQuotationID,OtherQuotationIDS,DeliveryWithin,PaymentWithinID,D.Days AS PaymentWithInDays,    
+ SGSTAmt,CGSTAmt,IGSTAmt,FreightAmt,OtherCharges,PackingShippingCharge,NetAmt, S.Name AS SupplierName,E.Name as RequestedBy      
+ from PurchaseOrder p    
+ inner join Supplier S on S.ID = SupplierID      
+ inner join PaymentDays D on D.ID = P.PaymentWithinID    
+ Inner join Employee E on E.UserID=P.CreatedUserID    
+ where  (SupplierID = @SupplierID OR SupplierID in(Select SupplierID from RelatedSupplier where RelatedSupplierID = @SupplierID)     
+ OR  SupplierID in(Select RelatedSupplierID from RelatedSupplier where SupplierID = @SupplierID))     
+ and OrderMet = 0 and Cancelled = 0 and IsDraft = 0 and IsApproved = 1 and IsSuspended = 0 --and p.FinYear = @FinYear     
+  and p.ApplicationID = @ApplicationID  ---and p.ShippingAddressID = @ShippingLocationID  
+     
+ Order By p.ID Desc    
+End    
+    

@@ -1,0 +1,18 @@
+ALTER PROCEDURE [Stock].[SpGetStockReceiptTrans](  
+@StockReceiptID INT,  
+@FinYear INT,  
+@LocationID INT,  
+@ApplicationID INT  
+)AS  
+BEGIN  
+ SET NOCOUNT ON  
+ select SRT.ID,SRT.ItemID,I.Name as ItemName,U.UOM as Unit,SRT.UnitID,SRT.BatchTypeID,B.ID as BatchID,B.BatchNO as BatchName,
+ SRT.ReceiptQty,SRT.SecondaryIssueQty,SRT.SecondaryReceiptQty,SRT.SecondaryUnit,SRT.SecondaryUnitSize,BT.Name as BatchTypeName,
+ SRT.IssueQty,SRT.FinYear,SRT.LocationID,SRT.ApplicationID,SRT.BasicPrice,SRT.GrossAmount,SRT.TradeDiscountPercentage,
+ SRT.TradeDiscount,SRT.TaxableAmount,SRT.SGSTPercentage,SRT.CGSTPercentage,SRT.IGSTPercentage,SRT.CGSTAmount,
+ SRT.IGSTAmount,SRT.SGSTAmount,SRT.NetAmount from StockReceiptTrans SRT  inner join StockReceipt SR on SR.ID=SRT.StockReceiptID  
+ inner Join viItem I on I.Id=SRT.ItemID  INNER Join Batch B on B.ID=SRT.BatchID  
+ Left Join BatchType BT on BT.ID=SRT.BatchTypeID   Inner join Unit U on U.ID=SRT.UnitID  
+ where SRT.StockReceiptID=@StockReceiptID   AND SRT.FinYear = @FinYear   
+ AND SRT.LocationID = @LocationID    and SRT.ApplicationID=@ApplicationID  
+END  

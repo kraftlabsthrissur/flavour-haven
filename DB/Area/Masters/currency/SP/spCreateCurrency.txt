@@ -1,0 +1,17 @@
+      
+ALTER PROCEDURE [Master].[spCreateCurrency](                  
+  @Code char(3),            
+  @Name nvarchar(100),          
+  @Description  nvarchar(200),          
+  @CountryID int, 
+  @DecimalPlaces int,
+  @CreatedUserID int    
+ )            
+AS            
+BEGIN            
+              
+ SET NOCOUNT ON;                     
+Insert into Currency(Code,Name,CreatedUserID,Description,CountryID,DecimalPlaces) values (@Code,@Name,@CreatedUserID,@Description,@CountryID,@DecimalPlaces)               
+END            
+            
+            

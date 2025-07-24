@@ -1,0 +1,178 @@
+﻿@*@model List<TradeSuiteApp.Web.Areas.Purchase.Models.PurchaseInvoiceTaxViewModel>*@
+@model dynamic
+
+@{
+    var isLocal = ViewBag.IsLocal ?? false;
+    int rowNo = 1;
+    bool isEdit = true;
+    if (Model == null || Model.GetType() == new List<TradeSuiteApp.Web.Areas.Purchase.Models.PurchaseInvoiceTaxViewModel>().GetType())
+    {
+        isEdit = false;
+    }
+}
+@if (!isEdit)
+{
+    var createModel = Model != null ? (List<TradeSuiteApp.Web.Areas.Purchase.Models.PurchaseInvoiceTaxViewModel>)Model : null;
+
+
+    if (createModel != null && createModel.Count() > 0)
+    {
+
+
+        if (isLocal)
+        {                   //CGST and SGST
+
+            foreach (var item in createModel)
+            {
+
+                <tr>
+                    <input type="hidden" class="taxName" value="@Purchase.CGST" />
+                    <td class="uk-text-center">@(rowNo++)</td>
+                    <td>@Purchase.CGST On Items</td>
+                    <td>
+                        <select class="md-input label-fixed label-fixed ddlTaxPercentage" data-uk-tooltip="{pos:'top'}" title="@Purchase.Percentage" readonly>
+                            <option value="@item.CGSTPercent">@item.CGSTPercent</option>
+                        </select>
+                    </td>
+                    <td class="uk-text-right"><input type="text" class="md-input txtTaxPOValue txtCGSTPOValue mask-currency" value="@item.CGSTAmt" disabled /> </td>
+                    <td class="uk-text-right"><input type="text" class="md-input txtTaxInvoiceValue txtCGSTInvoiceValue mask-currency" value="0" /></td>
+                    <td class="uk-text-right taxDiffValue mask-currency">-@item.CGSTAmt</td>
+                    <td><input type="text" class="md-input label-fixed label-fixed txtTaxRemarks" /></td>
+                </tr>
+                <tr>
+                    <input type="hidden" class="taxName" value="@Purchase.SGST" />
+                    <td class="uk-text-center">@(rowNo++)</td>
+                    <td>@Purchase.SGST On Items</td>
+                    <td>
+                        <select class="md-input label-fixed label-fixed ddlTaxPercentage" data-uk-tooltip="{pos:'top'}" title="@Purchase.Percentage" readonly>
+                            <option value="@item.SGSTPercent">@item.SGSTPercent</option>
+                        </select>
+                    </td>
+                    <td class="uk-text-right"><input type="text" class="md-input txtTaxPOValue txtSGSTPOValue mask-currency" value="@item.SGSTAmt" disabled /></td>
+                    <td class="uk-text-right"><input type="text" class="md-input txtTaxInvoiceValue txtSGSTInvoiceValue mask-currency" value="0" /></td>
+                    <td class="uk-text-right taxDiffValue">-@item.SGSTAmt</td>
+                    <td><input type="text" class="md-input label-fixed label-fixed txtTaxRemarks" /></td>
+                </tr>
+            }
+        }
+        else
+        {
+            foreach (var item in createModel.Select((value, i) => new { i = (i + 1), value }))
+            {
+                <tr>
+                    <input type="hidden" class="taxName" value="@Purchase.IGST" />
+                    <td class="uk-text-center">@item.i</td>
+                    <td>@Purchase.IGST On Items</td>
+                    <td>
+                        <select class="md-input label-fixed ddlTaxPercentage" data-uk-tooltip="{pos:'top'}" title="@Purchase.Percentage" readonly>
+                            <option value="@item.value.IGSTPercent">@item.value.IGSTPercent</option>
+                        </select>
+                    </td>
+                    <td class="uk-text-right"><input type="text" class="md-input txtTaxPOValue txtSGSTPOValue mask-currency" value="@item.value.IGSTAmt" disabled /></td>
+                    <td class="uk-text-right"><input type="text" class="md-input txtTaxInvoiceValue txtIGSTInvoiceValue mask-currency" value="0" /></td>
+                    <td class="uk-text-right taxDiffValue">-@item.value.IGSTAmt</td>
+                    <td><input type="text" class="md-input  txtTaxRemarks" /></td>
+                </tr>
+                rowNo = item.i;
+            }
+        }
+        <tr>
+            <input type="hidden" class="taxName" value="@Purchase.TaxOnFreight" />
+            <td class="uk-text-center">@(rowNo++)</td>
+            <td>@Purchase.TaxOnFreight</td>
+            <td>
+                <select class="md-input label-fixed label-fixed ddlTaxPercentage" data-uk-tooltip="{pos:'top'}" title="@Purchase.Percentage">
+                    <option value="" disabled selected hidden>Select...</option>
+                    @foreach (var item in ViewBag.AvailablePercentages)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </td>
+            <td class="uk-text-right"><input type="text" class="md-input txtTaxPOValue mask-currency" id="txtTaxOnFreightPOValue" value="0" /></td>
+            <td class="uk-text-right"><input type="text" class="md-input txtTaxInvoiceValue mask-currency" id="txtTaxOnFreightInvoiceValue" value="0" /></td>
+            <td class="uk-text-right taxDiffValue mask-currency" id="taxOnFreightDiffValue">0</td>
+            <td><input type="text" class="md-input  txtTaxRemarks" /></td>
+        </tr>
+        <tr>
+            <input type="hidden" class="taxName" value="@Purchase.TaxOnOtherCharges" />
+            <td class="uk-text-center">@(rowNo++)</td>
+            <td>@Purchase.TaxOnOtherCharges</td>
+            <td>
+                <select class="md-input label-fixed label-fixed ddlTaxPercentage" data-uk-tooltip="{pos:'top'}" title="@Purchase.Percentage">
+                    <option value="" disabled selected hidden>Select...</option>
+                    @foreach (var item in ViewBag.AvailablePercentages)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </td>
+            <td class="uk-text-right"><input type="text" class="md-input txtTaxPOValue mask-currency" id="txtTaxOnOtherChargePOValue" value="0" /></td>
+            <td class="uk-text-right"><input type="text" class="md-input txtTaxInvoiceValue mask-currency" id="txtTaxOnOtherChargeInvoiceValue" value="0" /></td>
+            <td class="uk-text-right taxDiffValue mask-currency" id="taxOnOtherChargeDiffValue">0</td>
+            <td><input type="text" class="md-input  txtTaxRemarks" /></td>
+        </tr>
+                <tr>
+                    <input type="hidden" class="taxName" value="@Purchase.TaxOnPackingCharges" />
+                    <td class="uk-text-center">@(rowNo++)</td>
+                    <td>@Purchase.TaxOnPackingCharges</td>
+                    <td>
+                        <select class="md-input label-fixed label-fixed ddlTaxPercentage" data-uk-tooltip="{pos:'top'}" title="@Purchase.Percentage">
+                            <option value="" disabled selected hidden>Select...</option>
+                            @foreach (var item in ViewBag.AvailablePercentages)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    </td>
+                    <td class="uk-text-right"><input type="text" class="md-input txtTaxPOValue mask-currency" id="txtTaxOnPackingChargePOValue" value="0" /></td>
+                    <td class="uk-text-right"><input type="text" class="md-input txtTaxInvoiceValue mask-currency" id="txtTaxOnPackingChargeInvoiceValue" value="0" /></td>
+                    <td class="uk-text-right taxDiffValue mask-currency" id="taxOnPackingChargeDiffValue">0</td>
+                    <td><input type="text" class="md-input txtTaxRemarks" /></td>
+                </tr>
+    }
+
+
+}
+else
+{
+    var editModel = Model != null ? (List<BusinessObject.PurchaseInvoiceTaxDetailBO>)Model : null;
+    <table id="tbl-tax-details" class="uk-table" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th class="width-10">@Common.SerialNo</th>
+                <th class="width-80">@Purchase.Particulars</th>
+                <th class="width-80">@Purchase.Percentage</th>
+                <th class="width-100">@Purchase.POValue</th>
+                <th class="width-100">@Purchase.InvoiceValue</th>
+                <th class="width-40">@Purchase.Difference</th>
+                <th class="width-250">@Purchase.Remarks</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (editModel != null && editModel.Count() > 0)
+            {
+                foreach (var item in editModel)
+                {
+                    <tr>
+                        <input type="hidden" class="taxName" value="@item.Particular" />
+                        <input type="hidden" class="hdnID" value="@item.Id" />
+                        <td class="uk-text-center">@(rowNo++)</td>
+                        <td>@item.Particular</td>
+                        <td class="uk-text-right">
+                            @item.TaxPercentage
+
+                        </td>
+                        <td class="uk-text-right">@item.POValue</td>
+                        <td class="uk-text-right">@item.InvoiceValue</td>
+                        <td class="uk-text-right taxDiffValue mask-currency">@item.DifferenceValue</td>
+                        <td>@item.Remarks</td>
+                    </tr>
+
+                }
+                //}
+            }
+
+        </tbody>
+    </table>
+}

@@ -1,0 +1,9 @@
+      
+ALTER PROCEDURE [Master].[SpGetItemPriceDetails](        
+@ItemID INT    
+)        
+AS        
+BEGIN      
+SElect p.ID,p.ItemID,l.Name Location,p.LocationID,p.MRP SalesPrice,p.LoosePrice from PriceListDetails p join Location l   
+on p.LocationID=l.ID WHERE ItemID=@ItemID      
+END    

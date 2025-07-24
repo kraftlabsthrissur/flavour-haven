@@ -1,0 +1,1585 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="ApprovalModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AyurwareDevelopment.Approvals.ApprovalConfig' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="ApprovalConfig">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="KeyValueField" Type="varchar" MaxLength="100" />
+          <Property Name="KeyValueField1" Type="varchar" MaxLength="100" />
+          <Property Name="KeyValueField2" Type="varchar" MaxLength="100" />
+          <Property Name="TransNoField" Type="varchar" MaxLength="100" />
+          <Property Name="TableName" Type="varchar" MaxLength="100" />
+          <Property Name="RequestActionID" Type="int" />
+          <Property Name="ViewActionID" Type="int" />
+          <Property Name="ApprovalTypeID" Type="int" />
+          <Property Name="SpOnApprove" Type="varchar" MaxLength="100" />
+          <Property Name="SpOnReject" Type="varchar" MaxLength="100" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="CreatedUserID" Type="int" />
+          <Property Name="LocationID" Type="int" />
+          <Property Name="ApplicationID" Type="int" />
+          <Property Name="KeyValueField3" Type="varchar" MaxLength="100" />
+          <Property Name="KeyValueField4" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AyurwareDevelopment.Approvals.ApprovalFlow' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="ApprovalFlow">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="Code" Type="varchar" MaxLength="20" />
+          <Property Name="ApprovalTypeID" Type="int" />
+          <Property Name="ForDepartmentID" Type="int" />
+          <Property Name="ForUserID" Type="int" />
+          <Property Name="AmountAbove" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="AmountBelow" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="KeyValue1" Type="int" />
+          <Property Name="KeyValue2" Type="int" />
+          <Property Name="ApprovalQueueID" Type="int" />
+          <Property Name="CanOverRide" Type="bit" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="CreatedUserID" Type="int" />
+          <Property Name="LocationID" Type="int" />
+          <Property Name="ApplicationID" Type="int" />
+          <Property Name="KeyValue3" Type="int" />
+          <Property Name="KeyValue4" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AyurwareDevelopment.Approvals.ApprovalQueues' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="ApprovalQueues">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="QueueName" Type="varchar" MaxLength="30" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="CreatedUserID" Type="int" />
+          <Property Name="LocationID" Type="int" />
+          <Property Name="ApplicationID" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AyurwareDevelopment.Approvals.ApprovalQueueTrans' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="ApprovalQueueTrans">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ApprovalQueueID" Type="int" />
+          <Property Name="UserID" Type="int" />
+          <Property Name="SortOrder" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="CreatedUserID" Type="int" />
+          <Property Name="LocationID" Type="int" />
+          <Property Name="ApplicationID" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AyurwareDevelopment.Approvals.Approvals' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Approvals">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="TransID" Type="int" />
+          <Property Name="TransNo" Type="varchar" MaxLength="50" />
+          <Property Name="NetAmount" Type="numeric" Precision="18" Scale="4" />
+          <Property Name="ApprovalFlowID" Type="int" />
+          <Property Name="ViewActionID" Type="int" />
+          <Property Name="RequestActionID" Type="int" />
+          <Property Name="IsApproved" Type="bit" />
+          <Property Name="Status" Type="varchar" MaxLength="100" />
+          <Property Name="LastActionUserID" Type="int" />
+          <Property Name="NextActionUserID" Type="int" />
+          <Property Name="UserID" Type="int" />
+          <Property Name="ApprovalConfigID" Type="int" />
+          <Property Name="CreatedUserID" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="FinYear" Type="int" />
+          <Property Name="LocationID" Type="int" />
+          <Property Name="ApplicationID" Type="int" />
+          <Property Name="ApprovalTypeID" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AyurwareDevelopment.Approvals.ApprovalTrans' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="ApprovalTrans">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ApprovalID" Type="int" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="Date" Type="datetime" />
+          <Property Name="UserID" Type="int" />
+          <Property Name="Status" Type="varchar" MaxLength="50" />
+          <Property Name="Comment" Type="varchar" MaxLength="255" />
+          <Property Name="IsApproved" Type="bit" />
+          <Property Name="FinYear" Type="int" />
+          <Property Name="LocationID" Type="int" />
+          <Property Name="ApplicationID" Type="int" />
+          <Property Name="SortOrder" Type="numeric" Precision="12" Scale="4" />
+          <Property Name="IsActiveForUser" Type="bit" />
+          <Property Name="Requirement" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AyurwareDevelopment.Approvals.ApprovalType' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="ApprovalType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="CreatedUserID" Type="int" />
+          <Property Name="ApplicationID" Type="int" />
+        </EntityType>
+        <Function Name="FnGetApprovalsList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="IsViewer" Type="bit" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <ReturnType>
+            <CollectionType>
+              <RowType>
+                <Property Name="TransID" Type="int" />
+                <Property Name="TransNo" Type="varchar" MaxLength="50" />
+                <Property Name="Date" Type="datetime" />
+                <Property Name="Type" Type="varchar" MaxLength="50" />
+                <Property Name="ApprovalFlow" Type="varchar" MaxLength="30" Nullable="false" />
+                <Property Name="NetAmount" Type="numeric" Precision="18" Scale="4" />
+                <Property Name="SubmittedBy" Type="varchar" MaxLength="100" />
+                <Property Name="Area" Type="varchar" MaxLength="255" />
+                <Property Name="Controller" Type="varchar" MaxLength="255" />
+                <Property Name="Action" Type="varchar" MaxLength="255" />
+                <Property Name="Status" Type="varchar" MaxLength="100" />
+                <Property Name="SupplierName" Type="varchar" MaxLength="200" />
+                <Property Name="Remark" Type="varchar" MaxLength="150" />
+                <Property Name="IsNext" Type="int" Nullable="false" />
+                <Property Name="NextAction" Type="varchar" MaxLength="100" Nullable="false" />
+                <Property Name="LastAction" Type="varchar" MaxLength="100" />
+                <Property Name="ApprovalStatus" Type="varchar" MaxLength="12" />
+                <Property Name="LocationID" Type="int" />
+              </RowType>
+            </CollectionType>
+          </ReturnType>
+        </Function>
+        <Function Name="FnIsRecordCancellable" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals" ReturnType="bit">
+          <Parameter Name="Type" Type="varchar" Mode="In" />
+          <Parameter Name="TransID" Type="int" Mode="In" />
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpCancelRecordInApproval" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="Type" Type="varchar" Mode="In" />
+          <Parameter Name="TransID" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpCreateApprovalFlow" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="LocationName" Type="varchar" Mode="In" />
+          <Parameter Name="ForDepartmentID" Type="int" Mode="In" />
+          <Parameter Name="AmountAbove" Type="decimal" Mode="In" />
+          <Parameter Name="AmountBelow" Type="decimal" Mode="In" />
+          <Parameter Name="ItemCategoryID" Type="int" Mode="In" />
+          <Parameter Name="ItemAccountsCategoryID" Type="int" Mode="In" />
+          <Parameter Name="ApprovalQueueID" Type="int" Mode="In" />
+          <Parameter Name="SupplierCategoryID" Type="int" Mode="In" />
+          <Parameter Name="SupplierAccountsCategoryID" Type="int" Mode="In" />
+          <Parameter Name="CreatedUserID" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <Parameter Name="ReturnValue" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="SpCreateApprovalQueue" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="QueueName" Type="varchar" Mode="In" />
+          <Parameter Name="CreatedDate" Type="datetime" Mode="In" />
+          <Parameter Name="CreatedUserID" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <Parameter Name="ApprovalQueueID" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="SpCreateApprovalQueueTrans" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="ApprovalQueueID" Type="int" Mode="In" />
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="SortOrder" Type="int" Mode="In" />
+          <Parameter Name="CreatedUserID" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpDoApprovalAction" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="ApprovalID" Type="int" Mode="In" />
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="Comment" Type="varchar" Mode="In" />
+          <Parameter Name="Status" Type="varchar" Mode="In" />
+          <Parameter Name="ClarificationUserID" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetApprovalFlow" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetApprovalFlowDetails" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetApprovalFlowList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="AppQueueName" Type="varchar" Mode="In" />
+          <Parameter Name="ForDepartmentName" Type="varchar" Mode="In" />
+          <Parameter Name="AmountAbove" Type="varchar" Mode="In" />
+          <Parameter Name="AmountBelow" Type="varchar" Mode="In" />
+          <Parameter Name="ItemCategoryName" Type="varchar" Mode="In" />
+          <Parameter Name="ItemAccountsCategoryName" Type="varchar" Mode="In" />
+          <Parameter Name="SuppliercategoryName" Type="varchar" Mode="In" />
+          <Parameter Name="SupplierAccountscategoryName" Type="varchar" Mode="In" />
+          <Parameter Name="SortField" Type="varchar" Mode="In" />
+          <Parameter Name="SortOrder" Type="varchar" Mode="In" />
+          <Parameter Name="Offset" Type="int" Mode="In" />
+          <Parameter Name="Limit" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetApprovalList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="Type" Type="varchar" Mode="In" />
+          <Parameter Name="CodeHint" Type="varchar" Mode="In" />
+          <Parameter Name="DateHint" Type="varchar" Mode="In" />
+          <Parameter Name="TypeHint" Type="varchar" Mode="In" />
+          <Parameter Name="SupplierNameHint" Type="varchar" Mode="In" />
+          <Parameter Name="FlowHint" Type="varchar" Mode="In" />
+          <Parameter Name="NetAmountHint" Type="varchar" Mode="In" />
+          <Parameter Name="UserNameHint" Type="varchar" Mode="In" />
+          <Parameter Name="LastActionByHint" Type="varchar" Mode="In" />
+          <Parameter Name="NextActionByHint" Type="varchar" Mode="In" />
+          <Parameter Name="StatusHint" Type="varchar" Mode="In" />
+          <Parameter Name="SortField" Type="varchar" Mode="In" />
+          <Parameter Name="SortOrder" Type="varchar" Mode="In" />
+          <Parameter Name="Offset" Type="int" Mode="In" />
+          <Parameter Name="Limit" Type="int" Mode="In" />
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetApprovalProcess" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="Area" Type="varchar" Mode="In" />
+          <Parameter Name="Controller" Type="varchar" Mode="In" />
+          <Parameter Name="Action" Type="varchar" Mode="In" />
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetApprovalQueue" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetApprovalQueueDetails" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="ApprovalQueueID" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetApprovalQueueTrans" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="ApprovalQueueID" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetApprovals" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="Area" Type="varchar" Mode="In" />
+          <Parameter Name="Controller" Type="varchar" Mode="In" />
+          <Parameter Name="Action" Type="varchar" Mode="In" />
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetItemsForApprovalFlow" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="ForDepartmentID" Type="int" Mode="In" />
+          <Parameter Name="ItemCategoryID" Type="int" Mode="In" />
+          <Parameter Name="ItemAccountsCategoryID" Type="int" Mode="In" />
+          <Parameter Name="UserLocationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetLocationListForApprovalFlow" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpHasApprovalProcess" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="Area" Type="varchar" Mode="In" />
+          <Parameter Name="Controller" Type="varchar" Mode="In" />
+          <Parameter Name="Action" Type="varchar" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpInitiateApprovalRequest" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="Area" Type="varchar" Mode="In" />
+          <Parameter Name="Controller" Type="varchar" Mode="In" />
+          <Parameter Name="Action" Type="varchar" Mode="In" />
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="ApprovalFlowID" Type="int" Mode="In" />
+          <Parameter Name="CreatedUserID" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpOnProformaApprove" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="ProformaInvoiceID" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpOnProformaReject" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="ProformaInvoiceID" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpOnPurchaseOrderApprove" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpOnPurchaseOrderReject" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpOnServicePurchaseOrderApprove" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpOnServicePurchaseOrderReject" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpUpdateApprovalFlow" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="LocationName" Type="varchar" Mode="In" />
+          <Parameter Name="ForDepartmentID" Type="int" Mode="In" />
+          <Parameter Name="AmountAbove" Type="decimal" Mode="In" />
+          <Parameter Name="AmountBelow" Type="decimal" Mode="In" />
+          <Parameter Name="ItemCategoryID" Type="int" Mode="In" />
+          <Parameter Name="ItemAccountsCategoryID" Type="int" Mode="In" />
+          <Parameter Name="ApprovalQueueID" Type="int" Mode="In" />
+          <Parameter Name="SupplierCategoryID" Type="int" Mode="In" />
+          <Parameter Name="SupplierAccountsCategoryID" Type="int" Mode="In" />
+          <Parameter Name="CreatedUserID" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpUpdateApprovalQueue" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Approvals">
+          <Parameter Name="QueueName" Type="varchar" Mode="In" />
+          <Parameter Name="CreatedDate" Type="datetime" Mode="In" />
+          <Parameter Name="CreatedUserID" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <Parameter Name="ID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpCancelTransaction" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="TableName" Type="varchar" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpCreateBatch" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ItemType" Type="char" Mode="In" />
+          <Parameter Name="ItemID" Type="int" Mode="In" />
+          <Parameter Name="BatchNo" Type="varchar" Mode="In" />
+          <Parameter Name="CustomBatchNo" Type="varchar" Mode="In" />
+          <Parameter Name="ManufacturingDate" Type="datetime" Mode="In" />
+          <Parameter Name="ExpiryDate" Type="datetime" Mode="In" />
+          <Parameter Name="BatchTypeID" Type="int" Mode="In" />
+          <Parameter Name="CreatedUserID" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <Parameter Name="BatchID" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="SpGetConfigByUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ConfigName" Type="varchar" Mode="In" />
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetCurrentFinYear" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpIsCodeAlreadyExists" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="tableName" Type="varchar" Mode="In" />
+          <Parameter Name="FieldName" Type="varchar" Mode="In" />
+          <Parameter Name="Code" Type="varchar" Mode="In" />
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="IsExists" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="SpSuspendTransaction" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="TableName" Type="varchar" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <Parameter Name="RetValue" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="SpUpdateSerialNo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="FormName" Type="varchar" Mode="In" />
+          <Parameter Name="FieldName" Type="varchar" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <Parameter Name="SerialNo" Type="varchar" Mode="InOut" />
+        </Function>
+        <EntityContainer Name="ApprovalModelStoreContainer">
+          <EntitySet Name="ApprovalConfig" EntityType="Self.ApprovalConfig" store:Type="Tables" store:Schema="Approvals">
+            <DefiningQuery>SELECT 
+    [ApprovalConfig].[ID] AS [ID], 
+    [ApprovalConfig].[Name] AS [Name], 
+    [ApprovalConfig].[KeyValueField] AS [KeyValueField], 
+    [ApprovalConfig].[KeyValueField1] AS [KeyValueField1], 
+    [ApprovalConfig].[KeyValueField2] AS [KeyValueField2], 
+    [ApprovalConfig].[TransNoField] AS [TransNoField], 
+    [ApprovalConfig].[TableName] AS [TableName], 
+    [ApprovalConfig].[RequestActionID] AS [RequestActionID], 
+    [ApprovalConfig].[ViewActionID] AS [ViewActionID], 
+    [ApprovalConfig].[ApprovalTypeID] AS [ApprovalTypeID], 
+    [ApprovalConfig].[SpOnApprove] AS [SpOnApprove], 
+    [ApprovalConfig].[SpOnReject] AS [SpOnReject], 
+    [ApprovalConfig].[CreatedDate] AS [CreatedDate], 
+    [ApprovalConfig].[CreatedUserID] AS [CreatedUserID], 
+    [ApprovalConfig].[LocationID] AS [LocationID], 
+    [ApprovalConfig].[ApplicationID] AS [ApplicationID], 
+    [ApprovalConfig].[KeyValueField3] AS [KeyValueField3], 
+    [ApprovalConfig].[KeyValueField4] AS [KeyValueField4]
+    FROM [Approvals].[ApprovalConfig] AS [ApprovalConfig]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="ApprovalFlow" EntityType="Self.ApprovalFlow" store:Type="Tables" store:Schema="Approvals">
+            <DefiningQuery>SELECT 
+    [ApprovalFlow].[ID] AS [ID], 
+    [ApprovalFlow].[Name] AS [Name], 
+    [ApprovalFlow].[Code] AS [Code], 
+    [ApprovalFlow].[ApprovalTypeID] AS [ApprovalTypeID], 
+    [ApprovalFlow].[ForDepartmentID] AS [ForDepartmentID], 
+    [ApprovalFlow].[ForUserID] AS [ForUserID], 
+    [ApprovalFlow].[AmountAbove] AS [AmountAbove], 
+    [ApprovalFlow].[AmountBelow] AS [AmountBelow], 
+    [ApprovalFlow].[KeyValue1] AS [KeyValue1], 
+    [ApprovalFlow].[KeyValue2] AS [KeyValue2], 
+    [ApprovalFlow].[ApprovalQueueID] AS [ApprovalQueueID], 
+    [ApprovalFlow].[CanOverRide] AS [CanOverRide], 
+    [ApprovalFlow].[CreatedDate] AS [CreatedDate], 
+    [ApprovalFlow].[CreatedUserID] AS [CreatedUserID], 
+    [ApprovalFlow].[LocationID] AS [LocationID], 
+    [ApprovalFlow].[ApplicationID] AS [ApplicationID], 
+    [ApprovalFlow].[KeyValue3] AS [KeyValue3], 
+    [ApprovalFlow].[KeyValue4] AS [KeyValue4]
+    FROM [Approvals].[ApprovalFlow] AS [ApprovalFlow]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="ApprovalQueues" EntityType="Self.ApprovalQueues" store:Type="Tables" store:Schema="Approvals">
+            <DefiningQuery>SELECT 
+    [ApprovalQueues].[ID] AS [ID], 
+    [ApprovalQueues].[QueueName] AS [QueueName], 
+    [ApprovalQueues].[CreatedDate] AS [CreatedDate], 
+    [ApprovalQueues].[CreatedUserID] AS [CreatedUserID], 
+    [ApprovalQueues].[LocationID] AS [LocationID], 
+    [ApprovalQueues].[ApplicationID] AS [ApplicationID]
+    FROM [Approvals].[ApprovalQueues] AS [ApprovalQueues]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="ApprovalQueueTrans" EntityType="Self.ApprovalQueueTrans" store:Type="Tables" store:Schema="Approvals">
+            <DefiningQuery>SELECT 
+    [ApprovalQueueTrans].[ID] AS [ID], 
+    [ApprovalQueueTrans].[ApprovalQueueID] AS [ApprovalQueueID], 
+    [ApprovalQueueTrans].[UserID] AS [UserID], 
+    [ApprovalQueueTrans].[SortOrder] AS [SortOrder], 
+    [ApprovalQueueTrans].[CreatedDate] AS [CreatedDate], 
+    [ApprovalQueueTrans].[CreatedUserID] AS [CreatedUserID], 
+    [ApprovalQueueTrans].[LocationID] AS [LocationID], 
+    [ApprovalQueueTrans].[ApplicationID] AS [ApplicationID]
+    FROM [Approvals].[ApprovalQueueTrans] AS [ApprovalQueueTrans]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Approvals" EntityType="Self.Approvals" store:Type="Tables" store:Schema="Approvals">
+            <DefiningQuery>SELECT 
+    [Approvals].[ID] AS [ID], 
+    [Approvals].[Name] AS [Name], 
+    [Approvals].[TransID] AS [TransID], 
+    [Approvals].[TransNo] AS [TransNo], 
+    [Approvals].[NetAmount] AS [NetAmount], 
+    [Approvals].[ApprovalFlowID] AS [ApprovalFlowID], 
+    [Approvals].[ViewActionID] AS [ViewActionID], 
+    [Approvals].[RequestActionID] AS [RequestActionID], 
+    [Approvals].[IsApproved] AS [IsApproved], 
+    [Approvals].[Status] AS [Status], 
+    [Approvals].[LastActionUserID] AS [LastActionUserID], 
+    [Approvals].[NextActionUserID] AS [NextActionUserID], 
+    [Approvals].[UserID] AS [UserID], 
+    [Approvals].[ApprovalConfigID] AS [ApprovalConfigID], 
+    [Approvals].[CreatedUserID] AS [CreatedUserID], 
+    [Approvals].[CreatedDate] AS [CreatedDate], 
+    [Approvals].[FinYear] AS [FinYear], 
+    [Approvals].[LocationID] AS [LocationID], 
+    [Approvals].[ApplicationID] AS [ApplicationID], 
+    [Approvals].[ApprovalTypeID] AS [ApprovalTypeID]
+    FROM [Approvals].[Approvals] AS [Approvals]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="ApprovalTrans" EntityType="Self.ApprovalTrans" store:Type="Tables" store:Schema="Approvals">
+            <DefiningQuery>SELECT 
+    [ApprovalTrans].[ID] AS [ID], 
+    [ApprovalTrans].[ApprovalID] AS [ApprovalID], 
+    [ApprovalTrans].[IsActive] AS [IsActive], 
+    [ApprovalTrans].[Date] AS [Date], 
+    [ApprovalTrans].[UserID] AS [UserID], 
+    [ApprovalTrans].[Status] AS [Status], 
+    [ApprovalTrans].[Comment] AS [Comment], 
+    [ApprovalTrans].[IsApproved] AS [IsApproved], 
+    [ApprovalTrans].[FinYear] AS [FinYear], 
+    [ApprovalTrans].[LocationID] AS [LocationID], 
+    [ApprovalTrans].[ApplicationID] AS [ApplicationID], 
+    [ApprovalTrans].[SortOrder] AS [SortOrder], 
+    [ApprovalTrans].[IsActiveForUser] AS [IsActiveForUser], 
+    [ApprovalTrans].[Requirement] AS [Requirement]
+    FROM [Approvals].[ApprovalTrans] AS [ApprovalTrans]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="ApprovalType" EntityType="Self.ApprovalType" store:Type="Tables" store:Schema="Approvals">
+            <DefiningQuery>SELECT 
+    [ApprovalType].[ID] AS [ID], 
+    [ApprovalType].[Name] AS [Name], 
+    [ApprovalType].[CreatedDate] AS [CreatedDate], 
+    [ApprovalType].[CreatedUserID] AS [CreatedUserID], 
+    [ApprovalType].[ApplicationID] AS [ApplicationID]
+    FROM [Approvals].[ApprovalType] AS [ApprovalType]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ApprovalModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <ComplexType Name="FnGetApprovalsList_Result">
+          <Property Name="TransID" Type="Int32" />
+          <Property Name="TransNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Date" Type="DateTime" />
+          <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ApprovalFlow" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="NetAmount" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="SubmittedBy" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Area" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Controller" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Action" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="SupplierName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Remark" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="IsNext" Type="Int32" Nullable="false" />
+          <Property Name="NextAction" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="LastAction" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ApprovalStatus" Type="String" MaxLength="12" FixedLength="false" Unicode="false" />
+          <Property Name="LocationID" Type="Int32" />
+        </ComplexType>
+        <EntityType Name="ApprovalConfig">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="KeyValueField" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="KeyValueField1" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="KeyValueField2" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="TransNoField" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="TableName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="RequestActionID" Type="Int32" />
+          <Property Name="ViewActionID" Type="Int32" />
+          <Property Name="ApprovalTypeID" Type="Int32" />
+          <Property Name="SpOnApprove" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="SpOnReject" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedUserID" Type="Int32" />
+          <Property Name="LocationID" Type="Int32" />
+          <Property Name="ApplicationID" Type="Int32" />
+          <Property Name="KeyValueField3" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="KeyValueField4" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="ApprovalFlow">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Code" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="ApprovalTypeID" Type="Int32" />
+          <Property Name="ForDepartmentID" Type="Int32" />
+          <Property Name="ForUserID" Type="Int32" />
+          <Property Name="AmountAbove" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="AmountBelow" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="KeyValue1" Type="Int32" />
+          <Property Name="KeyValue2" Type="Int32" />
+          <Property Name="ApprovalQueueID" Type="Int32" />
+          <Property Name="CanOverRide" Type="Boolean" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedUserID" Type="Int32" />
+          <Property Name="LocationID" Type="Int32" />
+          <Property Name="ApplicationID" Type="Int32" />
+          <Property Name="KeyValue3" Type="Int32" />
+          <Property Name="KeyValue4" Type="Int32" />
+        </EntityType>
+        <EntityType Name="ApprovalQueue">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="QueueName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedUserID" Type="Int32" />
+          <Property Name="LocationID" Type="Int32" />
+          <Property Name="ApplicationID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="ApprovalQueueTran">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ApprovalQueueID" Type="Int32" />
+          <Property Name="UserID" Type="Int32" />
+          <Property Name="SortOrder" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedUserID" Type="Int32" />
+          <Property Name="LocationID" Type="Int32" />
+          <Property Name="ApplicationID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Approval">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TransID" Type="Int32" />
+          <Property Name="TransNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="NetAmount" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="ApprovalFlowID" Type="Int32" />
+          <Property Name="ViewActionID" Type="Int32" />
+          <Property Name="RequestActionID" Type="Int32" />
+          <Property Name="IsApproved" Type="Boolean" />
+          <Property Name="Status" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="LastActionUserID" Type="Int32" />
+          <Property Name="NextActionUserID" Type="Int32" />
+          <Property Name="UserID" Type="Int32" />
+          <Property Name="ApprovalConfigID" Type="Int32" />
+          <Property Name="CreatedUserID" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="FinYear" Type="Int32" />
+          <Property Name="LocationID" Type="Int32" />
+          <Property Name="ApplicationID" Type="Int32" />
+          <Property Name="ApprovalTypeID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="ApprovalTran">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ApprovalID" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="Date" Type="DateTime" Precision="3" />
+          <Property Name="UserID" Type="Int32" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Comment" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="IsApproved" Type="Boolean" />
+          <Property Name="FinYear" Type="Int32" />
+          <Property Name="LocationID" Type="Int32" />
+          <Property Name="ApplicationID" Type="Int32" />
+          <Property Name="SortOrder" Type="Decimal" Precision="12" Scale="4" />
+          <Property Name="IsActiveForUser" Type="Boolean" />
+          <Property Name="Requirement" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="ApprovalType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedUserID" Type="Int32" />
+          <Property Name="ApplicationID" Type="Int32" />
+        </EntityType>
+        <EntityContainer Name="ApprovalEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ApprovalConfigs" EntityType="Self.ApprovalConfig" />
+          <EntitySet Name="ApprovalFlows" EntityType="Self.ApprovalFlow" />
+          <EntitySet Name="ApprovalQueues" EntityType="Self.ApprovalQueue" />
+          <EntitySet Name="ApprovalQueueTrans" EntityType="Self.ApprovalQueueTran" />
+          <EntitySet Name="Approvals" EntityType="Self.Approval" />
+          <EntitySet Name="ApprovalTrans" EntityType="Self.ApprovalTran" />
+          <EntitySet Name="ApprovalTypes" EntityType="Self.ApprovalType" />
+          <FunctionImport Name="FnGetApprovalsList" IsComposable="true" ReturnType="Collection(ApprovalModel.FnGetApprovalsList_Result)">
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="IsViewer" Mode="In" Type="Boolean" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpCancelRecordInApproval">
+            <Parameter Name="Type" Mode="In" Type="String" />
+            <Parameter Name="TransID" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpCreateApprovalFlow">
+            <Parameter Name="LocationName" Mode="In" Type="String" />
+            <Parameter Name="ForDepartmentID" Mode="In" Type="Int32" />
+            <Parameter Name="AmountAbove" Mode="In" Type="Decimal" />
+            <Parameter Name="AmountBelow" Mode="In" Type="Decimal" />
+            <Parameter Name="ItemCategoryID" Mode="In" Type="Int32" />
+            <Parameter Name="ItemAccountsCategoryID" Mode="In" Type="Int32" />
+            <Parameter Name="ApprovalQueueID" Mode="In" Type="Int32" />
+            <Parameter Name="SupplierCategoryID" Mode="In" Type="Int32" />
+            <Parameter Name="SupplierAccountsCategoryID" Mode="In" Type="Int32" />
+            <Parameter Name="CreatedUserID" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+            <Parameter Name="ReturnValue" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpCreateApprovalQueue">
+            <Parameter Name="QueueName" Mode="In" Type="String" />
+            <Parameter Name="CreatedDate" Mode="In" Type="DateTime" />
+            <Parameter Name="CreatedUserID" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApprovalQueueID" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpCreateApprovalQueueTrans">
+            <Parameter Name="ApprovalQueueID" Mode="In" Type="Int32" />
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="SortOrder" Mode="In" Type="Int32" />
+            <Parameter Name="CreatedUserID" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpDoApprovalAction" ReturnType="Collection(Int32)">
+            <Parameter Name="ApprovalID" Mode="In" Type="Int32" />
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="Comment" Mode="In" Type="String" />
+            <Parameter Name="Status" Mode="In" Type="String" />
+            <Parameter Name="ClarificationUserID" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetApprovalFlow" ReturnType="Collection(ApprovalModel.SpGetApprovalFlow_Result)">
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetApprovalFlowDetails" ReturnType="Collection(ApprovalModel.SpGetApprovalFlowDetails_Result)">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetApprovalFlowList" ReturnType="Collection(ApprovalModel.SpGetApprovalFlowList_Result)">
+            <Parameter Name="AppQueueName" Mode="In" Type="String" />
+            <Parameter Name="ForDepartmentName" Mode="In" Type="String" />
+            <Parameter Name="AmountAbove" Mode="In" Type="String" />
+            <Parameter Name="AmountBelow" Mode="In" Type="String" />
+            <Parameter Name="ItemCategoryName" Mode="In" Type="String" />
+            <Parameter Name="ItemAccountsCategoryName" Mode="In" Type="String" />
+            <Parameter Name="SuppliercategoryName" Mode="In" Type="String" />
+            <Parameter Name="SupplierAccountscategoryName" Mode="In" Type="String" />
+            <Parameter Name="SortField" Mode="In" Type="String" />
+            <Parameter Name="SortOrder" Mode="In" Type="String" />
+            <Parameter Name="Offset" Mode="In" Type="Int32" />
+            <Parameter Name="Limit" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetApprovalList" ReturnType="Collection(ApprovalModel.SpGetApprovalList_Result)">
+            <Parameter Name="Type" Mode="In" Type="String" />
+            <Parameter Name="CodeHint" Mode="In" Type="String" />
+            <Parameter Name="DateHint" Mode="In" Type="String" />
+            <Parameter Name="TypeHint" Mode="In" Type="String" />
+            <Parameter Name="SupplierNameHint" Mode="In" Type="String" />
+            <Parameter Name="FlowHint" Mode="In" Type="String" />
+            <Parameter Name="NetAmountHint" Mode="In" Type="String" />
+            <Parameter Name="UserNameHint" Mode="In" Type="String" />
+            <Parameter Name="LastActionByHint" Mode="In" Type="String" />
+            <Parameter Name="NextActionByHint" Mode="In" Type="String" />
+            <Parameter Name="StatusHint" Mode="In" Type="String" />
+            <Parameter Name="SortField" Mode="In" Type="String" />
+            <Parameter Name="SortOrder" Mode="In" Type="String" />
+            <Parameter Name="Offset" Mode="In" Type="Int32" />
+            <Parameter Name="Limit" Mode="In" Type="Int32" />
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetApprovalProcess" ReturnType="Collection(ApprovalModel.SpGetApprovalProcess_Result)">
+            <Parameter Name="Area" Mode="In" Type="String" />
+            <Parameter Name="Controller" Mode="In" Type="String" />
+            <Parameter Name="Action" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetApprovalQueue" ReturnType="Collection(ApprovalModel.SpGetApprovalQueue_Result)">
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetApprovalQueueDetails" ReturnType="Collection(ApprovalModel.SpGetApprovalQueueDetails_Result)">
+            <Parameter Name="ApprovalQueueID" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetApprovalQueueTrans" ReturnType="Collection(ApprovalModel.SpGetApprovalQueueTrans_Result)">
+            <Parameter Name="ApprovalQueueID" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetApprovals" ReturnType="Collection(ApprovalModel.SpGetApprovals_Result)">
+            <Parameter Name="Area" Mode="In" Type="String" />
+            <Parameter Name="Controller" Mode="In" Type="String" />
+            <Parameter Name="Action" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetItemsForApprovalFlow" ReturnType="Collection(ApprovalModel.SpGetItemsForApprovalFlow_Result)">
+            <Parameter Name="ForDepartmentID" Mode="In" Type="Int32" />
+            <Parameter Name="ItemCategoryID" Mode="In" Type="Int32" />
+            <Parameter Name="ItemAccountsCategoryID" Mode="In" Type="Int32" />
+            <Parameter Name="UserLocationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetLocationListForApprovalFlow" ReturnType="Collection(ApprovalModel.SpGetLocationListForApprovalFlow_Result)">
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpHasApprovalProcess" ReturnType="Collection(Boolean)">
+            <Parameter Name="Area" Mode="In" Type="String" />
+            <Parameter Name="Controller" Mode="In" Type="String" />
+            <Parameter Name="Action" Mode="In" Type="String" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpInitiateApprovalRequest">
+            <Parameter Name="Area" Mode="In" Type="String" />
+            <Parameter Name="Controller" Mode="In" Type="String" />
+            <Parameter Name="Action" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="ApprovalFlowID" Mode="In" Type="Int32" />
+            <Parameter Name="CreatedUserID" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpOnProformaApprove">
+            <Parameter Name="ProformaInvoiceID" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpOnProformaReject">
+            <Parameter Name="ProformaInvoiceID" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpOnPurchaseOrderApprove">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpOnPurchaseOrderReject">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpOnServicePurchaseOrderApprove">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpOnServicePurchaseOrderReject">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpUpdateApprovalFlow">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="LocationName" Mode="In" Type="String" />
+            <Parameter Name="ForDepartmentID" Mode="In" Type="Int32" />
+            <Parameter Name="AmountAbove" Mode="In" Type="Decimal" />
+            <Parameter Name="AmountBelow" Mode="In" Type="Decimal" />
+            <Parameter Name="ItemCategoryID" Mode="In" Type="Int32" />
+            <Parameter Name="ItemAccountsCategoryID" Mode="In" Type="Int32" />
+            <Parameter Name="ApprovalQueueID" Mode="In" Type="Int32" />
+            <Parameter Name="SupplierCategoryID" Mode="In" Type="Int32" />
+            <Parameter Name="SupplierAccountsCategoryID" Mode="In" Type="Int32" />
+            <Parameter Name="CreatedUserID" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpUpdateApprovalQueue">
+            <Parameter Name="QueueName" Mode="In" Type="String" />
+            <Parameter Name="CreatedDate" Mode="In" Type="DateTime" />
+            <Parameter Name="CreatedUserID" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpCancelTransaction">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="TableName" Mode="In" Type="String" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpCreateBatch">
+            <Parameter Name="ItemType" Mode="In" Type="String" />
+            <Parameter Name="ItemID" Mode="In" Type="Int32" />
+            <Parameter Name="BatchNo" Mode="In" Type="String" />
+            <Parameter Name="CustomBatchNo" Mode="In" Type="String" />
+            <Parameter Name="ManufacturingDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ExpiryDate" Mode="In" Type="DateTime" />
+            <Parameter Name="BatchTypeID" Mode="In" Type="Int32" />
+            <Parameter Name="CreatedUserID" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+            <Parameter Name="BatchID" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetConfigByUser" ReturnType="Collection(ApprovalModel.SpGetConfigByUser_Result)">
+            <Parameter Name="ConfigName" Mode="In" Type="String" />
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetCurrentFinYear" ReturnType="Collection(ApprovalModel.SpGetCurrentFinYear_Result)">
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpIsCodeAlreadyExists">
+            <Parameter Name="tableName" Mode="In" Type="String" />
+            <Parameter Name="FieldName" Mode="In" Type="String" />
+            <Parameter Name="Code" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="IsExists" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpSuspendTransaction">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="TableName" Mode="In" Type="String" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+            <Parameter Name="RetValue" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpUpdateSerialNo">
+            <Parameter Name="FormName" Mode="In" Type="String" />
+            <Parameter Name="FieldName" Mode="In" Type="String" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+            <Parameter Name="SerialNo" Mode="InOut" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="SpGetApprovalFlow_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="QueueName" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="FlowName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Code" Nullable="true" MaxLength="20" />
+          <Property Type="Int32" Name="DeptID" Nullable="true" />
+          <Property Type="String" Name="DepartmentName" Nullable="false" MaxLength="50" />
+          <Property Type="Decimal" Name="AmountAbove" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="AmountBelow" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Int32" Name="KeyValue1" Nullable="true" />
+          <Property Type="String" Name="KeyValue1Name" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="KeyValue2" Nullable="true" />
+          <Property Type="String" Name="KeyValue2Name" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="KeyValue3" Nullable="true" />
+          <Property Type="String" Name="KeyValue3Name" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="KeyValue4" Nullable="true" />
+          <Property Type="String" Name="KeyValue4Name" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="LocationName" Nullable="true" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="SpGetApprovalFlowDetails_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="QueueName" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="FlowName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Code" Nullable="true" MaxLength="20" />
+          <Property Type="Int32" Name="DeptID" Nullable="true" />
+          <Property Type="String" Name="DepartmentName" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="AmountAbove" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="AmountBelow" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Int32" Name="KeyValue1" Nullable="true" />
+          <Property Type="String" Name="KeyValue1Name" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="KeyValue2" Nullable="true" />
+          <Property Type="String" Name="KeyValue2Name" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="KeyValue3" Nullable="true" />
+          <Property Type="String" Name="KeyValue3Name" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="KeyValue4" Nullable="true" />
+          <Property Type="String" Name="KeyValue4Name" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="LocationName" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="QueueID" Nullable="false" />
+          <Property Type="Int32" Name="UserLocationID" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="SpGetApprovalFlowList_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="QueueName" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="FlowName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Code" Nullable="true" MaxLength="20" />
+          <Property Type="Int32" Name="DeptID" Nullable="true" />
+          <Property Type="String" Name="DepartmentName" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="AmountAbove" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="AmountBelow" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Int32" Name="KeyValue1" Nullable="true" />
+          <Property Type="String" Name="KeyValue1Name" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="KeyValue2" Nullable="true" />
+          <Property Type="String" Name="KeyValue2Name" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="KeyValue3" Nullable="true" />
+          <Property Type="String" Name="KeyValue3Name" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="KeyValue4" Nullable="true" />
+          <Property Type="String" Name="KeyValue4Name" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="LocationName" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="totalRecords" Nullable="true" />
+          <Property Type="Int32" Name="recordsFiltered" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SpGetApprovalList_Result">
+          <Property Type="Int32" Name="TransID" Nullable="true" />
+          <Property Type="String" Name="TransNo" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="Date" Nullable="true" Precision="23" />
+          <Property Type="String" Name="Type" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ApprovalFlow" Nullable="false" MaxLength="30" />
+          <Property Type="Decimal" Name="NetAmount" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="String" Name="SubmittedBy" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="NextAction" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="LastAction" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Status" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Area" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="Controller" Nullable="true" MaxLength="255" />
+          <Property Type="String" Name="Action" Nullable="true" MaxLength="255" />
+          <Property Type="Int32" Name="IsNext" Nullable="false" />
+          <Property Type="Int32" Name="totalRecords" Nullable="true" />
+          <Property Type="Int32" Name="recordsFiltered" Nullable="true" />
+          <Property Type="String" Name="SupplierName" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="Remark" Nullable="true" MaxLength="150" />
+        </ComplexType>
+        <ComplexType Name="SpGetApprovalProcess_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="Int32" Name="ApprovalID" Nullable="true" />
+          <Property Type="Boolean" Name="IsActive" Nullable="true" />
+          <Property Type="DateTime" Name="Date" Nullable="true" Precision="23" />
+          <Property Type="Int32" Name="UserID" Nullable="true" />
+          <Property Type="String" Name="UserName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Status" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Comment" Nullable="true" MaxLength="255" />
+          <Property Type="Boolean" Name="IsApproved" Nullable="true" />
+          <Property Type="Decimal" Name="SortOrder" Nullable="true" Precision="12" Scale="4" />
+          <Property Type="Int32" Name="NextActionUserID" Nullable="false" />
+          <Property Type="Boolean" Name="IsActiveForUser" Nullable="true" />
+          <Property Type="String" Name="Requirement" Nullable="true" MaxLength="20" />
+        </ComplexType>
+        <ComplexType Name="SpGetApprovalQueue_Result">
+          <Property Type="Int32" Name="AppQueueID" Nullable="false" />
+          <Property Type="String" Name="QueueName" Nullable="true" MaxLength="30" />
+          <Property Type="Int32" Name="LocationID" Nullable="true" />
+          <Property Type="String" Name="LocationName" Nullable="true" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="SpGetApprovalQueueDetails_Result">
+          <Property Type="Int32" Name="AppQueueID" Nullable="false" />
+          <Property Type="String" Name="QueueName" Nullable="true" MaxLength="30" />
+          <Property Type="Int32" Name="LocationID" Nullable="true" />
+          <Property Type="String" Name="LocationName" Nullable="true" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="SpGetApprovalQueueTrans_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="Int32" Name="ApprovalQueueID" Nullable="true" />
+          <Property Type="String" Name="UserName" Nullable="false" MaxLength="256" />
+          <Property Type="Int32" Name="SortOrder" Nullable="true" />
+          <Property Type="Int32" Name="UserID" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="SpGetApprovals_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="TransID" Nullable="true" />
+          <Property Type="String" Name="TransNo" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="ApprovalFlowID" Nullable="true" />
+          <Property Type="Boolean" Name="IsApproved" Nullable="true" />
+          <Property Type="String" Name="Status" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="LastActionUserID" Nullable="true" />
+          <Property Type="Int32" Name="NextActionUserID" Nullable="false" />
+          <Property Type="Int32" Name="UserID" Nullable="true" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="true" Precision="23" />
+          <Property Type="Int32" Name="ApprovalTypeID" Nullable="true" />
+          <Property Type="String" Name="UserName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Requirement" Nullable="true" MaxLength="20" />
+        </ComplexType>
+        <ComplexType Name="SpGetItemsForApprovalFlow_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="Int32" Name="ForDepartmentID" Nullable="true" />
+          <Property Type="Decimal" Name="AmountAbove" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="AmountBelow" Nullable="true" Precision="18" Scale="4" />
+          <Property Type="Int32" Name="KeyValue1" Nullable="true" />
+          <Property Type="Int32" Name="KeyValue2" Nullable="true" />
+          <Property Type="Int32" Name="ApprovalQueueID" Nullable="true" />
+          <Property Type="Int32" Name="KeyValue3" Nullable="true" />
+          <Property Type="Int32" Name="KeyValue4" Nullable="true" />
+          <Property Type="String" Name="ItemCategory" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="DepartmentName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="ItemAccountCategory" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="SupplierCategory" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="SupplierAccountCategory" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Code" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="QueueName" Nullable="true" MaxLength="30" />
+        </ComplexType>
+        <ComplexType Name="SpGetLocationListForApprovalFlow_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Code" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Place" Nullable="true" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="SpGetConfigByUser_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="ConfigValue" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Description" Nullable="true" MaxLength="255" />
+          <Property Type="Boolean" Name="IsBoolean" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SpGetCurrentFinYear_Result">
+          <Property Type="Int32" Name="FinancialYearID" Nullable="false" />
+          <Property Type="DateTime" Name="StartDate" Nullable="false" Precision="23" />
+          <Property Type="DateTime" Name="EndDate" Nullable="false" Precision="23" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="100" />
+          <Property Type="Int32" Name="Year" Nullable="false" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ApprovalModelStoreContainer" CdmEntityContainer="ApprovalEntities">
+          <EntitySetMapping Name="ApprovalConfigs">
+            <EntityTypeMapping TypeName="ApprovalModel.ApprovalConfig">
+              <MappingFragment StoreEntitySet="ApprovalConfig">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="KeyValueField" ColumnName="KeyValueField" />
+                <ScalarProperty Name="KeyValueField1" ColumnName="KeyValueField1" />
+                <ScalarProperty Name="KeyValueField2" ColumnName="KeyValueField2" />
+                <ScalarProperty Name="TransNoField" ColumnName="TransNoField" />
+                <ScalarProperty Name="TableName" ColumnName="TableName" />
+                <ScalarProperty Name="RequestActionID" ColumnName="RequestActionID" />
+                <ScalarProperty Name="ViewActionID" ColumnName="ViewActionID" />
+                <ScalarProperty Name="ApprovalTypeID" ColumnName="ApprovalTypeID" />
+                <ScalarProperty Name="SpOnApprove" ColumnName="SpOnApprove" />
+                <ScalarProperty Name="SpOnReject" ColumnName="SpOnReject" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedUserID" ColumnName="CreatedUserID" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="ApplicationID" ColumnName="ApplicationID" />
+                <ScalarProperty Name="KeyValueField3" ColumnName="KeyValueField3" />
+                <ScalarProperty Name="KeyValueField4" ColumnName="KeyValueField4" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ApprovalFlows">
+            <EntityTypeMapping TypeName="ApprovalModel.ApprovalFlow">
+              <MappingFragment StoreEntitySet="ApprovalFlow">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="ApprovalTypeID" ColumnName="ApprovalTypeID" />
+                <ScalarProperty Name="ForDepartmentID" ColumnName="ForDepartmentID" />
+                <ScalarProperty Name="ForUserID" ColumnName="ForUserID" />
+                <ScalarProperty Name="AmountAbove" ColumnName="AmountAbove" />
+                <ScalarProperty Name="AmountBelow" ColumnName="AmountBelow" />
+                <ScalarProperty Name="KeyValue1" ColumnName="KeyValue1" />
+                <ScalarProperty Name="KeyValue2" ColumnName="KeyValue2" />
+                <ScalarProperty Name="ApprovalQueueID" ColumnName="ApprovalQueueID" />
+                <ScalarProperty Name="CanOverRide" ColumnName="CanOverRide" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedUserID" ColumnName="CreatedUserID" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="ApplicationID" ColumnName="ApplicationID" />
+                <ScalarProperty Name="KeyValue3" ColumnName="KeyValue3" />
+                <ScalarProperty Name="KeyValue4" ColumnName="KeyValue4" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ApprovalQueues">
+            <EntityTypeMapping TypeName="ApprovalModel.ApprovalQueue">
+              <MappingFragment StoreEntitySet="ApprovalQueues">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="QueueName" ColumnName="QueueName" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedUserID" ColumnName="CreatedUserID" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="ApplicationID" ColumnName="ApplicationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ApprovalQueueTrans">
+            <EntityTypeMapping TypeName="ApprovalModel.ApprovalQueueTran">
+              <MappingFragment StoreEntitySet="ApprovalQueueTrans">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ApprovalQueueID" ColumnName="ApprovalQueueID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedUserID" ColumnName="CreatedUserID" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="ApplicationID" ColumnName="ApplicationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Approvals">
+            <EntityTypeMapping TypeName="ApprovalModel.Approval">
+              <MappingFragment StoreEntitySet="Approvals">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="TransID" ColumnName="TransID" />
+                <ScalarProperty Name="TransNo" ColumnName="TransNo" />
+                <ScalarProperty Name="NetAmount" ColumnName="NetAmount" />
+                <ScalarProperty Name="ApprovalFlowID" ColumnName="ApprovalFlowID" />
+                <ScalarProperty Name="ViewActionID" ColumnName="ViewActionID" />
+                <ScalarProperty Name="RequestActionID" ColumnName="RequestActionID" />
+                <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="LastActionUserID" ColumnName="LastActionUserID" />
+                <ScalarProperty Name="NextActionUserID" ColumnName="NextActionUserID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="ApprovalConfigID" ColumnName="ApprovalConfigID" />
+                <ScalarProperty Name="CreatedUserID" ColumnName="CreatedUserID" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="FinYear" ColumnName="FinYear" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="ApplicationID" ColumnName="ApplicationID" />
+                <ScalarProperty Name="ApprovalTypeID" ColumnName="ApprovalTypeID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ApprovalTrans">
+            <EntityTypeMapping TypeName="ApprovalModel.ApprovalTran">
+              <MappingFragment StoreEntitySet="ApprovalTrans">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ApprovalID" ColumnName="ApprovalID" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+                <ScalarProperty Name="FinYear" ColumnName="FinYear" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="ApplicationID" ColumnName="ApplicationID" />
+                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                <ScalarProperty Name="IsActiveForUser" ColumnName="IsActiveForUser" />
+                <ScalarProperty Name="Requirement" ColumnName="Requirement" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ApprovalTypes">
+            <EntityTypeMapping TypeName="ApprovalModel.ApprovalType">
+              <MappingFragment StoreEntitySet="ApprovalType">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedUserID" ColumnName="CreatedUserID" />
+                <ScalarProperty Name="ApplicationID" ColumnName="ApplicationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionName="ApprovalModel.Store.FnGetApprovalsList" FunctionImportName="FnGetApprovalsList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ApprovalModel.FnGetApprovalsList_Result">
+                <ScalarProperty Name="TransID" ColumnName="TransID" />
+                <ScalarProperty Name="TransNo" ColumnName="TransNo" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="ApprovalFlow" ColumnName="ApprovalFlow" />
+                <ScalarProperty Name="NetAmount" ColumnName="NetAmount" />
+                <ScalarProperty Name="SubmittedBy" ColumnName="SubmittedBy" />
+                <ScalarProperty Name="Area" ColumnName="Area" />
+                <ScalarProperty Name="Controller" ColumnName="Controller" />
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="SupplierName" ColumnName="SupplierName" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="IsNext" ColumnName="IsNext" />
+                <ScalarProperty Name="NextAction" ColumnName="NextAction" />
+                <ScalarProperty Name="LastAction" ColumnName="LastAction" />
+                <ScalarProperty Name="ApprovalStatus" ColumnName="ApprovalStatus" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpCancelRecordInApproval" FunctionName="ApprovalModel.Store.SpCancelRecordInApproval" />
+          <FunctionImportMapping FunctionImportName="SpCreateApprovalFlow" FunctionName="ApprovalModel.Store.SpCreateApprovalFlow" />
+          <FunctionImportMapping FunctionImportName="SpCreateApprovalQueue" FunctionName="ApprovalModel.Store.SpCreateApprovalQueue" />
+          <FunctionImportMapping FunctionImportName="SpCreateApprovalQueueTrans" FunctionName="ApprovalModel.Store.SpCreateApprovalQueueTrans" />
+          <FunctionImportMapping FunctionImportName="SpDoApprovalAction" FunctionName="ApprovalModel.Store.SpDoApprovalAction" />
+          <FunctionImportMapping FunctionImportName="SpGetApprovalFlow" FunctionName="ApprovalModel.Store.SpGetApprovalFlow">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ApprovalModel.SpGetApprovalFlow_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="QueueName" ColumnName="QueueName" />
+                <ScalarProperty Name="FlowName" ColumnName="FlowName" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="DeptID" ColumnName="DeptID" />
+                <ScalarProperty Name="DepartmentName" ColumnName="DepartmentName" />
+                <ScalarProperty Name="AmountAbove" ColumnName="AmountAbove" />
+                <ScalarProperty Name="AmountBelow" ColumnName="AmountBelow" />
+                <ScalarProperty Name="KeyValue1" ColumnName="KeyValue1" />
+                <ScalarProperty Name="KeyValue1Name" ColumnName="KeyValue1Name" />
+                <ScalarProperty Name="KeyValue2" ColumnName="KeyValue2" />
+                <ScalarProperty Name="KeyValue2Name" ColumnName="KeyValue2Name" />
+                <ScalarProperty Name="KeyValue3" ColumnName="KeyValue3" />
+                <ScalarProperty Name="KeyValue3Name" ColumnName="KeyValue3Name" />
+                <ScalarProperty Name="KeyValue4" ColumnName="KeyValue4" />
+                <ScalarProperty Name="KeyValue4Name" ColumnName="KeyValue4Name" />
+                <ScalarProperty Name="LocationName" ColumnName="LocationName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetApprovalFlowDetails" FunctionName="ApprovalModel.Store.SpGetApprovalFlowDetails">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ApprovalModel.SpGetApprovalFlowDetails_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="QueueName" ColumnName="QueueName" />
+                <ScalarProperty Name="FlowName" ColumnName="FlowName" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="DeptID" ColumnName="DeptID" />
+                <ScalarProperty Name="DepartmentName" ColumnName="DepartmentName" />
+                <ScalarProperty Name="AmountAbove" ColumnName="AmountAbove" />
+                <ScalarProperty Name="AmountBelow" ColumnName="AmountBelow" />
+                <ScalarProperty Name="KeyValue1" ColumnName="KeyValue1" />
+                <ScalarProperty Name="KeyValue1Name" ColumnName="KeyValue1Name" />
+                <ScalarProperty Name="KeyValue2" ColumnName="KeyValue2" />
+                <ScalarProperty Name="KeyValue2Name" ColumnName="KeyValue2Name" />
+                <ScalarProperty Name="KeyValue3" ColumnName="KeyValue3" />
+                <ScalarProperty Name="KeyValue3Name" ColumnName="KeyValue3Name" />
+                <ScalarProperty Name="KeyValue4" ColumnName="KeyValue4" />
+                <ScalarProperty Name="KeyValue4Name" ColumnName="KeyValue4Name" />
+                <ScalarProperty Name="LocationName" ColumnName="LocationName" />
+                <ScalarProperty Name="QueueID" ColumnName="QueueID" />
+                <ScalarProperty Name="UserLocationID" ColumnName="UserLocationID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetApprovalFlowList" FunctionName="ApprovalModel.Store.SpGetApprovalFlowList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ApprovalModel.SpGetApprovalFlowList_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="QueueName" ColumnName="QueueName" />
+                <ScalarProperty Name="FlowName" ColumnName="FlowName" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="DeptID" ColumnName="DeptID" />
+                <ScalarProperty Name="DepartmentName" ColumnName="DepartmentName" />
+                <ScalarProperty Name="AmountAbove" ColumnName="AmountAbove" />
+                <ScalarProperty Name="AmountBelow" ColumnName="AmountBelow" />
+                <ScalarProperty Name="KeyValue1" ColumnName="KeyValue1" />
+                <ScalarProperty Name="KeyValue1Name" ColumnName="KeyValue1Name" />
+                <ScalarProperty Name="KeyValue2" ColumnName="KeyValue2" />
+                <ScalarProperty Name="KeyValue2Name" ColumnName="KeyValue2Name" />
+                <ScalarProperty Name="KeyValue3" ColumnName="KeyValue3" />
+                <ScalarProperty Name="KeyValue3Name" ColumnName="KeyValue3Name" />
+                <ScalarProperty Name="KeyValue4" ColumnName="KeyValue4" />
+                <ScalarProperty Name="KeyValue4Name" ColumnName="KeyValue4Name" />
+                <ScalarProperty Name="LocationName" ColumnName="LocationName" />
+                <ScalarProperty Name="totalRecords" ColumnName="totalRecords" />
+                <ScalarProperty Name="recordsFiltered" ColumnName="recordsFiltered" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetApprovalList" FunctionName="ApprovalModel.Store.SpGetApprovalList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ApprovalModel.SpGetApprovalList_Result">
+                <ScalarProperty Name="TransID" ColumnName="TransID" />
+                <ScalarProperty Name="TransNo" ColumnName="TransNo" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="ApprovalFlow" ColumnName="ApprovalFlow" />
+                <ScalarProperty Name="NetAmount" ColumnName="NetAmount" />
+                <ScalarProperty Name="SubmittedBy" ColumnName="SubmittedBy" />
+                <ScalarProperty Name="NextAction" ColumnName="NextAction" />
+                <ScalarProperty Name="LastAction" ColumnName="LastAction" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Area" ColumnName="Area" />
+                <ScalarProperty Name="Controller" ColumnName="Controller" />
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="IsNext" ColumnName="IsNext" />
+                <ScalarProperty Name="totalRecords" ColumnName="totalRecords" />
+                <ScalarProperty Name="recordsFiltered" ColumnName="recordsFiltered" />
+                <ScalarProperty Name="SupplierName" ColumnName="SupplierName" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetApprovalProcess" FunctionName="ApprovalModel.Store.SpGetApprovalProcess">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ApprovalModel.SpGetApprovalProcess_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ApprovalID" ColumnName="ApprovalID" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                <ScalarProperty Name="NextActionUserID" ColumnName="NextActionUserID" />
+                <ScalarProperty Name="IsActiveForUser" ColumnName="IsActiveForUser" />
+                <ScalarProperty Name="Requirement" ColumnName="Requirement" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetApprovalQueue" FunctionName="ApprovalModel.Store.SpGetApprovalQueue">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ApprovalModel.SpGetApprovalQueue_Result">
+                <ScalarProperty Name="AppQueueID" ColumnName="AppQueueID" />
+                <ScalarProperty Name="QueueName" ColumnName="QueueName" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="LocationName" ColumnName="LocationName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetApprovalQueueDetails" FunctionName="ApprovalModel.Store.SpGetApprovalQueueDetails">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ApprovalModel.SpGetApprovalQueueDetails_Result">
+                <ScalarProperty Name="AppQueueID" ColumnName="AppQueueID" />
+                <ScalarProperty Name="QueueName" ColumnName="QueueName" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="LocationName" ColumnName="LocationName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetApprovalQueueTrans" FunctionName="ApprovalModel.Store.SpGetApprovalQueueTrans">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ApprovalModel.SpGetApprovalQueueTrans_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ApprovalQueueID" ColumnName="ApprovalQueueID" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetApprovals" FunctionName="ApprovalModel.Store.SpGetApprovals">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ApprovalModel.SpGetApprovals_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="TransID" ColumnName="TransID" />
+                <ScalarProperty Name="TransNo" ColumnName="TransNo" />
+                <ScalarProperty Name="ApprovalFlowID" ColumnName="ApprovalFlowID" />
+                <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="LastActionUserID" ColumnName="LastActionUserID" />
+                <ScalarProperty Name="NextActionUserID" ColumnName="NextActionUserID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="ApprovalTypeID" ColumnName="ApprovalTypeID" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Requirement" ColumnName="Requirement" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetItemsForApprovalFlow" FunctionName="ApprovalModel.Store.SpGetItemsForApprovalFlow">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ApprovalModel.SpGetItemsForApprovalFlow_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ForDepartmentID" ColumnName="ForDepartmentID" />
+                <ScalarProperty Name="AmountAbove" ColumnName="AmountAbove" />
+                <ScalarProperty Name="AmountBelow" ColumnName="AmountBelow" />
+                <ScalarProperty Name="KeyValue1" ColumnName="KeyValue1" />
+                <ScalarProperty Name="KeyValue2" ColumnName="KeyValue2" />
+                <ScalarProperty Name="ApprovalQueueID" ColumnName="ApprovalQueueID" />
+                <ScalarProperty Name="KeyValue3" ColumnName="KeyValue3" />
+                <ScalarProperty Name="KeyValue4" ColumnName="KeyValue4" />
+                <ScalarProperty Name="ItemCategory" ColumnName="ItemCategory" />
+                <ScalarProperty Name="DepartmentName" ColumnName="DepartmentName" />
+                <ScalarProperty Name="ItemAccountCategory" ColumnName="ItemAccountCategory" />
+                <ScalarProperty Name="SupplierCategory" ColumnName="SupplierCategory" />
+                <ScalarProperty Name="SupplierAccountCategory" ColumnName="SupplierAccountCategory" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="QueueName" ColumnName="QueueName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetLocationListForApprovalFlow" FunctionName="ApprovalModel.Store.SpGetLocationListForApprovalFlow">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ApprovalModel.SpGetLocationListForApprovalFlow_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Place" ColumnName="Place" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpHasApprovalProcess" FunctionName="ApprovalModel.Store.SpHasApprovalProcess" />
+          <FunctionImportMapping FunctionImportName="SpInitiateApprovalRequest" FunctionName="ApprovalModel.Store.SpInitiateApprovalRequest" />
+          <FunctionImportMapping FunctionImportName="SpOnProformaApprove" FunctionName="ApprovalModel.Store.SpOnProformaApprove" />
+          <FunctionImportMapping FunctionImportName="SpOnProformaReject" FunctionName="ApprovalModel.Store.SpOnProformaReject" />
+          <FunctionImportMapping FunctionImportName="SpOnPurchaseOrderApprove" FunctionName="ApprovalModel.Store.SpOnPurchaseOrderApprove" />
+          <FunctionImportMapping FunctionImportName="SpOnPurchaseOrderReject" FunctionName="ApprovalModel.Store.SpOnPurchaseOrderReject" />
+          <FunctionImportMapping FunctionImportName="SpOnServicePurchaseOrderApprove" FunctionName="ApprovalModel.Store.SpOnServicePurchaseOrderApprove" />
+          <FunctionImportMapping FunctionImportName="SpOnServicePurchaseOrderReject" FunctionName="ApprovalModel.Store.SpOnServicePurchaseOrderReject" />
+          <FunctionImportMapping FunctionImportName="SpUpdateApprovalFlow" FunctionName="ApprovalModel.Store.SpUpdateApprovalFlow" />
+          <FunctionImportMapping FunctionImportName="SpUpdateApprovalQueue" FunctionName="ApprovalModel.Store.SpUpdateApprovalQueue" />
+          <FunctionImportMapping FunctionImportName="SpCancelTransaction" FunctionName="ApprovalModel.Store.SpCancelTransaction" />
+          <FunctionImportMapping FunctionImportName="SpCreateBatch" FunctionName="ApprovalModel.Store.SpCreateBatch" />
+          <FunctionImportMapping FunctionImportName="SpGetConfigByUser" FunctionName="ApprovalModel.Store.SpGetConfigByUser">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ApprovalModel.SpGetConfigByUser_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ConfigValue" ColumnName="ConfigValue" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsBoolean" ColumnName="IsBoolean" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetCurrentFinYear" FunctionName="ApprovalModel.Store.SpGetCurrentFinYear">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="ApprovalModel.SpGetCurrentFinYear_Result">
+                <ScalarProperty Name="FinancialYearID" ColumnName="FinancialYearID" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Year" ColumnName="Year" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpIsCodeAlreadyExists" FunctionName="ApprovalModel.Store.SpIsCodeAlreadyExists" />
+          <FunctionImportMapping FunctionImportName="SpSuspendTransaction" FunctionName="ApprovalModel.Store.SpSuspendTransaction" />
+          <FunctionImportMapping FunctionImportName="SpUpdateSerialNo" FunctionName="ApprovalModel.Store.SpUpdateSerialNo" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

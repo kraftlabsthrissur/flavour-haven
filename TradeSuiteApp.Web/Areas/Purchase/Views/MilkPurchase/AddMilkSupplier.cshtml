@@ -1,0 +1,40 @@
+﻿@model TradeSuiteApp.Web.Areas.Purchase.Models.MilkPurchaseModel
+@{
+    ViewBag.Title = "Create Milk Supplier ";
+
+}
+<div class="uk-modal" id="add-Supplier" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">@Purchase.AddMilkSupplier<i class="material-icons" data-uk-tooltip="{pos:'top'}" title="headline tooltip"></i></h3>
+        </div>
+        <br />
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-1-1">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-2-6">
+                            <label>Name<span>*</span></label>
+                            <input type="text" class="md-input label-fixed" id="MilkSupplierName" />
+                        </div>
+                        <div class="uk-width-medium-2-6">
+                            <label>Address</label>
+                            <input type="text" class="md-input label-fixed" id="Address" />
+                        </div>
+                        <div class="uk-width-medium-2-6">
+                            <label>Contact No<span>*</span></label>
+                            <input type="number" min="0" max="9999999999"   class="md-input label-fixed" id="ContactNo" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button class="md-btn md-btn-primary uk-modal-close btnSaveMilkSupplier">@Common.Save</button>
+            <button type="button" class="md-btn  uk-modal-close">Close</button>
+            
+        </div>
+    </div>
+</div>
+
+

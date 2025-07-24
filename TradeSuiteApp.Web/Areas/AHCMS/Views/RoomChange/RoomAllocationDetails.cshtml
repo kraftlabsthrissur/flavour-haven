@@ -1,0 +1,23 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.RoomReservationModel
+
+
+@if (Model.RoomItems != null)
+{
+    foreach (var item in Model.RoomItems.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+                <input type="hidden" class="RoomID" value="@item.value.RoomID" />
+                <input type="hidden" class="RoomTypeID" value="@item.value.RoomTypeID" />
+            </td>
+            <td class="Treatment">@item.value.FromDate</td>
+            <td class="Therapist">@item.value.ToDate</td>
+            <td class="TreatmentRoom">@item.value.RoomType</td>
+            <td class="Instructions">@item.value.RoomName</td>
+            <td class="Rate mask-positive-currency">@item.value.Rate</td>
+        </tr>
+    }
+}
+
+

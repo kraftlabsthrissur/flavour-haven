@@ -1,0 +1,127 @@
+﻿
+@model IEnumerable<TradeSuiteApp.Web.Areas.Stock.Models.OpeningStockModel>
+@{
+    ViewBag.Title = "Opening Stock";
+}
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 48, media: 960 }">
+        <div class="heading_title">
+            <h1>@Stock.OpeningStock</h1>
+            <span class="uk-text-upper uk-text-small">@Stock.OpeningStockList</span>
+        </div>
+        <div class="heading_actions">
+
+            @ActionAuthorization.IsAuthorized("Create", Html.ActionLink(Common.Create, "Create", "OpeningStock", new { Area = "Stock" }, new { @class = "md-btn" }))
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>@Common.Action</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page_content_inner" class="list-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <ul class="uk-tab hai" data-uk-tab="{connect:'#tabs-opening-stock',animation:'slide-horizontal'}" id="tabs-OpeningStock">
+                    <li class="uk-active" data-tab="draft"><a>@Stock.Draft</a></li>
+                    <li class="" data-tab="opening-stock"><a>@Stock.SavedOpeningStock</a></li>
+                </ul>
+                <ul id="tabs-opening-stock" class="uk-switcher uk-margin">
+                    <li>
+                        <table id="draft-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-10">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransDate
+                                    </th>
+                                    <th>
+                                        @Stock.Store
+                                    </th>
+
+
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th>
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @Stock.TransNo
+                                    </th>
+                                    <th>
+                                        @Stock.Date
+                                    </th>
+                                    <th>
+                                        @Stock.Store
+                                    </th>
+
+
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table id="stock-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-10">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransDate
+                                    </th>
+                                    <th>
+                                        @Stock.Store
+                                    </th>
+
+
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th>
+                                        @Common.SerialNo
+                                    </th>
+                                    <th>
+                                        @Stock.TransNo
+                                    </th>
+                                    <th>
+                                        @Stock.Date
+                                    </th>
+                                    <th>
+                                        @Stock.Store
+                                    </th>
+
+
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/Js/Page/Item")
+@Scripts.Render("~/Js/Page/OpeningStock")
+<script type="text/javascript">
+    openingstock.list();
+</script>

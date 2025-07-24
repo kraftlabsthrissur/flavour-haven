@@ -1,0 +1,83 @@
+    
+ALTER PROCEDURE [Purchase].[SpGetGRNDetail]                
+(@ID INT = 0,               
+@UserID INT,             
+@FinYear INT,                
+@LocationID INT,                
+@ApplicationID INT                
+)                
+AS                 
+BEGIN                
+------------------ MASTER DATA --------------------------                
+Declare @LoginDeparmentID int,@IsGRNViewer int;            
+SELECT @LoginDeparmentID=DepartmentID from Employee WHERE UserID=@UserID            
+SELECT @IsGRNViewer = CASE WHEN COUNT(*) = 0 THEN 0 ELSE 1 END              
+ FROM AspNetUsers U             
+ LEFT JOIN UserRoles UR ON U.ID = UR.UserID            
+ LEFT JOIN Roles R ON R.ID = UR.RoleID              
+ WHERE  ((R.Name LIKE 'GRN TRANSACTION VIEWER'AND UR.LocationID = @LocationID)OR (UserName LIKE 'admin'))            
+ AND U.ID = @UserID            
+            
+IF (@ID =0)                
+BEGIN                
+ SELECT GRN.ID,GRN.Code AS GrnNo,GRN.Date AS GrnDate,GRN.SupplierID,S.Name AS Supplier,GRN.ReceiptDate,GRN.DeliveryChallanNo,GRN.DeliveryChallanDate,            
+  GRN.IsDraft ,  GRN.WarehouseID,WH.Name AS Warehouse,GRN.PurchaseCompleted,GRN.Cancelled,GRN.CancelledDate,GRN.CreatedUserID,GRN.CreatedDate, 
+  isnull((SELECT TOP 1 c.Name FROM Country c join Currency cu on c.ID=cu.CountryID WHERE cu.ID=S.CurrencyID ),'') as CountryName ,  
+  isnull((SELECT TOP 1 cu.Name FROM Currency cu WHERE cu.ID=S.CurrencyID ),'') as CurrencyName ,  
+  Isnull(SA.AddressLine1,'') as AddressLine1 ,isnull(SA.AddressLine2,'') as AddressLine2,isnull(SA.AddressLine3,'') as AddressLine3,   
+ isnull(SA.MobileNo,'') as MobileNo , isnull(SA.Email,'') as Email ,Isnull(BA.AddressLine1,'') as BAddressLine1 ,isnull(BA.AddressLine2,'') as BAddressLine2,
+ isnull(BA.AddressLine3,'') as BAddressLine3,GRN.FinYear,GRN.LocationID, GRN.ApplicationID,S.Code as SupplierCode,MAX(PO.PurchaseOrderDate) AS PurchaseOrderDate,GRN.IGSTAmt,GRN.SGSTAmt,            
+  GRN.CGSTAmt,GRN.RoundOff,GRN.DiscountAmount,PO.PurchaseOrderNo,GRN.GrossAmount,GRN.VATAmount,GRN.SuppDocAmount,GRN.SuppOtherCharge,GRN.SuppShipAmount,    
+  GRN.PackingForwarding,GRN.SuppFreight,GRN.LocalCustomsDuty,GRN.LocalFreight,GRN.LocalMiscCharge,GRN.LocalOtherCharges,GRN.Remarks,GRN.NetAmount               
+ FROM GoodsReceiptNote GRN                
+ INNER JOIN Supplier S ON GRN.SupplierID = S.ID   
+ LEFT join Addresses SA on SA.PartyID = S.ID  left join Location SL on SL.ID = SA.PartyID AND SA.PartyType = 'Supplier'                 
+ LEFT join Addresses BA on BA.PartyID = S.ID  left join Location BL on BL.ID = BA.PartyID AND BA.PartyType = 'Supplier'       
+ LEFT JOIN GoodsReceiptNoteTrans GRNT ON GRN.ID = GRNT.GoodsReceiptNoteID              
+ LEFT JOIN PurchaseOrder PO ON GRNT.PurchaseOrderID = PO.ID                
+ INNER JOIN Warehouse WH ON GRN.WarehouseID = WH.ID              
+ INNER JOIN Employee E on E.UserID=GRN.CreatedUserID              
+ --WHERE  GRN.FinYear = @FinYear             
+AND ((E.DepartmentID =@LoginDeparmentID AND GRN.LocationID=@LocationID) OR GRN.CreatedUserID=@UserID OR (@IsGRNViewer=1 AND GRN.LocationID=@LocationID ))             
+ AND GRN.ApplicationID = @ApplicationID                
+             
+ GROUP BY GRN.ID,GRN.Code,GRN.Date,GRN.SupplierID,S.Name,GRN.ReceiptDate,GRN.DeliveryChallanNo,GRN.DeliveryChallanDate,             
+ GRN.IsDraft,GRN.WarehouseID,WH.Name,GRN.PurchaseCompleted,GRN.Cancelled,GRN.CancelledDate,GRN.CreatedUserID,GRN.CreatedDate,  
+  GRN.FinYear,GRN.LocationID,GRN.ApplicationID,S.Code ,GRN.IGSTAmt,GRN.SGSTAmt,SA.CountryID,S.CurrencyID,  
+  SA.AddressLine1,SA.AddressLine2,SA.AddressLine3,SA.MobileNo,SA.Email, BA.AddressLine1,BA.AddressLine2,BA.AddressLine3,    
+  GRN.CGSTAmt,GRN.RoundOff,GRN.DiscountAmount,GRN.GrossAmount,GRN.NetAmount,PO.PurchaseOrderNo,GRN.SuppDocAmount,GRN.SuppOtherCharge,GRN.SuppShipAmount,    
+  GRN.PackingForwarding,GRN.SuppFreight,GRN.LocalCustomsDuty,GRN.LocalFreight,GRN.LocalMiscCharge,GRN.LocalOtherCharges,GRN.Remarks,GRN.VATAmount             
+ ORDER BY GRN.ID DESC               
+END                
+ELSE                
+BEGIN                
+ SELECT GRN.ID,GRN.Code AS GrnNo,GRN.Date AS GrnDate,GRN.SupplierID,S.Name AS Supplier,GRN.ReceiptDate,GRN.DeliveryChallanNo,GRN.DeliveryChallanDate,             
+  GRN.IsDraft ,  GRN.WarehouseID,WH.Name AS Warehouse,GRN.PurchaseCompleted,GRN.Cancelled,GRN.CancelledDate,GRN.CreatedUserID,GRN.CreatedDate,    
+  Isnull(SA.AddressLine1,'') as AddressLine1 ,isnull(SA.AddressLine2,'') as AddressLine2,isnull(SA.AddressLine3,'') as AddressLine3,   
+ isnull(SA.MobileNo,'') as MobileNo , isnull(SA.Email,'') as Email , isnull((SELECT TOP 1 Name FROM Country c WHERE c.ID=SA.CountryID ),'') as CountryName , 
+   isnull((SELECT TOP 1 cu.Name FROM Currency cu WHERE cu.ID=S.CurrencyID ),'') as CurrencyName ,  
+ Isnull(BA.AddressLine1,'') as BAddressLine1 ,isnull(BA.AddressLine2,'') as BAddressLine2,isnull(BA.AddressLine3,'') as BAddressLine3,   
+  GRN.FinYear,GRN.LocationID,GRN.ApplicationID,S.Code as SupplierCode,MAX(PO.PurchaseOrderDate) AS PurchaseOrderDate   ,GRN.IGSTAmt,GRN.SGSTAmt,            
+  GRN.CGSTAmt,GRN.RoundOff,GRN.DiscountAmount,PO.PurchaseOrderNo,GRN.GrossAmount,GRN.GrossAmount,GRN.VATAmount,GRN.SuppDocAmount,GRN.SuppOtherCharge,GRN.SuppShipAmount,    
+  GRN.PackingForwarding,GRN.SuppFreight,GRN.LocalCustomsDuty,GRN.LocalFreight,GRN.LocalMiscCharge,GRN.LocalOtherCharges,GRN.Remarks,GRN.NetAmount                   
+ FROM GoodsReceiptNote GRN                
+ INNER JOIN Supplier S ON GRN.SupplierID = S.ID     
+ LEFT join Addresses SA on SA.PartyID = S.ID  left join Location SL on SL.ID = SA.PartyID AND SA.PartyType = 'Supplier'                 
+ LEFT join Addresses BA on BA.PartyID = S.ID  left join Location BL on BL.ID = BA.PartyID AND BA.PartyType = 'Supplier'        
+ LEFT JOIN GoodsReceiptNoteTrans GRNT ON GRN.ID = GRNT.GoodsReceiptNoteID              
+ LEFT JOIN PurchaseOrder PO ON GRNT.PurchaseOrderID = PO.ID                
+ INNER JOIN Warehouse WH ON GRN.WarehouseID = WH.ID            
+ INNER JOIN Employee E on E.UserID=GRN.CreatedUSerID                
+ WHERE GRN.ID = @ID --AND GRN.FinYear = @FinYear             
+ AND ((E.DepartmentID =@LoginDeparmentID AND GRN.LocationID=@LocationID) OR GRN.CreatedUserID=@UserID OR (@IsGRNViewer=1 AND GRN.LocationID=@LocationID ))             
+ AND GRN.ApplicationID = @ApplicationID                
+ GROUP BY GRN.ID,GRN.Code,GRN.Date,GRN.SupplierID,S.Name,GRN.ReceiptDate,GRN.DeliveryChallanNo,GRN.DeliveryChallanDate,             
+ GRN.IsDraft,GRN.WarehouseID,WH.Name,GRN.PurchaseCompleted,GRN.Cancelled,GRN.CancelledDate,GRN.CreatedUserID,GRN.CreatedDate,            
+ GRN.FinYear,GRN.LocationID,GRN.ApplicationID,S.Code  ,GRN.IGSTAmt,GRN.SGSTAmt,GRN.CGSTAmt,SA.CountryID,S.CurrencyID,   
+ SA.AddressLine1,SA.AddressLine2,SA.AddressLine3,SA.MobileNo,SA.Email, BA.AddressLine1,BA.AddressLine2,BA.AddressLine3,    
+ GRN.RoundOff,GRN.DiscountAmount,GRN.GrossAmount,    
+ GRN.NetAmount,PO.PurchaseOrderNo,GRN.SuppDocAmount,GRN.SuppOtherCharge,GRN.SuppShipAmount,GRN.PackingForwarding,GRN.SuppFreight,GRN.LocalCustomsDuty    
+ ,GRN.LocalFreight,GRN.LocalMiscCharge,GRN.LocalOtherCharges,GRN.Remarks,GRN.VATAmount              
+END                
+          
+END                

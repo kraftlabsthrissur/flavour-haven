@@ -1,0 +1,11 @@
+ALTER PROCEDURE [Master].[SPGetAlternativeItemByItemID]            
+(            
+ @ItemID int          
+)            
+AS                
+BEGIN                
+ SELECT a.ID,a.ItemID,a.AlternativeItemID,i.Name,i.Code,i.CategoryID,c.Name CategoryName          
+ FROM AlternativeItems a join Item i on a.AlternativeItemID=i.ID           
+ LEFT JOIN Category c on i.CategoryID=c.ID        
+ where a.ItemID=@ItemID           
+END 

@@ -1,0 +1,256 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.FSOModel
+@{
+    ViewBag.Title = "SalesRepresentatives Details";
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.SalesRepresentatives</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.SalesRepresentativesDetails</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "Edit", "FSO", new { Area = "Masters", id = (Model != null) ? Model.ID : 0 }, new { @class = "md-btn " }))
+            @Html.ActionLink(Common.Back, "Index", "FSO", new { Area = "Masters" }, new { @class = "md-btn " })
+            @Html.HiddenFor(m => m.ID)
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="details-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+              
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-1-1">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+
+                                        <div class="uk-width-medium-2-10">
+                                            <label for="uk_dp_start">@Masters.FSOName<span>*</span></label>
+                                            @Html.TextBoxFor(m => m.FSOName, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                                        </div>
+
+                                        <div class="uk-width-medium-1-10">
+                                            <label>@Masters.FSOCode</label>
+                                            @Html.TextBoxFor(m => m.FSOCode, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                                        </div>
+
+                                        <div class="uk-width-medium-1-10 uk-hidden">
+                                            <label>@Masters.BusinessCategory</label>
+                                            @Html.TextBoxFor(m => m.BusinessCategoryName, new { @class = "md-input label-fixed", @readonly = "readonly" })
+
+                                        </div>
+
+                                        <div class="uk-width-medium-2-10">
+                                            <label>@Masters.SalesIncentiveCategory</label>
+                                            @Html.TextBoxFor(m => m.SalesIncentiveCategoryName, new { @class = "md-input label-fixed" , @readonly = "readonly" })
+                                        </div>
+
+                                        <div class="uk-width-medium-1-10 uk-hidden">
+                                            <label>@Masters.SalesCategory</label>
+                                            @Html.TextBoxFor(m => m.SalesCategoryName, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                                        </div>
+
+                                        <div class="uk-width-medium-1-10">
+                                            <label>@Masters.RouteCode</label>
+                                            @Html.TextBoxFor(m => m.RouteCode, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                                        </div>
+
+                                        <div class="uk-width-medium-1-10">
+                                            <label>@Masters.RouteName</label>
+                                            @Html.TextBoxFor(m => m.RouteName, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                                        </div>
+
+                                        <div class="uk-width-medium-1-10">
+                                            <label>@Masters.ZoneCode</label>
+                                            @Html.TextBoxFor(m => m.ZoneCode, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                                        </div>
+
+                                        <div class="uk-width-medium-1-10">
+                                            <label>@Masters.ZoneName</label>
+                                            @Html.TextBoxFor(m => m.ZoneName, new { @class = "md-input label-fixed" , @readonly = "readonly" })
+                                        </div>
+
+
+                                        <div class="uk-width-medium-1-10">
+                                            <div class="uk-input-group">
+                                                <label>@Masters.FromDate *</label>
+                                                @Html.TextBoxFor(m => m.FromDate, new { @class = "md-input label-fixed  date future-date" , @disabled = "disabled" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin="">
+
+                                <div class="uk-width-medium-1-10 SalesManager-hide">
+                                    <label class="SalesManager-hide">@Masters.SalesManager</label>
+                                    @Html.TextBoxFor(m => m.SalesManager, new { @class = "md-input label-fixed SalesManager-hide", @readonly = "readonly" })
+                                    
+                                </div>
+
+                                <div class="uk-width-medium-1-10 RegionalSalesManager-hide">
+                                    <label class="RegionalSalesManager-hide">@Masters.RegionalSalesManager</label>
+                                    @Html.TextBoxFor(m => m.RegionalSalesManager, new { @class = "md-input label-fixed RegionalSalesManager-hide", @readonly = "readonly" })
+                                    
+                                </div>
+
+
+
+                                <div class="uk-width-medium-1-10 ZonalManager-hide">
+                                    <label class="ZonalManager-hide">@Masters.ZonalManager</label>
+                                    @Html.TextBoxFor(m => m.ZonalManager, new { @class = "md-input label-fixed ZonalManager-hide", @readonly = "readonly" })
+                                    
+                                </div>
+
+                                <div class="uk-width-medium-1-10  AreaManager-hide">
+                                    <label class="AreaManager-hide">@Masters.AreaManager</label>
+                                    @Html.TextBoxFor(m => m.AreaManager, new { @class = "md-input label-fixed AreaManager-hide", @readonly = "readonly" })
+                                    
+                                </div>
+
+                                <div class="uk-width-medium-1-10  AreaManager-hide">
+                                    <label class="AreaManager-hide">@Masters.ReportingToName</label>
+                                    @Html.TextBoxFor(m => m.ReportingToName, new { @class = "md-input label-fixed ", @readonly = "readonly" })
+
+                                </div>
+
+
+                                <div class="uk-width-medium-1-10 ToDate-hide">
+                                    <div class="uk-input-group ToDate-hide">
+                                        <label class="ToDate-hide">@Masters.DateOfRetirement  *</label>
+                                        @Html.TextBoxFor(m => m.ToDate, new { @class = "md-input label-fixed  date future-date ToDate-hide" })
+                                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin="">
+
+                                <div class="uk-width-medium-1-10 hide" id="IsSalesManager-hide">
+                                    <label>@Html.Label("Is SalesManager")</label>
+                                    <div class="uk-grid uk-margin-small-top" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-10">
+                                            @Html.HiddenFor(m => m.IsSalesManager)
+                                            <div class="uk-input-group">
+                                                <input type="checkbox" class="icheckbox Is-SalesManager" id="IsSalesManager" data-md-icheck @Model.SalesManagerStatus disabled = "disabled" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="uk-width-medium-2-10 Is-RegionalSalesManager-hide hide" id="Is-RegionalSalesManager-hide">
+                                    <label>@Html.Label("Is RegionalSalesManager")</label>
+                                    <div class="uk-grid uk-margin-small-top" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-10">
+                                            @Html.HiddenFor(m => m.IsRegionalSalesManager)
+                                            <div class="uk-input-group">
+                                                <input type="checkbox" class="icheckbox Is-RegionalSalesManager" id="IsRegionalSalesManager" data-md-icheck @Model.RegionalSalesManagerStatus disabled = "disabled" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="uk-width-medium-1-10 Is-ZonalManager-hide hide" id="Is-ZonalManager-hide">
+                                    <label>@Html.Label("Is ZonalManager")</label>
+                                    <div class="uk-grid uk-margin-small-top" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-10">
+                                            @Html.HiddenFor(m => m.IsZonalManager)
+                                            <div class="uk-input-group">
+                                                <input type="checkbox" class="icheckbox Is-ZonalManager" id="IsZonalManager" data-md-icheck @Model.ZonalManagerStatus disabled = "disabled" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="uk-width-medium-1-10 Is-AreaManager-hide hide" id="Is-AreaManager-hide">
+                                    <label>@Html.Label("Is AreaManager")</label>
+                                    <div class="uk-grid uk-margin-small-top" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-10">
+                                            @Html.HiddenFor(m => m.IsAreaManager)
+                                            <div class="uk-input-group">
+                                                <input type="checkbox" class="icheckbox Is-AreaManager" id="IsAreaManager" data-md-icheck @Model.AreaManagerStatus disabled = "disabled" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="uk-width-medium-1-10">
+                                    <label>@Html.Label("IsActive")</label>
+                                    <div class="uk-grid uk-margin-small-top" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-10">
+                                            @Html.HiddenFor(m => m.IsActive)
+                                            <div class="uk-input-group">
+                                                <input type="checkbox" class="icheckbox IsActive" id="IsActive" data-md-icheck @Model.IsActiveStatus disabled = "disabled"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="section-group">
+                            <table id="tbl_fsocustomers" class="uk-table" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="width-10">@Common.SerialNo</th>
+                                        <th class="width-60">@Sales.CustomerCode</th>
+                                        <th class="width-60">@Masters.CustomerName</th>
+                                        <th class="width-60">@Masters.CustomerCategory</th>
+                                        <th class="width-60">@Masters.SalesIncentiveCategory</th>
+                                        <th class="width-60">@Masters.State</th>
+                                        <th class="width-60">@Masters.District</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/Employee")
+@Scripts.Render("~/Js/Page/FSO")
+<script type="text/javascript">
+    FSO.init();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

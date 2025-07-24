@@ -1,0 +1,88 @@
+ALTER PROCEDURE [Purchase].[SpCreatePurchaseReturnTrans](        
+@ReturnOrderID int,      
+@InvoiceID int,        
+@InvoiceTransID int,      
+@ItemID int,        
+@Qty Numeric(18,4),        
+@OfferQty Numeric(18,4),        
+@Rate Numeric(18,4),        
+@SGSTPercent Numeric(18,4),        
+@CGSTPercent Numeric(18,4),        
+@IGSTPercent Numeric(18,4),        
+@SGSTAmount Numeric(18,4),      
+@CGSTAmount Numeric(18,4),        
+@IGSTAmount Numeric(18,4),        
+@Amount  Numeric(18,4),       
+@Discount numeric(18,4),  
+@SecondaryUnitSize numeric(18,4),  
+@SecondaryUnit VARCHAR(200),  
+@SecondaryReturnQty numeric(18,4),  
+@SecondaryRate numeric(18,4),  
+@Remarks varchar(256),        
+@FinYear int,        
+@LocationID int,        
+@ApplicationID int,        
+@WareHouseID int,        
+@BatchTypeID int,        
+@UnitID int,        
+@PurchaseReturnID int,      
+@RetValue int out  ) AS        
+Begin        
+set @BatchTypeID=1        
+  select @WareHouseID=ConfigValue from configuration where ConfigName= 'DefaultPurchaseStore' and LocationID=@LocationID        
+ Declare @BatchID int,@BatchNo varchar(20),@TransDate Datetime,@GRNNo varchar(20),@GrnID int,@IsDraft bit,@PRCode varchar(20), @PurchaseReturnOrderIsDraft bit,      
+ @supplierID int,@PRetrunTransID int,@QtyForStock numeric(18,4),@ReturnOrderTransID int,@PrimaryUnitID INT,@PackSize numeric(18,4)      
+ select top 1 @GrnID= GRNID from purchaseinvoicetrans where PurchaseInvoiceID=@InvoiceID and ItemID=@ItemID    
+ Select @GRNNo = Code from GoodsReceiptNote where ID = @GrnID        
+ Select @BatchID = Batch from GoodsReceiptNoteTrans where ItemID = @ItemID and GoodsReceiptNoteID=@GrnID        
+ Select @TransDate= Date, @IsDraft=IsDraft,@supplierID = SupplierID,@PRCode = Code        
+ from PurchaseReturn where ID = @PurchaseReturnID        
+ SELECT @PackSize=PackSize FROM Unit where ID=@UnitID     
+  if(Select Count(*) from Item where PurchaseUnitID = InventoryUnitID AND ID = @ItemID) > 0    
+  begin    
+ Set @PackSize = 1    
+  End    
+ SET @RetValue=1      
+ Select @PurchaseReturnOrderIsDraft=IsDraft  from PurchaseReturnOrder where ID = @ReturnOrderID       
+ SELECT @PrimaryUnitID=UnitID FROM viItem where ID=@ItemID      
+       
+--IF (dbo.FnConvertStockFromInventoryUnit(@ItemID, dbo.FnGetAvailableStock(@ItemID,@BatchID,1,      
+ --@WareHouseID,@FinYear,@LocationID,@ApplicationID),@UnitID))>=@Qty       
+IF (dbo.FnGetAvailableStockWithOutCheckExpiry(@ItemID,@BatchID,1,      
+ @WareHouseID,@FinYear,@LocationID,@ApplicationID)/@PackSize)>=@Qty +@OfferQty      
+BEGIN      
+          
+SET @RetValue=0      
+ insert into PurchaseReturnOrderTrans(PurchaseReturnID,GrnID,ItemID,Qty,RATE,SGSTPercent,CGSTPercent,IGSTPercent,SGSTAmount,CGSTAmount,        
+ IGSTAmount,Amount,Remarks,FinYear,LocationID,ApplicationID,WareHouseID,InvoiceID,UnitID,BatchTypeID,BatchID,InvoiceTransID,GSTPercent,      
+ GSTAmount,PurchaseReturnDiscount,OfferQty,SecondaryUnitSize,SecondaryUnit,SecondaryReturnQty,SecondaryRate )VALUES        
+    (@ReturnOrderID,@GrnID,@ItemID,@Qty,@Rate,@SGSTPercent,@CGSTPercent,@IGSTPercent,@SGSTAmount,        
+ @CGSTAmount,@IGSTAmount,@Amount,@Remarks,@FinYear,@LocationID,@ApplicationID,@WareHouseID,@InvoiceID,@UnitID,@BatchTypeID,      
+ @BatchID,@InvoiceTransID,@IGSTPercent,(@IGSTAmount+@CGSTAmount+@SGSTAmount),@Discount,@OfferQty,
+ @SecondaryUnitSize,@SecondaryUnit,@SecondaryReturnQty,@SecondaryRate)         
+      
+ SELECT @ReturnOrderTransID=SCOPE_IDENTITY();        
+        
+ INSERT INTO PurchasereturnTrans(PurchaseReturnID,GrnID,ItemID,Qty,RATE,SGSTPercent,CGSTPercent,IGSTPercent,SGSTAmount,CGSTAmount,        
+  IGSTAmount,Amount,Remarks,FinYear,LocationID,ApplicationID,WareHouseID,InvoiceID,UnitID,ReturnOrderID,ReturnOrderTransID,BatchID,BatchTypeID,PurchaseReturnDiscount,OfferQty,
+  SecondaryUnitSize,SecondaryUnit,SecondaryReturnQty,SecondaryRate)      
+ VALUES (@PurchaseReturnID,@GrnID,@ItemID,@Qty,@Rate,@SGSTPercent,@CGSTPercent,@IGSTPercent,@SGSTAmount,        
+  @CGSTAmount,@IGSTAmount,@Amount,@Remarks,@FinYear,@LocationID,@ApplicationID,@WareHouseID,@InvoiceID,@UnitID,@ReturnOrderID,        
+  @ReturnOrderTransID,@BatchID,@BatchTypeID,@Discount,@OfferQty,@SecondaryUnitSize,@SecondaryUnit,@SecondaryReturnQty,@SecondaryRate)         
+ SET @PRetrunTransID = SCOPE_IDENTITY();        
+ If(@IsDraft=0)        
+  BEGIN        
+   UPDATE PurchaseReturnOrderTrans set QtyMet=(QtyMet+@Qty) where ID=@ReturnOrderTransID  AND FinYear = @FinYear AND LocationID = @LocationID AND ApplicationID = @ApplicationID        
+   IF(Select Count(*) from PurchaseReturnOrderTrans where PurchaseReturnID = @ReturnOrderID and Qty > QtyMet AND FinYear = @FinYear AND LocationID = @LocationID AND ApplicationID = @ApplicationID) = 0        
+    BEGIN        
+    UPDATE PurchaseReturnOrder set IsProcessed = 1 where ID = @ReturnOrderID AND FinYear = @FinYear AND LocationID = @LocationID AND ApplicationID = @ApplicationID         
+    END        
+                
+   --SELECT @QtyForStock= dbo.FnConvertStockToInventoryUnit(@ItemID,@Qty,@UnitID)        
+   SELECT @QtyForStock=(@Qty + @OfferQty)*@PackSize      
+   EXEC SpStockUpdate @TransDate,'F',@ItemID,@BatchID,@WareHouseID,0,@QtyForStock,'PurchaseReturn',@LocationID,@FinYear,4,@ApplicationID,'ReceiptsReturn',1,@BatchTypeID,@PRCode        
+                
+  End        
+ END      
+      
+END 

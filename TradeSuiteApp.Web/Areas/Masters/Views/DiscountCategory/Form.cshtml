@@ -1,0 +1,32 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.DiscountCategoryModel
+@{
+    ViewBag.Title = "Form";
+}
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-5">
+                            <label>@Masters.DiscountPercentage<span>*</span></label>
+                            @Html.TextBoxFor(m => m.DiscountPercentage, new { @class = "md-input label-fixed mask-production-qty" })
+                        </div>
+                        <div class="uk-width-medium-1-5">
+                            <label>@Masters.DiscountType<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.DiscountType, new SelectList(Model.DiscountTypeList, "Value", "Text"), new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-5">
+                            <label>Payment With In(Days)<span>*</span></label>
+                            @Html.TextBoxFor(m => m.Days, new { @class = "md-input label-fixed mask-numeric", @disabled = "disabled" })
+                        </div>
+
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+</div>
+

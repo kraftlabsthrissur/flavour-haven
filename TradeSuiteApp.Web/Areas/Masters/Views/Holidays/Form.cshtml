@@ -1,0 +1,219 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Masters.Models.HolidaysModel
+<div class="uk-grid" data-uk-grid-margin>
+    <div class="uk-width-medium-8-10">
+        <div class="md-card">
+            <div class="md-card-content master-card-padding">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-1">
+                            <div class="uk-grid" data-uk-grid-margin>
+                                <div class="uk-width-medium-2-8">
+                                    <label>@Masters.LeaveYear</label>
+                                    @Html.TextBoxFor(m => m.LeaveYear, new { @class = "md-input" })
+                                </div>&nbsp;&nbsp;&nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-width-1-1">
+                    <div class="section-group">
+                        <div class="uk-form-row">
+                            <div class="uk-grid">
+                                <div class="uk-width-1-1">
+                                    <ul class="uk-tab" data-uk-tab="{connect:'#tabs_1_content'}">
+                                        <li class="uk-active" aria-expanded="true"><a>Weekly Holiday</a></li>
+                                        <li><a> General Holiday</a></li>
+                                    </ul>
+                                    <ul id="tabs_1_content" class="uk-switcher uk-margin" style="width:100%">
+                                        <li aria-hidden="false" class="uk-active" style="width:100%">
+                                            <div class="uk-width-medium-1-1">
+                                                <div class="uk-form-row">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-1-4">
+                                                            <label>@Masters.SelectDay *</label>
+                                                            @Html.DropDownListFor(Model => Model.DayID, new SelectList(Model.DayList, "Value", "Text"), "Select", new
+                                                   {
+                                                       @class = "md-input label-fixed"@*, @id = "ShippingState"*@ })
+                                                        </div>
+                                                    </div>
+                                                </div><br />
+                                                <div class="uk-grid" data-uk-grid-margin>
+                                                    <div class="uk-width-medium-1-5">
+                                                        <label>Locations</label>
+
+                                                        @foreach (var weeks in @Model.WeekList)
+                                                        {
+                                                            var weekId = "chk" + weeks.Value;
+                                                            var tdId = "td" + weeks.Value;
+                                                        <div class="tablescroll">
+                                                            <table width="100%" ,>
+                                                                <thead>
+                                                                    <tr>
+                                                                        <td width="20px">
+                                                                            <input type="checkbox" id="@weekId" class="icheckbox" value="@weeks.Value" data-md-icheck />
+                                                                        </td>
+                                                                        <td id="@tdId" width="100px">
+                                                                            @weeks.Text
+                                                                        </td>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class="poTbody"></tbody>
+                                                            </table>
+                                                        </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-2-10">
+                                                    <div class="md-input-wrapper md-input-filled">
+                                                        <label>&nbsp;</label>
+                                                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddProduct"> Add </button>
+                                                    </div>
+                                                </div>
+                                                <br />
+                                                <div class="section-group">
+                                                    <div class="tablescroll">
+                                                        <table id="Location-list" class="uk-table" cellspacing="0" width="100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="width-100">@Masters.Day</th>
+                                                                    <th class="width-60">Week</th>
+                                                                    @*<th class="width-30">Half Day</th>*@
+                                                                    <th class="width-60">Consider Full Day Leave</th>
+                                                                    <th class="width-20"></th>
+
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="poTbody">
+                                                                @{
+                                                                    <tr>
+                                                                        <td>
+                                                                            @Model.WeeklyHoliday
+
+                                                                        </td>
+                                                                        <td>
+                                                                            @Model.Week
+                                                                        </td>
+                                                                        <td>
+                                                                            Yes
+                                                                        </td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                        <input type="hidden" id="item-count" value="0" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li aria-hidden="true" class="" style="width:100%">
+                                            <div class="uk-width-medium-1-1">
+                                                <div class="uk-form-row">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-1-5">
+                                                            <div class="uk-input-group">
+                                                                <label>@Masters.Date</label>
+                                                                @Html.TextBoxFor(model => model.Date, new { @class = "md-input label-fixed  past-date date" })
+                                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                                            </div>
+                                                            <div class="uk-width-medium">
+                                                                <label>&nbsp;</label><br />
+                                                                <input type="checkbox" class="icheckbox" id="IsRestrictedOrOptional" data-md-icheck />@Html.Label(" Is Restricted/Optional Holiday?") &nbsp;
+                                                            </div>
+                                                        </div>
+                                                        <div class="uk-width-medium-1-5">
+                                                            <div class="uk-input-group">
+                                                                <label>HolidayName&nbsp;</label>
+                                                                @Html.TextBoxFor(m => m.HolidayName, new { @class = "md - input label -fixed " })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <br />
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-1-5">
+                                                            <label>Locations</label>
+
+                                                            @foreach (var names in @Model.LocationList)
+                                                            {
+                                                                var checkBoxId = "chk" + names.Value;
+                                                                checkBoxId = Model.Islocation == true ? "Checked=" : "";
+                                                                var tdId = "td" + names.Value;
+                                                            <div class="tablescroll">
+                                                                <table width="100%" , id="location-check-list">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <td width="20px">
+                                                                                <input type="checkbox" id="@checkBoxId" class="icheckbox" value="@names.Value" data-md-icheck />
+                                                                            </td>
+                                                                            <td id="@tdId" width="100px">
+                                                                                @names.Text
+                                                                            </td>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody class="poTbody"></tbody>
+                                                                </table>
+                                                            </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="uk-width-medium-2-10">
+                                                <div class="md-input-wrapper md-input-filled">
+                                                    <label>&nbsp;</label>
+                                                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddGenralHoliday"> Add </button>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="section-group">
+                                                <div class="tablescroll">
+                                                    <table id="purchase-order-items-list" class="uk-table" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="width-10">@Common.SerialNo</th>
+                                                                <th class="width-20">@Masters.Date</th>
+                                                                <th class="width-50">Day</th>
+                                                                <th class="width-80">Remarks</th>
+                                                                <th class="width-30">Type</th>
+                                                                <th class="width-40">Location</th>
+                                                                <th class="width-20"></th>
+
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="poTbody">
+                                                            @{
+                                                                <tr>
+                                                                    <td></td>
+                                                                    <td>
+                                                                        @Model.Dates
+
+                                                                    </td>
+                                                                    <td>
+                                                                        @Model.GeneralHoliday
+                                                                    </td>
+                                                                    <td>
+                                                                        @Model.HolidayName
+                                                                    </td>
+                                                                    <td>@Model.HolidayType</td>
+                                                                    <td>@Model.Location</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                    <input type="hidden" id="item-count" value="0" />
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,71 @@
+﻿
+@model TradeSuiteApp.Web.Areas.AHCMS.Models.DischargeModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-width-medium-1-1">
+            <div class="uk-grid" data-uk-grid-margin="">
+                <div class="uk-width-medium-1-2">
+                    <div class="uk-input-group">
+                        <label>@AHCMS.CourseInHospital</label>
+                        @Html.TextAreaFor(m => m.Course, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        @Html.HiddenFor(m => m.IPID)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-width-medium-1-1">
+            <div class="uk-grid" data-uk-grid-margin="">
+                <div class="uk-width-medium-1-2">
+                    <div class="uk-input-group">
+                        <label>@AHCMS.ConditionAtDischarge</label>
+                        @Html.TextAreaFor(m => m.Condition, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-width-medium-1-1">
+            <div class="uk-grid" data-uk-grid-margin="">
+                <div class="uk-width-medium-1-2">
+                    <div class="uk-input-group">
+                        <label>@AHCMS.DietAdvice</label>
+                        @Html.TextAreaFor(m => m.Diet, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="uk-form-row">
+    <div>
+        <table id="medicine-list" class="uk-table" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-90">@AHCMS.Medicine</th>
+                    <th class="width-120">@AHCMS.Qty</th>
+                    <th class="width-150">@AHCMS.Unit</th>
+                    <th class="width-90">@AHCMS.Instructions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @Html.Partial("~/Areas/AHCMS/Views/Discharge/MedicineList.cshtml", Model)
+            </tbody>
+        </table>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/Discharge")
+<script type="text/javascript">
+    Discharge.init();
+</script>
+

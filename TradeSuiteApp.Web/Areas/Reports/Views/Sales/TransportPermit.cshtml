@@ -1,0 +1,210 @@
+﻿@model TradeSuiteApp.Web.Areas.Reports.Models.TransportPermitReportModel
+@{
+    ViewBag.Title = "Transport Permit";
+    ViewBag.ReportTitle = "Transport Permit";
+}
+
+<div id="page_content_inner" class="form-view">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-3-5">
+                            <form id="report-filter-form" method="POST" data-name="TransportPermitReport">
+                                <div class="uk-form-row ">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-5">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.Fromdate</label>
+                                                @Html.TextBoxFor(model => model.FromDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-5">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.Todate</label>
+                                                @Html.TextBoxFor(model => model.ToDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="uk-width-medium-1-1">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-8">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        <input type="checkbox" name="ReportType" class="StockTransferIssue" data-md-icheck checked="" value="StockTransferIssue" />&nbsp;@Html.Label("Stock Transfer Issue")
+                                    </div>
+                                    <div class="uk-width-medium-1-8 StockTransfer">
+                                        <div class="uk-autocomplete " id="stock-issuenoFrom-autocomplete">
+                                            <label for="uk_dp_start">@Reports.StockTransferNoFrom</label>
+                                            @Html.TextBox("StockTransferNoFrom", "", new { @class = "md-input label-fixed" })
+                                            <script type="text/autocomplete">
+                                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                    {{~items}}
+                                                    <li data-value="{{ $item.IssueNo}}"
+                                                        data-id="{{$item.ID}}">
+                                                        <a>
+                                                            {{ $item.IssueNo}}
+                                                        </a>
+                                                    </li>
+                                                    {{/items}}
+                                                </ul>
+                                            </script>
+                                        </div>
+                                        @Html.HiddenFor(m => m.StockTransferNoFromID)
+                                    </div>
+
+                                    <div class="uk-width-1-6 StockTransfer">
+                                        <div class="uk-autocomplete " id="stock-issuenoTo-autocomplete">
+                                            <label for="uk_dp_start">@Reports.StockTransferNoTo</label>
+                                            @Html.TextBox("StockTransferNoTo", "", new { @class = "md-input label-fixed" })
+                                            <script type="text/autocomplete">
+                                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                    {{~items}}
+                                                    <li data-value="{{ $item.IssueNo}}"
+                                                        data-id="{{$item.ID}}">
+                                                        <a>
+                                                            {{ $item.IssueNo}}
+                                                        </a>
+                                                    </li>
+                                                    {{/items}}
+                                                </ul>
+                                            </script>
+                                        </div>
+                                        @Html.HiddenFor(m => m.StockTransferNoToID)
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-1">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-8">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        <input type="checkbox" name="ReportType" class="SalesInvoice" data-md-icheck checked="" value="SalesInvoice" />&nbsp;@Html.Label("Sales Invoice")
+                                    </div>
+
+                                    <div class="uk-width-medium-1-8 SalesInvoice">
+                                        <div class="uk-autocomplete " id="sales-invoiceno_from-autocomplete">
+                                            <label for="uk_dp_start">@Reports.SalesInvoiceNoFrom</label>
+                                            @Html.TextBox("SalesInvoiceNoFrom", "", new { @class = "md-input label-fixed" })
+                                            <script type="text/autocomplete">
+                                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                    {{~items}}
+                                                    <li data-value="{{ $item.InvoiceNo}}"
+                                                        data-id="{{$item.ID}}">
+                                                        <a>
+                                                            {{ $item.InvoiceNo}}
+                                                        </a>
+                                                    </li>
+                                                    {{/items}}
+                                                </ul>
+                                            </script>
+                                        </div>
+                                        @Html.HiddenFor(m => m.SalesInvoiceNoFromID)
+                                    </div>
+                                    <div class="uk-width-1-6 SalesInvoice">
+                                        <div class="uk-autocomplete " id="sales-ordernoTo-autocomplete">
+                                            <label for="uk_dp_start">@Reports.SalesInvoiceNoTo</label>
+                                            @Html.TextBox("SalesInvoiceNoTo", "", new { @class = "md-input label-fixed" })
+                                            <script type="text/autocomplete">
+                                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                    {{~items}}
+                                                    <li data-value="{{ $item.InvoiceNo}}"
+                                                        data-id="{{$item.ID}}">
+                                                        <a>
+                                                            {{ $item.InvoiceNo}}
+                                                        </a>
+                                                    </li>
+                                                    {{/items}}
+                                                </ul>
+                                            </script>
+                                        </div>
+                                        @Html.HiddenFor(m => m.SalesInvoiceNoToID)
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-1">
+                            <div class="uk-form-row ">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-8">
+                                        <label>@Reports.DriverName<span>*</span></label>
+                                        @Html.TextBoxFor(m => m.DriverName, new { @class = "md-input label-fixed" })
+                                    </div>
+                                    <div class="uk-width-medium-1-8">
+                                        <label>@Reports.VehicleNumber<span>*</span></label>
+                                        @Html.TextBoxFor(m => m.VehicleNumber, new { @class = "md-input label-fixed" })
+                                    </div>
+                                    <div class="md-input-wrapper md-input-filled uk-width-medium-1-8">
+                                        <label>&nbsp;</label>
+                                        <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="report-filter-submit">Show</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin>
+                                <div class="uk-width-medium-1-1">
+                                    <div>
+                                        <table id="TransportPermitList" class="uk-table " cellspacing="0" width=100">
+                                            <thead>
+                                                <tr>
+                                                    <th class="width-10">@Common.SerialNo</th>
+                                                    <th class="width-30"></th>
+                                                    <th class="width-200">@Reports.TransNo</th>
+                                                    <th class="width-200">@Reports.ItemCode</th>
+                                                    <th class="width-250">@Reports.ItemName</th>
+                                                    <th class="width-250">@Reports.BatchType</th>
+                                                    <th class="width-100">@Reports.Quantity </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                            @*<div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="report-filter-submit">Show</button>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <a class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light " id="Refresh">Reset</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>*@
+                           
+                            @*</div>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/Js/Page/TransportPermitReport")
+<script type="text/javascript">
+    TransportPermitReport.init();
+</script>

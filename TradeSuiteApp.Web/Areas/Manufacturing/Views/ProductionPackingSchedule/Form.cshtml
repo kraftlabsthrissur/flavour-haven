@@ -1,0 +1,227 @@
+﻿@model  TradeSuiteApp.Web.Areas.Manufacturing.Models.ProductionPackingScheduleModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-1-10">
+                <label>@Manufacturing.TransNo</label>
+                @Html.TextBoxFor(model => model.TransNo, new { @class = "md-input label-fixed", @readonly = "readonly" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Manufacturing.TransDate</label>
+                @Html.TextBoxFor(model => model.Date, new { @class = "md-input label-fixed", @readonly = "readonly" })
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-autocomplete " id="item-autocomplete">
+                    <div class="uk-input-group">
+                        <label>@Manufacturing.ItemName<span>*</span></label>
+                        @if (Model.ID <= 0)
+                        {
+                            @Html.TextBoxFor(model => model.ItemName, new { @class = "md-input label-fixed" })
+                            <span class="uk-input-group-addon">
+                                <a data-uk-modal="{target:'#select-production-group',center:false}">
+                                    <i class="uk-input-group-icon uk-icon-search"></i>
+                                </a>
+                            </span>
+                            <script type="text/autocomplete">
+                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                    {{~items}}
+                                    <li data-value="{{ $item.Name }}"
+                                        data-id="{{$item.ID}}"
+                                        data-unit="{{$item.Unit}}"
+                                        data-unit-id="{{$item.UnitID}}"
+                                        data-code="{{$item.Code}}"
+                                        data-product-id="{{$item.ProductID}}"
+                                        data-batch-size="{{$item.BatchSize}}"
+                                        data-product-group-id="{{$item.ProductionGroupID}}">
+                                        <a>
+                                            {{ $item.Name }} ({{{ $item.Code }}})
+                                        </a>
+                                    </li>
+                                    {{/items}}
+                                </ul>
+                            </script>
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(model => model.ItemName, new { @class = "md-input label-fixed", @readonly = "readonly" })
+                        }
+                    </div>
+                </div>
+            </div>
+            @Html.HiddenFor(model => model.ItemID)
+            @Html.HiddenFor(model => model.ProductID)
+            @Html.HiddenFor(model => model.ProductGroupID)
+            @Html.HiddenFor(model => model.DefaultPackingStoreID)
+            @Html.HiddenFor(model => model.BatchSize)
+            @Html.HiddenFor(model => model.IsBatchSuspended)
+            @Html.HiddenFor(model => model.UnitID)
+            <div class="uk-width-medium-1-10">
+                <label for="uk_dp_start">@Manufacturing.UOM</label>
+                @Html.TextBoxFor(model => model.UOM, new { @class = "md-input label-fixed", @readonly = "readonly" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label for="uk_dp_start">@Manufacturing.BatchNo</label>
+                @if (Model.ID <= 0)
+                {
+                    @Html.DropDownListFor(Model => Model.BatchID, Model.BatchList, "Select", new { @class = "md-input label-fixed" })
+                }
+                else
+                {
+                    @Html.TextBoxFor(Model => Model.BatchNo, new { @class = "md-input label-fixed ", @disabled = "disabled" })
+                    @Html.HiddenFor(Model => Model.BatchID)
+                }
+            </div>
+
+            <div class="uk-width-medium-1-10">
+                <label for="uk_dp_start">@Manufacturing.PackedQty</label>
+                @Html.TextBoxFor(model => model.PackedQty, new { @class = "md-input label-fixed mask-production-qty" })
+            </div>
+            <div class="uk-width-medium-1-10" id="select_batch_type">
+                <label for="uk_dp_start">@Manufacturing.BatchType</label>
+                @Html.DropDownListFor(Model => Model.BatchTypeID, Model.BatchTypeList, "Select", new { @class = "md-input label-fixed" })
+            </div>
+
+                <div class="uk-width-medium-1-10">
+                    <div class="md-input-wrapper md-input-filled">
+                        <label>&nbsp;</label>
+                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnGetPackingMaterials">@Common.Add</button>
+                    </div>
+                </div>
+            <input type="hidden" value="@Model.ID" id="ID" />
+        </div>
+    </div>
+
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+
+
+            <div class="uk-width-medium-1-10">
+                <div class="uk-input-group">
+                    <label>@Masters.StartDate <span>*</span></label>
+                    @Html.TextBoxFor(m => m.StartDate, new { @class = "md-input label-fixed  date future-date" })
+                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <label>@Manufacturing.Remarks</label>
+                @Html.TextBoxFor(model => model.Remarks, new { @class = "md-input label-fixed", })
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-1-1">
+                <table id="production-packing-material-list" class="uk-table" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="width-20">
+                                @Common.SerialNo
+                            </th>
+                            <th class="width-40">
+                                @Manufacturing.ItemCode
+                            </th>
+                            <th class="width-200">
+                                @Manufacturing.ItemName
+                            </th>
+                            <th class="width-10">
+                                @Manufacturing.UOM
+                            </th>
+                            <th class="width-40 BatchType">
+                                @Manufacturing.BatchType
+                            </th>
+                            <th class="width-60">
+                                @Manufacturing.AvailableStock
+                            </th>
+                            <th class="width-80">
+                                @Manufacturing.StandardQtyForStdBatch
+                            </th>
+                            <th class="width-80">
+                                @Manufacturing.ActualQtyForActualBatch
+                            </th>
+                            <th class="width-60">
+                                @Manufacturing.IssuedQty
+                            </th>
+                            <th class="width-40">
+                                @Manufacturing.Remarks
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model == null)
+                        {
+                            { Html.RenderPartial("/Areas/Manufacturing/Views/ProductionPackingSchedule/GetPackingMaterials.cshtml", Model.Materials); }
+                        }
+                        else
+
+                        {
+                            if (Model.Materials != null)
+                            {
+                                foreach (var item in Model.Materials)
+                                {
+
+                                    var IsAdditionalIssue = item.IsAdditionalIssue == true ? 1 : 0;
+                                    var IsMaterialReturn = item.IsMaterialReturn == true ? 1 : 0;
+
+                                    <tr class="@(item.IsDraft ? "new":"saved")">
+                                        <td>
+                                            @(1 + @Model.Materials.IndexOf(item) )
+
+
+                                            <input type="hidden" class="ItemID" value="@item.ItemID" />
+                                            <input type="hidden" class="AvailableStock" value="@item.AvailableStock" />
+                                            <input type="hidden" class="BatchTypeID" value="@item.BatchTypeID" />
+                                            <input type="hidden" class="UnitID" value="@item.UnitID" />
+                                            <input type="hidden" class="StoreID" value="@item.StoreID" />
+                                            <input type="hidden" class="PackingIssueID" value="@item.PackingIssueID" />
+                                            <input type="hidden" class="PackingMaterialMasterID" value="@item.PackingMaterialMasterID" />
+                                            <input type="hidden" class="IsAdditionalIssue" value="@IsAdditionalIssue" />
+                                            <input type="hidden" class="IsMaterialReturn" value="@IsMaterialReturn" />
+
+                                        </td>
+                                        <td>@item.ItemCode</td>
+                                        <td>@item.ItemName</td>
+                                        <td>@item.UOM</td>
+                                        <td class="BatchType batch_type">
+                                            @item.BatchType
+                                        </td>
+                                        <td class="mask-production-qty Stock">@item.AvailableStock</td>
+                                        <td class="mask-production-qty StandardQty">@item.StandardQty</td>
+                                        <td class="mask-production-qty ActualQty">@item.ActualQty</td>
+                                        @if (IsAdditionalIssue == 1 || IsMaterialReturn == 1)
+                                        {
+                                            <td>
+                                                <input type="text" class="md-input mask-production-qty IssueQty" value="@item.IssueQty" disabled />
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <input type="text" class="md-input mask-production-qty IssueQty" value="@item.IssueQty" />
+                                            </td>
+                                        }
+
+                                        <td>
+                                            <input type="text" class="md-input  Remarks" value="@item.Remarks" />
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<input type="hidden" id="item-count">
+
+@Html.Partial("~/Areas/Masters/Views/Item/PackingMaterialList.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Item/ProductionItemList.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Item/RepackingMaterialReturnItemList.cshtml")

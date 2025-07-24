@@ -1,0 +1,15 @@
+
+CREATE proc [Sales].[SpCheckItemCreatedForSalesInquiryItems](@SalesInquiryItemID int,@ItemID int OUT)  
+AS  
+BEGIN  
+ SET NOCOUNT ON;  
+ 
+  SET @ItemID=(Select TOP 1 s.ItemID from Sales.SalesInquiryItems s Where ID=@SalesInquiryItemID)
+
+End  
+  
+  
+  
+  
+  
+  

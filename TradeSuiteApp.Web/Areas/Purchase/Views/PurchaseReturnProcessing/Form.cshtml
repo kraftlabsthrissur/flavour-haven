@@ -1,0 +1,107 @@
+﻿@model TradeSuiteApp.Web.Areas.Purchase.Models.PurchaseReturnProcessingModel
+
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Purchase.TransNo</label>
+                            @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            @Html.HiddenFor(m => m.LoationStateID, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        
+                        
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Purchase.Date</label>
+                            @Html.TextBoxFor(m => m.TransDate, new { @class = "md-input label-fixed current-date date", @id = "Date", disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid " data-uk-grid-margin="">
+                        <div class="uk-width-medium-2-8">
+                            <label>@Purchase.ProcessingTypes<span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.ProcessingType, Model.ProcessingTypeList, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-8 MovingItems">
+                            <div class="uk-input-group">
+                                <label>@Accounts.FromTransactionDate<span>*</span></label>
+                                @Html.TextBoxFor(m => m.FromTransactionDate, new { @class = "md-input label-fixed past-date date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-1-8 MovingItems">
+                            <div class="uk-input-group">
+                                <label>@Accounts.ToTransactionDate<span>*</span></label>
+                                @Html.TextBoxFor(m => m.ToTransactionDate, new { @class = "md-input label-fixed past-date date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="uk-width-medium-1-8 ExpireItems uk-hidden">
+                            <div class="uk-input-group">
+                                <label>@Purchase.AsOnDate<span>*</span></label>
+                                @Html.TextBoxFor(m => m.AsOnDate, new { @class = "md-input label-fixed future-date date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="uk-width-medium-1-6 SlowMovingItem uk-hidden">
+                                <label>No Of Days Inventory Held<span>*</span></label>
+                                @Html.TextBoxFor(m => m.Days, new { @class = "md-input label-fixed" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label>&nbsp;</label>
+                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnshow">@Common.Show</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-1-1">
+                <table id="purchase-return-item-list" class="uk-table" cellspacing="0" accesskey="" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="width-10">Sl.No</th>
+                            <th class="width-10"></th>
+                            <th class="width-60">@Purchase.ItemName</th>
+                            <th class="width-60">@Purchase.Batch</th>
+                            <th class="width-60">@Purchase.Supplier</th>
+                            <th class="width-40">@Purchase.InvoiceNo</th>
+                            <th class="width-60">@Purchase.InvoiceDate</th>
+                            <th class="width-60">@Purchase.ExpDate</th>
+                            <th class="width-60">@Purchase.Unit</th>
+                            <th class="width-60">@Purchase.PurchaseRate</th>
+                            <th class="width-60">@Purchase.Qty</th>
+                            <th class="width-40">@Purchase.OfferQty</th>
+                            <th class="width-40">@Purchase.TotalStock</th>
+                            <th class="width-40">@Purchase.GSTAmount</th>
+                            <th class="width-40">@Purchase.Value</th>
+                            <th class="width-10">Inventory Held Days</th>
+                            <th class="width-40">@Purchase.ReturnQty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" ID="item-count" />

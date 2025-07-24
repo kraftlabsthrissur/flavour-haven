@@ -1,0 +1,34 @@
+  ALTER PROCEDURE [Sales].[SpGetCounterSalesDetail]          
+  (@ID int,@FinYear int,@LocationID int,@ApplicationID int)           
+  AS            
+BEGIN            
+                
+  SELECT C.ID,C.IsGST,C.IsVAT,TransNo,Transdate,NetAmount as NetAmountTotal,isnull(C.DoctorID,0) as DoctorID,            
+  Case when C.DoctorID=0 Then C.DoctorName Else ISNULL(D.Name,' ') End as DoctorName,ISNULL(CU.Name,'') CurrencyName,c.DiscountAmt,c.DiscountPercentage,            
+  C.PackingPrice,WarehouseID,Warehouse.Name  As Warehouse,IsDraft,IsCancelled,C.RoundOff,IsNull(C.PaymentModeID,0) as PaymentModeID ,            
+  IsNull(C.TotalAmountReceived,0) as TotalAmountReceived,C.SGSTAmount,C.CGSTAmount,C.IGSTAmount,IsNull(C.BalanceToBePaid,0) as BalanceToBePaid,            
+  C.CessAmount,C.TotalVATAmount,ISNULL(C.SalesType,0) SalesTypeID,CS.Type SalesType,ISNULL(C.EmployeeID,0) EmployeeID,ISNULL(E.Name,'') Employee,ISNULL(E.Code,'') EmployeeCode,  
+  ISNULL(C.PatientID,0) PatientID,P.Name as PatientName,SUM(ISNULL(EM.BalAmount,0)) BalAmount,GrossAmount,TaxableAmt,isnull(C.BankID,0) as BankID,            
+  CASE WHEN CS.Type = 'Employee' THEN E.Name  when  CS.Type = 'Patient' Then  P.Name ELSE ISNULL(C.PartyName,'') END AS PartyName,C.CustomerID,  
+  (ISNULL(con.Name1,'')+' '+ ISNULL(con.Name2,'')) ContactName,c.ContactID,C.MobileNumber,C.CivilID,      
+  CASE When CS.Type='Cash Sales'Then ISNULL(C.PartyName,'') Else '' End as CashSalesName,c.PrintWithItemName,c.Remarks,            
+  SUM(ISNULL(EM.BalAmount,0.00)) AS OutstandingAmount,C.DiscountCategoryID,ISNULL(DC.DiscountCategory,'') DiscountCategory,            
+  ISNULL((SELECT TOP 1 I.BusinessCategoryID FROM Sales.CounterSalesTrans CST INNER JOIN Item I ON I.ID=CST.ItemID where CounterSalesID=@ID ),0) BusinessCategoryID            
+ FROM Sales.CounterSales C            
+ INNER JOIN warehouse ON Warehouse.ID = C.WareHouseID            
+ LEFT JOIN CounterSalesType CS ON CS.ID=C.SalesType            
+ LEFT JOIN Employee E ON E.ID=C.EmployeeID            
+ LEFT JOIN Customer P ON P.ID=C.PatientID   
+ LEFT JOIN Contact con on con.ID=C.ContactID  
+ left join Employee D on D.ID=C.DoctorID            
+ left join EmployeeFreeMedicineCreditAmount EM ON EM.EmployeeID= C.EmployeeID AND  current_timestamp BETWEEN EM.StartDate and EM.EndDate             
+ left join DiscountCategory DC ON DC.ID = C.DiscountCategoryID       
+ left join Currency CU ON CU.ID = C.CurrencyID       
+ WHERE --C.FinYear =@FinYear AND            
+  C.LocationID=@LocationID AND C.ApplicationID = @ApplicationID and            
+ C.ID=@ID            
+ GROUP BY C.ID,TransNo,C.IsGST,C.IsVAT,Transdate, PartyName,NetAmount,C.DoctorID,C.CustomerID,C.MobileNumber,C.CivilID,D.Name,C.PackingPrice,WarehouseID,Warehouse.Name,IsDraft,IsCancelled,C.RoundOff,C.PaymentModeID,            
+   C.TotalAmountReceived,C.SGSTAmount,C.CGSTAmount,C.IGSTAmount,C.TotalVATAmount,C.BalanceToBePaid,C.CessAmount,C.SalesType,CS.Type,C.EmployeeID,E.Name,C.PatientID,            
+   P.Name,E.Code,GrossAmount,TaxableAmt,C.BankID,C.DoctorName,C.DiscountCategoryID,DC.DiscountCategory,C.DiscountAmt,c.DiscountPercentage,cu.Name,con.Name1,con.Name2,  
+   c.ContactID,c.PrintWithItemName,c.Remarks           
+END 

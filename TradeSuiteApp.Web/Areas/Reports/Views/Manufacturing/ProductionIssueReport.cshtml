@@ -1,0 +1,100 @@
+﻿@model TradeSuiteApp.Web.Areas.Reports.Models.ManufacturingModel
+@{
+    ViewBag.ReportTitle = "Production Report";
+}
+
+@Scripts.Render("~/Js/Page/ManufacturingReport")
+<div id="page_content_inner" @*class="stock-report"*@>
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-3-10">
+                            <form action="/Reports/Manufacturing/ProductionIssueReport" id="report-filter-form" method="POST">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-3">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.Fromdate</label>
+                                                @Html.TextBoxFor(model => model.FromDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-3">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.Todate</label>
+                                                @Html.TextBoxFor(model => model.ToDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                @*<div class="uk-form-row">
+                                    <div class="uk-grid ">
+                                        <div class="uk-width-medium-2-3 @*supplier-wise*">
+                                            <div class="uk-autocomplete " id="productionGroup-autocomplete">
+                                                <label for="uk_dp_start">@Reports.ProductionGroupName</label>
+                                                @Html.TextBoxFor(model => model.ProductionGroupName, new { @class = "md-input label-fixed", @id = "txtProductionIssueItem" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.ItemName }}"
+                                                            data-id="{{$item.ItemID}}"
+                                                            data-unit="{{$item.UnitName}}">
+                                                            <a>
+                                                                {{ $item.ItemName }} {{{( $item.UnitName ) }}}
+                                                                <div>{{{ $item.UnitName }}}</div>
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(model => Model.ProductionGroupID)
+                                        </div>
+                                    </div>
+                                </div>*@
+                                @*<div class="uk-form-row">
+                                        <div class="panel">
+                                            <label>Report Type</label>
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-1-3">
+                                                    <input type="radio" name="Summary" data-md-icheck checked="" value="Summary" /> @Html.Label("Summary")
+                                                </div>
+                                                <div class="uk-width-medium-1-3">
+
+                                                    <input type="radio" name="Summary" data-md-icheck value="Detail" /> @Html.Label("Detail")
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>*@
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-3">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="report-filter-submit">Show</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="uk-width-medium-7-10 ">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="" id="report-viewer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Html.Partial("~/Areas/Masters/Views/Item/ProductionItemList.cshtml")
+

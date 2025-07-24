@@ -1,0 +1,198 @@
+﻿@{
+    ViewBag.Title = "Proforma Invoice";
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Sales.ProformaInvoice</h1>
+            <span class="uk-text-upper uk-text-small">@Sales.ProformaInvoice</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Create", Html.ActionLink(Common.Create, "Create", "ProformaInvoice", new { Area = "Sales" }, new { @class = "md-btn" }))
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page_content_inner" class="sales list-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <ul class="uk-tab" data-uk-tab="{connect:'#tabs-proforma-invoice-content',animation:'slide-horizontal'}" id="tabs-proforma-invoice">
+                    <li class="uk-active" data-tab="draft"><a>@Sales.Draft</a></li>
+                    <li data-tab="to-be-approved"><a>@Sales.ToBeApproved</a></li>
+                    <li data-tab="to-be-invoiced"><a>@Sales.ToBeInvoiced</a></li>
+                    <li data-tab="fully-invoiced"><a>@Sales.FullyInvoiced</a></li>
+                    <li data-tab="cancelled"><a>@Sales.Cancelled</a></li>
+                </ul>
+                <ul id="tabs-proforma-invoice-content" class="uk-switcher uk-margin">
+                    <li>
+                        <table id="proforma-invoice-draft-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th class="width-80">@Sales.TransNo</th>
+                                    <th class="width-80">@Sales.TransDate</th>
+                                    <th class="width-80">@Sales.SalesType</th>
+                                    <th>@Sales.CustomerName</th>
+                                    <th class="width-120">@Sales.CustomerLocation</th>
+                                    <th class="width-80">@Sales.NetAmount</th>
+                                    <th class="width-80"></th>
+                                    <th class="width-80"></th>
+
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th>@Common.SerialNo</th>
+                                    <th>@Sales.InvoiceNo</th>
+                                    <th>@Sales.InvoiceDate</th>
+                                    <th>@Sales.SalesType</th>
+                                    <th>@Sales.CustomerName</th>
+                                    <th>@Sales.CustomerLocation</th>
+                                    <th>@Sales.NetAmount</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table id="proforma-invoice-to-be-approved-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th class="width-80">@Sales.TransNo</th>
+                                    <th class="width-80">@Sales.TransDate</th>
+                                    <th class="width-80">@Sales.SalesType</th>
+                                    <th>@Sales.CustomerName</th>
+                                    <th class="width-120">@Sales.CustomerLocation</th>
+                                    <th class="width-80">@Sales.NetAmount</th>
+                                    <th class="width-80"></th>
+                                    <th class="width-80"></th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th>@Common.SerialNo</th>
+                                    <th>@Sales.InvoiceNo</th>
+                                    <th>@Sales.InvoiceDate</th>
+                                    <th>@Sales.SalesType</th>
+                                    <th>@Sales.CustomerName</th>
+                                    <th>@Sales.CustomerLocation</th>
+                                    <th>@Sales.NetAmount</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table id="proforma-invoice-to-be-invoiced-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th class="width-80">@Sales.TransNo</th>
+                                    <th class="width-80">@Sales.TransDate</th>
+                                    <th class="width-80">@Sales.SalesType</th>
+                                    <th>@Sales.CustomerName</th>
+                                    <th class="width-120">@Sales.CustomerLocation</th>
+                                    <th class="width-80">@Sales.NetAmount</th>
+                                    <th class="width-80"></th>
+                                    <th class="width-80"></th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th>@Common.SerialNo</th>
+                                    <th>@Sales.InvoiceNo</th>
+                                    <th>@Sales.InvoiceDate</th>
+                                    <th>@Sales.SalesType</th>
+                                    <th>@Sales.CustomerName</th>
+                                    <th>@Sales.CustomerLocation</th>
+                                    <th>@Sales.NetAmount</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table id="proforma-invoice-fully-invoiced-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th class="width-80">@Sales.TransNo</th>
+                                    <th class="width-80">@Sales.TransDate</th>
+                                    <th class="width-80">@Sales.SalesType</th>
+                                    <th>@Sales.CustomerName</th>
+                                    <th class="width-120">@Sales.CustomerLocation</th>
+                                    <th class="width-80">@Sales.NetAmount</th>
+                                    <th class="width-80"></th>
+                                    <th class="width-80"></th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th>@Common.SerialNo</th>
+                                    <th>@Sales.InvoiceNo</th>
+                                    <th>@Sales.InvoiceDate</th>
+                                    <th>@Sales.SalesType</th>
+                                    <th>@Sales.CustomerName</th>
+                                    <th>@Sales.CustomerLocation</th>
+                                    <th>@Sales.NetAmount</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table id="proforma-invoice-cancelled-list" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">@Common.SerialNo</th>
+                                    <th class="width-80">@Sales.TransNo</th>
+                                    <th class="width-80">@Sales.TransDate</th>
+                                    <th class="width-80">@Sales.SalesType</th>
+                                    <th>@Sales.CustomerName</th>
+                                    <th class="width-120">@Sales.CustomerLocation</th>
+                                    <th class="width-80">@Sales.NetAmount</th>
+                                    <th class="width-80"></th>
+                                    <th class="width-80"></th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th>@Common.SerialNo</th>
+                                    <th>@Sales.InvoiceNo</th>
+                                    <th>@Sales.InvoiceDate</th>
+                                    <th>@Sales.SalesType</th>
+                                    <th>@Sales.CustomerName</th>
+                                    <th>@Sales.CustomerLocation</th>
+                                    <th>@Sales.NetAmount</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/ProformaInvoice")
+<script type="text/javascript">
+    ProformaInvoice.list();
+</script>

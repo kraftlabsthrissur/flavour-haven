@@ -1,0 +1,555 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="SnopModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ForecastFormula">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Type" Type="varchar" MaxLength="20" />
+          <Property Name="Formula" Type="varchar" MaxLength="1000" />
+          <Property Name="IsActive" Type="bit" />
+        </EntityType>
+        <EntityType Name="SalesForecast">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TransNo" Type="varchar" MaxLength="50" />
+          <Property Name="TransDate" Type="datetime" />
+          <Property Name="Month" Type="int" Nullable="false" />
+          <Property Name="MonthName" Type="varchar" MaxLength="20" />
+          <Property Name="FormulaID" Type="int" Nullable="false" />
+          <Property Name="CreatedUserID" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="FinYear" Type="int" Nullable="false" />
+          <Property Name="LocationID" Type="int" Nullable="false" />
+          <Property Name="ApplicationID" Type="int" Nullable="false" />
+          <Property Name="IsFinalize" Type="bit" />
+        </EntityType>
+        <EntityType Name="SalesForecastItems">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SalesForecastID" Type="int" />
+          <Property Name="ItemID" Type="int" Nullable="false" />
+          <Property Name="ComputedForecast" Type="numeric" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="FinalForecast" Type="numeric" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="ActualSales" Type="numeric" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="FinYear" Type="int" Nullable="false" />
+          <Property Name="LocationID" Type="int" Nullable="false" />
+          <Property Name="ApplicationID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SalesForecastLocations">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SalesForecastID" Type="int" Nullable="false" />
+          <Property Name="LocationID" Type="int" Nullable="false" />
+          <Property Name="IsFinal" Type="bit" Nullable="false" />
+          <Property Name="ApplicationID" Type="int" Nullable="false" />
+        </EntityType>
+        <Function Name="SpCancelTransaction" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="TableName" Type="varchar" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpCreateBatch" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ItemType" Type="char" Mode="In" />
+          <Parameter Name="ItemID" Type="int" Mode="In" />
+          <Parameter Name="BatchNo" Type="varchar" Mode="In" />
+          <Parameter Name="CustomBatchNo" Type="varchar" Mode="In" />
+          <Parameter Name="ManufacturingDate" Type="datetime" Mode="In" />
+          <Parameter Name="ExpiryDate" Type="datetime" Mode="In" />
+          <Parameter Name="BatchTypeID" Type="int" Mode="In" />
+          <Parameter Name="CreatedUserID" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <Parameter Name="BatchID" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="SpGetConfigByUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ConfigName" Type="varchar" Mode="In" />
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetCurrentFinYear" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpIsCodeAlreadyExists" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="tableName" Type="varchar" Mode="In" />
+          <Parameter Name="FieldName" Type="varchar" Mode="In" />
+          <Parameter Name="Code" Type="varchar" Mode="In" />
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="IsExists" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="SpSuspendTransaction" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="ID" Type="int" Mode="In" />
+          <Parameter Name="TableName" Type="varchar" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <Parameter Name="RetValue" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="SpUpdateSerialNo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Common">
+          <Parameter Name="FormName" Type="varchar" Mode="In" />
+          <Parameter Name="FieldName" Type="varchar" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <Parameter Name="SerialNo" Type="varchar" Mode="InOut" />
+        </Function>
+        <Function Name="SpGetSalesForecast" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Snop">
+          <Parameter Name="SalesForecastID" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetSalesForecastItems" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Snop">
+          <Parameter Name="SalesForecastID" Type="int" Mode="In" />
+          <Parameter Name="ItemNameHint" Type="varchar" Mode="In" />
+          <Parameter Name="CodeHint" Type="varchar" Mode="In" />
+          <Parameter Name="SalesCategoryHint" Type="varchar" Mode="In" />
+          <Parameter Name="LocationNameHint" Type="varchar" Mode="In" />
+          <Parameter Name="SortField" Type="varchar" Mode="In" />
+          <Parameter Name="SortOrder" Type="varchar" Mode="In" />
+          <Parameter Name="Offset" Type="int" Mode="In" />
+          <Parameter Name="Limit" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpGetSalesForecasts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Snop">
+          <Parameter Name="TransNoHint" Type="varchar" Mode="In" />
+          <Parameter Name="MonthHint" Type="varchar" Mode="In" />
+          <Parameter Name="SortField" Type="varchar" Mode="In" />
+          <Parameter Name="SortOrder" Type="varchar" Mode="In" />
+          <Parameter Name="Offset" Type="int" Mode="In" />
+          <Parameter Name="Limit" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpIsSalesForecastExist" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Snop">
+          <Parameter Name="Month" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <Parameter Name="ReturnValue" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="SpProcessSalesForecast" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Snop">
+          <Parameter Name="SalesForecastID" Type="int" Mode="In" />
+          <Parameter Name="TransNo" Type="varchar" Mode="In" />
+          <Parameter Name="TransDate" Type="datetime" Mode="In" />
+          <Parameter Name="CreatedUserID" Type="int" Mode="In" />
+          <Parameter Name="FinYear" Type="int" Mode="In" />
+          <Parameter Name="LocationID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+          <Parameter Name="ReturnValue" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="SpSaveSalesForecast" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Snop">
+          <Parameter Name="SalesForecastID" Type="int" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SpUpdateSalesForecast" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Snop">
+          <Parameter Name="SalesForecastID" Type="int" Mode="In" />
+          <Parameter Name="XMLItems" Type="xml" Mode="In" />
+          <Parameter Name="ApplicationID" Type="int" Mode="In" />
+        </Function>
+        <EntityContainer Name="SnopModelStoreContainer">
+          <EntitySet Name="ForecastFormula" EntityType="Self.ForecastFormula" Schema="Snop" store:Type="Tables" />
+          <EntitySet Name="SalesForecast" EntityType="Self.SalesForecast" Schema="Snop" store:Type="Tables" />
+          <EntitySet Name="SalesForecastItems" EntityType="Self.SalesForecastItems" Schema="Snop" store:Type="Tables" />
+          <EntitySet Name="SalesForecastLocations" EntityType="Self.SalesForecastLocations" Schema="Snop" store:Type="Tables" />
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="SnopModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="ForecastFormula">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Type" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Formula" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="IsActive" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="SalesForecast">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TransNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TransDate" Type="DateTime" Precision="3" />
+          <Property Name="Month" Type="Int32" Nullable="false" />
+          <Property Name="MonthName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="FormulaID" Type="Int32" Nullable="false" />
+          <Property Name="CreatedUserID" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="FinYear" Type="Int32" Nullable="false" />
+          <Property Name="LocationID" Type="Int32" Nullable="false" />
+          <Property Name="ApplicationID" Type="Int32" Nullable="false" />
+          <Property Name="IsFinalize" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="SalesForecastItem">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SalesForecastID" Type="Int32" />
+          <Property Name="ItemID" Type="Int32" Nullable="false" />
+          <Property Name="ComputedForecast" Type="Decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="FinalForecast" Type="Decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="ActualSales" Type="Decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="FinYear" Type="Int32" Nullable="false" />
+          <Property Name="LocationID" Type="Int32" Nullable="false" />
+          <Property Name="ApplicationID" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SalesForecastLocation">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SalesForecastID" Type="Int32" Nullable="false" />
+          <Property Name="LocationID" Type="Int32" Nullable="false" />
+          <Property Name="IsFinal" Type="Boolean" Nullable="false" />
+          <Property Name="ApplicationID" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="SnopEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ForecastFormulas" EntityType="Self.ForecastFormula" />
+          <EntitySet Name="SalesForecasts" EntityType="Self.SalesForecast" />
+          <EntitySet Name="SalesForecastItems" EntityType="Self.SalesForecastItem" />
+          <EntitySet Name="SalesForecastLocations" EntityType="Self.SalesForecastLocation" />
+          <FunctionImport Name="SpCancelTransaction">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="TableName" Mode="In" Type="String" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpCreateBatch">
+            <Parameter Name="ItemType" Mode="In" Type="String" />
+            <Parameter Name="ItemID" Mode="In" Type="Int32" />
+            <Parameter Name="BatchNo" Mode="In" Type="String" />
+            <Parameter Name="CustomBatchNo" Mode="In" Type="String" />
+            <Parameter Name="ManufacturingDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ExpiryDate" Mode="In" Type="DateTime" />
+            <Parameter Name="BatchTypeID" Mode="In" Type="Int32" />
+            <Parameter Name="CreatedUserID" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+            <Parameter Name="BatchID" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetConfigByUser" ReturnType="Collection(SnopModel.SpGetConfigByUser_Result)">
+            <Parameter Name="ConfigName" Mode="In" Type="String" />
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetCurrentFinYear" ReturnType="Collection(SnopModel.SpGetCurrentFinYear_Result)">
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpIsCodeAlreadyExists">
+            <Parameter Name="tableName" Mode="In" Type="String" />
+            <Parameter Name="FieldName" Mode="In" Type="String" />
+            <Parameter Name="Code" Mode="In" Type="String" />
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="IsExists" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpSuspendTransaction">
+            <Parameter Name="ID" Mode="In" Type="Int32" />
+            <Parameter Name="TableName" Mode="In" Type="String" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+            <Parameter Name="RetValue" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpUpdateSerialNo">
+            <Parameter Name="FormName" Mode="In" Type="String" />
+            <Parameter Name="FieldName" Mode="In" Type="String" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+            <Parameter Name="SerialNo" Mode="InOut" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetSalesForecast" ReturnType="Collection(SnopModel.SpGetSalesForecast_Result)">
+            <Parameter Name="SalesForecastID" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetSalesForecastItems" ReturnType="Collection(SnopModel.SpGetSalesForecastItems_Result)">
+            <Parameter Name="SalesForecastID" Mode="In" Type="Int32" />
+            <Parameter Name="ItemNameHint" Mode="In" Type="String" />
+            <Parameter Name="CodeHint" Mode="In" Type="String" />
+            <Parameter Name="SalesCategoryHint" Mode="In" Type="String" />
+            <Parameter Name="LocationNameHint" Mode="In" Type="String" />
+            <Parameter Name="SortField" Mode="In" Type="String" />
+            <Parameter Name="SortOrder" Mode="In" Type="String" />
+            <Parameter Name="Offset" Mode="In" Type="Int32" />
+            <Parameter Name="Limit" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpGetSalesForecasts" ReturnType="Collection(SnopModel.SpGetSalesForecasts_Result)">
+            <Parameter Name="TransNoHint" Mode="In" Type="String" />
+            <Parameter Name="MonthHint" Mode="In" Type="String" />
+            <Parameter Name="SortField" Mode="In" Type="String" />
+            <Parameter Name="SortOrder" Mode="In" Type="String" />
+            <Parameter Name="Offset" Mode="In" Type="Int32" />
+            <Parameter Name="Limit" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpIsSalesForecastExist">
+            <Parameter Name="Month" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+            <Parameter Name="ReturnValue" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpProcessSalesForecast">
+            <Parameter Name="SalesForecastID" Mode="In" Type="Int32" />
+            <Parameter Name="TransNo" Mode="In" Type="String" />
+            <Parameter Name="TransDate" Mode="In" Type="DateTime" />
+            <Parameter Name="CreatedUserID" Mode="In" Type="Int32" />
+            <Parameter Name="FinYear" Mode="In" Type="Int32" />
+            <Parameter Name="LocationID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+            <Parameter Name="ReturnValue" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpSaveSalesForecast">
+            <Parameter Name="SalesForecastID" Mode="In" Type="Int32" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SpUpdateSalesForecast">
+            <Parameter Name="SalesForecastID" Mode="In" Type="Int32" />
+            <Parameter Name="XMLItems" Mode="In" Type="String" />
+            <Parameter Name="ApplicationID" Mode="In" Type="Int32" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="SpGetConfigByUser_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="ConfigValue" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Description" Nullable="true" MaxLength="255" />
+          <Property Type="Boolean" Name="IsBoolean" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SpGetCurrentFinYear_Result">
+          <Property Type="Int32" Name="FinancialYearID" Nullable="false" />
+          <Property Type="DateTime" Name="StartDate" Nullable="false" Precision="23" />
+          <Property Type="DateTime" Name="EndDate" Nullable="false" Precision="23" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="100" />
+          <Property Type="Int32" Name="Year" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="SpGetSalesForecast_Result">
+          <Property Type="String" Name="TransNo" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="TransDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="MonthName" Nullable="true" MaxLength="20" />
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="Boolean" Name="IsFinalize" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="SpGetSalesForecastItems_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="Int32" Name="SalesForecastID" Nullable="true" />
+          <Property Type="Int32" Name="ItemID" Nullable="false" />
+          <Property Type="String" Name="Code" Nullable="true" MaxLength="25" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="LocationName" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="SalesCategory" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="SalesUnit" Nullable="true" MaxLength="10" />
+          <Property Type="Int32" Name="SecondaryUnitID" Nullable="true" />
+          <Property Type="Int32" Name="SalesUnitID" Nullable="true" />
+          <Property Type="Decimal" Name="ComputedForecast" Nullable="false" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="ComputedForecastInKgs" Nullable="true" Precision="23" Scale="9" />
+          <Property Type="Decimal" Name="ComputedForecastValue" Nullable="true" Precision="37" Scale="8" />
+          <Property Type="Decimal" Name="Value" Nullable="false" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="FinalForecast" Nullable="false" Precision="18" Scale="4" />
+          <Property Type="Decimal" Name="FinalForecastInkgs" Nullable="true" Precision="23" Scale="9" />
+          <Property Type="Decimal" Name="FinalForecastValue" Nullable="true" Precision="37" Scale="8" />
+          <Property Type="Decimal" Name="ActualSales" Nullable="false" Precision="18" Scale="4" />
+          <Property Type="Int32" Name="totalRecords" Nullable="true" />
+          <Property Type="Int32" Name="recordsFiltered" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SpGetSalesForecasts_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="TransNO" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="MonthName" Nullable="true" MaxLength="20" />
+          <Property Type="Int32" Name="FinYear" Nullable="false" />
+          <Property Type="DateTime" Name="TransDate" Nullable="true" Precision="23" />
+          <Property Type="Boolean" Name="IsFinalize" Nullable="false" />
+          <Property Type="Int32" Name="totalRecords" Nullable="true" />
+          <Property Type="Int32" Name="recordsFiltered" Nullable="true" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="SnopModelStoreContainer" CdmEntityContainer="SnopEntities">
+          <EntitySetMapping Name="ForecastFormulas">
+            <EntityTypeMapping TypeName="SnopModel.ForecastFormula">
+              <MappingFragment StoreEntitySet="ForecastFormula">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Formula" ColumnName="Formula" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SalesForecasts">
+            <EntityTypeMapping TypeName="SnopModel.SalesForecast">
+              <MappingFragment StoreEntitySet="SalesForecast">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="TransNo" ColumnName="TransNo" />
+                <ScalarProperty Name="TransDate" ColumnName="TransDate" />
+                <ScalarProperty Name="Month" ColumnName="Month" />
+                <ScalarProperty Name="MonthName" ColumnName="MonthName" />
+                <ScalarProperty Name="FormulaID" ColumnName="FormulaID" />
+                <ScalarProperty Name="CreatedUserID" ColumnName="CreatedUserID" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="FinYear" ColumnName="FinYear" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="ApplicationID" ColumnName="ApplicationID" />
+                <ScalarProperty Name="IsFinalize" ColumnName="IsFinalize" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SalesForecastItems">
+            <EntityTypeMapping TypeName="SnopModel.SalesForecastItem">
+              <MappingFragment StoreEntitySet="SalesForecastItems">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="SalesForecastID" ColumnName="SalesForecastID" />
+                <ScalarProperty Name="ItemID" ColumnName="ItemID" />
+                <ScalarProperty Name="ComputedForecast" ColumnName="ComputedForecast" />
+                <ScalarProperty Name="FinalForecast" ColumnName="FinalForecast" />
+                <ScalarProperty Name="ActualSales" ColumnName="ActualSales" />
+                <ScalarProperty Name="FinYear" ColumnName="FinYear" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="ApplicationID" ColumnName="ApplicationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SalesForecastLocations">
+            <EntityTypeMapping TypeName="SnopModel.SalesForecastLocation">
+              <MappingFragment StoreEntitySet="SalesForecastLocations">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="SalesForecastID" ColumnName="SalesForecastID" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="IsFinal" ColumnName="IsFinal" />
+                <ScalarProperty Name="ApplicationID" ColumnName="ApplicationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SpCancelTransaction" FunctionName="SnopModel.Store.SpCancelTransaction" />
+          <FunctionImportMapping FunctionImportName="SpCreateBatch" FunctionName="SnopModel.Store.SpCreateBatch" />
+          <FunctionImportMapping FunctionImportName="SpGetConfigByUser" FunctionName="SnopModel.Store.SpGetConfigByUser">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SnopModel.SpGetConfigByUser_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ConfigValue" ColumnName="ConfigValue" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsBoolean" ColumnName="IsBoolean" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetCurrentFinYear" FunctionName="SnopModel.Store.SpGetCurrentFinYear">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SnopModel.SpGetCurrentFinYear_Result">
+                <ScalarProperty Name="FinancialYearID" ColumnName="FinancialYearID" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Year" ColumnName="Year" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpIsCodeAlreadyExists" FunctionName="SnopModel.Store.SpIsCodeAlreadyExists" />
+          <FunctionImportMapping FunctionImportName="SpSuspendTransaction" FunctionName="SnopModel.Store.SpSuspendTransaction" />
+          <FunctionImportMapping FunctionImportName="SpUpdateSerialNo" FunctionName="SnopModel.Store.SpUpdateSerialNo" />
+          <FunctionImportMapping FunctionImportName="SpGetSalesForecast" FunctionName="SnopModel.Store.SpGetSalesForecast">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SnopModel.SpGetSalesForecast_Result">
+                <ScalarProperty Name="TransNo" ColumnName="TransNo" />
+                <ScalarProperty Name="TransDate" ColumnName="TransDate" />
+                <ScalarProperty Name="MonthName" ColumnName="MonthName" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="IsFinalize" ColumnName="IsFinalize" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetSalesForecastItems" FunctionName="SnopModel.Store.SpGetSalesForecastItems">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SnopModel.SpGetSalesForecastItems_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="SalesForecastID" ColumnName="SalesForecastID" />
+                <ScalarProperty Name="ItemID" ColumnName="ItemID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="LocationName" ColumnName="LocationName" />
+                <ScalarProperty Name="SalesCategory" ColumnName="SalesCategory" />
+                <ScalarProperty Name="SalesUnit" ColumnName="SalesUnit" />
+                <ScalarProperty Name="SecondaryUnitID" ColumnName="SecondaryUnitID" />
+                <ScalarProperty Name="SalesUnitID" ColumnName="SalesUnitID" />
+                <ScalarProperty Name="ComputedForecast" ColumnName="ComputedForecast" />
+                <ScalarProperty Name="ComputedForecastInKgs" ColumnName="ComputedForecastInKgs" />
+                <ScalarProperty Name="ComputedForecastValue" ColumnName="ComputedForecastValue" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="FinalForecast" ColumnName="FinalForecast" />
+                <ScalarProperty Name="FinalForecastInkgs" ColumnName="FinalForecastInkgs" />
+                <ScalarProperty Name="FinalForecastValue" ColumnName="FinalForecastValue" />
+                <ScalarProperty Name="ActualSales" ColumnName="ActualSales" />
+                <ScalarProperty Name="totalRecords" ColumnName="totalRecords" />
+                <ScalarProperty Name="recordsFiltered" ColumnName="recordsFiltered" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpGetSalesForecasts" FunctionName="SnopModel.Store.SpGetSalesForecasts">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SnopModel.SpGetSalesForecasts_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="TransNO" ColumnName="TransNO" />
+                <ScalarProperty Name="MonthName" ColumnName="MonthName" />
+                <ScalarProperty Name="FinYear" ColumnName="FinYear" />
+                <ScalarProperty Name="TransDate" ColumnName="TransDate" />
+                <ScalarProperty Name="IsFinalize" ColumnName="IsFinalize" />
+                <ScalarProperty Name="totalRecords" ColumnName="totalRecords" />
+                <ScalarProperty Name="recordsFiltered" ColumnName="recordsFiltered" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SpIsSalesForecastExist" FunctionName="SnopModel.Store.SpIsSalesForecastExist" />
+          <FunctionImportMapping FunctionImportName="SpProcessSalesForecast" FunctionName="SnopModel.Store.SpProcessSalesForecast" />
+          <FunctionImportMapping FunctionImportName="SpSaveSalesForecast" FunctionName="SnopModel.Store.SpSaveSalesForecast" />
+          <FunctionImportMapping FunctionImportName="SpUpdateSalesForecast" FunctionName="SnopModel.Store.SpUpdateSalesForecast" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,110 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+@if (Model.BaseLineItems != null)
+{
+    List<string> Temp = new List<string>();
+    var TempGroupName = "";
+    var TempName = "";
+    var count = 0;
+    int slno = 1;
+    foreach (var item in Model.BaseLineItems.Select((value, i) => new { i = (i + 1), value }))
+    {
+        if (item.value.Type == "Radio" || item.value.Type == "Text")
+        {
+            count += 1;
+            if (TempGroupName == item.value.GroupName)
+            {
+
+                if (item.value.Type == "Radio")
+                {
+
+                        <input type="radio" name="@item.value.GroupName" class="baselineResults" data-md-icheck value="@item.value.Name" @(item.value.IsChecked == true ? "checked=\"checked\"" : "")/><label>@item.value.Name</label>
+                }
+                else
+                {
+                        <input type="text" name="@item.value.GroupName" class="md-input label-fixed baselineResults baseLine_txt" value="@item.value.Description"/><label>@item.value.Name</label>
+                }
+
+
+
+            }
+            else
+            {
+                TempGroupName = item.value.GroupName;
+
+                @Html.Raw("<tr>")              
+                @Html.Raw("<td class='uk-text-center'>")@slno
+                slno++;
+                @Html.Raw("</td>")
+
+                @Html.Raw("<td class='width-70 Area groupname'>")
+                @item.value.GroupName
+
+                @Html.Raw("</td>")
+                @Html.Raw("<td class='" + @item.value.GroupName + "'>")
+                if (Model.BaseLineItems.Where(a => a.GroupName == TempGroupName).Count() != count)
+                {
+                    if (item.value.Type == "Radio")
+                    {
+                        <input type="radio" name="@item.value.GroupName" class="baselineResults" data-md-icheck value="@item.value.Name" @(item.value.IsChecked == true ? "checked=\"checked\"" : "") /><label>@item.value.Name</label>
+
+                    }
+                    else
+                    {
+                        <input type="text" name="@item.value.GroupName" class="md-input label-fixed baselineResults baseLine_txt" value="@item.value.Description" />
+                    }
+
+
+                }
+                if (!Model.IsCompleted)
+                {
+
+                }
+
+
+            }
+            if (Model.BaseLineItems.Where(a => a.GroupName == TempGroupName).Count() == count)
+            {
+                count = 0;
+
+                @Html.Raw("</td>")
+                @Html.Raw("</tr>")
+            }
+        }
+
+        else
+        {
+            count += 1;
+            if (TempName == item.value.GroupName)
+            {
+                    <input type="checkbox" name="@item.value.GroupName" class="baselineResults checkboxresults" data-md-icheck value="@item.value.Name" @(item.value.IsChecked == true ? "checked=\"checked\"" : "") /><label>@item.value.Name</label>
+                   
+            }
+            else
+            {
+                TempName = item.value.GroupName;
+
+                @Html.Raw("<tr>")
+                @Html.Raw("<td class='uk-text-center'>")@slno
+                slno++;
+                @Html.Raw("</td>")
+
+                @Html.Raw("<td class='width-70 Area groupname'>")
+                @item.value.GroupName
+
+                @Html.Raw("</td>")
+                @Html.Raw("<td class='" + @item.value.GroupName + "'>")
+                if (Model.BaseLineItems.Where(a => a.GroupName == TempName).Count() != count)
+                {                  
+                        <input type="checkbox" name="@item.value.GroupName" class="baselineResults checkboxresults" data-md-icheck value="@item.value.Name" @(item.value.IsChecked == true ? "checked=\"checked\"" : "") /><label>@item.value.Name</label>
+                }
+                if (!Model.IsCompleted)
+                {
+
+                }
+            }
+        }
+    }
+    @Html.Raw("</td>")
+    @Html.Raw("</tr>")
+}
+

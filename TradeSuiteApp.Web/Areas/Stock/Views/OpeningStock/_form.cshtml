@@ -1,0 +1,171 @@
+﻿@model TradeSuiteApp.Web.Areas.Stock.Models.OpeningStockModel
+@{
+    ViewBag.Title = "_form";
+}
+
+<div class="uk-form-row">
+    <div class="uk-grid" data-uk-grid-margin>
+        <div class="uk-width-medium-1-1">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-10">
+                        <label>@Stock.TransNo</label>
+                        @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                    </div>
+                    <div class="uk-width-medium-1-10">
+                        <label for="uk_dp_start">@Stock.Date</label>
+                        @Html.TextBoxFor(m => m.Date, new { @class = "md-input", @id = "txtDate", @disabled = "disabled" })
+                    </div>
+
+                    <div class="uk-width-medium-1-10">
+                        <label>@Stock.Store<span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.WarehouseID, Model.WarehouseList, "Select", new { @class = "md-input label-fixed", @id = "StoreID" })
+                        @Html.HiddenFor(model => model.WarehouseID)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="uk-grid" data-uk-grid-margin>
+    <div class="uk-width-medium-1-1">
+        <div class="uk-form-row">
+            <div class="uk-grid" data-uk-grid-margin>
+
+                <div class="uk-width-medium-1-10">
+                    <label>@Stock.ItemCategory</label>
+                    @Html.DropDownListFor(Model => Model.ItemCategoryID, Model.ItemCategoryList, "Select", new { @class = "md-input label-fixed" })
+      
+                </div>
+
+                <div class="uk-width-medium-2-10">
+                    <div class="uk-autocomplete " id="item-autocomplete">
+                        <label>@Stock.Item<span>*</span></label>
+                        @Html.TextBox("ItemName", "", new { @class = "md-input label-fixed" })
+                        <span class="uk-input-group-addon">
+                            <a data-uk-modal="{target:'#select-item'}">
+                                <i class="uk-input-group-icon uk-icon-search"></i>
+                            </a>
+                        </span>
+                        <script type="text/autocomplete">
+                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                {{~items}}
+                                <li data-value="{{ $item.ItemName }}"
+                                    data-id="{{$item.ItemID}}"
+                                    data-code="{{$item.Code}}"
+                                    data-stock="{{$item.stock}}"
+                                    data-unit="{{$item.UnitName}}"
+                                    data-category="{{$item.CategoryName}}"
+                                    data-unit-id="{{$item.UnitID}}">
+                                    <a>
+                                        {{ $item.ItemName }}
+                                        <div>{{{ $item.Code }}}</div>
+                                    </a>
+                                </li>
+                                {{/items}}
+                            </ul>
+                        </script>
+                    </div>
+
+                    @Html.Hidden("ItemID")
+                    @Html.Hidden("Unit")
+                    @Html.Hidden("UnitID")
+                    @Html.Hidden("Category")
+                    @Html.Hidden("Stock")
+                    @Html.Hidden("PriceListID", 1)
+                </div>
+
+                <div class="uk-width-medium-1-10">
+                    <label>@Stock.BatchType<span>*</span></label>
+                    @Html.DropDownListFor(Model => Model.BatchTypeID, Model.BatchTypeList, "Select", new { @class = "md-input label-fixed", @disabled="disabled" })
+                    @Html.HiddenFor(model => model.BatchTypeID)
+                </div>
+
+                <div class="uk-width-medium-1-10">
+                    <div class="uk-autocomplete " id="batch-autocomplete">
+                        <label>@Stock.Batch<span>*</span></label>
+                        @Html.TextBox("Batch", "", new { @class = "md-input label-fixed" })
+                        <script type="text/autocomplete">
+                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                {{~items}}
+                                <li data-value="{{ $item.BatchNo }}"
+                                    data-id="{{$item.BatchID}}"
+                                    data-batchtypeid="{{$item.BatchTypeID}}">
+                                    <a>
+                                        {{ $item.BatchNo }}
+                                        @*<div>{{{ $item.BatchID }}}</div>*@
+                                    </a>
+                                </li>
+                                {{/items}}
+                            </ul>
+                        </script>
+                        @Html.Hidden("BatchID")
+                    </div>
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Stock.Quantity<span>*</span></label>
+                    <input type="text" id="RequiredQty" min="0" class="md-input label-fixed mask-production-qty " />
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <label>@Stock.MRP/Rate<span>*</span></label>
+                    <input type="text" id="Value" class="md-input label-fixed mask-currency " />
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <div class="md-input-wrapper md-input-filled">
+                        <label>&nbsp;</label>
+                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddItem">@Common.Add</button>
+                    </div>
+                    @Html.Hidden("item-count")
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<br />
+
+<div class="section-group">
+    <table id="OpeningStock" class="uk-table" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th class="width-10">@Common.SerialNo</th>
+                <th class="width-150">@Stock.ItemName</th>
+                <th class="width-60">@Stock.Batch</th>
+                <th class="width-50">@Stock.BatchType</th>
+                <th class="width-20">@Stock.Unit</th>
+                <th class="width-50">@Stock.Quantity</th>
+                <th class="width-50">@Stock.MRP/Rate</th>
+                <th class="width-10"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if(Model.Items!=null)
+            { 
+            foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td class="uk-text-center serial-no">@(1 + @Model.Items.IndexOf(item))</td>
+                    <td class="item-name">
+                        @item.ItemName
+                    <input type="hidden" class="item-ID" value="@item.ItemID" readonly="readonly" />
+                    <input type="hidden" class="batchtype-ID" value="@item.BatchTypeID" readonly="readonly" />
+                    <input type="hidden" class="batch-ID" value="@item.BatchID" />'
+                    <input type="hidden" class="store-ID" value="@item.WarehouseID" />'
+                    <input type="hidden" class="unit-ID" value="@item.UnitID" />
+                </td>
+                <td class="batch">@item.Batch</td>
+                <td class="batch-type">@item.BatchType</td>
+                <td class="unit">@item.Unit </td>
+                <td class="RequiredQty mask-production-qty">@item.Qty </td>
+                <td class="Value mask-currency">@item.Value </td>
+                <td><a class="remove-item"><i class="uk-icon-remove"></i></a></td>
+            </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <input type="hidden" id="item-count" value="" />
+</div>
+

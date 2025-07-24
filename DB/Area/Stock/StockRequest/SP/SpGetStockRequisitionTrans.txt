@@ -1,0 +1,20 @@
+ALTER PROCEDURE [Stock].[SpGetStockRequisitionTrans]          
+(@ID INT,          
+@FinYear INT,          
+@LocationID INT,          
+@ApplicationID INT)          
+AS          
+BEGIN          
+SET NOCOUNT ON          
+  select SRT.ID,SRT.StockRequisitionID,SRT.ItemID,I.Code,I.Name as ItemName,I.PatentNo,I.Make,I.Model,SRT.ItemType,U.UOM as Unit,SRT.UnitID as UnitID,          
+  SRT.RequiredQty,SRT.SecondaryQty,SRT.SecondaryUnit,SRT.SecondaryUnitSize,(SRT.RequiredQty-SRT.IssuedQty) as RemainingRequiredQty,    
+  SRT.RequiredDate,SRT.RequiredTime,SRT.Remarks,SRT.BatchTypeID,BT.Name as BatchName,SRT.IssuedQty, SRT.Stock, SRT.AverageSales,  
+   ISNULL((SELECT STRING_AGG(Name+'|'+CAST(PackSize AS varchar(10)), ',') FROM SecondaryUnit su where su.UnitID=SRT.UnitID),'')SecondaryUnits,    
+  SRT.FinYear,SRT.LocationID, SRT.ApplicationID,SRT.SuggestedQty,ISNULL(C.Name,'') as SalesCategory,LTRIM(RTRIM(I.MalayalamName)) AS MalayalamName          
+  from Stockrequisitiontrans SRT          
+  Inner Join viItem I on I.Id=SRT.ItemID          
+  inner join Unit U on U.ID=SRT.UnitID          
+  Left Join BatchType BT on BT.ID=SRT.BatchTypeID          
+  LEFT join Category C on C.ID=I.SalesCategoryID          
+  where SRT.StockRequisitionID=@ID AND SRT.FinYear = @FinYear AND SRT.ApplicationID=@ApplicationID          
+END 

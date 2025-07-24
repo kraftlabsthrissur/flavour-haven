@@ -1,0 +1,289 @@
+﻿@model IEnumerable<TradeSuiteApp.Web.Areas.Stock.Models.StockIssueViewModel>
+@{
+    ViewBag.Title = @Stock.StockIssueList;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 48, media: 960 }">
+        <div class="heading_title">
+            <h1>@Stock.StockIssue</h1>
+            <span class="uk-text-upper uk-text-small">@Stock.StockIssueList</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Create", Html.ActionLink(Common.Create, "Create", "StockIssue", new { Area = "Stock" }, new { @class = "md-btn" }))
+
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>@Common.Action</a></li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="list-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <ul class="uk-tab" data-uk-tab="{connect:'#tabs-stock-issue-content',animation:'slide-horizontal'}" id="tabs-stock-issue">
+                    <li class="uk-active" data-tab="draft"><a>@Stock.Draft</a></li>
+                    <li data-tab="to-be-received"><a>@Stock.ToBeReceived</a></li>
+                    <li data-tab="fully-received"><a>@Stock.FullyReceived</a></li>
+                    <li data-tab="cancelled"><a>@Stock.Cancelled</a></li>
+                </ul>
+                <ul id="tabs-stock-issue-content" class="uk-switcher uk-margin">
+                    <li>
+                        <table id="stock-issue-draft-list" class="uk-table">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransDate
+                                    </th>
+                                    <th>
+                                        @Stock.IssueLocation
+                                    </th>
+                                    <th>
+                                        @Stock.IssuePremise
+                                    </th>
+                                    <th>
+                                        @Stock.ReceiptLocation
+                                    </th>
+                                    <th>
+                                        @Stock.ReceiptPremise
+                                    </th>
+                                    <th>
+                                        @Stock.Amount
+                                    </th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-20">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransDate
+                                    </th>
+                                    <th>
+                                        @Stock.IssueLocation
+                                    </th>
+                                    <th>
+                                        @Stock.IssuePremise
+                                    </th>
+                                    <th>
+                                        @Stock.ReceiptLocation
+                                    </th>
+                                    <th>
+                                        @Stock.ReceiptPremise
+                                    </th>
+                                    <th>
+                                        @Stock.Amount
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table id="stock-issue-to-be-received-list" class="uk-table">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransDate
+                                    </th>
+                                    <th>
+                                        @Stock.IssueLocation
+                                    </th>
+                                    <th>
+                                        @Stock.IssuePremise
+                                    </th>
+                                    <th>
+                                        @Stock.ReceiptLocation
+                                    </th>
+                                    <th>
+                                        @Stock.ReceiptPremise
+                                    </th>
+                                    <th>
+                                        @Stock.Amount
+                                    </th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-20">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransDate
+                                    </th>
+                                    <th>
+                                        @Stock.IssueLocation
+                                    </th>
+                                    <th>
+                                        @Stock.IssuePremise
+                                    </th>
+                                    <th>
+                                        @Stock.ReceiptLocation
+                                    </th>
+                                    <th>
+                                        @Stock.ReceiptPremise
+                                    </th>
+                                    <th>
+                                        @Stock.Amount
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table id="stock-issue-fully-received-list" class="uk-table">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransDate
+                                    </th>
+                                    <th>
+                                        @Stock.IssueLocation
+                                    </th>
+                                    <th>
+                                        @Stock.IssuePremise
+                                    </th>
+                                    <th>
+                                        @Stock.ReceiptLocation
+                                    </th>
+                                    <th>
+                                        @Stock.ReceiptPremise
+                                    </th>
+                                    <th>
+                                        @Stock.Amount
+                                    </th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-20">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransDate
+                                    </th>
+                                    <th>
+                                        @Stock.IssueLocation
+                                    </th>
+                                    <th>
+                                        @Stock.IssuePremise
+                                    </th>
+                                    <th>
+                                        @Stock.ReceiptLocation
+                                    </th>
+                                    <th>
+                                        @Stock.ReceiptPremise
+                                    </th>
+                                    <th>
+                                        @Stock.Amount
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                    <li>
+                        <table id="stock-issue-cancelled-list" class="uk-table">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransDate
+                                    </th>
+                                    <th>
+                                        @Stock.IssueLocation
+                                    </th>
+                                    <th>
+                                        @Stock.IssuePremise
+                                    </th>
+                                    <th>
+                                        @Stock.ReceiptLocation
+                                    </th>
+                                    <th>
+                                        @Stock.ReceiptPremise
+                                    </th>
+                                    <th>
+                                        @Stock.Amount
+                                    </th>
+                                </tr>
+                            </thead>
+                            <thead class="search">
+                                <tr>
+                                    <th class="width-20">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransNo
+                                    </th>
+                                    <th class="width-80">
+                                        @Stock.TransDate
+                                    </th>
+                                    <th>
+                                        @Stock.IssueLocation
+                                    </th>
+                                    <th>
+                                        @Stock.IssuePremise
+                                    </th>
+                                    <th>
+                                        @Stock.ReceiptLocation
+                                    </th>
+                                    <th>
+                                        @Stock.ReceiptPremise
+                                    </th>
+                                    <th>
+                                        @Stock.Amount
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/Js/Page/StockIssue")
+
+<script type="text/javascript">
+    stockissue.list();
+</script>

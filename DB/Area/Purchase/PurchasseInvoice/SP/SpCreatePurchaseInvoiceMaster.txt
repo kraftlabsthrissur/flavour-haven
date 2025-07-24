@@ -1,0 +1,152 @@
+      
+ALTER PROCEDURE [Purchase].[SpCreatePurchaseInvoiceMaster]         
+(@PurchaseNo VARCHAR(20),        
+@PurchaseDate DATETIME,        
+@SupplierID INT,        
+@LocalSupplierName VARCHAR(100),        
+@InvoiceNo VARCHAR(50),        
+@InvoiceDate DATETIME,        
+@GrossAmount NUMERIC(18,4),        
+@InvoiceTotal NUMERIC(18,4),        
+@TotalDifference NUMERIC(18,4),        
+@SGSTAmount NUMERIC(18,4),        
+@CGSTAmount NUMERIC(18,4),        
+@IGSTAmount NUMERIC(18,4),        
+@Discount NUMERIC(18,4),   
+@VATAmount NUMERIC(18,4),   
+@FreightAmount NUMERIC(18,4),        
+@PackingCharges NUMERIC(18,4),           
+@SuppDocAmount NUMERIC(18,4),   
+@SuppShipAmount NUMERIC(18,4),   
+@SupplierOtherCharges NUMERIC(18,4),    
+@CurrencyID INT,      
+@IsGST INT,      
+@IsVat INT,
+@PackingForwarding  NUMERIC(18,4),
+@LocalCustomsDuty  NUMERIC(18,4),
+@LocalFreight NUMERIC(18,4),
+@LocalMiscCharge  NUMERIC(18,4),
+@LocalOtherCharges   NUMERIC(18,4),
+@CurrencyExchangeRate NUMERIC(18,4),    
+@VatPercentage NUMERIC(18,4),    
+@TaxOnFreight NUMERIC(18,4),        
+@TaxOnPackingCharges NUMERIC(18,4),        
+@TaxOnOtherCharge NUMERIC(18,4),        
+@TDSOnFreightPercentage NUMERIC(9,2),        
+@LessTDS NUMERIC(18,4),        
+@OtherDeductions NUMERIC(18,4),        
+@AmountPayable NUMERIC(18,4),        
+@NetAmount NUMERIC(18,4),        
+@IsDraft BIT,        
+@IsCancelled BIT,        
+@CancelledDate DATETIME,        
+@CreatedUserID INT,        
+@CreatedDate DATETIME,        
+@Status varchar(25),        
+@TDSID int,        
+@PaymentModeID int,      
+@TurnOverDiscount numeric(18,4),      
+@AdditionalDiscount numeric(18,4),      
+@TaxableAmt numeric(18,4),      
+@TradeDiscount numeric(18,4),      
+@CashDiscount numeric(18,4),      
+@SalesInvoiceID int,      
+@CashDiscountEnabled bit,      
+@SelectedQuotationID INT,      
+@Remarks VARCHAR(100),      
+@GRNNo varchar(50),      
+@FinYear INT,        
+@LocationID INT,        
+@ApplicationID INT,        
+@PurchaseInvoiceID INT OUTPUT)        
+AS        
+BEGIN        
+Declare @PaymentWithIn INT,@SupplierAccountCategoryID int,@SupplierName VARCHAR(100);      
+-------AccountHeadID For SLAMappingItem      
+DECLARE @AccountCode Varchar(20)      
+SELECT @AccountCode= Code FROM Supplier WHERE ID=@SupplierID      
+------------------------------------------------------      
+SELECT @SupplierName=Name FROM Supplier where ID =  @SupplierID      
+Select @SupplierAccountCategoryID = SupplierAccountsCategoryID from Supplier where ID =  @SupplierID      
+--if abs(@TotalDifference) < 1        
+--begin        
+ Set @Status = 'Approved'        
+--end        
+
+INSERT INTO PurchaseInvoice (PurchaseNo,PurchaseDate,SupplierID,LocalSupplierName,InvoiceNo,InvoiceDate,GrossAmount,       
+ InvoiceTotal, TotalDifference,SGSTAmount,CGSTAmount,IGSTAmount,Discount, FreightAmount,PackingCharges,      
+ TaxOnFreight,TaxOnPackingCharges,TaxOnOtherCharge,TDSOnFreightPercentage,LessTDS,OtherDeductions,AmountPayable,      
+ NetAmount,IsDraft,IsCancelled,CancelledDate,CreatedUserID,CreatedDate,Status,FinYear,LocationID,ApplicationID,TDSID,      
+ PaymentModeID,TurnOverDiscount,AdditionalDiscount,TaxableAmt,TradeDiscount,CashDiscount,SalesInvoiceID,CashDiscountEnabled,      
+ SelectedQuotationID,Remarks,GRNNo,VATPercentage,CurrencyID,IsGST,IsVat,PackingForwarding,LocalCustomsDuty,LocalFreight,LocalMiscCharge,
+LocalOtherCharges,CurrencyExchangeRate,SupplierOtherCharges,VATAmount, SuppDocAmount,SuppShipAmount)        
+VALUES(@PurchaseNo, @PurchaseDate, @SupplierID, @LocalSupplierName, @InvoiceNo, @InvoiceDate, @GrossAmount,@InvoiceTotal,       
+@TotalDifference,@SGSTAmount, @CGSTAmount, @IGSTAmount, @Discount, @FreightAmount, @PackingCharges, @TaxOnFreight,      
+@TaxOnPackingCharges, @TaxOnOtherCharge, @TDSOnFreightPercentage, @LessTDS, @OtherDeductions, @AmountPayable, @NetAmount, @IsDraft,      
+0, @CancelledDate, @CreatedUserID, @CreatedDate,@Status, @FinYear, @LocationID, @ApplicationID,@TDSID,@PaymentModeID,@TurnOverDiscount,      
+@AdditionalDiscount,@TaxableAmt,@TradeDiscount,@CashDiscount,@SalesInvoiceID,@CashDiscountEnabled,ISNULL(@SelectedQuotationID,0),      
+ISNULL(@Remarks,''),@GRNNo,@VATPercentage,@CurrencyID,@IsGST,@IsVat,@PackingForwarding,@LocalCustomsDuty,@LocalFreight,@LocalMiscCharge,
+@LocalOtherCharges,@CurrencyExchangeRate,@SupplierOtherCharges,@VATAmount,@SuppDocAmount,@SuppShipAmount)        
+      
+SET @PurchaseInvoiceID = SCOPE_IDENTITY();        
+      
+IF @IsDraft = 0       
+BEGIN      
+ UPDATE  GoodsReceiptNote set PurchaseCompleted =1 WHERE code = @GRNNo      
+      
+ Select @PaymentWithIn = CreditDays from Supplier where ID = @SupplierID       
+ Insert into payable(PayableType,PartyID,PayableAmount,PaidAmount,DueDate,Status,Description,CreatedUserID,CreatedDate,      
+  FinYear ,LocationID,ApplicationID,TDSAmount,TDSAmountMet,TransDate,SupplierName,InvoiceNo,AccountHeadCode)         
+ Select 'Supplier',SupplierID,AmountPayable,0,PurchaseDate+ISNULL(@PaymentWithIn,0),'NotPaid',PurchaseNo,CreatedUserID,      
+  CURRENT_TIMESTAMP,FinYear, LocationID, ApplicationID,0,0,PurchaseDate,@SupplierName,InvoiceNo,@AccountCode      
+  FROM PurchaseInvoice WHERE ID=@PurchaseInvoiceID        
+      
+ Declare @IsApproved bit=0,@SLARemarks varchar(100),@Amt Numeric(18,4)      
+ IF @Discount <> 0        
+ BEGIN        
+  Select @SLARemarks = 'PurchaseInvoice_Discount'+CAST(@PurchaseInvoiceID AS varchar(10))      
+        
+  EXEC SpInsertSLAMappingItemV3 'INV_Approve','Discount',@SLARemarks,@Discount,@InvoiceNo,'PurchaseInvoice',@PurchaseNo,@PurchaseInvoiceID,      
+  @FinYear ,@LocationID ,@ApplicationID ,@SupplierID ,-2,-2,-2,-2,@IsApproved,0,0,0,0,0,0,0,0,0,0,0,0,0,@PurchaseDate,1,@AccountCode       
+         
+ END        
+      
+ IF @OtherDeductions <> 0        
+ BEGIN        
+  Select @SLARemarks = 'PurchaseInvoice_Roundoff'+CAST(@PurchaseInvoiceID AS varchar(10))      
+        
+  EXEC SpInsertSLAMappingItemV3 'INV_Approve','Roundoff',@SLARemarks,@OtherDeductions,@InvoiceNo,'PurchaseInvoice',@PurchaseNo,@PurchaseInvoiceID,      
+  @FinYear ,@LocationID ,@ApplicationID ,@SupplierID ,-2,-2,-2,-2,@IsApproved,0,0,0,0,0,0,0,0,0,0,0,0,0,@PurchaseDate,1,@AccountCode      
+      
+ END        
+      
+ IF @SGSTAmount <> 0        
+ BEGIN        
+  Select @SLARemarks = 'PurchaseInvoice_SGST'+CAST(@PurchaseInvoiceID AS varchar(10))      
+        
+  EXEC SpInsertSLAMappingItemV3 'INV_Approve','SGST',@SLARemarks,@SGSTAmount,@InvoiceNo,'PurchaseInvoice',@PurchaseNo,@PurchaseInvoiceID,      
+  @FinYear ,@LocationID ,@ApplicationID ,@SupplierID ,-2,-2,-2,-2,@IsApproved,0,0,0,0,0,0,0,0,0,0,0,0,0,@PurchaseDate,1,@AccountCode      
+        
+ END        
+      
+ IF @CGSTAmount <> 0        
+ BEGIN        
+  Select @SLARemarks = 'PurchaseInvoice_CGST'+CAST(@PurchaseInvoiceID AS varchar(10))      
+        
+  EXEC SpInsertSLAMappingItemV3 'INV_Approve','CGST',@SLARemarks,@CGSTAmount,@InvoiceNo,'PurchaseInvoice',@PurchaseNo,@PurchaseInvoiceID,      
+  @FinYear ,@LocationID ,@ApplicationID ,@SupplierID ,-2,-2,-2,-2,@IsApproved,0,0,0,0,0,0,0,0,0,0,0,0,0,@PurchaseDate,1,@AccountCode      
+ END        
+      
+ IF @IGSTAmount <> 0        
+ BEGIN        
+  Select @SLARemarks = 'PurchaseInvoice_IGST'+CAST(@PurchaseInvoiceID AS varchar(10))      
+        
+  EXEC SpInsertSLAMappingItemV3 'INV_Approve','IGST',@SLARemarks,@IGSTAmount,@InvoiceNo,'PurchaseInvoice',@PurchaseNo,@PurchaseInvoiceID,      
+  @FinYear ,@LocationID ,@ApplicationID ,@SupplierID ,-2,-2,-2,-2,@IsApproved,0,0,0,0,0,0,0,0,0,0,0,0,0,@PurchaseDate,1,@AccountCode      
+      
+ END        
+      
+ EXEC SpInsertSLAMappingItemV3 'INV_Approve','GrossAmount',@SLARemarks,@GrossAmount,@InvoiceNo,'PurchaseInvoice',@PurchaseNo,@PurchaseInvoiceID,      
+ @FinYear ,@LocationID ,@ApplicationID ,@SupplierID ,-2,-2,-2,-2,@IsApproved,0,0,0,0,0,0,0,0,0,0,0,0,0,@PurchaseDate,1,@AccountCode        
+END          
+END 

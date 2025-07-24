@@ -1,0 +1,251 @@
+﻿@model TradeSuiteApp.Web.Areas.Stock.Models.StockRequestViewModel
+@{
+    ViewBag.Title = "Form";
+}
+
+<div class="uk-form-row">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-1-10">
+                <label>@Stock.TransNo</label>
+                @Html.TextBoxFor(m => m.RequestNo, new { @class = "md-input", @disabled = "disabled", @id = "StockRequestNumber" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label for="uk_dp_start">@Stock.TransDate</label>
+                @Html.TextBoxFor(m => m.Date, new { @class = "md-input", @disabled = "disabled", @id = "Date" })
+                <input type="hidden" id="requestdate" class="md-input label-fixed" value="@DateTime.Now.ToString("dd-MM-yyyy")" />
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Stock.IssueLocation<span>*</span></label>
+                @if (Model.ID > 0)
+                {
+                    @Html.DropDownListFor(Model => Model.IssueLocationID, Model.LocationList, "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                }
+                else
+                {
+                    @Html.DropDownListFor(Model => Model.IssueLocationID, Model.LocationList, "Select", new { @class = "md-input label-fixed" })
+                }
+                @Html.HiddenFor(Model => Model.DefaultBatchTypeID)
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Stock.IssuePremise<span>*</span></label>
+                @if (Model.ID > 0)
+                {
+                    @Html.DropDownListFor(Model => Model.IssuePremiseID, Model.IssuePremiseList, "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                }
+                else
+                {
+                    @Html.DropDownListFor(Model => Model.IssuePremiseID, Model.IssuePremiseList, "Select", new { @class = "md-input label-fixed" })
+                }
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Stock.ReceiptLocation<span>*</span></label>
+                @Html.DropDownListFor(Model => Model.ReceiptLocationID, Model.LocationList, "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Stock.ReceiptPremise<span>*</span></label>
+                @if (Model.ID > 0)
+                {
+                    @Html.DropDownListFor(Model => Model.ReceiptPremiseID, Model.PremiseList, "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                }
+                else
+                {
+                    @Html.DropDownListFor(Model => Model.ReceiptPremiseID, Model.PremiseList, "Select", new { @class = "md-input label-fixed" })
+                }
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Stock.ItemCategory</label>
+                @Html.DropDownListFor(Model => Model.ItemCategoryID, Model.ItemCategoryList, "Select", new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="md-input-wrapper md-input-filled">
+                    <label></label>
+                    <div class="uk-form-file v1">
+                        <label id="selected-file">
+                            Upload XLS File
+                        </label>
+                        <label class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                            <i class="uk-icon-upload"></i>
+                        </label>
+                        <input id="select-file" type="file" tabindex="-1">
+                    </div>
+                </div>
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="md-input-wrapper md-input-filled">
+                    <label>&nbsp;</label>
+                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btn-download-template">@Common.Template</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-autocomplete " id="item-autocomplete">
+                    <label>@Stock.Item<span>*</span></label>
+                    @Html.TextBox("ItemName", "", new { @class = "md-input label-fixed" })
+                    <span class="uk-input-group-addon">
+                        <a data-uk-modal="{target:'#select-item'}">
+                            <i class="uk-input-group-icon uk-icon-search"></i>
+                        </a>
+                    </span>
+                    <script type="text/autocomplete">
+                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                            {{~items}}
+                            <li data-value="{{ $item.ItemName }}"
+                                data-id="{{$item.ItemID}}"
+                                data-code="{{$item.ItemCode}}"
+                                data-stock="{{$item.Stock}}"
+                                data-primary-unit="{{$item.UnitName}}"
+                                data-category="{{$item.ItemCategory}}"
+                                data-salescategory="{{$item.SalesCategoryName}}"
+                                data-inventory-unit="{{$item.InventoryUnit}}"
+                                data-inventory-unit-id="{{$item.InventoryUnitID}}"
+                                data-primary-unit-id="{{$item.UnitID}}">
+                                <a>
+                                    {{ $item.ItemName }}
+                                    <div>{{{ $item.ItemCode }}}</div>
+                                </a>
+                            </li>
+                            {{/items}}
+                        </ul>
+                    </script>
+                </div>
+                @Html.Hidden("Code")
+                @Html.Hidden("ItemID")
+                @Html.Hidden("Stock")
+                @Html.Hidden("Category")
+                @Html.Hidden("WarehouseID")
+                @Html.Hidden("AverageSales")
+                @Html.Hidden("PrimaryUnit")
+                @Html.Hidden("PrimaryUnitID")
+                @Html.Hidden("SecondaryUnits")
+                @Html.Hidden("PartsNumber")
+                @Html.Hidden("Make")
+                @Html.Hidden("Model")
+                @Html.Hidden("InventoryUnit")
+                @Html.Hidden("InventoryUnitID")
+                @Html.Hidden("SalesCategory")
+                @Html.Hidden("CurrentDate", @DateTime.Now.ToString("dd-MM-yyyy"))
+                <input type="hidden" value="stock" id="type" />
+
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Sales.Unit </label>
+                @Html.DropDownListFor(Model => Model.UnitID, Model.UnitList, "Select", new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-1-10 uk-hidden" id="select_batch_type">
+                <label>@Stock.BatchType<span>*</span></label>
+                @Html.DropDownListFor(Model => Model.BatchTypeName, Model.BatchTypeList, "Select", new { @class = "md-input label-fixed", @id = "BatchType", @disabled = "disabled" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Stock.RequiredQuantity<span>*</span></label>
+                <input type="text" id="txtRqQty" class="md-input label-fixed mask-production-qty" />
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="uk-input-group">
+                    <label for="uk_dp_start">@Stock.RequiredDate</label>
+                    <input class="md-input label-fixed future-date date" id="txtExpDate" value="@DateTime.Now.AddDays(1).ToString("dd-MM-yyyy")">
+                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date" value="@DateTime.Now.ToString("dd-MM-yyyy")"></i></span>
+                </div>
+            </div>
+            <div class="uk-width-medium-2-10">
+                <label>@Stock.Remarks</label>
+                <input type="text" class="md-input label-fixed" id="txtRemarks" />
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="md-input-wrapper md-input-filled">
+                    <label>&nbsp;</label>
+                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddProduct">@Common.Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="uk-form-row">
+        <table id="stock-request-items-list" class="uk-table " cellspacing="0" width=100">
+            <thead>
+                <tr>
+                    <th class="width-60">@Common.SerialNo</th>
+                    <th class="width-60">@Stock.ItemCode</th>
+                    <th class="width-150">@Stock.ItemName</th>
+                    <th class="width-150">@Sales.PartsNumber</th>
+                    <th class="width-150">@Masters.Model_Make</th>
+                    <th class="width-80">@Stock.Unit</th>
+                    @*<th class="width-60">@Stock.SalesCategory</th>*@
+                    <th class="width-80">@Stock.RequestedQty</th>
+                    <th class="width-120">@Stock.RequiredDate</th>
+                    <th class="width-130">@Stock.Remarks</th>
+                    <th class="width-80">@Stock.StockInPremises</th>
+                    <th class="width-80">@Stock.SuggestedQyty</th>
+                    <th class="width-80">@Stock.AverageSales</th>
+                    <th class="width-20"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var itm in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                {
+                    <tr>
+                        <td class="uk-text-center">
+                            @itm.i
+                        </td>
+                        <td>
+                            @itm.value.Code
+                        </td>
+                        <td>
+                            @itm.value.Name
+                            <input type="hidden" class="ItemID" value="@itm.value.ItemID" />
+                            <input type="hidden" class="BatchTypeID" value="@itm.value.BatchTypeID" />
+                            <input type="hidden" class="UnitID" value="@itm.value.UnitID" />
+                        </td>
+                        <td>
+                            @itm.value.PartsNumber
+                        </td>
+                        <td>
+                            @itm.value.Model
+                        </td>
+                        <td class="clUnit uk-hidden">
+                            @itm.value.Unit
+                        </td>
+                        <td class="secondary">
+                            <select class="md-input label-fixed secondaryUnit">
+                                @foreach (var option in itm.value.SecondaryUnitList)
+                                {
+                                    <option value="@option.PackSize" @(option.Name == itm.value.SecondaryUnit ? "selected" : "")>@option.Name</option>
+                                }
+                            </select>
+                        </td>
+                        @*<td class="clSalesCategory">
+                                @itm.value.SalesCategory
+                            </td>*@
+                        <td class="uk-hidden">
+                            <input type="text" class="md-input clQty mask-production-qty" value="@itm.value.RequiredQty" />
+                        </td>
+                        <td class="secondary"><input type="text" class="md-input mask-sales2-currency secondaryQty included" value="@itm.value.SecondaryQty" /></td>
+                        <td class="cltxtDate"> @itm.value.RequiredDate</td>
+                        <td>
+                            <input type="text" class="md-input txtRemarks" value="@itm.value.Remarks" />
+                        </td>
+                        <td>
+                            <input type="text" class="md-input mask-qty StockInPremises" value="@itm.value.Stock" readonly="readonly" />
+                        </td>
+                        <td>
+                            <input type="text" class="md-input mask-qty SuggestedQty" value="@itm.value.SuggestedQty" readonly="readonly" />
+                        </td>
+                        <td>
+                            <input type="text" class="md-input mask-qty AverageSales" value="@itm.value.AverageSales" readonly="readonly" />
+                        </td>
+                        <td class="uk-text-center remove-item">
+                            <a data-uk-tooltip="{pos:" bottom"}">
+                                <i class="md-btn-icon-small uk-icon-remove"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <input type="hidden" id="item-count" value="@Model.Items.Count()" />
+    </div>
+</div>

@@ -1,0 +1,26 @@
+      
+ALTER PROCEDURE [Purchase].[SpGetUnProcessedGRNBySupplierIDForAllopathyV3]            
+(@SupplierID int,            
+@Hint VARCHAR(50),            
+@FinYear int,            
+@LocationID int,            
+@ApplicationID int)            
+AS            
+BEGIN            
+                        
+ Select Distinct G.ID,G.Code,G.Date,G.SupplierID,S.Name AS SupplierName,G.LocationID,L.Place AS Location,            
+ ISNULL(MAX(PO.PurchaseOrderDate),CURRENT_TIMESTAMP) AS PurchaseOrderDate,G.DeliveryChallanNo,S.IsGSTRegistered,            
+ SS.ID AS StateID  from GoodsReceiptNote G  inner join Supplier S on S.ID = G.SupplierID  
+ Inner join Location L on L.ID= G.LocationID  inner join GoodsReceiptNotetrans GRT on GRT.GoodsReceiptNoteID=G.ID            
+ inner join PurchaseOrder PO on GRT.PurchaseOrderID=PO.ID            
+ Inner join Addresses SA on SA.PartyID = S.ID and SA.PartyType = 'Supplier' and SA.IsDefaultShipping = 1 and SA.IsShipping = 1                  
+ Inner join State SS on SS.ID = SA.StateID              
+ where S.ID=@SupplierID AND (@Hint IS NULL OR @Hint='' OR G.Code Like '%'+@Hint+'%')          
+ AND PurchaseCompleted = 0  and G.Cancelled=0  AND G.IsDraft = 0             
+ ---AND G.FinYear = @FinYear  and G.ApplicationID = @ApplicationID      
+  GROUP BY G.ID,G.Code,G.Date,G.SupplierID,S.Name ,G.LocationID,L.Place,G.DeliveryChallanNo,S.IsGSTRegistered,SS.ID              
+ Order by G.ID Desc            
+            
+END 
+
+    

@@ -1,0 +1,180 @@
+﻿@model TradeSuiteApp.Web.Areas.Stock.Models.StockAdjustmentModel
+@{
+    ViewBag.Title = "_form";
+}
+<div class="uk-form-row">
+    <div class="uk-grid" data-uk-grid-margin>
+        <div class="uk-width-medium-1-1">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-10">
+                        <label>@Stock.TransNo</label>
+                        @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input", @disabled = "disabled", @id = "TransNo" })
+                    </div>
+                    <div class="uk-width-medium-1-10">
+                        <label for="uk_dp_start">@Stock.Date</label>
+                        @Html.TextBoxFor(m => m.Date, new { @class = "md-input", @id = "txtDate", @disabled = "disabled" })
+                    </div>
+                    <div class="uk-width-medium-1-10">
+                        <label>@Stock.Store<span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.WarehouseID, Model.WarehouseList, "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                    @*<div class="uk-width-medium-1-10">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label>&nbsp;</label>
+                                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btn_template">@Common.Template</button>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-2-10">
+                            <div class="md-input-wrapper md-input-filled">
+                                <label></label>
+                                <div class="uk-form-file v1">
+                                    <label id="selected-file">
+                                        Upload XLS File
+                                    </label>
+                                    <label class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                                        <i class="uk-icon-upload"></i>
+                                    </label>
+                                    <input id="select-file" type="file" tabindex="-1">
+                                </div>
+                            </div>
+                        </div>*@
+
+                </div>
+            </div>
+        </div>
+        @Html.HiddenFor(m => m.ID)
+        <div class="uk-width-medium-1-10">
+            <label>@Stock.ItemCategory</label>
+            @Html.DropDownListFor(Model => Model.ItemCategoryID, Model.CategoryList, "Select", new { @class = "md-input label-fixed", @id = "DDLItemCategory" })
+        </div>
+        <div class="uk-width-medium-1-10">
+            <label>@Stock.SalesCategory<span>*</span></label>
+            @Html.DropDownListFor(Model => Model.SalesCategoryID, Model.SalesCategoryList, "Select", new { @class = "md-input label-fixed", @id = "DDLSalesCategory" })
+        </div>
+        <div class="uk-width-medium-2-10">
+            <div class="uk-autocomplete " id="item-autocomplete">
+                <div class="uk-input-group">
+                    <label for="uk_dp_start">@Stock.Item</label>
+                    @Html.TextBox("ItemName", "", new { @class = "md-input label-fixed" })
+                    <span class="uk-input-group-addon">
+                        <a data-uk-modal="{target:'#select-item',center:false} ">
+                            <i class="uk-input-group-icon uk-icon-search"></i>
+                        </a>
+                    </span>
+                    <script type="text/autocomplete">
+                        <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                            {{~items}}
+                            <li data-value="{{ $item.Name }}"
+                                data-id="{{$item.ID}}"
+                                data-SalesCategoryID="{{$item.SalesCategoryID}}">
+                                <a>
+                                    {{ $item.Name }}
+                                </a>
+                            </li>
+                            {{/items}}
+                        </ul>
+                    </script>
+                </div>
+            </div>
+            <input type="hidden" value="stock" id="type" />
+
+            @Html.Hidden("ItemID")
+        </div>
+
+
+        <div class="uk-width-medium-1-10">
+            <div class="md-input-wrapper md-input-filled">
+                <label>&nbsp;</label>
+                <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnFilter">@Common.Filter</button>
+            </div>
+        </div>
+
+
+    </div>
+    <br />
+    <div class="uk-form-row">
+        <div>
+
+            <table id="stock-adjustment-items-list" class="uk-table " cellspacing="0" width=100">
+                <thead>
+                    <tr>
+
+                        <th class="width-50">@Common.SerialNo</th>
+                        <th class="width-30"><input type='checkbox' name="passed" data-md-icheck class='select-all' /></th>
+                        <th class="width-200">@Stock.ItemName</th>
+                        <th class="width-50">@Stock.Unit</th>
+                        <th class="width-80">@Stock.Batch</th>
+                        <th class="width-50">@Stock.BatchType</th>
+                        <th class="width-50">@Stock.Rate</th>
+                        <th class="width-80">@Stock.Store</th>
+                        <th class="width-120">@Stock.ExpiryDate</th>
+                        <th class="width-80">@Stock.CurrentQty</th>
+                        <th class="width-80">@Stock.PhysicalQty</th>
+                        <th class="width-80">@Stock.ExcessShortageQty</th>
+                        <th class="width-80">@Stock.ExcessShortageValue</th>
+                        <th class="width-100">@Stock.Remarks</th>
+                        <th class="width-80">@Stock.Reason</th>
+                        <th class="width-20"></th>
+
+
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                        <tr class="included">
+                            <td class="uk-text-center">
+                                @(1 + @Model.Items.IndexOf(item.value))
+
+                            </td>
+                            <td class="uk-text-center" data-md-icheck>
+                                <input type="checkbox" class="check-box" checked />
+                                <input type="hidden" class="ItemID" value="@item.value.ItemID" />
+                                <input type="hidden" class="BatchID" value="@item.value.BatchID" />
+                                <input type="hidden" class="BatchTypeID" value="@item.value.BatchTypeID" />
+                                <input type="hidden" class="UnitID" value="@item.value.UnitID" />
+                                <input type="hidden" class="WarehouseID" value="@item.value.WarehouseID" />
+
+                                <input type="hidden" class="PrimaryUnit" value="@item.value.PrimaryUnit" />
+                                <input type="hidden" class="PrimaryUnitID" value="@item.value.PrimaryUnitID" />
+                                <input type="hidden" class="InventoryUnit" value="@item.value.InventoryUnit" />
+                                <input type="hidden" class="InventoryUnitID" value="@item.value.InventoryUnitID" />
+                                <input type="hidden" class="FullRate" value="@item.value.FullRate" />
+                                <input type="hidden" class="LooseRate" value="@item.value.LooseRate" />
+
+
+
+                            </td>
+                            <td class="itemname">@item.value.ItemName</td>
+                            <td> @item.value.UnitName</td>
+                            <td>@item.value.Batch</td>
+                            <td> @item.value.BatchType</td>
+                            <td class="Rate mask-currency"> @item.value.Rate</td>
+                            <td> @item.value.Warehouse</td>
+                            <td class="ExpiryDate">@item.value.ExpiryDate</td>
+                            <td class="mask-production-qty currentqty"> @item.value.CurrentQty</td>
+                            <td class=""><input type="text" class="md-input mask-production-qty physicalqty" value="@item.value.PhysicalQty"></td>
+                            <td class="mask-production-qty ExcessQty"> @item.value.ExcessQty</td>
+
+                            <td class="mask-production-qty ExcessValue"> @item.value.ExcessValue</td>
+                            <td><input type="text" class="md-input Remark" value="@item.value.Remark"></td>
+                            <td>
+                                @Html.DropDownListFor(Model => item.value.DamageTypeID, new SelectList(Model.DamageTypeList, "Value", "Text", item.value.DamageTypeID), "Select", new { @class = "md-input label-fixed DamageTypeID" })
+                            </td>
+
+                            <td>
+                                <div class="uk-input-group">
+                                    <button class="btnOpenBatchWithZeroQty">+</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <input type="hidden" id="item-count" value="@Model.Items.Count()" />
+        </div>
+
+    </div>
+</div>

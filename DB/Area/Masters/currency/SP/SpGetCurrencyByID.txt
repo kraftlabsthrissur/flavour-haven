@@ -1,0 +1,11 @@
+ALTER PROCEDURE [Master].[SpGetCurrencyByID]        
+(@CurrencyID int)        
+AS        
+BEGIN        
+ SELECT C.ID,C.Name,C.Code,c.Description,d.Name CountryName,d.ID CountryId,c.DecimalPlaces FROM Currency c join Country d on c.CountryID=d.ID    
+ WHERE C.ID = @CurrencyID      
+END        
+        
+        
+        
+        

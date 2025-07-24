@@ -1,0 +1,39 @@
+   
+  
+          
+ALTER PROCEDURE [Sales].[SpGetSalesReturnTrans]            
+(@ID INT,            
+@FinYear INT,            
+@LocationID INT,            
+@ApplicationID INT)            
+AS            
+BEGIN              
+SET NOCOUNT ON            
+Declare @PriceListID int,@LocationHeadID int, @CustomerID int        
+        
+ SELECT @LocationHeadID = LocationHeadID FROM Location WHERE ID = @LocationID    
+ SELECT @CustomerID = CustomerID FROM Sales.SalesReturn WHERE ID = @ID     
+ SELECT @PriceListID = PriceListID FROM Customer WHERE ID = @CustomerID          
+        
+ SELECT SRT.ID,SRT.SalesReturnID,VI.Name as ItemName,VI.ID as ItemID,U.UOM Unit,SRT.UnitID,SRT.SecondaryQty,SRT.SecondaryMRP,SRT.SecondaryUnit,SRT.SecondaryUnitSize ,
+ SRT.SecondaryOfferQty,IsNull( dbo.FnConvertUnit(SRT.ItemID,(ISNULL(C.InvoiceQty,0.0)-ISNULL(C.ReturnQtyMet,0.0)),C.UnitID,SRT.UnitID),0) as Qty,   
+ SRT.Rate,SRT.MRP,SRT.BasicPrice,IsNull(dbo.FnConvertUnit(SRT.ItemID,(ISNULL(C.InvoiceOfferQty,0.0)-ISNULL(C.ReturnOfferQtyMet,0.0)),C.UnitID,SRT.UnitID),0) as OfferQty,    
+ SRT.GrossAmount,SRT.DiscountPercentage,SRT.DiscountAmount,SRT.TaxableAmount,SRT.SGSTPercentage,SRT.CGSTPercentage,SRT.IGSTPercentage,SRT.ReturnOfferQty,SRT.BatchID,          
+ SRT.SGSTAmt,SRT.CGSTAmt,SRT.IGSTAmt,SRT.NetAmt,SRT.ReturnQty,VI.Code as ItemCode,SRT.FinYear,SRT.LocationID,SRT.ApplicationID,B.BatchNo,SRT.TransNo,          
+ VI.UnitID as PrimaryUnitID,VI.SalesUnitID,VI.Unit as PrimaryUnit,VI.SalesUnit ,ISNULL(PD.MRP, ISNULL(IC.TransferPrice,0.0)) AS FullRate,          
+ ISNULL(PD.LoosePrice, (ISNULL(IC.TransferPrice,0.0) * ISNULL(dbo.FnConvertUnit(VI.ID,null,VI.UnitID,VI.SalesUnitID),0) )) LooseRate ,          
+ case when C.UnitID<>VI.SalesUnitID then dbo.FnConvertUnit(VI.ID,(ISNULL(C.InvoiceQty,0.0)-ISNULL(C.ReturnQtyMet,0.0)-ISNULL(C.InvoiceOfferQty,0.0)),VI.UnitID,VI.SalesUnitID)  
+ else dbo.FnConvertUnit(VI.ID,(ISNULL(C.InvoiceQty,0.0)-ISNULL(C.ReturnQtyMet,0.0)-ISNULL(C.InvoiceOfferQty,0.0)),VI.SalesUnitID,VI.UnitID) end    as ConvertedQuantity,   
+ case when C.UnitID<>VI.SalesUnitID then dbo.FnConvertUnit(VI.ID,(ISNULL(C.InvoiceOfferQty,0.0)-ISNULL(C.ReturnOfferQtyMet,0.0)),VI.UnitID,VI.SalesUnitID)  
+ else dbo.FnConvertUnit(VI.ID,(ISNULL(C.InvoiceOfferQty,0.0)-ISNULL(C.ReturnOfferQtyMet,0.0)),VI.SalesUnitID,VI.UnitID) end    as ConvertedOfferQuantity,          
+ (ISNULL(C.InvoiceQty,0.0)-ISNULL(C.ReturnQtyMet,0.0)) as InvoiceQuantity,(ISNULL(C.InvoiceOfferQty,0.0)-ISNULL(C.ReturnOfferQtyMet,0.0)) as InvoiceOfferQuantity,
+ ISNULL(c.UnitID,0) as CounterSalesTransUnitID,ISNULL(c.ID,0) as SalesInvoiceTransID,SRT.LogicCodeID,SLC.Code AS LogicCode,SLC.Name AS LogicName ,SRT.BatchtypeID         
+ FROM Sales.SalesReturnTrans SRT INNER JOIN viSalesItem VI ON VI.ID=SRT.ItemID          
+ INNER JOIN Batch B on B.ID=SRT.BatchID inner join Unit U on U.ID=SRT.UnitID          
+ LEFT JOIN PriceListDetails PD on PD.ItemID = VI.ID AND PD.PriceListID = @PriceListID AND PD.BasePriceListID = B.BasePriceListID--PD.BasePriceListID = @BasePriceListID          
+ LEFT JOIN ItemwiseCostHistory IC ON IC.ItemID = vi.ID AND IC.IsActive = 1 AND IC.LocationHeadID = @LocationHeadID         
+ LEFT join sales.SalesInvoiceTrans C on C.ID=SRT.InvoiceTransID and C.ItemID=SRT.ItemID         
+ LEFT JOIN SalesReturnLogicCode SLC ON SRT.LogicCodeID = SLC.ID          
+ where SRT.SalesReturnID=@ID AND SRT.FinYear = @FinYear AND SRT.LocationID = @LocationID and SRT.ApplicationID=@ApplicationID           
+END   
+  

@@ -1,0 +1,25 @@
+
+
+ALTER TABLE Sales.SalesInquiryItems
+ADD Year VARCHAR(200);
+
+ALTER TABLE Sales.SalesInquiryItems
+ADD SIOrVINNumber VARCHAR(200);
+
+ALTER TABLE Sales.SalesInquiry
+ADD CreatedUserID INT;
+
+ALTER TABLE Sales.SalesInquiry
+ADD ModifiedUserID INT;
+
+ALTER TABLE Sales.SalesInquiry
+ADD Status VARCHAR(100);
+
+
+CREATE TABLE [dbo].[InquiryCustomer](
+    [ID] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    [Name] [varchar](250) NULL
+);
+
+
+

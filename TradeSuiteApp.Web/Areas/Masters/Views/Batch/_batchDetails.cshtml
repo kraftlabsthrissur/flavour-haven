@@ -1,0 +1,247 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.PreviousBatchModel
+<div style="border:solid">
+    <div class="md-card">
+        <div class="md-card-content">
+            
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+
+                        <div class="uk-width-medium-4-8 description-heading">
+
+                            <label>Previous Purchase - @Model.ItemName </label>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-6">
+
+                            <label>Trans No </label>
+                            <input type="text" class="md-input label-fixed  " value="@Model.TransNo" disabled />
+
+                        </div>
+                        <div class="uk-width-medium-1-6">
+
+                            <label>Invoice No </label>
+                            <input type="text" class="md-input label-fixed  " value="@Model.InvoiceNo" disabled />
+
+                        </div>
+                        <div class="uk-width-medium-1-6">
+
+                            <label>Invoice Date</label>
+                            <input type="text" class="md-input label-fixed  " value="@Model.PODate " disabled />
+
+                        </div>
+                        <div class="uk-width-medium-1-4">
+
+                            <label>Supplier Name</label>
+                            <input type="text" class="md-input label-fixed  " value="@Model.SupplierName " disabled />
+
+                        </div>
+
+                        <div class="uk-grid  " data-uk-grid-margin="">
+
+                            <div class="uk-width-medium-1-1 description-price">
+
+                                <br />
+                                <label class=" bold">Profit ratio @Model.ProfitRatio.ToString("0.00") </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            <div class="uk-form-row">
+
+                <div class="uk-grid" data-uk-grid-margin="10">
+                    <div class="uk-width-medium-1-6">
+
+                        <label>Qty</label>
+                        <input type="text" class="md-input  mask-numeric" value="@Model.Quantity" disabled />
+                    </div>
+                    <div class="uk-width-medium-1-6">
+
+                        <label>Offer Qty </label>
+                        <input type="text" class="md-input  mask-numeric" value="@Model.OfferQty" disabled />
+
+                    </div>
+                    <div class="uk-width-medium-1-6">
+
+                        <label>Discount</label>
+                        <input type="text" class="md-input   mask-currency" value="@Model.Discount" disabled />
+
+                    </div>
+                    <div class="uk-width-medium-1-6">
+
+                        <label>Purchase Price</label>
+                        <input type="text" class="md-input   mask-currency" value="@Model.BatchRate" disabled />
+
+                    </div>
+                    <div class="uk-width-medium-1-6">
+
+                        <label>MRP</label>
+                        <input type="text" class="md-input   mask-currency" value="@Model.RetailMRP" disabled />
+
+                    </div>
+
+                    <div class="uk-width-medium-1-6">
+
+                        <label>Unit</label>
+                        <input type="text" class="md-input" value="@Model.Unit" disabled />
+                        @Html.HiddenFor(Model=>Model.UnitID)
+                    </div>
+
+                </div>
+            </div>
+                
+            </div>
+        </div>
+    </div>
+
+<div style="border:solid">
+    <div class="md-card">
+        <div class="md-card-content">
+            <div class="uk-form-row">
+
+                <div class="uk-grid" data-uk-grid-margin="">
+
+                    <div class="uk-width-medium-4-8 description-heading">
+
+                        <label>Current Purchase - @Model.ItemName </label>
+
+                    </div>
+                </div>
+            </div>
+            <div class="uk-form-row">
+
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-1-6">
+
+                        <label>Trans No </label>
+                        <input type="text" class="md-input label-fixed  " value="" disabled />
+
+                    </div>
+                    <div class="uk-width-medium-1-6">
+
+                        <label>Invoice No </label>
+                        <input type="text" class="md-input label-fixed  " value="" disabled />
+
+                    </div>
+                    <div class="uk-width-medium-1-6">
+
+                        <label>Invoice Date</label>
+                        <input type="text" class="md-input label-fixed  " value="" disabled />
+
+                    </div>
+
+                    <div class="uk-width-medium-1-4">
+
+                        <label>Supplier Name</label>
+                        <input type="text" class="md-input label-fixed" value="@Model.CurrentSupplierName" disabled />
+
+                    </div>
+                    <div class="uk-grid  " data-uk-grid-margin="">
+
+                        <div class="uk-width-medium-1-1 description-price">
+
+                            <br />
+                            <label class=" bold">Profit ratio @Model.CurrentBatchNetProfit.ToString("0.00") </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="uk-form-row">
+
+                <div class="uk-grid" data-uk-grid-margin="">
+
+                    <div class="uk-width-medium-1-6">
+
+                        <label>Qty</label>
+                        <input type="text" class="md-input label-fixed mask-numeric" value="@Model.CurrentQty" disabled />
+
+                    </div>
+                    <div class="uk-width-medium-1-6">
+
+                        <label>Offer Qty</label>
+                        <input type="text" class="md-input label-fixed  mask-numeric" value="@Model.CurrentOfferQty" disabled />
+
+                    </div>
+                    <div class="uk-width-medium-1-6">
+
+                        <label>Discount</label>
+                        <input type="text" class="md-input label-fixed  mask-currency" value="@Model.CurrentDiscountAmt" disabled />
+
+                    </div>
+
+                    <div class="uk-width-medium-1-6">
+
+                        <label>Purchase Price</label>
+                        <input type="text" class="md-input label-fixed  mask-currency" value="@Model.PurchasePrice" disabled />
+
+                    </div>
+                    <div class="uk-width-medium-1-6">
+
+                        <label>Batch MRP</label>
+                        <input type="text" class="md-input label-fixed  mask-currency" value="@Model.CurrentBatchRetailMRP" disabled />
+
+                    </div>
+                    <div class="uk-width-medium-1-6">
+
+                        <label>Unit</label>
+                        <input type="text" class="md-input" value="@Model.CurrentUnit" disabled />
+                        @Html.HiddenFor(Model => Model.CurrentUnitID)
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="uk-form-row">
+
+    <div class="uk-grid" data-uk-grid-margin="">
+        @if (Model.Profit > 0)
+        {
+            <div class="uk-width-medium-4-8 description-loose">
+
+                <label class="bold">Difference between current batch and previous batch profit % is <span class="">@Model.Profit.ToString("0.00") </span> </label>
+
+            </div>
+        }
+        else
+        {
+            <div class="uk-width-medium-4-8 description-loose">
+
+                <label class="bold">Difference between current batch and previous batch <span class="description-profit-negative">profit % is @Model.Profit.ToString("0.00") </span> </label>
+
+            </div>
+        }
+
+
+
+    </div>
+</div>
+
+
+p.solid {border-style: solid;}
+@*<div class="uk-form-row">
+
+    <div class="uk-grid  " data-uk-grid-margin="">
+
+        <div class="uk-width-medium-1-1  ">
+
+            <label class="mask-currency profit ">  @Model.Profit.ToString("0.00") </label>
+
+        </div>
+    </div>
+</div>*@

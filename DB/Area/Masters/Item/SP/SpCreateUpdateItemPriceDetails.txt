@@ -1,0 +1,25 @@
+      
+CREATE PROCEDURE [Master].[SpCreateUpdateItemPriceDetails](        
+@ItemID INT,     
+@LocationID INT,   
+@ApplicationID INT,  
+@SalesPrice Numeric(18,4),      
+@LoosePrice Numeric(18,4)    
+)        
+AS        
+BEGIN   
+
+DECLARE @PriceListDetailID INT;  
+SET @PriceListDetailID =(select TOP 1 p.ID from PriceListDetails p WHERE p.ItemID=@ItemID AND p.LocationID=@LocationID ORDER BY p.ID DESC)   
+  
+IF(@PriceListDetailID IS NULL)      
+BEGIN  
+INSERT INTO PriceListDetails(PriceListID,BasePriceListID,ItemID,MRP,LoosePrice,LocationID,ApplicationID,CurrencyID)   
+values(1,1,@ItemID,@SalesPrice,@LoosePrice,@LocationID,@ApplicationID,(select l.CurrencyID from Location l WHERE l.ID=@LocationID))    
+END
+ELSE
+BEGIN
+UPDATE PriceListDetails SET MRP=@SalesPrice,LoosePrice=@LoosePrice WHERE ID=@PriceListDetailID
+END
+
+END

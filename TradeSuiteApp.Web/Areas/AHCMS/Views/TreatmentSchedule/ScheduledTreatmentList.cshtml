@@ -1,0 +1,59 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.TreatmentScheduleModel
+
+@if (Model.Items != null)
+{
+    foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+    {
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+            </td>
+            @if ((item.value.Status == "Scheduled") || (item.value.Status == "Prescribed"))
+            {
+                <td class="uk-text-center checked width-20" data-md-icheck><input type="checkbox" class="chkCheck"  /></td>
+            }
+            else
+            {
+                <td class="uk-text-center checked width-20" data-md-icheck><input type="checkbox" class="chkCheck" disabled="disabled" /></td>
+            }
+            <td>
+                <input type="hidden" class="PatientID" value="@item.value.PatientID" />
+                <input type="hidden" class="PatientTreatmentTransID" value="@item.value.PatientTreatmentTransID" />
+                <input type="hidden" class="ScheduleID" value="@item.value.ScheduleID" />
+                @item.value.PatientName
+            </td>
+            <td>
+                <input type="hidden" class="DoctorID" value="@item.value.DoctorID" />
+                @item.value.DoctorName
+            </td>
+            <td class="TreatmentName">
+                <input type="hidden" class="TreatmentID" value="@item.value.TreatmentID" />
+                @item.value.TreatmentName
+            </td>
+            <td class="NoOfTreatment">
+                (@item.value.NoOfTreatment/@item.value.TotalTreatmentNo)
+            </td>
+            <td class="TreatmentRoom"> @item.value.PreferedTreatmentRoom
+                    <input type="hidden" value="@item.value.PreferedTreatmentRoomID" />
+            </td>
+            <td>
+                @Html.DropDownListFor(m => item.value.TreatmentRoomID, new SelectList(item.value.TreatmentRoomList, "value", "text", item.value.TreatmentRoomID), "Select", new { @class = "md-input label-fixed TreatmentRoomID", @disabled = "disabled" })
+            </td>
+            <td><input type="text" class="md-input uk-icon-calendar future-date StartDate" disabled="disabled" value="@item.value.ScheduledDate" /></td>
+            <td>
+                <input type="text" value="@item.value.StartTime" class="md-input StartTime label-fixed  time15" disabled />
+                <input type="hidden" value="" class="md-input EndTime label-fixed" disabled />
+            </td>
+            <td>
+                @Html.DropDownListFor(m => item.value.DurationID, new SelectList(item.value.DurationList, "value", "text", item.value.DurationID), "Select", new { @class = "md-input label-fixed DurationID", @disabled = "disabled" })
+            </td>
+            <td class="TherapistName">@item.value.PreferedTherapist
+                <input type="hidden" value="@item.value.PreferedTherapistID" />
+            </td>
+            <td>
+                @Html.DropDownListFor(m => item.value.TherapistID, new SelectList(item.value.TherapistList, "value", "text", item.value.TherapistID), "Select", new { @class = "md-input label-fixed TherapistID", @disabled = "disabled" })
+            </td>
+            <td class="Status">@item.value.Status</td>
+        </tr>
+    }
+}

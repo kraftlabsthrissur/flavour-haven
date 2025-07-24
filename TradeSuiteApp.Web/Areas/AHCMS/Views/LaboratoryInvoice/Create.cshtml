@@ -1,0 +1,57 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.LabTestModel
+@{
+    ViewBag.Title = "Create";
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@AHCMS.LaboratoryInvoice</h1>
+            <span class="uk-text-upper uk-text-small">@AHCMS.CreateLaboratoryInvoice</span>
+        </div>
+        <div class="heading_actions">
+            @if (Model.InvoiceID == 0)
+            {
+                @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSave'>" + Common.GenerateBill + "</a>")
+            }
+            @if (Model.InvoiceID > 0)
+            {
+                @ActionAuthorization.IsAuthorized("LabTestInvoicePrintPDF", " <a class='md-btn print'>Print As PDF</a>")
+            }
+            @Html.HiddenFor(m => m.AppointmentProcessID)  
+            @Html.HiddenFor(m => m.PatientLabTestMasterID)
+            @Html.HiddenFor(m => m.IPID)
+            @Html.HiddenFor(m => m.ID)
+            @Html.HiddenFor(m => m.ConfigValue)
+            @Html.ActionLink(Common.Close, "Index", "LaboratoryInvoice", new { Area = "AHCMS" }, new { @class = "md-btn " })
+
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                @{Html.RenderPartial("/Areas/AHCMS/Views/LaboratoryInvoice/Form.cshtml", Model); }
+            </div>
+        </div>
+    </div>
+</div>
+@Html.Partial("~/Areas/AHCMS/Views/LaboratoryInvoice/LabTestType.cshtml", Model)
+@Html.Partial("~/Areas/Masters/Views/Customer/DirectSalesInvoice.cshtml")
+@Scripts.Render("~/Js/Page/LaboratoryInvoice")
+@Scripts.Render("~/Js/Page/Customer")
+@Scripts.Render("~/Js/Page/InternationalPatient")
+@Scripts.Render("~/Js/Page/PatientDiagnosis")
+
+<script type="text/javascript">
+    LaboratoryInvoice.init();
+    LaboratoryInvoice.create();
+</script>
+
+

@@ -1,0 +1,10 @@
+
+CREATE PROCEDURE [Master].[SPGetSecondarytUnitListByUnitID]  
+@UnitID INT
+AS    
+BEGIN    
+ SELECT S.ID,S.Name,S.PackSize 
+ FROM SecondaryUnit S    
+ WHERE s.UnitID=@UnitID
+END    
+    

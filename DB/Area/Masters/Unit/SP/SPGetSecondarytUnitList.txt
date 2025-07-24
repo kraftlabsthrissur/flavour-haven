@@ -1,0 +1,7 @@
+CREATE PROCEDURE [Master].[SPGetSecondarytUnitList]    
+AS    
+BEGIN    
+ SELECT S.ID,S.Name,ISNULL(S.UnitGroupID,0)UnitGroupID,ISNULL(G.Name,'') UnitGroupName,S.UnitID,U.Name UnitName,S.PackSize,S.CreatedUserID,S.CreatedDate FROM SecondaryUnit S    
+ join Unit U on U.ID=s.UnitID  
+ LEFT JOIN UnitGroup G on G.ID=S.UnitGroupID  
+END    

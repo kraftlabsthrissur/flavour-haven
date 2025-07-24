@@ -1,0 +1,18 @@
+CREATE PROCEDURE [Master].[SpUpdateSecondaryUnit]  
+ (@SecondaryUnitID int,@SecondaryUnitName varchar(20),@UnitID int, @UnitGroupID int,@PackSize numeric(18,2),@CreatedUserId int, @CreatedDate datetime,@LocationID int,@ApplicationID int )  
+AS  
+  
+BEGIN  
+ SET NOCOUNT ON;  
+  
+ EXEC SpLogChange 'SecondaryUnit','ID',@UnitID,@CreatedUserID,@LocationID,@ApplicationID  
+  
+ UPDATE SecondaryUnit SET Name = @SecondaryUnitName, UnitID = @UnitID, UnitGroupID=@UnitGroupID,PackSize=@PackSize, CreatedUserID=@CreatedUserId, CreatedDate=@CreatedDate WHERE ID = @SecondaryUnitID;   
+END  
+  
+  
+  
+  
+  
+  
+  

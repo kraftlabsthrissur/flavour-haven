@@ -1,0 +1,112 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.ProductionDefinitionModel
+
+@{
+    ViewBag.Title = "Production Definition Details";
+}
+<input type="hidden" id="batchtypeid" value="@Model.BatchTypeID" />
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 48, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.ProductionDefinition</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.ProductionDefinitionDetail</span>
+        </div>
+        <div class="heading_actions">
+
+            @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "Edit", "ProductionDefinition", new { Area = "Masters", id = (Model != null) ? Model.ProductionGroupID : 0 }, new { @class = "md-btn edit" }))
+
+            @Html.ActionLink(Common.Back, "Index", "ProductionDefinition", new { Area = "Masters" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>@Common.Action</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        @Html.HiddenFor(m => m.ID)
+                        <div class="uk-width-medium-2-10">
+                            <label>@Masters.ProductionGroup</label>
+                            @Html.TextBoxFor(m => m.ProductionGroupName, "", new { @class = "md-input label-fixed", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-2-10">
+                            <label>@Masters.ItemName</label>
+                            @Html.TextBoxFor(m => m.ItemName, "", new { @class = "md-input label-fixed", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-10">
+                            <label>@Masters.BatchSize</label>
+                            @Html.TextBoxFor(m => m.BatchSize, "", new { @class = "md-input label-fixed mask-production-qty", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-10">
+                            <label>@Masters.IsKalkan</label>
+                            <div class="uk-grid uk-margin-small-top" data-uk-grid-margin="">
+                                @Html.HiddenFor(m => m.IsKalkan)
+                                <div class="uk-input-group">
+                                    <input type="checkbox" class="icheckbox IsKalkan" data-md-icheck disabled checked />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-10">
+                            <label>@Masters.Location</label>
+                            @Html.TextBoxFor(m => m.Location, "", new { @class = "md-input label-fixed", @readonly = "readonly" })
+                        </div>
+                       
+                              
+                                    @foreach (var location in Model.LocationList)
+                                    {
+                                        <div class="uk-width-medium-1-10 Locationdiv">
+                                            <br />
+                                            <input type="checkbox" class="icheckbox ProductionLocation" id="@location.Value" value="@location.Value" data-md-icheck disabled />&nbsp;
+                                            <label id="locationLabel">@location.Text</label>
+                                        </div>
+                                    }
+                                
+                                <input type="hidden" id="Production-Location-Mapping" value="0">
+                            </div>
+                      
+                </div>
+                <br />
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-1">
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin>
+                                <div class="uk-width-1-1">
+                                    <ul class="uk-tab" data-uk-tab="{connect:'#tabs-sequence-content', animation: 'slide-right'}">
+                                        @*@foreach (var productionSequence in Model.Sequences.GroupBy(a => new { a.ProductionSequence, a.SequenceName }).Select(g => g.ToList()))
+                                            {*@
+                                        @foreach (var sequence in Model.Sequences)
+                                        {
+                                            @*<li aria-expanded="true"><a>SEQUENCE @productionSequence.FirstOrDefault().ProductionSequence</a></li>*@
+                                            @*<li aria-expanded="true"><a>SEQUENCE @sequence.ProductionSequence</a></li>*@
+                                            <li aria-expanded="true"><a>@(sequence.ProcessStage == "" ? "Packing" : sequence.ProcessStage)</a></li>
+                                        }
+                                    </ul>
+                                    <ul id="tabs-sequence-content" class="uk-switcher uk-margin" style="width:100%">
+                                        @foreach (var sequence in Model.Sequences)
+                                        {
+                                            Html.RenderPartial("View", sequence);
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/ProductionDefinition")
+<script type="text/javascript">
+    ProductionDefinition.details();
+</script>

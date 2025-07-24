@@ -1,0 +1,158 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.RoomReservationModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-width-medium-1-1">
+            <div class="uk-grid" data-uk-grid-margin="">
+                @if (Model.IsRoomChange == false)
+                {
+                    <div class="uk-width-medium-1-10">
+                        <label>@AHCMS.TransNo</label>
+                        @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                    </div>
+                }
+                @if (Model.ReservationID > 0)
+                {
+                    <div class="uk-width-medium-1-10">
+                        <div class="uk-input-group">
+                            <label>@AHCMS.AdmissionDate*</label>
+                            @Html.TextBoxFor(m => m.AdmissionDate, new { @class = "md-input label-fixed  date future-date", @disabled = "disabled" })
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="uk-width-medium-1-10">
+                        <div class="uk-input-group">
+                            <label>@AHCMS.AdmissionDate*</label>
+                            @Html.TextBoxFor(m => m.AdmissionDate, new { @class = "md-input label-fixed  date future-date" })
+                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                        </div>
+                    </div>
+                }
+                @if (Model.ReservationID > 0)
+                {
+                    <div class="uk-width-medium-1-10 uk-hidden">
+                        <div class="uk-input-group">
+                            <label>@AHCMS.RoomChangeDate*</label>
+                            @Html.TextBoxFor(m => m.RoomChangeDate, new { @class = "md-input label-fixed  date future-date" })
+                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.ReservationID > 0)
+                {
+                    <div class="uk-width-medium-1-10">
+                        <div class="uk-input-group">
+                            <label>@AHCMS.AdmissionDateTill*</label>
+                            @Html.TextBoxFor(m => m.AdmissionDateTill, new { @class = "md-input label-fixed  date future-date", @disabled = "disabled" })
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="uk-width-medium-1-10">
+                        <div class="uk-input-group">
+                            <label>@AHCMS.AdmissionDateTill*</label>
+                            @Html.TextBoxFor(m => m.AdmissionDateTill, new { @class = "md-input label-fixed  date future-date" })
+                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-width-medium-1-1">
+            <div class="uk-grid" data-uk-grid-margin="">
+                <div class="uk-width-medium-1-5">
+                    <label>@AHCMS.Patient</label>
+                    @Html.TextBoxFor(m => m.PatientName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                    @Html.HiddenFor(m => m.AppointmentProcessID)
+                    @Html.HiddenFor(m => m.PatientID)
+                    @Html.HiddenFor(m => m.DoctorID)
+                    @Html.HiddenFor(m => m.ReservationID)
+                    @Html.HiddenFor(m => m.RoomStatusID)
+                </div>
+                @if (Model.ReservationID == 0 || Model.IsRoomChange == true)
+                {
+                    <div class="uk-width-medium-1-10">
+                        <label>@AHCMS.RoomType<span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.RoomTypeID, Model.RoomTypeList, "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                }
+                else
+                {
+                    <div class="uk-width-medium-1-10">
+                        <label>@AHCMS.RoomType<span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.RoomTypeID, Model.RoomTypeList, "Select", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        @Html.HiddenFor(m => m.RoomID)
+                    </div>
+                }
+
+                @if (Model.ReservationID == 0 && Model.RoomStatusID == 0)
+                {
+                    <div class="uk-width-medium-1-10">
+                        <label>@AHCMS.AvailableRooms*</label>
+                        <select id="RoomID" class="md-input label-fixed Room">
+                            <option>Select</option>
+                        </select>
+                    </div>
+                }
+                else if (Model.IsRoomChange == true)
+                {
+                    <div class="uk-width-medium-1-10">
+                        <label>@AHCMS.AvailableRooms*</label>
+                        @Html.DropDownListFor(Model => Model.RoomID, Model.RoomList, new { @class = "md-input label-fixed" })
+                    </div>
+                }
+                else
+                {
+                    <div class="uk-width-medium-1-10">
+                        <label>@AHCMS.AvailableRooms*</label>
+                        @Html.DropDownListFor(Model => Model.RoomID, Model.RoomList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        @Html.HiddenFor(m => m.RoomID)
+                    </div>
+
+                }
+                <div class="uk-width-medium-1-10">
+                    <label>@AHCMS.Rate</label>
+                    @Html.TextBoxFor(m => m.Rate, new { @class = "md-input label-fixed mask-positive-currency", @disabled = "disabled" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-width-medium-1-1">
+            <div class="uk-grid" data-uk-grid-margin="">
+                <div class="uk-width-medium-1-5">
+                    <label>@AHCMS.ByStander</label>
+                    @Html.TextBoxFor(m => m.ByStander, new { @class = "md-input label-fixed" })
+                </div>
+                <div class="uk-width-medium-1-6">
+                    <label>@AHCMS.MobileNumber</label>
+                    @Html.TextBoxFor(m => m.MobileNumber, new { @class = "md-input label-fixed" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/Js/Page/RoomAllocation")
+<script type="text/javascript">
+    RoomAllocation.init();
+</script>
+
+
+
+
+
+

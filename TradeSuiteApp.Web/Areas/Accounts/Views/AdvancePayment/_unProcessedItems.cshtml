@@ -1,0 +1,110 @@
+﻿@model List<TradeSuiteApp.Web.Areas.Accounts.Models.AdvancePaymentPurchaseOrderModel>
+
+
+@if (Model != null && Model.Count() > 0)
+{
+    foreach (var poItem in Model.Select((value, i) => new { i = i + 1, value }))
+    {
+        if (!poItem.value.IsDraft)
+        {
+            <tr>
+                <td class="uk-text-center">@poItem.i </td>
+                <td class="transNo">
+                    @poItem.value.PurchaseOrderNo <input type="hidden" class="hdnPOID" value="@poItem.value.PurchaseOrderID" />
+                    <input type="hidden" id="@String.Format("hdnItemID{0}", poItem.i)" class="hdnItemID" />
+                </td>
+                <td class="podate">@poItem.value.PurchaseOrderDateStr</td>
+                <td class="poTerms">@poItem.value.PaymentWithin</td>
+                <td class="poAdvance mask-positive-currency uk-text-right">@poItem.value.Advance</td>
+                <td>
+                    <div class="uk-autocomplete" id="item-autocomplete@(poItem.i)">
+                        <div class="uk-input-group">
+
+                            @Html.TextBoxFor(m => poItem.value.ItemName, new { @class = "md-input label-fixed" })
+
+                            <script type="text/autocomplete">
+                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                    {{~items}}
+                                    <li data-value="{{ $item.Name }}"
+                                        data-id="{{$item.ItemID}}">
+                                        <a>
+                                            {{ $item.Name }}
+                                            <div>{{{ $item.Location }}}</div>
+
+                                        </a>
+                                    </li>
+                                    {{/items}}
+                                </ul>
+                            </script>
+                        </div>
+
+                    </div>
+
+                </td>
+                <td>
+                    <input type="text" class="md-input uk-text-right txtAmount mask-positive-currency" value="" />
+                    <input type="hidden" class="balance-amount mask-qty" value="@poItem.value.AdvanceAmount" />
+                </td>
+                <td class="uk-hidden">
+                    @Html.DropDownList("ddlTDSCode", new SelectList(ViewBag.TDSCodes, "Text", "Value"), "Select", new { @class = "md-input label-fixed ddlTDSCode" })
+                </td>
+                <td class="uk-hidden"><input type="text" class="md-input  txtTDSAmount mask-qty " readonly value="0" /></td>
+                <td><input type="text" class="md-input  txtNetAmount mask-qty " readonly value="0" /></td>
+
+                <td><input type="text" class="md-input txtRemarks" /></td>
+            </tr>
+        }
+        else
+        {
+            var amount = @poItem.value.Amount - @poItem.value.TDSAmount;
+            <tr>
+                <td class="uk-text-center">@poItem.i</td>
+                <td class="transNo">
+                    @poItem.value.PurchaseOrderNo<input type="hidden" class="hdnPOID" value="@poItem.value.PurchaseOrderID" />
+                    <input type="hidden" id="@String.Format("hdnItemID{0}", poItem.i)" class="hdnItemID" value="@poItem.value.ItemID" />
+
+                </td>
+                <td class="podate">@poItem.value.PurchaseOrderDateStr</td>
+                <td class="poTerms">@poItem.value.PaymentWithin</td>
+                <td class="poAdvance mask-positive-currency uk-text-right">@poItem.value.Advance</td>
+                <td>
+                    <div class="uk-autocomplete" id="item-autocomplete@(poItem.i)">
+                        <div class="uk-input-group">
+
+                            @Html.TextBoxFor(Model => poItem.value.ItemName, new { @class = "md-input label-fixed", @id = @String.Format("txtItemName{0}", poItem.i) })
+
+
+                            <script type="text/autocomplete">
+                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                    {{~items}}
+                                    <li data-value="{{ $item.Name }}"
+                                        data-id="{{$item.ItemID}}">
+                                        <a>
+                                            {{ $item.Name }}
+                                            <div>{{{ $item.Location }}}</div>
+
+                                        </a>
+                                    </li>
+                                    {{/items}}
+                                </ul>
+                            </script>
+                        </div>
+
+                    </div>
+
+                </td>
+                <td>
+                    <input type="text" class="md-input uk-text-right txtAmount mask-positive-currency" value="@poItem.value.Amount" />
+                    <input type="hidden" class="balance-amount mask-qty" value="@poItem.value.AdvanceAmount" />
+                </td>
+                <td class="uk-hidden">
+                    @Html.DropDownListFor(model => poItem.value.TDS, new SelectList(ViewBag.TDSCodes, "Text", "Value", @poItem.value.TDS), "Select", new { @class = "md-input label-fixed ddlTDSCode " })
+                </td>
+                <td class="uk-hidden"><input type="text" class="md-input  txtTDSAmount mask-qty " readonly value="@poItem.value.TDSAmount" /></td>
+                <td><input type="text" class="md-input  txtNetAmount mask-qty " readonly value=@amount /></td>
+
+                <td><input type="text" class="md-input txtRemarks" value="@poItem.value.Remarks" /></td>
+            </tr>
+        }
+    }
+}           

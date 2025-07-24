@@ -1,0 +1,17 @@
+﻿@model List<TradeSuiteApp.Web.Areas.AHCMS.Models.AppointmentScheduleItemModel>
+
+@foreach (var item in Model.Select((value, i) => new { i = (i + 1), value }))
+{
+    <tr>
+        <td class="uk-text-center serial-no"></td>
+        <td class="Patient">
+            @item.value.PatientName
+    </td>
+    <td class="Time">@item.value.Time </td>
+    <td class="TokenNo">@item.value.TokenNo</td>
+    <td>
+        <a class="remove-item"><i class="uk-icon-remove"></i></a>
+    </td>
+</tr>
+}
+

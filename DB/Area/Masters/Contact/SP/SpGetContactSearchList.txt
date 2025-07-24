@@ -1,0 +1,61 @@
+                    
+ALTER procedure [Master].[SpGetContactSearchList](   
+ @CustomerID INT,
+ @FirstNameHint varchar(100),                    
+ @LastNameHint varchar(100),                    
+ @PhoneHint varchar(100),                    
+ @AlternateNoHint varchar(100),                
+ @DesignationHint varchar(100),  
+ @EmailHint varchar(100),  
+ @SortField varchar(100),                    
+ @SortOrder varchar(10),                    
+ @Offset int = 0,                    
+ @Limit int = 20,                     
+ @LocationID int,                    
+ @ApplicationID int)                    
+AS                    
+BEGIN                                     
+   DECLARE @totalRecords INT                                               
+   Set @Offset = @Offset + 1                    
+                      
+   Select @totalRecords =  Count(*) from Contact V 
+     Where  V.CustomerID=@CustomerID  
+	AND (@FirstNameHint IS NULL OR V.Name1 Like '%'+@FirstNameHint+'%')                    
+    AND (@LastNameHint IS NULL OR V.Name2 Like '%'+@LastNameHint+'%')                      
+    AND (@PhoneHint IS NULL OR V.PhoneNo Like '%'+@PhoneHint+'%')                  
+    AND (@AlternateNoHint IS NULL OR V.AlternateNo Like '%'+@AlternateNoHint+'%')                  
+    AND (@DesignationHint IS NULL OR V.Designation Like '%'+@DesignationHint+'%')                       
+    AND (@EmailHint IS NULL OR V.EmailID Like '%'+@EmailHint+'%')   
+                        
+   ;WITH Contact_CTE AS                    
+   (                    
+    SELECT top 10000  Count(*) OVER (Partition by 1) AS recordsFiltered,                    
+     V.ID,V.Name1,V.Name2,V.PhoneNo,V.AlternateNo,V.Designation,V.EmailID,ROW_NUMBER() OVER ( ORDER BY                    
+    case when @SortField+@SortOrder = 'Name1ASC' then V.Name1 End ASC,                    
+    case when @SortField+@SortOrder = 'Name1DESC' then V.Name1 End DESC,                    
+    case when @SortField+@SortOrder = 'Name2ASC' then V.Name2 End ASC,                    
+    case when @SortField+@SortOrder = 'Name2DESC' then V.Name2 End DESC,                    
+    case when @SortField+@SortOrder = 'PhoneNoASC' then V.PhoneNo End ASC,                    
+    case when @SortField+@SortOrder = 'PhoneNoDESC' then V.PhoneNo End DESC,                    
+    case when @SortField+@SortOrder = 'AlternateNoASC' then V.AlternateNo End ASC,                    
+    case when @SortField+@SortOrder = 'AlternateNoDESC' then V.AlternateNo End DESC,             
+    case when @SortField+@SortOrder = 'DesignationASC' then V.Designation End ASC,                    
+    case when @SortField+@SortOrder = 'DesignationDESC' then V.Designation End DESC,
+	case when @SortField+@SortOrder = 'EmailASC' then V.EmailID End ASC,                    
+    case when @SortField+@SortOrder = 'EmailDESC' then V.EmailID End DESC
+	) AS RowNum                    
+    FROM Contact V                                      
+    Where V.CustomerID=@CustomerID 
+	AND (@FirstNameHint IS NULL OR V.Name1 Like '%'+@FirstNameHint+'%')                    
+    AND (@LastNameHint IS NULL OR V.Name2 Like '%'+@LastNameHint+'%')                      
+    AND (@PhoneHint IS NULL OR V.PhoneNo Like '%'+@PhoneHint+'%')                  
+    AND (@AlternateNoHint IS NULL OR V.AlternateNo Like '%'+@AlternateNoHint+'%')                  
+    AND (@DesignationHint IS NULL OR V.Designation Like '%'+@DesignationHint+'%')                       
+    AND (@EmailHint IS NULL OR V.EmailID Like '%'+@EmailHint+'%')                     
+                                               
+   )                    
+   SELECT ID,Name1,Name2,PhoneNo,AlternateNo,Designation,EmailID,@totalRecords AS totalRecords ,recordsFiltered                    
+   FROM Contact_CTE WHERE RowNum >= @Offset                    
+   AND RowNum < @Offset + @Limit                    
+                                 
+End 

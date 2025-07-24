@@ -1,0 +1,9 @@
+ALTER PROCEDURE [Master].[SPGetItemSecondaryUnitByItemID]                  
+(                  
+ @ItemID int                
+)                  
+AS                      
+BEGIN                      
+ SELECT iu.ID,ItemID,Name SecondaryUnit,SecondaryUnitID FROM ItemSecondaryUnit  iu join SecondaryUnit s on s.ID=iu.SecondaryUnitID
+ where ItemID=@ItemID                 
+END   

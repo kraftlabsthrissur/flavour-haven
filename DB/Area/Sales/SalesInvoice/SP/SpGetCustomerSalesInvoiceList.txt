@@ -1,0 +1,61 @@
+ ALTER Procedure[Sales].[SpGetCustomerSalesInvoiceList]      
+(           
+ @TransNoHint VARCHAR(20),         
+ @TransDateHint VARCHAR(50),               
+ @PartyNameHint VARCHAR(100),        
+ @NetAmountHint VARCHAR(100),          
+ @SortField VARCHAR(100),        
+ @SortOrder VARCHAR(10),        
+ @Offset INT = 0,        
+ @Limit INT = 20,        
+ @FinYear INT,         
+ @LocationID INT,        
+ @ApplicationID INT        
+)      
+AS      
+BEGIN      
+ SET @Offset = @Offset + 1        
+ DECLARE @totalRecords int = 0;        
+           
+ SELECT @totalRecords =  Count(DISTINCT C.ID) FROM 
+sales.SalesInvoice C  LEFT JOIN Customer P on C.CustomerID=P.ID
+  WHERE ISNULL(c.IsCancelled,0)<>1 AND ISNULL(c.IsDraft,0)<> 1 AND ISNULL(c.IsGoodsReceived,0) <> 1         
+  AND(@TransNoHint IS NULL OR c.TransNo LIKE '%'+@TransNoHint+ '%') 
+  AND(@TransDateHint IS NULL OR C.InvoiceDate LIKE '%'+@TransDateHint+ '%') 
+  AND(@PartyNameHint IS NULL OR P.Name LIKE '%'+@PartyNameHint+ '%')  
+  AND(@NetAmountHint IS NULL OR C.NetAmt LIKE '%'+@NetAmountHint+ '%')            
+  AND C.LocationID = @LocationID         
+  AND C.ApplicationID = @ApplicationID                 
+          
+ ;WITH CounterSales_CTE AS        
+ (        
+  SELECT top 10000  Count(C.ID) OVER(Partition By 1) AS recordsFiltered,        
+   C.ID,C.TransNo,C.InvoiceDate,C.NetAmt NetAmount,PaymentModeID,P.Name CustomerName,       
+   ROW_NUMBER() OVER (        
+    ORDER BY         
+     CASE WHEN @SortField+@SortOrder = 'TransNoASC' THEN C.TransNo END ASC,        
+     CASE WHEN @SortField+@SortOrder = 'TransNoDESC' THEN C.TransNo END DESC,        
+     CASE WHEN @SortField+@SortOrder = 'InvoiceDateASC' THEN C.InvoiceDate END ASC,        
+     CASE WHEN @SortField+@SortOrder = 'InvoiceDateDESC' THEN C.InvoiceDate END DESC,  
+	 CASE WHEN @SortField+@SortOrder = 'NetAmountASC' THEN C.NetAmt END ASC,        
+     CASE WHEN @SortField+@SortOrder = 'NetAmountDESC' THEN C.NetAmt END DESC,
+	 CASE WHEN @SortField+@SortOrder = 'PaymentModeIDASC' THEN C.PaymentModeID END ASC,        
+     CASE WHEN @SortField+@SortOrder = 'PaymentModeIDDESC' THEN C.PaymentModeID END DESC,
+     CASE WHEN @SortField+@SortOrder = 'PartyNameASC' THEN p.Name END ASC,        
+     CASE WHEN @SortField+@SortOrder = 'PartyNameDESC' THEN p.Name END DESC        
+      
+    ) AS RowNum        
+  FROM sales.SalesInvoice C  LEFT JOIN Customer P on C.CustomerID=P.ID
+  WHERE ISNULL(c.IsCancelled,0)<>1 AND ISNULL(c.IsDraft,0)<> 1 AND ISNULL(c.IsGoodsReceived,0) <> 1           
+  AND(@TransNoHint IS NULL OR c.TransNo LIKE '%'+@TransNoHint+ '%') 
+  AND(@TransDateHint IS NULL OR C.InvoiceDate LIKE '%'+@TransDateHint+ '%') 
+  AND(@PartyNameHint IS NULL OR P.Name LIKE '%'+@PartyNameHint+ '%')  
+  AND(@NetAmountHint IS NULL OR C.NetAmt LIKE '%'+@NetAmountHint+ '%')            
+  AND C.LocationID = @LocationID         
+  AND C.ApplicationID = @ApplicationID          
+ )        
+ SELECT ID,TransNo,InvoiceDate,NetAmount,PaymentModeID,CustomerName, @totalRecords AS totalRecords ,recordsFiltered        
+ FROM CounterSales_CTE WHERE RowNum >= @Offset        
+ AND RowNum < @Offset + @Limit        
+END      
+      

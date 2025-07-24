@@ -1,0 +1,37 @@
+                      
+ALTER PROCEDURE [Master].[SpGetItemListForPurchaseRequisition](                                 
+ @PurchaseRequisitionID int,                                     
+ @FinYear int,                      
+ @LocationID int,                      
+ @ApplicationID int)                      
+AS                      
+BEGIN                 
+      
+   SELECT t.ID PurchaseRequisitionTrasID, ISNULL(V.ID,0)ID,ISNULL(V.Code,t.ItemCode)Code,ISNULL(V.Name,t.ItemName)Name,ISNULL(V.PartsNumber,t.PartsNumber)PartsNumber,    
+   ISNULL(Remark,t.Remarks)Remark,ISNULL(Model,'')Model,ISNULL(Unit,t.UnitName)as PrimaryUnit,ISNULL(PrimaryUnitID,t.UnitID)PrimaryUnitID,t.Quantity,      
+   ISNULL((SELECT STRING_AGG(Name+'|'+CAST(PackSize AS varchar(10)), ',') FROM SecondaryUnit su  join ItemSecondaryUnit iu on iu.SecondaryUnitID=su.ID WHERE iu.ItemID=t.ItemID  AND su.UnitID=ISNULL(V.PurchaseUnitID,V.SalesUnitID)),'')SecondaryUnits,      
+   (CASE WHEN V.PurchaseUnitID IS NULL THEN ISNULL(V.SalesUnit ,t.UnitName) ELSE V.PurchaseUnit END)PurchaseUnit,      
+   (CASE WHEN V.PurchaseUnitID IS NULL THEN ISNULL(V.SalesUnitID ,t.UnitID) ELSE V.PurchaseUnitID END)PurchaseUnitID,      
+   ISNULL(V.Category,'')Category, ISNULL(V.PurchaseCategory,'')PurchaseCategory,ISNULL(V.PurchaseCategoryID,0)PurchaseCategoryID,ISNULL(V.CategoryID,0)CategoryID,      
+   (select TOP 1 CountryID from Location WHERE LocationHeadID=@LocationID)CountryID,(select TOP 1 CurrencyID from Location WHERE LocationHeadID=@LocationID)CurrencyID,       
+   ISNULL(dbo.FnGetStockByItemID(V.ID,@FinYear,@LocationID,@ApplicationID),0) AS Stock,ISNULL(dbo.FnGetStockQuantityUnderQC(V.ID,@FinYear,@LocationID,@ApplicationID),0) AS QtyUnderQC,                      
+   ISNULL(V.GSTCategoryID,0)GSTCategoryID,ISNULL(V.GSTCategory,'')GSTCategory,CAST( ISNULL(V.IGSTPercent,0) AS numeric(18,4)) as GSTPercentage,    
+   CAST(ISNULL(V.VATPercentage,0) AS numeric(18,4))VATPercentage,ISNULL(V.TaxType,'')TaxType,ISNULL(V.TaxTypeID,0)TaxTypeID,                
+   CAST(ISNULL((select TOP 1 B.RetailMRP from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID),0) AS numeric(18,4))RetailMRP,                
+   CAST(ISNULL((select TOP 1 B.RetailLooseRate from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID),0) AS numeric(18,4))RetailLooseRate,          
+   (CASE WHEN t.PurchaseMRP IS NULL OR t.PurchaseMRP = 0 THEN (CAST(ISNULL((select TOP 1 B.PurchaseMRP from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID),0) AS numeric(18,4))) ELSE t.PurchaseMRP END) PurchaseMRP,                
+   CAST(ISNULL((select TOP 1 B.PurchaseLooseRate from Batch B WHERE B.ItemID=V.ID AND B.LocationID=@LocationID),0) AS numeric(18,4))PurchaseLooseRate,          
+   CAST(ISNULL(dbo.FnGetLastPurchaseRateByItemID(V.ID,@FinYear,@LocationID,@ApplicationID),0) AS numeric(18,4)) AS LastPR,                      
+   CAST(ISNULL(dbo.FnGetLowestPurchaseRateByItemID(V.ID,@FinYear,@LocationID,@ApplicationID),0) AS numeric(18,4))  AS LowestPR,                      
+   CAST(ISNULL(dbo.FnGetStockQuantityOrdered(V.ID,@FinYear,@LocationID,@ApplicationID),0) AS numeric(18,4)) AS QtyOrdered,                      
+   CAST(ISNULL(dbo.FnGetStockByItemID(V.ID,@FinYear,@LocationID,@ApplicationID),0) AS numeric(18,4)) AS QtyAvailable,                      
+   CAST(ISNULL(dbo.FnGetPurchaseRequestedQtyByItemID(V.ID,@FinYear,@LocationID,@ApplicationID),0) AS numeric(18,4)) AS RequestedQty,                      
+   ISNULL((select ID from Category where CategoryGroupID = 1 and ID IN                       
+   (Select ItemCategoryID from StockOrServiceType where Type = 'Stock') and (Name like'Finished Goods%') and V.CategoryID=ID),0) as FGCategoryID,                      
+   0 as TravelCategoryID FROM PurchaseRequisitionTrans t     
+   LEFT JOIN  viGoodsItem V   on V.ID=t.ItemID                
+  WHERE  t.PurchaseRequisitionID=@PurchaseRequisitionID AND t.LocationID=@LocationID       
+End   
+  
+  
+  

@@ -1,0 +1,283 @@
+﻿@model IEnumerable<TradeSuiteApp.Web.Areas.Payroll.Models.AttendanceModel>
+@{
+    ViewBag.Title = Common.Attendance;
+}
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Payroll.Attendance</h1>
+            <span class="uk-text-upper uk-text-small">@Payroll.AttendanceList - @DateTime.Now.Year</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Create", Html.ActionLink("Monthly Attendance", "Edit", "Attendance", new { Area = "Payroll" }, new { @class = "md-btn" }))
+            
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="list-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="uk-grid">
+                    <div class="uk-width-4-10" id="employee-list-wrapper">
+                        <table id="attendance-employee-list" class="uk-table" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th class="width-20">
+                                        @Common.SerialNo
+                                    </th>
+                                    <th class="width-40">
+                                        @Payroll.EmployeeCode
+                                    </th>
+
+                                    <th >
+                                        @Payroll.EmployeeName
+                                    </th>
+                                    <th class="width-20">
+                                        @Payroll.TotalLeave
+                                    </th>
+                                    <th class="width-20">
+                                        @Payroll.BalanceLeave
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Select((value, i) => new { i = (i + 1), value }))
+                                {
+                                    <tr>
+                                        <td>
+                                            @item.i
+                                            @Html.HiddenFor(model => item.value.ID, new { @class = "ID" })
+                                        </td>
+                                        <td>
+                                            @item.value.EmployeeCode
+                                        </td>
+                                        <td>
+                                            <span>@item.value.EmployeeName</span>
+                                        </td>
+                                        <td class="uk-text-right">
+                                            @item.value.TotalLeave
+                                        </td>
+                                        <td class="uk-text-right">
+                                            @item.value.BalanceLeave
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="uk-width-6-10" id="month-list-wrapper">
+                        <table id="attendance-month-list" class="uk-table" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th colspan="5">
+                                        @Payroll.January
+                                    </th>
+                                    <th colspan="5">
+                                        @Payroll.February
+                                    </th>
+                                    <th colspan="5">
+                                        @Payroll.March
+                                    </th>
+                                    <th colspan="5">
+                                        @Payroll.April
+                                    </th>
+                                    <th colspan="5">
+                                        @Payroll.May
+                                    </th>
+                                    <th colspan="5">
+                                        @Payroll.June
+                                    </th>
+                                    <th colspan="5">
+                                        @Payroll.July
+                                    </th>
+                                    <th colspan="5">
+                                        @Payroll.August
+                                    </th>
+                                    <th colspan="5">
+                                        @Payroll.September
+                                    </th>
+                                    <th colspan="5">
+                                        @Payroll.October
+                                    </th>
+                                    <th colspan="5">
+                                        @Payroll.November
+                                    </th>
+                                    <th colspan="5">
+                                        @Payroll.December
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>@Payroll.TotalDays</th>
+                                    <th>@Payroll.WorkingDays</th>
+                                    <th>@Payroll.LOPDays</th>
+                                    <th>@Payroll.SalaryDays</th>
+                                    <th>@Payroll.AttendanceDays</th>
+
+                                    <th>@Payroll.TotalDays</th>
+                                    <th>@Payroll.WorkingDays</th>
+                                    <th>@Payroll.LOPDays</th>
+                                    <th>@Payroll.SalaryDays</th>
+                                    <th>@Payroll.AttendanceDays</th>
+
+                                    <th>@Payroll.TotalDays</th>
+                                    <th>@Payroll.WorkingDays</th>
+                                    <th>@Payroll.LOPDays</th>
+                                    <th>@Payroll.SalaryDays</th>
+                                    <th>@Payroll.AttendanceDays</th>
+
+                                    <th>@Payroll.TotalDays</th>
+                                    <th>@Payroll.WorkingDays</th>
+                                    <th>@Payroll.LOPDays</th>
+                                    <th>@Payroll.SalaryDays</th>
+                                    <th>@Payroll.AttendanceDays</th>
+
+                                    <th>@Payroll.TotalDays</th>
+                                    <th>@Payroll.WorkingDays</th>
+                                    <th>@Payroll.LOPDays</th>
+                                    <th>@Payroll.SalaryDays</th>
+                                    <th>@Payroll.AttendanceDays</th>
+
+                                    <th>@Payroll.TotalDays</th>
+                                    <th>@Payroll.WorkingDays</th>
+                                    <th>@Payroll.LOPDays</th>
+                                    <th>@Payroll.SalaryDays</th>
+                                    <th>@Payroll.AttendanceDays</th>
+
+                                    <th>@Payroll.TotalDays</th>
+                                    <th>@Payroll.WorkingDays</th>
+                                    <th>@Payroll.LOPDays</th>
+                                    <th>@Payroll.SalaryDays</th>
+                                    <th>@Payroll.AttendanceDays</th>
+
+                                    <th>@Payroll.TotalDays</th>
+                                    <th>@Payroll.WorkingDays</th>
+                                    <th>@Payroll.LOPDays</th>
+                                    <th>@Payroll.SalaryDays</th>
+                                    <th>@Payroll.AttendanceDays</th>
+
+                                    <th>@Payroll.TotalDays</th>
+                                    <th>@Payroll.WorkingDays</th>
+                                    <th>@Payroll.LOPDays</th>
+                                    <th>@Payroll.SalaryDays</th>
+                                    <th>@Payroll.AttendanceDays</th>
+
+                                    <th>@Payroll.TotalDays</th>
+                                    <th>@Payroll.WorkingDays</th>
+                                    <th>@Payroll.LOPDays</th>
+                                    <th>@Payroll.SalaryDays</th>
+                                    <th>@Payroll.AttendanceDays</th>
+
+                                    <th>@Payroll.TotalDays</th>
+                                    <th>@Payroll.WorkingDays</th>
+                                    <th>@Payroll.LOPDays</th>
+                                    <th>@Payroll.SalaryDays</th>
+                                    <th>@Payroll.AttendanceDays</th>
+
+                                    <th>@Payroll.TotalDays</th>
+                                    <th>@Payroll.WorkingDays</th>
+                                    <th>@Payroll.LOPDays</th>
+                                    <th>@Payroll.SalaryDays</th>
+                                    <th>@Payroll.AttendanceDays</th>
+
+                                </tr>
+
+                            </thead>
+                            <tbody>
+                                @for (var i = 0; i < 10; i++)
+                                {
+
+                                    <tr>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                        <td align="right">0</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/Attendance")
+<script type="text/javascript">   
+    Attendance.list();
+</script>
+

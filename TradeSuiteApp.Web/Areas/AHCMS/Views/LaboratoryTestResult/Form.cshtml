@@ -1,0 +1,35 @@
+﻿
+@model TradeSuiteApp.Web.Areas.AHCMS.Models.LaboratoryTestResultModel
+@{
+    ViewBag.Title = "Form";
+}
+
+<div class="uk-form-row">
+    <div>
+        <br />
+        @Html.HiddenFor(model => model.OPID)
+        @Html.HiddenFor(model => model.SalesInvoiceID)
+        @Html.HiddenFor(model => model.PatientID)
+        <table id="labtest_result_list" class="uk-table" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-10"></th>
+                    <th >@AHCMS.LabTest</th>
+                    <th class="width-100">@AHCMS.ObservedValue</th>
+                    <th class="width-40">@AHCMS.Unit</th>
+                    <th class="width-150">@AHCMS.BiologicalReference</th>                   
+                    <th class="width-150">@AHCMS.FileUpload</th>
+                    <th class="width-100">Collected Time</th>
+                    <th class="width-100">Reported Time</th>                   
+                    @*<th class="width-100">@AHCMS.Status </th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @Html.Partial("~/Areas/AHCMS/Views/LaboratoryTestResult/InvoicedLabTestItems.cshtml", Model)
+            </tbody>
+        </table>
+        <input type="hidden" id="item-count" value="" />
+    </div>
+</div>
+

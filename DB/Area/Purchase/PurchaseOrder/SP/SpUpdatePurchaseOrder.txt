@@ -1,0 +1,105 @@
+  
+  
+ALTER PROCEDURE [Purchase].[SpUpdatePurchaseOrder]    
+(    
+@ID INT,    
+@SupplierID INT,    
+@DeliveryWithin INT,    
+@AdvancePercentage INT,    
+@AdvanceAmount NUMERIC(18,4),    
+@PurchaseOrderDate Date,    
+@ShippingAddressID int,    
+@BillingAddressID int,    
+@SelectedQuotationID int,    
+@OtherQuotationIDS varchar(100),    
+@IsDraft bit,    
+@Remarks varchar(200),
+@SuppDocCode VARCHAR(200),
+@SuppShipCode VARCHAR(200),
+@SuppOtherRemark VARCHAR(200),
+@SuppQuotNo VARCHAR(200),
+@Shipment VARCHAR(200),
+@OrderType VARCHAR(200),
+@SuppDocAmount NUMERIC(18,4),
+@SuppShipAmount NUMERIC(18,4),
+@SuppOtherCharge NUMERIC(18,4),
+@SupplierReferenceNo varchar(100),  
+@TermsOfPrice varchar(100),  
+@PaymentModeID INT,    
+@PaymentWithinID INT,    
+@SGSTAmt NUMERIC(18,4),    
+@CGSTAmt NUMERIC(18,4),    
+@IGSTAmt NUMERIC(18,4),  
+@VATAmount NUMERIC(18,4),  
+@FreightAmt NUMERIC(18,4),    
+@OtherCharges NUMERIC(18,4),    
+@PackingShippingCharges NUMERIC(18,4),    
+@Discount NUMERIC(18,4),   
+@NetAmt NUMERIC(18,4), 
+@GrossAmount NUMERIC(18,4),
+@SalesOrderLocationID int,    
+@CreatedUserID int,    
+@FinYear INT,    
+@LocationID INT,    
+@ApplicationID INT)    
+AS     
+BEGIN    
+ SET NOCOUNT ON    
+ Declare @SelectedQuotation int ,@IsDraftBeforeEdit bit , @SerialNo Varchar(20), @CreatedDate datetime  
+  Declare @OtherQuotations varchar(100),@SupplierCategoryID INT, @IsApproved int = 0, @IsInterCompanySupplier int   
+  
+ select @LocationID = LocationID, @SerialNo = PurchaseOrderNo, @SelectedQuotation = SelectedQuotationID,@OtherQuotations = OtherQuotationIDS,@IsDraftBeforeEdit = IsDraft from PurchaseOrder  where ID = @ID   
+  SET @IsApproved = 1  
+ IF @IsDraft = 0  
+ BEGIN   
+  SELECT @SupplierCategoryID = SupplierCategoryID FROM Supplier WHERE ID = @SupplierID  
+  IF (@SupplierCategoryID = 9)  
+  BEGIN  
+   SET @IsApproved = 1  
+   EXEC Common.SpUpdateSerialNo 'LocalPurchaseInvoice','Code',@FinYear,@LocationID ,@ApplicationID,@SerialNo = @SerialNo OUT  
+  END  
+  ELSE  
+  BEGIN  
+   EXEC Master.SpIsInterCompanySupplier @SupplierID, @ApplicationID, @IsInterCompanySupplier = @IsInterCompanySupplier output  
+   IF @IsInterCompanySupplier = 1   
+   BEGIN  
+    SET @IsApproved = 1  
+   END  
+   If  SUBSTRING(@SerialNo, 4, 1) ='D'  
+   Begin  
+   EXEC Common.SpUpdateSerialNo 'PurchaseOrder','Code',@FinYear,@LocationID ,@ApplicationID,@SerialNo = @SerialNo OUT  
+   End  
+  END  
+  SET @PurchaseOrderDate = CAST(getdate() AS date)  
+  SET @CreatedDate = CURRENT_TIMESTAMP  
+ END  
+  
+  EXEC SpLogChange 'PurchaseOrder','ID',@ID,@CreatedUserID,@LocationID,@ApplicationID  
+  
+  EXEC SpLogChange 'PurchaseOrderTrans','PurchaseOrderID',@ID,@CreatedUserID,@LocationID,@ApplicationID  
+  
+ UPDATE PurchaseOrder SET PurchaseOrderNo=@SerialNo, SupplierID = @SupplierID,PurchaseOrderDate = @PurchaseOrderDate,   
+ DeliveryWithin = @DeliveryWithin,AdvancePercentage = @AdvancePercentage,AdvanceAmount = @AdvanceAmount,PaymentModeID = @PaymentModeID,    
+ PaymentWithinID = @PaymentWithinID,SGSTAmt = @SGSTAmt,CGSTAmt = @CGSTAmt,IGSTAmt = @IGSTAmt,VATAmount=@VATAmount, FreightAmt = @FreightAmt,  
+ OtherCharges = @OtherCharges,ShippingAddressID =@ShippingAddressID ,BillingAddressID = @BillingAddressID,    
+ SelectedQuotationID = @SelectedQuotationID, OtherQuotationIDS = @OtherQuotationIDS,CreatedUserID = @CreatedUserID, SalesOrderLocationID =@SalesOrderLocationID ,  
+ SupplierReferenceNo = @SupplierReferenceNo,TermsOfPrice = @TermsOfPrice, IsApproved = @IsApproved, PackingShippingCharge = @PackingShippingCharges,
+ GrossAmount=@GrossAmount,Discount=@Discount,NetAmt=@NetAmt,IsDraft = @IsDraft,Remarks = @Remarks,
+ SuppDocCode=@SuppDocCode,SuppShipCode=@SuppShipCode,SuppOtherRemark=@SuppOtherRemark,SuppQuotNo=@SuppQuotNo,Shipment=@Shipment,OrderType=@OrderType,
+ SuppDocAmount=@SuppDocAmount,SuppShipAmount=@SuppShipAmount,SuppOtherCharge=@SuppOtherCharge, CreatedDate = @CreatedDate,  
+ Status= case When @IsDraft=1 Then 'Draft' Else Case When @IsApproved=1 Then 'Approved' Else 'ToBeApproved' End End     
+ WHERE  ID = @ID AND ApplicationID = @ApplicationID    
+     
+ if @IsDraft = 0 AND @IsDraftBeforeEdit = 0  
+ begin  
+  update A set A.QtyMet = A.QtyMet - B.Quantity   
+   from PurchaseRequisitionTrans A   
+   inner join PurchaseOrderTrans B on ISNULL(B.PRTransID,0) = A.ID   
+   where B.PurchaseOrderID = @ID  AND B.ApplicationID = @ApplicationID   
+ end  
+   
+   
+ DELETE FROM PurchaseOrderTrans WHERE PurchaseOrderID = @ID AND  ApplicationID = @ApplicationID   
+END   
+  
+  

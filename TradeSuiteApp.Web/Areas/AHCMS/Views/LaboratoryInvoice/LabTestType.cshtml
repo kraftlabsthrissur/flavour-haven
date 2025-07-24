@@ -1,0 +1,44 @@
+﻿
+@model TradeSuiteApp.Web.Areas.AHCMS.Models.LabTestModel
+<input type="button" id="show-modal" data-uk-modal="{target:'#select_type', center:false}" />
+<div class="uk-modal" id="select_type" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Select Test Type<i class="material-icons"></i></h3>
+        </div>
+        <br />
+        <div class="section-group">
+            <div class="uk-form-row">
+                <div class="uk-width-medium-1-1">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-2-10">
+                            <div class="uk-input-group">
+                                <label for="uk_dp_start">@AHCMS.IssueDate</label>
+                                @Html.TextBoxFor(m => m.IssueDate, new { @class = "md-input label-fixed current-date date" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-2-10">
+                            <div class="uk-input-group">
+                                <label>Test Type</label>
+                                @Html.DropDownList("Type", new List<SelectListItem>
+                                     {
+                            new SelectListItem{ Text="Internal", Value = "Internal" },
+                            new SelectListItem{ Text="External", Value = "External"} }, new { @class = "md-input label-fixed" })
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-2-5" id="supplier">
+                            <label>@AHCMS.Supplier</label>
+                            @Html.DropDownListFor(model => model.SupplierID, Model.SupplierList, "Select", new { @class = "md-input label-fixed" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn  uk-modal-close">@Common.Close</button>
+            <button type="button" class="md-btn md-btn-primary" id="btnOk">Ok</button>
+            <input type="hidden" id="Index" />
+        </div>
+    </div>
+</div>

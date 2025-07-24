@@ -1,0 +1,417 @@
+﻿@model TradeSuiteApp.Web.Areas.Sales.Models.CounterSalesModel
+@{
+    ViewBag.Title = "Print";
+}
+
+
+@{  int BodyLines = 5;
+    int TotalPages = 0;
+    int TotalLines = 0;
+    int PrintedLines = 0;
+    decimal TotalGrossAmt = 0;
+    decimal SubTotalGrossAmt = 0;
+    decimal SubTotalSGSTAmt = 0;
+    decimal SubTotalCGSTAmt = 0;
+    decimal SubTotalCessAmt = 0;
+    decimal SubTotalNetAmt = 0;
+    TotalLines = Model.Items.Count();
+    TotalPages = TotalLines / BodyLines;
+    if (TotalLines % BodyLines == 0)
+    {
+        TotalPages = TotalLines / BodyLines;
+    }
+    else
+    {
+        ++TotalPages;
+    }
+}
+
+<style>
+    @@font-face {
+        font-family: "FontPrint";
+        /*src: url("http://localhost:55787/Assets/css/fonts/dotrice.condensed.otf");
+        src: url("http://localhost:55787/Assets/css/fonts/dotrice.condensed.otf") format('opentype');*/
+        src: url("~/Assets/css/fonts/FatCow.otf");
+        /*src: url("http://localhost:55787/Assets/css/fonts/dotrice.condensed.otf") format('opentype');*/
+        font-weight: normal;
+        font-style: normal;
+    }
+
+
+
+
+    @@font-face {
+        font-family: "sansserif";
+        src: url("../../../../Assets/css/fonts/new/OpenSans-CondLight.ttf");
+    }
+
+    @@font-face {
+        font-family: "fakereceipt";
+        src: url("../../../../Assets/css/fonts/new/fakereceipt.ttf");
+    }
+
+    @@font-face {
+        font-family: "dotricer";
+        src: url("../../../../Assets/css/fonts/new/Dotrice-Regular.otf");
+    }
+
+    @@font-face {
+        font-family: "dotricec";
+        src: url("../../../../Assets/css/fonts/new/Dotrice-Condensed.otf");
+    }
+
+    @@font-face {
+        font-family: "dotriceb";
+        src: url("../../../../Assets/css/fonts/new/Dotrice-Bold.otf");
+    }
+
+     @@font-face {
+        font-family: "dotmatrx";
+        src: url("../../../../Assets/css/fonts/new/Dotmatrx.ttf");
+    }
+
+      @@font-face {
+        font-family: "segoeui";
+        src: url("../../../../Assets/css/fonts/new/segoeui.ttf");
+    }
+
+        @@font-face {
+        font-family: "times";
+        src: url("../../../../Assets/css/fonts/new/times.ttf");
+    }
+
+    .sansserif {
+        font: normal 12px "sansserif";
+    }
+
+    .fakereceipt {
+        font: normal 12px "fakereceipt";
+    }
+
+    .dotricer {
+        font: normal 12px "dotricer";
+    }
+
+    .dotricec {
+        font: normal 12px "dotricec";
+    }
+
+    .dotriceb {
+        font: normal 12px "dotriceb";
+    }
+
+    .dotmatrx {
+        font-family: "dotmatrx";
+    }
+
+    .segoeui {
+        font-family: "segoeui";
+    }
+
+    .times {
+        font: 300 15px "times"
+    }
+
+
+
+
+
+
+    th {
+        border-top: 1px dashed;
+        border-bottom: 1px dashed;
+        font-size: 12px;
+        text-align: left;
+        font-family: math;
+    }
+
+    td {
+        /*font-size: 11px;*/
+        padding: 10px;
+        /*font-weight: bold;*/
+    }
+
+    .name {
+        width: 200px;
+    }
+
+    .align {
+        text-align: right;
+    }
+
+    .border {
+        border-left: 1px dashed;
+        text-align: center;
+    }
+
+    p {
+        font-size: 10px;
+        font-family: math;
+        height: 10px;
+    }
+
+    #head {
+        font-weight: bold;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .subHead {
+        font-weight: normal;
+        text-align: center;
+    }
+
+    .fontSize16 {
+        font-size: 12px;
+    }
+
+    .fontweightnormal {
+        font-weight: normal;
+    }
+
+    .width100px {
+        width: 100px;
+    }
+
+    .width50px {
+        width: 50px;
+    }
+
+    .fontSize10px {
+        font-size: 10px;
+    }
+
+    .colwidth {
+        width: 20px;
+    }
+
+    .widthpx {
+        width: 60px;
+    }
+</style>
+
+<script>
+    function pageHeader() {
+        var table = document.getElementById("pageHeader");
+        var header = table.createTHead();
+        var row = header.insertRow(0);
+        var cell = row.insertCell(0);
+        cell.innerHTML = "<b>Sl. No.</b>";
+    }
+</script>
+
+@*<table>
+    <tbody>
+        <tr class="sansserif">
+            <td>sansserif</td>
+            <td>The font is not clear. What are the types of font that I can use that can display the page clearly when printing the documents.</td>
+        </tr>
+        <tr class="fakereceipt">
+            <td>fakereceipt</td>
+            <td>The font is not clear. What are the types of font that I can use that can display the page clearly when printing the documents.</td>
+        </tr>
+        <tr class="dotricer">
+            <td>dotricer</td>
+            <td>The font is not clear. What are the types of font that I can use that can display the page clearly when printing the documents.</td>
+        </tr>
+        <tr class="dotricec">
+            <td>dotricec</td>
+            <td>The font is not clear. What are the types of font that I can use that can display the page clearly when printing the documents.</td>
+        </tr>
+        <tr class="dotriceb">
+            <td>dotriceb</td>
+            <td>The font is not clear. What are the types of font that I can use that can display the page clearly when printing the documents.</td>
+        </tr>
+
+        <tr class="dotmatrx">
+            <td>dotmatrx</td>
+            <td>The font is not clear. What are the types of font that I can use that can display the page clearly when printing the documents.</td>
+        </tr>
+
+        <tr class="segoeui">
+            <td>segoeui</td>
+            <td>The font is not clear. What are the types of font that I can use that can display the page clearly when printing the documents.</td>
+        </tr>
+
+        <tr class="times">
+            <td>times</td>
+            <td>The font is not clear. What are the types of font that I can use that can display the page clearly when printing the documents.</td>
+        </tr>
+
+    </tbody>
+</table>*@
+
+
+@for (var i = 0; i < TotalPages; i++)
+    {
+        <table style="width:100%">
+            @for (int index = 1; index <= 2; ++index)
+            {
+                <tr style='height:16px'></tr>
+            }
+            <tr>
+                <td colspan="5" id="gst">GST : @Model.GSTNo</td>
+            </tr>
+            <tr>
+                <td id="head" colspan="13">@Model.CompanyName.ToUpper()</td>
+            </tr>
+            <tr>
+                <td class="subHead" colspan="13"><center>@Model.Address1 &nbsp;  @Model.Address2</center></td>
+            </tr>
+            <tr>
+                <td class="subHead" colspan="13"><center>@Model.Address4 &nbsp;  @Model.Address5</center></td>
+            </tr>
+            <tr>
+                <td class="title" colspan="13"> <center>RETAIL INVOICE - CASH</center></td>
+            </tr>
+        </table>
+        <table style="width:100%">
+            <tr style="height:16px"></tr>
+            <tr>
+                <td colspan="8">Invoice No. &nbsp; : &nbsp; @Model.TransNo</td>
+                <td colspan="5">Invoice Date &nbsp; : &nbsp; @Model.TransDate</td>
+            </tr>
+            <tr>
+                <td colspan="8">Patient &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;: &nbsp; @Model.PartyName</td>
+                <td colspan="5">Doctor &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; : &nbsp; @Model.DoctorName</td>
+            </tr>
+            <tr>
+                <td colspan="13" class="align">@string.Concat(new object[4] { "Page : ", i + 1, " of ", TotalPages })</td>
+            </tr>
+            <tr style="height:16px"></tr>
+        </table>
+
+        var Lines = (i + 1) * BodyLines >= TotalLines ? TotalLines : (i + 1) * BodyLines;
+        PrintedLines = 0;
+        SubTotalGrossAmt = 0;
+        SubTotalSGSTAmt = 0;
+        SubTotalCGSTAmt = 0;
+        SubTotalCessAmt = 0;
+        SubTotalNetAmt = 0;
+        <table style="width:100%" cellspacing="0" cellpadding="3">
+            <thead>
+                <tr style="height:40px">
+                    <th class="colwidth">Sl. No.</th>
+                    <th class="border">Commodity / Item</th>
+                    <th class="border">UOM</th>
+                    <th class="border">Batch</th>
+                    <th class="border widthpx">Exp. Date</th>
+                    <th class="border">Unit Price</th>
+                    <th class="border">Qty</th>
+                    <th class="border">Gross Value</th>
+                    <th class="border">GST %</th>
+                    <th class="border">SGST Amt</th>
+                    <th class="border">CGST Amt</th>
+                    <th class="border">Cess Amt</th>
+                    <th class="border">Total Amt</th>
+                    <th class="border">HSN Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var j = (i) * BodyLines; j < Lines; j++)
+                {
+                    var item = Model.Items[j];
+                    var name = item.Name.Substring(0, Math.Min(item.Name.Length, 25));
+                    TotalGrossAmt += @item.GrossAmount;
+                    SubTotalGrossAmt += @item.GrossAmount;
+                    SubTotalSGSTAmt += @item.SGSTAmount;
+                    SubTotalCGSTAmt += @item.CGSTAmount;
+                    SubTotalCessAmt += @item.CessAmount;
+                    SubTotalNetAmt += @item.NetAmount;
+                    DateTime ExpDate = Convert.ToDateTime(@item.ExpiryDateString, System.Globalization.CultureInfo.GetCultureInfo("hi-IN").DateTimeFormat);
+                    <tr style="height:16px">
+                        <td> @(j + 1)</td>
+                        <td class="name">@name</td>
+                        <td>@item.Unit</td>
+                        <td>@item.BatchNo</td>
+                        <td class="widthpx">@ExpDate.ToString("MMM yyy").ToUpper()</td>
+                        <td class="align">@string.Format("{0:0.00}", @item.BasicPrice)</td>
+                        <td class="align">@string.Format("{0:0}", @item.Qty)</td>
+                        <td class="align">@string.Format("{0:0.00}", @item.GrossAmount)</td>
+                        <td class="align">@item.IGSTPercentage</td>
+                        <td class="align">@string.Format("{0:0.00}", @item.SGSTAmount)</td>
+                        <td class="align">@string.Format("{0:0.00}", @item.CGSTAmount)</td>
+                        <td class="align">@string.Format("{0:0.00}", @item.CessAmount)</td>
+                        <td class="align">@string.Format("{0:0.00}", @item.NetAmount)</td>
+                        <td>@item.HSNCode</td>
+                    </tr>
+                    ++PrintedLines;
+                }
+            </tbody>
+        </table>
+        if (i == TotalPages - 1)
+        {
+            <table style="width:100%" cellspacing="0" cellpadding="3">
+                @for (int index = 1; index <= BodyLines - PrintedLines; ++index)
+                {
+                    <tr style="height:16px"></tr>
+                }
+                <tfoot>
+                    <tr style='height:30px'>
+                        <th class="width100px">Total:</th>
+                        <th class="align width100px"></th>
+                        <th class="align width100px"></th>
+                        <th class="align width100px"></th>
+                        <th class="align width100px"></th>
+                        <th class="align width100px"></th>
+                        <th class="align width100px"></th>
+                        <th class="align width100px"></th>
+                        <th class="align fontSize10px">@string.Format("{0:0.00}", @TotalGrossAmt)</th>
+                        <th class="align width100px fontSize10px"></th>
+                        <th class="align fontSize10px">@string.Format("{0:0.00}", @Model.SGSTAmount)</th>
+                        <th class="align fontSize10px">@string.Format("{0:0.00}", @Model.CGSTAmount)</th>
+                        <th class="align fontSize10px">@string.Format("{0:0.00}", @Model.CessAmount)</th>
+                        <th class="align fontSize10px">@string.Format("{0:0.00}", @Model.NetAmount)</th>
+                        <th class="align widthpx fontSize10px"></th>
+                    </tr>
+                    <tr style="height:16px"></tr>
+                    <tr>
+                        <td colspan="14" class="align fontweightnormal">Grand Total(Rounded off)</td>
+                        <td class="align fontSize16">@string.Format("{0:0.00}", Model.NetAmount)</td>
+                    </tr>
+                    <tr style="height:16px"></tr>
+                    <tr>
+                        <td colspan="14" class="fontSize16">Total : Rupees @Model.NetAmountInWords Only</td>
+                    </tr>
+                    <tr>
+                        <td colspan="14" class="align fontweightnormal">Authorised Signatory</td>
+                    </tr>
+                    <tr>
+                        <td colspan="14" class="align fontweightnormal">[With Status & Seal]</td>
+                    </tr>
+                </tfoot>
+            </table>
+        }
+        else
+        {
+            <table style="width:100%" cellspacing="0" cellpadding="3">
+                <tfoot>
+                    <tr style="height:30px">
+                        <th class="width100px">Sub Total:</th>
+                        <th class="align width100px"></th>
+                        <th class="align width100px"></th>
+                        <th class="align width100px"></th>
+                        <th class="align width100px"></th>
+                        <th class="align width100px"></th>
+                        <th class="align width100px"></th>
+                        <th class="align width100px"></th>
+                        <th class="align fontSize10px">@string.Format("{0:0.00}", @SubTotalGrossAmt)</th>
+                        <th class="align width50px fontSize10px"></th>
+                        <th class="align fontSize10px">@string.Format("{0:0.00}", @SubTotalSGSTAmt)</th>
+                        <th class="align fontSize10px">@string.Format("{0:0.00}", @SubTotalCGSTAmt)</th>
+                        <th class="align fontSize10px">@string.Format("{0:0.00}", @SubTotalCessAmt)</th>
+                        <th class="align fontSize10px">@string.Format("{0:0.00}", @SubTotalNetAmt)</th>
+                        <th class="align width50px fontSize10px"></th>
+                    </tr>
+                    <tr style="height:16px"></tr>
+                    <tr>
+                        <td colspan="13" class="align">Continue.....</td>
+                    </tr>
+                    @for (int index = 1; index <= 9; ++index)
+                    {
+                        <tr style="height:16px"></tr>
+                    }
+                </tfoot>
+            </table>
+        }
+    }

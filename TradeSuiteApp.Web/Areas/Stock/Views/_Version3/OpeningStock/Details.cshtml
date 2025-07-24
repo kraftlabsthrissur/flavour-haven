@@ -1,0 +1,97 @@
+﻿@model TradeSuiteApp.Web.Areas.Stock.Models.OpeningStockModel
+
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Stock.OpeningStockItems</h1>
+            <span class="uk-text-upper uk-text-small">@Stock.OpeningStockDetails</span>
+        </div>
+        <div class="heading_actions print-actions uk-hidden">
+            <a class="md-btn print ">@Common.Print</a>
+            <a class="md-btn close-preview ">@Common.Close</a>
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="heading_actions hidden-print-preview">
+            @if (Model.Status == "draft")
+            {
+                @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "Edit", "OpeningStock", new { Area = "Stock", id = (Model != null) ? Model.ID : 0 }, new { @class = "md-btn" }))
+            }
+                @Html.ActionLink(Common.Close, "Index", "OpeningStock", new { Area = "Stock" }, new { @class = "md-btn " })
+        </div>
+    </div>
+
+
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-1">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-10">
+                                        <label>@Stock.TransNo</label>
+                                        @Html.TextBoxFor(m => m.TransNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                    </div>
+                                    <div class="uk-width-medium-1-10">
+                                        <label for="uk_dp_start">@Stock.Date</label>
+                                        @Html.TextBoxFor(m => m.Date, new { @class = "md-input", @id = "txtDate", @disabled = "disabled" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <table id="OpeningStock" class="uk-table" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="width-10">@Common.SerialNo</th>
+                                    <th class="width-150">@Stock.ItemName</th>
+                                    <th class="width-60">@Stock.Batch</th>
+                                    <th class="width-50">@Stock.ExpiryDate</th>
+                                    <th class="width-20">@Stock.Unit</th>
+                                    <th class="width-50">@Stock.Quantity</th>
+                                    <th class="width-50">@Stock.MRP/Rate</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td class="uk-text-center serial-no">@(1 + @Model.Items.IndexOf(item))</td>
+                                        <td class="item-name">@item.ItemName </td>
+                                        <td class="batch">@item.Batch</td>
+                                        <td class="ExpDate">@item.ExpDate</td>
+                                        <td class="unit">@item.Unit </td>
+                                        <td class="mask-production-qty"> @item.Qty</td>
+                                        <td class="mask-currency"> @item.Value</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/OpeningStock")
+<script type="text/javascript">
+    openingstock.details();
+</script>
+

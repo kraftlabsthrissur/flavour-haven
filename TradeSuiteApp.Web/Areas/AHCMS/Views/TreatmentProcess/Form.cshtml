@@ -1,0 +1,58 @@
+﻿
+@model TradeSuiteApp.Web.Areas.AHCMS.Models.TreatmentScheduleModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-width-medium-1-1">
+            <div class="uk-grid" data-uk-grid-margin="">
+                <div class="uk-width-medium-1-10">
+                    <div class="uk-input-group">
+                        <label for="uk_dp_start">@AHCMS.Date</label>
+                        @Html.TextBoxFor(m => m.Date, new { @class = "md-input label-fixed current-date date" })
+                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                    </div>
+                </div>
+                <div class="uk-width-medium-1-10">
+                    <div class="md-input-wrapper md-input-filled">
+                        <label>&nbsp;</label>
+                        <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnShow">@Common.Show</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="uk-form-row">
+    <div>
+        <table id="Treatment-issue-list" class="uk-table" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-20"></th>
+                    <th class="width-80">@AHCMS.Patient</th>
+                    <th class="width-80">@AHCMS.Doctor</th>
+                    <th class="width-80">@AHCMS.Treatment</th>
+                    <th class="width-10">@AHCMS.NoOfTimes</th>
+                    <th class="width-10">@AHCMS.Stage</th>
+                    <th class="width-40">@AHCMS.TreatmentRoom</th>
+                    <th class="width-20">@AHCMS.StartTime</th>
+                    <th class="width-20">@AHCMS.EndTime</th>
+                    <th class="width-10">@AHCMS.Duration</th>
+                    <th class="width-50">@AHCMS.Therapist</th>
+                    <th class="width-10">@AHCMS.Status</th>
+                    <th class="width-80">@AHCMS.Remarks</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @Html.Partial("~/Areas/AHCMS/Views/TreatmentProcess/ScheduleList.cshtml", Model)
+            </tbody>
+        </table>
+
+        <input type="hidden" id="item-count" value="" />
+        <input type="hidden" id="treatment-schedule-id" value=""/>
+    </div>
+</div>

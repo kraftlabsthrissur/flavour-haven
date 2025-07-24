@@ -1,0 +1,28 @@
+﻿
+@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+
+
+@if (Model.RoundsItems != null)
+{
+    foreach (var item in Model.RoundsItems.Select((value, i) => new { i = (i + 1), value }))
+    {
+
+        <tr>
+            <td class="uk-text-center">
+                @item.i
+            </td>
+            <td class="Date">@item.value.RoundsDate</td>
+            <td class="RoundTime">@item.value.RoundsTime</td>
+            <td class="ClinicalNote">@item.value.ClinicalNote</td>
+            <td class="Remarks">@item.value.Remarks</td>
+            <td class="Doctor">@item.value.Doctor
+                <input type="hidden" class="UserID" value="@item.value.UserID" />
+            </td>
+            <td></td>
+        </tr>
+    }
+}
+
+
+
+

@@ -1,0 +1,27 @@
+          
+-- =============================================          
+-- Author:  <Author,,neethu@kraftlabs>          
+-- Create date: <Create 06-6-19,,>          
+-- Description: <Description,,>          
+-- =============================================          
+ALTER PROCEDURE [Purchase].[SpGetDirectPurchaseOrder]          
+(          
+@PurchaseOrderID INT,          
+@FinYear INT,          
+@LocationID INT,          
+@ApplicationID INT          
+)          
+AS          
+BEGIN          
+ DECLARE @SupplierID INT;          
+           
+ SELECT P.ID,P.PurchaseOrderNo,P.PurchaseOrderDate,P.SupplierID,P.IsDraft,P.NetAmt,P.SGSTAmt,P.CGSTAmt,P.IGSTAmt, P.VATAmount,P.IsGST,P.IsVAt,
+ P.NetAmt-(SGSTAmt+CGSTAmt+IGSTAmt)+(ISNULL(P.OtherDeductions,0)+ISNULL(P.Discount,0)) TaxableAmount,S.IsGSTRegistered,BA.StateID,S.Name Supplier,
+ (Select c.Code from Currency c WHERE c.ID=s.CurrencyID)CurrencyCode,ISNULL(W.Name,'') Store,ISNULL(W.ID ,0) StoreID,ISNULL(P.Discount,0) Discount,
+ ISNULL(P.OtherDeductions,0) OtherDeductions, P.Cancelled,P.InvoiceDate,ISNULL(P.InvoiceNo,'') AS InvoiceNo      
+ FROM PurchaseOrder P           
+ INNER JOIN Supplier S ON S.ID=P.SupplierID          
+ LEFT JOIN WareHouse W ON W.ID=P.StoreID          
+ Inner join Addresses BA WITH(NOLOCK) on BA.PartyID = S.ID and BA.PartyType = 'Supplier' and BA.IsDefault = 1 and BA.IsBilling = 1           
+  Where P.ID=@PurchaseOrderID AND P.ApplicationID=@ApplicationID AND P.LocationID=@LocationID           
+END 

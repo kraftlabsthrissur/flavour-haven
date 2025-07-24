@@ -1,0 +1,228 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.AdvancePaymentModel
+@{
+    ViewBag.Title = "Print";
+}
+
+@{  int BodyLines = 25;
+    int TotalPages = 0;
+    int TotalLines = 0;
+    int PrintedLines = 0;
+    decimal TotalTDSAmt = 0;
+    decimal SubTotalAmt = 0;
+    decimal SubTotalTDSAmt = 0;
+    decimal SubTotalNetAmt = 0;
+    TotalLines = Model.List.Count();
+    TotalPages = TotalLines / BodyLines;
+    if (TotalLines % BodyLines == 0)
+    {
+        TotalPages = TotalLines / BodyLines;
+    }
+    else
+    {
+        ++TotalPages;
+    }
+}
+
+<style>
+    th {
+        border-top: 1px dashed;
+        border-bottom: 1px dashed;
+        font-size: 12px;
+        text-align: left;
+        font-family: Verdana;
+    }
+
+    td {
+        font-size: 10px;
+        font-family: Verdana;
+        font-weight: bold;
+    }
+
+    .name {
+        width: 200px;
+    }
+
+    .align {
+        text-align: right;
+    }
+
+    .border {
+        border-left: 1px dashed;
+        text-align: center;
+    }
+
+    p {
+        font-size: 10px;
+        font-family: Verdana;
+        height: 10px;
+    }
+
+    #head {
+        font-weight: bold;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .subHead {
+        font-weight: normal;
+        text-align: center;
+    }
+
+    .fontSize16 {
+        font-size: 12px;
+    }
+
+    .fontweightnormal {
+        font-weight: normal;
+    }
+
+    .widthtd {
+        width: 450px;
+    }
+
+    .width100px{
+         width: 100px;
+    }
+</style>
+
+
+@for (var i = 0; i < TotalPages; i++)
+{
+    <table style="width:100%">
+        @for (int index = 1; index <= 2; ++index)
+        {
+            <tr style='height:16px'></tr>
+        }
+        <tr>
+            <td colspan="5" id="gst">GST : @Model.GSTNo</td>
+        </tr>
+        <tr>
+            <td class="title" colspan="13"> <center>Advance Payment Voucher</center></td>
+        </tr>
+        <tr>
+            <td id="head" colspan="13">@Model.CompanyName.ToUpper()</td>
+        </tr>
+        <tr>
+            <td class="subHead" colspan="13"><center>@Model.Address1 &nbsp;  @Model.Address2</center></td>
+        </tr>
+        <tr>
+            <td class="subHead" colspan="13"><center>@Model.Address4 &nbsp;  @Model.Address5</center></td>
+        </tr>
+    </table>
+    <table style="width:100%">
+        <tr style="height:16px"></tr>
+        <tr>
+            <td class="widthtd fontweightnormal">Voucher No.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp; <b>@Model.AdvancePaymentNo</b></td>
+            <td class="fontweightnormal">From Bank&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp; <b>@Model.BankDetail</b></td>
+        </tr>
+        <tr>
+            <td class="widthtd fontweightnormal">Voucher Date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp; <b>@Model.AdvancePaymentDate</b></td>
+            <td class="fontweightnormal">Payment Type&nbsp;&nbsp;: &nbsp; <b>@Model.ModeOfPaymentName</b></td>
+        </tr>
+        <tr>
+            <td class="widthtd fontweightnormal">Category&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp;<b> @Model.Category</b></td>
+            <td class="fontweightnormal">Instrument No.&nbsp;: &nbsp; <b>@Model.ReferenceNo</b></td>
+        </tr>
+        <tr>
+            <td class="widthtd fontweightnormal">Supplier /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: &nbsp; <b>@Model.SelectedName</b><br>Employee Name</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="align">@string.Concat(new object[4] { "Page : ", i + 1, " of ", TotalPages })</td>
+        </tr>
+        <tr style="height:16px"></tr>
+    </table>
+
+    var Lines = (i + 1) * BodyLines >= TotalLines ? TotalLines : (i + 1) * BodyLines;
+    PrintedLines = 0;
+    SubTotalAmt = 0;
+    SubTotalTDSAmt = 0;
+    SubTotalNetAmt = 0;
+    <table style="width:100%" cellspacing="0" cellpadding="3">
+        <thead>
+            <tr style="height:40px">
+                <th style="width:20px">Sl. No.</th>
+                <th class="border">Document Date</th>
+                <th class="border">Document No.</th>
+                <th class="border">Gross Amount</th>
+                <th class="border">TDS Amount</th>
+                <th class="border">Net Amount</th>
+                <th class="border">Remarks</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var j = (i) * BodyLines; j < Lines; j++)
+            {
+                var item = Model.List[j];
+                TotalTDSAmt += @item.TDSAmount;
+                SubTotalAmt += @item.Amount;
+                SubTotalTDSAmt += @item.TDSAmount;
+                SubTotalNetAmt += @item.NetAmount;
+                <tr style="height:16px">
+                    <td style="width:20px"> @(j + 1)</td>
+                    <td>@item.PurchaseOrderDate</td>
+                    <td>@item.TransNo</td>
+                    <td class="align width100px">@string.Format("{0:0.00}", @item.Amount)</td>
+                    <td class="align width100px">@string.Format("{0:0.00}", @item.TDSAmount)</td>
+                    <td class="align width100px">@string.Format("{0:0.00}", @item.NetAmount)</td>
+                    <td class="width100px">@item.Remarks</td>
+                </tr>
+                ++PrintedLines;
+            }
+        </tbody>
+    </table>
+    if (i == TotalPages - 1)
+    {
+        <table style="width:100%" cellspacing="0" cellpadding="3">
+            @for (int index = 1; index <= BodyLines - PrintedLines; ++index)
+            {
+                <tr style="height:16px"></tr>
+            }
+            <tfoot>
+                <tr style='height:30px'>
+                    <th colspan="3">Total:</th>
+                    <th class="align width100px">@string.Format("{0:0.00}", @Model.Amount)</th>
+                    <th class="align width100px">@string.Format("{0:0.00}", @TotalTDSAmt)</th>
+                    <th class="align width100px">@string.Format("{0:0.00}", @Model.NetAmount)</th>
+                    <th class="width100px"></th>
+                </tr>
+                <tr style="height:16px"></tr>
+                <tr>
+                    <td colspan="7" class="align fontweightnormal">Recepient Signature</td>
+                </tr>
+                <tr>
+                    <td  colspan="7" class="fontSize16">Paid Rupees @Model.NetAmountInWords Only To</td>
+                </tr>
+                <tr style="height:16px"></tr>
+                <tr style="height:16px"></tr>
+                <tr>
+                    <td class="fontweightnormal">Prepared By</td>
+                    <td colspan="2" class="fontweightnormal width100px align">Recommended By</td>
+                    <td colspan="2" class="fontweightnormal width100px align">Approved by</td>
+                    <td colspan="2" class="fontweightnormal width100px align">Director</td>
+                </tr>
+            </tfoot>
+        </table>
+    }
+    else
+    {
+        <table style="width:100%" cellspacing="0" cellpadding="3">
+            <tfoot>
+                <tr style="height:30px">
+                    <th colspan="3">Sub Total:</th>
+                    <th class="align width100px">@string.Format("{0:0.00}", @SubTotalAmt)</th>
+                    <th class="align width100px">@string.Format("{0:0.00}", @SubTotalTDSAmt)</th>
+                    <th class="align width100px">@string.Format("{0:0.00}", @SubTotalNetAmt)</th>
+                    <th class="width100px"></th>
+                </tr>
+                <tr style="height:16px"></tr>
+                <tr>
+                    <td colspan="7" class="align">Continue.....</td>
+                </tr>
+                @for (int index = 1; index <= 10; ++index)
+                {
+                    <tr style="height:16px"></tr>
+                }
+            </tfoot>
+        </table>
+    }
+}

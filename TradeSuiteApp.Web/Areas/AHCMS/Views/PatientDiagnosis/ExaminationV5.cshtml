@@ -1,0 +1,327 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+@if (Model.ExaminationItems != null)
+{
+    List<string> Temp = new List<string>();
+    var TempGroupName = "";
+    var count = 0;
+    int slNo = 1;
+
+    foreach (var item in Model.ExaminationItems.Select((value, i) => new { i = (i + 1), value }))
+    {
+        if (item.value.Type == "Title")
+        {
+
+            <tr class="diagnosis_res">
+                <td></td>
+                <td><label class="label-fixed tille_label">@item.value.GroupName</label> </td>
+                <td></td>
+            </tr>
+        }
+
+        else if (item.value.Type == "Description")
+        {
+            <tr class="diagnosis_res">
+                @if (item.value.IsParent == false)
+                {
+                    <td class="uk-text-center"></td>
+                }
+                else
+                {
+                    <td class="uk-text-center">@slNo</td>
+                    slNo++;
+                }
+                <td class="width-70 Area">
+                    @item.value.GroupName
+                </td>
+
+                <td>
+                    @if (!Model.IsCompleted)
+                    {
+                        <input type="hidden" class="ID" value="@item.value.ID" />
+                        @Html.TextBoxFor(model => @item.value.Description, new { @class = "md-input label-fixed examination-results description " + @item.value.Name })
+                    }
+                    else
+                    {
+                        <input type="hidden" class="ID" value="@item.value.ID" />
+                        @Html.TextBoxFor(model => @item.value.Description, new { @class = "md-input label-fixed examination-results description " + @item.value.Name, @disabled = "disabled" })
+
+                    }
+                </td>
+
+            </tr>
+        }
+
+        else if (item.value.Type == "Value")
+        {
+            count += 1;
+            if (TempGroupName == item.value.GroupName)
+            {
+                if (!Model.IsCompleted)
+                {
+                    <div class="width-100 dropdownline">
+                        <label>@item.value.Name</label>
+                        @Html.Raw("<input type = 'hidden' class='ID' value=" + @item.value.ID + " />")
+                        @Html.DropDownListFor(Model => @item.value.GeneralOptionID,
+                                                                                                              new SelectList(Model.GeneralOptions.First(a => a.Key == @item.value.Name).Value, "value", "text", @item.value.GeneralOptionID),
+                                                                                                              "Select", new { @class = "md-input label-fixed value examination-results" })
+                    </div>
+                }
+                else
+                {
+                    <div class="width-100 dropdownline">
+                        <label>@item.value.Name</label>
+                        @Html.Raw("<input type = 'hidden' class='ID' value=" + @item.value.ID + " />")
+                        @Html.DropDownListFor(Model => @item.value.GeneralOptionID,
+                                                                                                              new SelectList(Model.GeneralOptions.First(a => a.Key == @item.value.Name).Value, "value", "text", @item.value.GeneralOptionID),
+                                                                                                              "Select", new { @class = "md-input label-fixed value examination-results", @disabled = "disabled" })
+                    </div>
+                }
+            }
+            else
+            {
+                TempGroupName = item.value.GroupName;
+
+                @Html.Raw("<tr class='diagnosis_res'>")
+                @Html.Raw("<td class='uk-text-center'>")@item.i
+
+                @Html.Raw("</td>")
+
+
+                @Html.Raw("<td class='width-70 Area'>")
+                <td class='width-70 Area'>
+
+                    @item.value.GroupName
+
+
+                    @Html.Raw("</td>")
+                </td>
+                @Html.Raw("<td class='" + @item.value.GroupName + "'><div class='width-100 dropdownline'><input type = 'hidden' class='ID' value=" + @item.value.ID + " />")
+                <td class='" + @item.value.GroupName + "'>
+                    <div class='width-100 dropdownline'>
+                        <input type='hidden' class='ID' value=" + @item.value.ID + " />
+                        if (Model.ExaminationItems.Where(a => a.GroupName == TempGroupName).Count() != count)
+                        {
+                        <
+                        <label>@item.value.Name</label>
+                        }
+                        if (!Model.IsCompleted)
+                        {
+                        @Html.DropDownListFor(Model => @item.value.GeneralOptionID,
+                                                                                                      new SelectList(Model.GeneralOptions.First(a => a.Key == @item.value.Name).Value, "value", "text", @item.value.GeneralOptionID),
+                                                                                                      "Select", new { @class = "md-input label-fixed value examination-results" }) @Html.Raw("</div>")
+                                                                                                </div>
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                @Html.DropDownListFor(Model => @item.value.GeneralOptionID,
+                                                                                                      new SelectList(Model.GeneralOptions.First(a => a.Key == @item.value.Name).Value, "value", "text", @item.value.GeneralOptionID),
+                                                                                                      "Select", new { @class = "md-input label-fixed value examination-results", @disabled = "disabled" }) @Html.Raw("</div>")
+                                                                                                    }
+
+                                                                                                    }
+                                                                                                    if (Model.ExaminationItems.Where(a => a.GroupName == TempGroupName).Count() == count)
+                                                                                                    {
+                                                                                                    count = 0;
+
+                                                                                                    @Html.Raw("</td>")
+                                                                                                </td>
+                                                                                                @Html.Raw("</tr>")
+            }
+        }
+        else
+        {
+            <tr class="diagnosis_res">
+                <td class="uk-text-center">@item.i</td>
+
+                <td class="width-70 Area">
+
+                    @item.value.GroupName
+                </td>
+
+                <td>
+                    <input type="hidden" class="ID" value="@item.value.ID" />
+
+
+                    <div class="uk-autocomplete " id="name-autocomplete">
+                        <input type="text" value="@item.value.Diagnosis" class="md-input label-fixed" />
+                        <input type="hidden" id="DiagnosisID" class="value examination-results" value="@item.value.Value" />
+                    </div>
+
+                </td>
+
+            </tr>
+        }
+    }
+}
+<tr>
+    <td>17</td>
+    <td>
+        <label class="label-fixed tille_label">PRAKRUTI</label>
+    </td>
+</tr>
+<tr>
+    <td></td>
+    <td class="width-70 Area">
+        <label class="label-fixed">SHARIRIKA</label>
+    </td>
+    <td class="SHARIRIKA">
+        <input type="radio" name="SHARIRIKA" class="dahavidyaResults" data-md-icheck value="V" /><label class="radio_label">V</label>
+        <input type="radio" name="SHARIRIKA" class="dahavidyaResults" data-md-icheck value="P" /><label class="radio_label">P</label>
+        <input type="radio" name="SHARIRIKA" class="dahavidyaResults" data-md-icheck value="K" /><label class="radio_label">K</label>
+        <input type="radio" name="SHARIRIKA" class="dahavidyaResults" data-md-icheck value="VP" /><label class="radio_label">VP</label>
+        <input type="radio" name="SHARIRIKA" class="dahavidyaResults" data-md-icheck value="VK" /><label class="radio_label">VK</label>
+        <input type="radio" name="SHARIRIKA" class="dahavidyaResults" data-md-icheck value="PK" /><label class="radio_label">PK</label>
+        <input type="radio" name="SHARIRIKA" class="dahavidyaResults" data-md-icheck value="SAMA" /><label class="radio_label">SAMA</label>
+    </td>
+</tr>
+<tr>
+    <td></td>
+    <td class="width-70 Area">
+        <label class="label-fixed">MANASIKA</label>
+    </td>
+    <td class="MANASIKA">
+        <input type="checkbox" name="SATVA" class="dahavidyaResults" data-md-icheck value="SATVA" /><label class="radio_label">SATVA</label>
+        <input type="checkbox" name="RAJA" class="dahavidyaResults" data-md-icheck value="RAJA" /><label class="radio_label">RAJA</label>
+        <input type="checkbox" name="TAMA" class="dahavidyaResults" data-md-icheck value="TAMA" /><label class="radio_label">TAMA</label>
+    </td>
+</tr>
+<tr>
+    <td>18</td>
+    <td class="width-70 Area">
+        <label class="label-fixed tille_label">VIKRUTI</label>
+    </td>
+    <td></td>
+</tr>
+<tr>
+    <td></td>
+    <td class="width-70 Area">
+        <label class="label-fixed">DOSHA</label>
+    </td>
+    <td><input type="text" name="DOSHA" class="md-input label-fixed dahavidyaResults DOSHA" data-md-icheck value="" /></td>
+</tr>
+<tr>
+    <td></td>
+    <td class="width-70 Area">
+        <label class="label-fixed">DHATU</label>
+    </td>
+    <td><input type="text" name="DHATU" class="md-input label-fixed dahavidyaResults DHATU" data-md-icheck value="" /></td>
+</tr>
+<tr>
+    <td></td>
+    <td class="width-70 Area">
+        <label class="label-fixed">MALA</label>
+    </td>
+    <td><input type="text" name="MALA" class="md-input label-fixed dahavidyaResults MALA" data-md-icheck value="" /></td>
+</tr>
+<tr>
+    <td>19</td>
+    <td class="width-70 Area">
+        <label class="label-fixed tille_label">SARA</label>
+    </td>
+    <td class="SARA">
+        <input type="checkbox" name="TWAK" class="dahavidyaResults" data-md-icheck value="TWAK" /><label class="radio_label">TWAK</label>
+        <input type="checkbox" name="RAKTA" class="dahavidyaResults" data-md-icheck value="RAKTA" /><label class="radio_label">RAKTA</label>
+        <input type="checkbox" name="MAMSA" class="dahavidyaResults" data-md-icheck value="MAMSA" /><label class="radio_label">MAMSA</label>
+        <input type="checkbox" name="MEDA" class="dahavidyaResults" data-md-icheck value="MEDA" /><label class="radio_label">MEDA</label>
+        <input type="checkbox" name="ASTHI" class="dahavidyaResults" data-md-icheck value="ASTHI" /><label class="radio_label">ASTHI</label>
+        <input type="checkbox" name="MAJJA" class="dahavidyaResults" data-md-icheck value="MAJJA" /><label class="radio_label">MAJJA</label>
+        <input type="checkbox" name="SATWA" class="dahavidyaResults" data-md-icheck value="SATWA" /><label class="radio_label">SATWA</label>
+    </td>
+</tr>
+<tr>
+    <td>20</td>
+    <td class="width-70 Area">
+        <label class="label-fixed tille_label">SAMHANANA</label>
+    </td>
+    <td class="SAMHANANA">
+        <input type="radio" name="SAMHANANA" class="dahavidyaResults" data-md-icheck value="SUSAMHITA" /><label class="radio_label">SUSAMHITA</label>
+        <input type="radio" name="SAMHANANA" class="dahavidyaResults" data-md-icheck value="MADHYAMASAMHITHA" /><label class="radio_label">MADHYAMA SAMHITHA</label>
+        <input type="radio" name="SAMHANANA" class="dahavidyaResults" data-md-icheck value="HEENASAMHITHA" /><label class="radio_label">HEENA SAMHITHA</label>
+    </td>
+</tr>
+<tr>
+    <td>21</td>
+    <td class="width-70 Area">
+        <label class="label-fixed tille_label">PRAMANA</label>
+    </td>
+    <td class="PRAMANA">
+        <input type="radio" name="PRAMANA" class="dahavidyaResults" data-md-icheck value="SUPRAMANITA" /><label class="radio_label">SUPRAMANITA</label>
+        <input type="radio" name="PRAMANA" class="dahavidyaResults" data-md-icheck value="ADHIKA" /><label class="radio_label">ADHIKA</label>
+        <input type="radio" name="PRAMANA" class="dahavidyaResults" data-md-icheck value="HEENA" /><label class="radio_label">HEENA</label>
+    </td>
+</tr>
+<tr>
+    <td>22</td>
+    <td class="width-70 Area">
+        <label class="label-fixed tille_label">SATMYA</label>
+    </td>
+    <td class="SATMYA">
+        <input type="checkbox" name="EKARASA" class="dahavidyaResults" data-md-icheck value="EKARASA" /><label class="radio_label">EKARASA</label>
+        <input type="checkbox" name="SARVARASA" class="dahavidyaResults" data-md-icheck value="SARVARASA" /><label class="radio_label">SARVA RASA</label>
+        <input type="checkbox" name="VYAMISRA" class="dahavidyaResults" data-md-icheck value="VYAMISRA" /><label class="radio_label">VYAMISRA</label>
+        <input type="checkbox" name="ROOKSHASATMYA" class="dahavidyaResults" data-md-icheck value="ROOKSHASATMYA" /><label class="radio_label">ROOKSHA SATMYA</label>
+        <input type="checkbox" name="SNIGDASATMYA" class="dahavidyaResults" data-md-icheck value="SNIGDASATMYA" /><label class="radio_label">SNIGDA SATMYA</label>
+    </td>
+</tr>
+<tr>
+    <td>23</td>
+    <td class="width-70 Area">
+        <label class="label-fixed tille_label">SATVA</label>
+    </td>
+    <td class="SATVA">
+        <input type="radio" name="SATVAA" class="dahavidyaResults" data-md-icheck value="PRAVARA" /><label class="radio_label">PRAVARA</label>
+        <input type="radio" name="SATVAA" class="dahavidyaResults" data-md-icheck value="MADHYAMA" /><label class="radio_label">MADHYAMA</label>
+        <input type="radio" name="SATVAA" class="dahavidyaResults" data-md-icheck value="AVARA" /><label class="radio_label">AVARA</label>
+    </td>
+</tr>
+<tr>
+    <td>24</td>
+    <td class="width-70 Area">
+        <label class="label-fixed tille_label">AHARA SHAKTI</label>
+    </td>
+    <td></td>
+</tr>
+<tr>
+    <td></td>
+    <td class="width-70 Area">
+        <label class="label-fixed">ABHYAVAHARANA SHAKTI</label>
+    </td>
+    <td class="AHARA_SHAKTI">
+        <input type="radio" name="AHARA_SHAKTI" class="dahavidyaResults" data-md-icheck value="PRAVARA" /><label class="radio_label">PRAVARA</label>
+        <input type="radio" name="AHARA_SHAKTI" class="dahavidyaResults" data-md-icheck value="MADHYAMA" /><label class="radio_label">MADHYAMA</label>
+        <input type="radio" name="AHARA_SHAKTI" class="dahavidyaResults" data-md-icheck value="AVARA" /><label class="radio_label">AVARA</label>
+    </td>
+</tr>
+<tr>
+    <td></td>
+    <td class="width-70 Area">
+        <label class="label-fixed">JARANA SHAKTI</label>
+    </td>
+    <td class="JARANA_SHAKTI">
+        <input type="radio" name="JARANA_SHAKTI" class="dahavidyaResults" data-md-icheck value="PRAVARA" /><label class="radio_label">PRAVARA</label>
+        <input type="radio" name="JARANA_SHAKTI" class="dahavidyaResults" data-md-icheck value="MADHYAMA" /><label class="radio_label">MADHYAMA</label>
+        <input type="radio" name="JARANA_SHAKTI" class="dahavidyaResults" data-md-icheck value="AVARA" /><label class="radio_label">AVARA</label>
+    </td>
+</tr>
+<tr>
+    <td>25</td>
+    <td class="width-70 Area">
+        <label class="label-fixed tille_label">VYAYAM SHAKTI</label>
+    </td>
+    <td class="VYAYAM_SHAKTI">
+        <input type="radio" name="VYAYAM_SHAKTI" class="dahavidyaResults" data-md-icheck value="PRAVARA" /><label class="radio_label">PRAVARA</label>
+        <input type="radio" name="VYAYAM_SHAKTI" class="dahavidyaResults" data-md-icheck value="MADHYAMA" /><label class="radio_label">MADHYAMA</label>
+        <input type="radio" name="VYAYAM_SHAKTI" class="dahavidyaResults" data-md-icheck value="AVARA" /><label class="radio_label">AVARA</label>
+    </td>
+</tr>
+<tr>
+    <td>26</td>
+    <td class="width-70 Area">
+        <label class="label-fixed tille_label">VAYA</label>
+    </td>
+    <td class="VAYA">
+        <input type="radio" name="VAYA" class="dahavidyaResults" data-md-icheck value="BALA" /><label class="radio_label">BALA</label>
+        <input type="radio" name="VAYA" class="dahavidyaResults" data-md-icheck value="MADHYAMA" /><label class="radio_label">MADHYAMA</label>
+        <input type="radio" name="VAYA" class="dahavidyaResults" data-md-icheck value="VRUDHA" /><label class="radio_label">VRUDHA</label>
+    </td>
+</tr>

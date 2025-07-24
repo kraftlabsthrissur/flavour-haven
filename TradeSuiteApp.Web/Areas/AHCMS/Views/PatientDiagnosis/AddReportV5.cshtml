@@ -1,0 +1,61 @@
+﻿@model TradeSuiteApp.Web.Areas.AHCMS.Models.PatientDiagnosisModel
+<input type="button" id="show-add-report" data-uk-modal="{target:'#add-report', center:false}" />
+<div class="uk-modal" id="add-report" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Add Report<i class="material-icons"></i></h3>
+        </div>
+        <div class="uk-modal-content">
+            <div class="uk-form-row">
+                <div class="uk-grid text-center uk-margin">
+                    <div class="uk-width-medium-2-4">
+                        <label>ReportName</label>
+                        @Html.TextBoxFor(m => m.ReportName, "", new { @class = "md-input label-fixed" })
+                    </div>
+
+                    <div class="uk-width-medium-1-4">
+                        <div class="uk-input-group">
+                            <label for="uk_dp_start">Date</label>
+                            @Html.TextBoxFor(m => m.ReportDate, "", new { @class = "md-input label-fixed current-date date" })
+                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                        </div>
+                    </div>
+                    <div class="uk-width-medium-1-4">
+                        <br />
+                        <label>&nbsp;</label>
+                        <input type="checkbox" name="IsBeforeAdmission" id="chk_IsBeforeAdmission" data-md-icheck value="@Model.IsBeforeAdmission" @(Model.IsBeforeAdmission == true ? "checked=\"checked\"" : "") />&nbsp;<label>Is Before Admission</label>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <div class="uk-grid text-center uk-margin">
+                    <div class="uk-width-medium-1-2">
+                        <div class="md-input-wrapper md-input-filled">
+                            <label>@AHCMS.Upload</label>
+                            <div class="uk-form-file v1">
+                                <label id="selected-quotation">
+                                </label>
+                                <label for="select-quotation" class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                                    <i class="uk-icon-upload"></i>
+                                </label>
+                                <input id="select-quotation" type="file" tabindex="-1">
+                            </div>
+                        </div>
+                        @Html.Hidden("ReportID")
+                        @Html.Hidden("URL")
+                    </div>
+                    <div class="uk-width-medium-1-2">
+                        <label>Description</label>
+                        @Html.TextBoxFor(m => m.Description, "", new { @class = "md-input label-fixed" })
+                    </div>                    
+                </div>
+            </div>
+            </div>
+            <div class="uk-modal-footer uk-text-right">
+                <button type="button" class="md-btn  uk-modal-close">@Common.Close</button>
+                <button type="button" class="md-btn md-btn-primary" id="btnSaveReport">Ok</button>
+                @Html.Hidden("Index")
+                @Html.Hidden("RowIndex")
+            </div>
+        </div>
+    </div>

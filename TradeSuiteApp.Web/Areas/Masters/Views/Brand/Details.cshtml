@@ -1,0 +1,115 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.BrandModel
+@{
+    ViewBag.Title = @Masters.BrandDetails;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>Brand</h1>
+            <span class="uk-text-upper uk-text-small">BrandDetails</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "Edit", "Brand", new { Area = "Masters", id = (Model != null) ? Model.Id : 0 }, new { @class = "md-btn " }))
+
+            @Html.HiddenFor(m => m.Id)
+            @Html.ActionLink(Common.Back, "Index", "Brand", new { Area = "Masters" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="details-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-2-8">
+                                            <label>BrandId<span>*</span></label>
+                                            @Html.TextBoxFor(m => m.BrandId, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>Code</label>
+                                            @Html.TextBoxFor(m => m.Code, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>BrandName</label>
+                                            @Html.TextBoxFor(m => m.BrandName, new { @class = "md-input", @disabled = "disabled" })
+                                        </div>
+
+                                        @*<div>
+                <label>Upload Files</label>
+                <input type="file" id="NegotiationFiles" name="files" multiple class="md-input label-fixed" title="Upload Files" />
+                @Html.TextBoxFor(m => m.Path, new { @class = "md-input", @disabled = "disabled" })
+            </div>*@
+
+                                        @*<div>
+                @if (!string.IsNullOrEmpty(Model.Path))
+                {
+                    <div style="margin-top: 10px;">
+                        <label>Uploaded Image:</label>
+                        <img src="@Url.Content(Model.Path)" alt="Uploaded Image" style="max-width: 100%; height: auto; border: 1px solid #ddd; padding: 5px;" />
+                    </div>
+                }
+                else
+                {
+                    <div style="margin-top: 10px;">
+                        <label>No Image Uploaded</label>
+                    </div>
+                }
+            </div>*@
+                                        <div>
+
+
+                                            <p>
+                                                Image:
+                                                @Html.TextBoxFor(m => m.image, new { @class = "md-input", @disabled = "disabled" })
+                                            </p> <!-- Display the path for debugging -->
+                                            @*@if (!string.IsNullOrEmpty(Model.Path))
+                {
+                    <div style="margin-top: 10px;">
+                        <label>Uploaded Image:</label>
+
+
+                        <img src="@Url.Content(Model.image)" alt="Uploaded Image" style="max-width: 100%; height: auto; border: 1px solid #ddd; padding: 5px;" />
+                    </div>
+                }
+                else
+                {
+                    <div style="margin-top: 10px;">
+                        <label>No Image Uploaded</label>
+                    </div>
+                }*@
+                                        </div>
+
+
+
+                                        @Html.HiddenFor(m => m.Path)
+
+
+
+
+                                    </div>
+                                    @*<div class="view-file"  data-url="@Model.Path">
+                                        <a>@Model.image</a>*@
+                                    @*</div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/Brand")
+
+

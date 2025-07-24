@@ -1,0 +1,14 @@
+ALTER Procedure [Master].[SpGetDescription]  
+(@Type varchar(20),  
+@ItemID int,  
+@FinYear int,  
+@LocationID int,  
+@ApplicationID int)  
+AS  
+Begin  
+select ISNULL(d.ItemName,I.Name) as Name,ISNULL(d.[Key],'Last Purchase') as Keys, ISNULL(d.Value,'0') as Value   
+ from ItemDetails d right join Item I on I.ID=d.ItemID 
+ where (d.ItemID=@ItemID OR d.ItemID IS NULL) and I.ID=@ItemID and (d.LocationID=@LocationID OR d.LocationID IS NULL) and (d.Type=@Type OR d.Type IS NULL)
+  
+End
+

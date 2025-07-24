@@ -1,0 +1,146 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.CustomerModel
+@{
+    ViewBag.Title = "Edit Customer";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.Customers</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.EditCustomer</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn BtnSave'>" + Common.Save + "</a>")
+            @if (Model.IsDraft)
+            {
+                @ActionAuthorization.IsAuthorized("Delete", "<a class='md-btn btnDelete'>" + Common.Delete + "</a>")
+                @ActionAuthorization.IsAuthorized("SaveAsDraft", "<a class='md-btn btnSaveAsDraft'>" + Common.SaveAsDraft + "</a>")
+            }
+           
+            @Html.HiddenFor(m => m.ID)
+
+            @Html.ActionLink(Common.Close, "Index", "Customer", new { Area = "Masters" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="" class="form-view">
+        <div class="md-card uk-margin-medium-bottom remove-box-shadow">
+            <div class="md-card-content">
+                <div class="uk-grid" data-uk-grid-margin>
+                    @{Html.RenderPartial("/Areas/Masters/Views/Customer/Form.cshtml", Model); }
+                    <div class="uk-width-medium-2-10">
+                        <div class="md-card">
+                            <div class="md-card-content small-padding">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        @Html.HiddenFor(m => m.IsInterCompany)
+                                        <input type="checkbox" class="icheckbox IsInterCompany" data-md-icheck />&nbsp;@Html.Label("Is Also a InterCompany")
+                                    </div>
+
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        @Html.HiddenFor(m => m.IsMappedtoExpsEntries)
+                                        <input type="checkbox" class="icheckbox IsMappedtoExpsEntries" data-md-icheck />&nbsp;@Html.Label("Mapped to Expense Entries")
+                                    </div>
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        @Html.HiddenFor(m => m.IsBlockedForSalesOrders)
+                                        <input type="checkbox" class="icheckbox IsBlockedForSalesOrders" data-md-icheck />&nbsp;@Html.Label("Blocked For Sales Orders")
+                                    </div>
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        @Html.HiddenFor(m => m.IsBlockedForSalesInvoices)
+                                        <input type="checkbox" class="icheckbox IsBlockedForSalesInvoices" data-md-icheck />&nbsp;@Html.Label("Block For Sales Invoices")
+                                    </div>
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        @Html.HiddenFor(m => m.IsAlsoASupplier)
+                                        <input type="checkbox" class="icheckbox IsAlsoASupplier" data-md-icheck />&nbsp;@Html.Label("Also A Supplier")
+                                    </div>
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        @Html.HiddenFor(m => m.IsBlockedForChequeReceipt)
+                                        <input type="checkbox" class="icheckbox IsBlockedForChequeReceipt" data-md-icheck disabled/>&nbsp;@Html.Label("Is Blocked For Cheque Receipt")
+                                    </div>
+                                    <br />
+                                    <div class="uk-width-medium-1-1 uk-hidden Supplier">
+                                        <div class="uk-autocomplete " id="supplier-autocomplete">
+                                            <div class="uk-input-group">
+                                                <label>@Purchase.Supplier<span>*</span></label>
+                                                @Html.TextBoxFor(model => model.SupplierName, new { @class = "md-input label-fixed" })
+                                                <span class="uk-input-group-addon">
+                                                    <a data-uk-modal="{target:'#select-supplier',center:false }">
+                                                        <i class="uk-input-group-icon uk-icon-search"></i>
+                                                    </a>
+                                                </span>
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Name }}"
+                                                            data-id="{{$item.ID}}"
+                                                            data-location="{{$item.Location}}"
+                                                            data-state-id="{{$item.StateID}}"
+                                                            data-Item-Category="{{$item.ItemCategory}}"
+                                                            data-payment-days="{{$item.PaymentDays}}"
+                                                            data-IsInterCompany="{{$item.IsInterCompany}}"
+                                                            data-is-gst-registered="{{$item.IsGSTRegistered}}">
+                                                            <a>
+                                                                {{ $item.Name }} ({{ $item.Code }})
+                                                                <div>{{{ $item.Location }}}</div>
+
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(model => model.SupplierID, new { @class = "md-input label-fixed" })
+                                        </div>
+                                    </div>
+
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <label>&nbsp;</label>
+                                        </div>
+                                        @Html.HiddenFor(m => m.IsMappedToServiceSales)
+                                        <input type="checkbox" class="icheckbox IsMappedToServiceSales" data-md-icheck />&nbsp;@Html.Label("Mapped to Service Sales")
+                                    </div>
+
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/Customer")
+@Scripts.Render("~/Js/Page/FSO")
+@Html.Partial("~/Areas/Masters/Views/Supplier/PartialList.cshtml")
+@Scripts.Render("~/Js/Page/Supplier")
+<script type="text/javascript">
+    Customer.init();
+</script>
+

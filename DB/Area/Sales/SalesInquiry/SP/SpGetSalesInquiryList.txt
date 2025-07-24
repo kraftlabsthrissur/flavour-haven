@@ -1,0 +1,67 @@
+ALTER PROCEDURE [Sales].[SpGetSalesInquiryList]        
+(
+ @Type  VARCHAR(20), 
+ @SalesInquiryNoHint VARCHAR(20),         
+ @SalesInquiryDateHint VARCHAR(100),        
+ @RequestedCustomerNameHint VARCHAR(100),          
+ @PhoneNo VARCHAR(100),        
+ @SortField VARCHAR(100),        
+ @SortOrder VARCHAR(10),        
+ @Offset INT = 0,        
+ @Limit INT = 20,            
+ @LocationID INT,        
+ @ApplicationID INT        
+)        
+AS        
+BEGIN        
+         
+ SET @Offset = @Offset + 1        
+ DECLARE @totalRecords int = 0;         
+           
+ SELECT @totalRecords =  Count(DISTINCT S.ID)         
+ FROM Sales.SalesInquiry S            
+  WHERE S.Status = @Type 
+  AND S.Converted<>1 AND S.Canceled<>1 AND (@RequestedCustomerNameHint IS NULL OR S.RequestedCustomerName LIKE '%'+@RequestedCustomerNameHint+'%')        
+  AND (@SalesInquiryNoHint IS NULL OR S.SalesInquiryNo LIKE '%' + ISNULL(@SalesInquiryNoHint,'')+ '%')         
+  AND (@SalesInquiryDateHint IS NULL OR CONVERT(VARCHAR(10),  S.SalesInquiryDate, 23) LIKE '%' + ISNULL(@SalesInquiryDateHint,'')+'%'  )       
+  AND (@PhoneNo IS NULL OR S.PhoneNo1 LIKE '%' + ISNULL(@PhoneNo,'')+'%' OR S.PhoneNo2 LIKE '%' + ISNULL(@PhoneNo,'')+'%')            
+  AND S.LocationID = @LocationID         
+          
+ ;WITH SalesOrder_CTE AS        
+ (        
+  SELECT top 10000  Count(S.ID) OVER(Partition By 1) AS recordsFiltered,        
+    S.ID,S.SalesInquiryNo ,s.SalesInquiryDate, RequestedCustomerName,  RequestedCustomerAddress, Remarks, S.PhoneNo1, S.PhoneNo2,    
+ S.GrossAmount,S.NetAmount,      
+   ROW_NUMBER() OVER (        
+    ORDER BY         
+     CASE WHEN @SortField+@SortOrder = 'SalesInquiryNoASC' THEN S.SalesInquiryNo END ASC,        
+     CASE WHEN @SortField+@SortOrder = 'SalesInquiryNoDESC' THEN S.SalesInquiryNo END DESC,        
+        
+     CASE WHEN @SortField+@SortOrder = 'SalesInquiryDateASC' THEN SalesInquiryDate END ASC,        
+     CASE WHEN @SortField+@SortOrder = 'SalesInquiryDateDESC' THEN SalesInquiryDate END DESC,        
+        
+     CASE WHEN @SortField+@SortOrder = 'RequestedCustomerNameASC' THEN RequestedCustomerName END ASC,        
+     CASE WHEN @SortField+@SortOrder = 'RequestedCustomerNameDESC' THEN RequestedCustomerName END DESC,        
+        
+     CASE WHEN @SortField+@SortOrder = 'PhoneNoASC' THEN PhoneNo1 END ASC,        
+     CASE WHEN @SortField+@SortOrder = 'PhoneNoDESC' THEN PhoneNo1 END DESC,        
+        
+     CASE WHEN @SortField+@SortOrder = 'PhoneNoASC' THEN PhoneNo2 END ASC,        
+     CASE WHEN @SortField+@SortOrder = 'PhoneNoDESC' THEN PhoneNo2 END DESC,        
+        
+     CASE WHEN @SortField+@SortOrder = 'NetAmountASC' THEN NetAmount END ASC,        
+     CASE WHEN @SortField+@SortOrder = 'NetAmountDESC' THEN NetAmount END DESC        
+    ) AS RowNum        
+  FROM Sales.SalesInquiry S            
+  WHERE S.Status = @Type 
+  AND S.Converted<>1 AND S.Canceled<>1 AND (@RequestedCustomerNameHint IS NULL OR S.RequestedCustomerName LIKE '%'+@RequestedCustomerNameHint+'%')        
+  AND (@SalesInquiryNoHint IS NULL OR S.SalesInquiryNo LIKE '%' + ISNULL(@SalesInquiryNoHint,'')+ '%')         
+  AND (@SalesInquiryDateHint IS NULL OR CONVERT(VARCHAR(10),  S.SalesInquiryDate, 23) LIKE '%' + ISNULL(@SalesInquiryDateHint,'')+'%'  )       
+  AND (@PhoneNo IS NULL OR S.PhoneNo1 LIKE '%' + ISNULL(@PhoneNo,'')+'%' OR S.PhoneNo2 LIKE '%' + ISNULL(@PhoneNo,'')+'%')            
+  AND S.LocationID = @LocationID           
+ )        
+ SELECT SalesOrder_CTE.ID,recordsFiltered,@totalRecords totalRecords ,SalesInquiryNo,SalesInquiryDate,RequestedCustomerName,RequestedCustomerAddress,    
+ Remarks, PhoneNo1, PhoneNo2, GrossAmount,NetAmount FROM SalesOrder_CTE        
+ WHERE RowNum >= @Offset        
+ AND RowNum < @Offset + @Limit        
+END 

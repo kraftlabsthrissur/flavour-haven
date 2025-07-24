@@ -1,0 +1,12 @@
+ALTER PROCEDURE [Master].[SPGetItemTaxByItemID]          
+(          
+ @ItemID int        
+)          
+AS              
+BEGIN              
+SELECT i.ID,i.ItemID,i.LocationID,l.Name Location,i.TaxTypeID,t.Name TaxType,i.GSTCategoryID,c.Name GSTCategory        
+ FROM ItemTax i join TaxType t on i.TaxTypeID=t.ID    
+ JOIN GSTCategory c on i.GSTCategoryID=c.ID      
+ join Location l on i.LocationID=l.ID        
+ where i.ItemID=@ItemID         
+END 

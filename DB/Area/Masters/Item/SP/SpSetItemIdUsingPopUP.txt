@@ -1,0 +1,18 @@
+CREATE PROCEDURE [Master].[SpSetItemIdUsingPopUP](        
+@ItemID INT,        
+@SalesInquiryItemsID INT,
+@PurchaseRequisitionTrasID INT,
+@CreatedUserID INT      
+)        
+AS        
+BEGIN   
+if(@PurchaseRequisitionTrasID>0)
+BEGIN
+  Update PurchaseRequisitionTrans set ItemID=@ItemID WHERE ID=@PurchaseRequisitionTrasID  
+END
+ELSE IF(@SalesInquiryItemsID>0)
+BEGIN
+  Update sales.SalesInquiryItems set ItemID=@ItemID WHERE ID=@SalesInquiryItemsID  
+END
+
+END

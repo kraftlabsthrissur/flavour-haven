@@ -1,0 +1,74 @@
+﻿
+@model   IEnumerable<TradeSuiteApp.Web.Areas.Sales.Models.SalesInvoiceModel>
+
+<div class="uk-modal" id="add-invoice" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Select Sales Invoice<i class="material-icons" data-uk-tooltip="{pos:'top'}" title="headline tooltip"></i></h3>
+        </div>
+        <br />
+
+        <table id="invoice-list" class="uk-table" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th class="width-30">@Common.SerialNo</th>
+                    <th class="width-20"></th>
+
+                    <th class="width-40">@Sales.InvoiceNo</th>
+                    <th class="width-40">@Sales.InvoiceDate</th>
+                    <th class="width-40">@Sales.GrossAmt</th>
+
+                </tr>
+            </thead>
+            <thead class="search">
+                <tr>
+
+                    <th class="width-30">@Common.SerialNo</th>
+                    <th class="width-20"></th>
+
+                    <th class="width-40">@Sales.InvoiceNo</th>
+                    <th class="width-40">@Sales.InvoiceDate</th>
+                    <th class="width-40">@Sales.GrossAmt</th>
+
+                </tr>
+
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    if (Model != null)
+                    {
+                        foreach (var item in Model.Select((value, i) => new { i = (i + 1), value }))
+                        {
+
+
+                            <tr>
+                                <td class="uk-text-center">
+                                    <input type="hidden" class="InvoiceID" value="@item.value.ID" />
+                                    @item.i
+                                </td>
+
+                                <td class="uk-text-center checked" data-md-icheck><input type="checkbox" class="CheckItem" value="@item.value.ID" /></td>
+
+                                <td class="uk-text-right">@item.value.InvoiceNo</td>
+
+                                <td class="uk-text-right"> @item.value.InvoiceDate</td>
+                                <td class="uk-text-right"> @item.value.NetAmount</td>
+
+
+                            </tr>
+                        }
+                    }
+                }
+
+            </tbody>
+        </table>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn uk-modal-close">Close</button>
+            <button type="button" class="md-btn md-btn-primary uk-modal-close" id="btnOkInvoiceList">Ok</button>
+        </div>
+    </div>
+</div>
+
+
+

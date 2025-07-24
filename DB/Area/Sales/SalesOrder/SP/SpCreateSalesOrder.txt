@@ -1,0 +1,92 @@
+ALTER PROCEDURE [Sales].[SpCreateSalesOrder]            
+(            
+ @SalesOrderNo varchar(20),            
+ @OrderDate datetime,            
+ @CustomerID int,            
+ @ItemCategoryID int,            
+ @SchemeAllocationID int,            
+ @DespatchDate datetime,            
+ @FreightAmount numeric(18,4),            
+ @GrossAmt numeric(18,4),            
+ @DiscountAmt numeric(18,4),            
+ @TaxableAmt numeric(18,4),            
+ @SGSTAmt numeric(18,4),            
+ @CGSTAmt numeric(18,4),            
+ @IGSTAmt numeric(18,4),            
+ @CessAmount numeric(18,4),            
+ @RoundOff numeric(18,4),  
+ @CustomerEnquiryNumber varchar(50),  
+ @QuotationExpiry datetime,  
+ @PaymentTerms varchar(1000),  
+ @NetAmt numeric(18,4),            
+ @PurchaseOrderID int,            
+ @FsoID int,            
+ @Source varchar(30),            
+ @BillingAddressID int,            
+ @ShippingAddressID int,            
+ @IsDraft bit,               
+ @IsApproved bit,          
+ @CurrencyID int,          
+ @IsGST int,          
+ @IsVat int,          
+ @CurrencyExchangeRate numeric(18,4),           
+ @VATAmount numeric(18,4),       
+ @PrintWithItemName BIT,   
+ @EnquiryDate datetime,
+ @Remarks varchar(1000),   
+ @CreatedUserID int,            
+ @FinYear int,            
+ @LocationID int,            
+ @ApplicationID int,            
+ @SalesOrderTrans XML )            
+AS            
+BEGIN            
+ DECLARE @SalesOrderID int, @BatchTypeID int = 0,@BatchType varchar(20),@QuotationNo varchar(100)            
+            
+ SET NOCOUNT ON;            
+            
+ IF @BillingAddressID = 0            
+ BEGIN            
+  SELECT @BillingAddressID = ID FROM Addresses WHERE PartyType = 'Customer' AND PartyID = @CustomerID AND IsBilling = 1 AND IsDefault = 1            
+ END            
+            
+ IF @ShippingAddressID = 0            
+ BEGIN            
+  SELECT @ShippingAddressID = ID FROM Addresses WHERE PartyType = 'Customer' AND PartyID = @CustomerID AND IsShipping = 1 AND IsDefaultShipping = 1            
+ END            
+        
+IF(@IsDraft=1)    
+BEGIN    
+ SET @QuotationNo=@SalesOrderNo;    
+END    
+     
+ INSERT INTO Sales.SalesOrder (SalesOrderNo,OrderDate,CustomerID,SchemeAllocationID,DespatchDate,GrossAmt,DiscountAmt,TaxableAmt,SGSTAmt,CGSTAmt,IGSTAmt,RoundOff,            
+  NetAmt,IsProcessed,IsDraft,ModifiedDate,IsCancelled,CancelledDate,CreatedUserID,CreatedDate,FinYear,LocationID,ApplicationID, SalesTypeID, PurchaseOrderID, FsoID,             
+  Source, BillingAddressID, ShippingAddressID,IsApproved, CessAmount,FreightAmount,OrderStatus,CurrencyID,IsGST,IsVat,CurrencyExchangeRate,VATAmount,PrintWithItemName,  
+  QuotationNo,CustomerEnquiryNumber,QuotationExpiry,PaymentTerms,EnquiryDate,Remarks)            
+ VALUES( @SalesOrderNo,@OrderDate,@CustomerID,@SchemeAllocationID,@DespatchDate,@GrossAmt,@DiscountAmt,@TaxableAmt,@SGSTAmt,@CGSTAmt,@IGSTAmt,            
+ @RoundOff,@NetAmt,  0,@IsDraft,NULL,0,NULL,@CreatedUserID,current_timestamp,@FinYear,@LocationID,@ApplicationID, @ItemCategoryID,             
+ @PurchaseOrderID, @FsoID, @Source,isnull( @BillingAddressID,''),isnull( @ShippingAddressID,''),@IsApproved, @CessAmount,@FreightAmount,'to-be-invoiced',@CurrencyID,@IsGST,@IsVat,      
+ @CurrencyExchangeRate,@VATAmount,@PrintWithItemName,@QuotationNo,@CustomerEnquiryNumber,@QuotationExpiry,@PaymentTerms,@EnquiryDate,@Remarks)            
+            
+ Select @SalesOrderID = SCOPE_IDENTITY();            
+            
+    EXEC [Sales].[InsertSalesOrderItems] @SalesOrderID, @SalesOrderTrans, @FinYear,@LocationID,@ApplicationID            
+            
+ UPDATE Sales.SalesOrder SET SalesTypeID = (SELECT TOP 1 CategoryID FROM Sales.SalesOrderTrans SOT            
+  INNER JOIN Item I ON I.ID = SOT.ItemID WHERE SOT.SalesOrderID = @SalesOrderID ORDER BY SOT.ID ASC) WHERE ID = @SalesOrderID              
+              
+ IF ISNULL(@PurchaseOrderID,0) > 0             
+ BEGIN            
+  UPDATE SOT SET SOT.POTransID = POTR.ID            
+  FROM Sales.SalesOrderTrans SOT            
+  INNER JOIN (SELECT ID,ItemID, SalesOrderID,(ROW_NUMBER() OVER (PARTITION BY SalesOrderID ORDER BY ID ASC)) RowNumber          
+   FROM   Sales.SalesOrderTrans ) SOTR ON SOT.ID = SOTR.ID            
+  INNER JOIN (SELECT ID,ItemID, PurchaseOrderID,(ROW_NUMBER() OVER (PARTITION BY PurchaseOrderID ORDER BY ID ASC)) RowNumber             
+   FROM  PurchaseOrderTrans) POTR ON POTR.PurchaseOrderID = @PurchaseOrderID            
+   AND SOTR.ItemID = POTR.ItemID            
+  WHERE SOT.SalesOrderID = @SalesOrderID             
+ END            
+END            
+  
+  

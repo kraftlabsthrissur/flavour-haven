@@ -1,0 +1,128 @@
+﻿@model TradeSuiteApp.Web.Areas.Reports.Models.StockTransferShortageReportModel
+@{
+    ViewBag.ReportTitle = "Short Transfer Report";
+}
+<div id="page_content_inner" class="short-transfer-report">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-2-10">
+                            <form action="/Reports/Stock/ShortTransfer" id="report-filter-form" method="POST" data-name="ShortTransferReport">
+                                @Html.HiddenFor(m => m.UserID)
+                                @Html.HiddenFor(m => m.LocationID)
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.Fromdate</label>
+                                                @Html.TextBoxFor(model => model.FromDateString, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.Todate</label>
+                                                @Html.TextBoxFor(model => model.ToDateString, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row ">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2 ">
+                                            @*summary*@
+                                            <div class="uk-input-group ">
+                                                <label>@Reports.FromLocation</label>
+                                                <select id="FromLocationID" name="FromLocationID" class="md-input label-fixed">
+
+                                                    <option value="0">Select</option>
+                                                    @foreach (var location in Model.LocationHeadList)
+                                                    {
+                                                        <option @(Model.FromLocationID == location.ID ? "selected='selected'" : "") value="@location.ID" data-type="@location.LocationType" data-code="@location.Code" data-headid="@location.LocationHeadID">@location.Name</option>
+                                                    }
+                                                </select>
+                                                @*@Html.DropDownListFor(Model => Model.LocationFromID, Model.LocationList, "Select", new { @class = "md-input label-fixed", @id = "LocationFromID" })*@
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="uk-input-group ">
+                                                <label>@Reports.ToLocation</label>
+                                                <select id="ToLocationID" name="ToLocationID" class="md-input label-fixed">
+                                                    <option value="0">Select</option>
+                                                    @foreach (var location in Model.LocationHeadList)
+                                                    {
+                                                        <option @(Model.ToLocationID == location.ID ? "selected='selected'" : "") value="@location.ID" data-type="@location.LocationType" data-code="@location.Code" data-headid="@location.LocationHeadID">@location.Name</option>
+                                                    }
+                                                </select>
+                                                @*@Html.DropDownListFor(Model => Model.LocationToID, Model.LocationHeadList, "Select", new { @class = "md-input label-fixed", @id = "LocationToID" })*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @*<div class="filters uk-form-row ">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start" class="location">@Reports.Location</label>
+                                                @Html.DropDownListFor(Model => Model.LocationID, Model.LocationList, "Select", new { @class = "md-input label-fixed" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>*@
+                                <div class="filters uk-form-row ">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start" class="sales-category">@Reports.SalesCategory</label>
+                                                @Html.DropDownListFor(Model => Model.SalesCategoryID, Model.SalesCategoryList, "Select", new { @class = "md-input label-fixed" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="filters uk-form-row ">
+                                    <div class="uk-grid ">
+                                        <div class="uk-width-medium-1-1  ">
+                                            <div class="uk-autocomplete " id="stock-item-autocomplete">
+                                                <label>@Stock.Item</label>
+                                                @Html.TextBox("ItemName", "", new { @class = "md-input label-fixed" })
+                                                <span></span>
+                                            </div>
+                                            @Html.HiddenFor(m => m.ItemID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="report-filter-submit">Show</button>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <div class="md-input-wrapper md-input-filled">
+                                                <label>&nbsp;</label>
+                                                <a class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light " id="Refresh">Reset</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="uk-width-medium-8-10 ">
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin="" id="report-viewer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/ShortTransferReport")
+

@@ -1,0 +1,390 @@
+﻿@model TradeSuiteApp.Web.Areas.Sales.Models.SalesInvoiceModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.InvoiceNo</label>
+                            @Html.TextBoxFor(model => model.InvoiceNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Sales.InvoiceDate</label>
+                            @Html.TextBoxFor(model => model.InvoiceDate, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Sales.CustomerType</label>
+                            @Html.TextBoxFor(model => model.CustomerCategory, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-2-8">
+                            <label>@Sales.CustomerName</label>
+                            @Html.TextBoxFor(model => model.CustomerName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            @Html.HiddenFor(model => model.CustomerID)
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Sales.SalesOrders</label>
+                            @Html.TextBoxFor(model => model.SalesOrderNos, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Sales.BillTo</label>
+                            @Html.TextBoxFor(model => model.BillingAddress, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Sales.ShippTo</label>
+                            @Html.TextBoxFor(model => model.ShippingAddress, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.GrossAmt</label>
+                            @Html.TextBoxFor(model => model.GrossAmount, new { @class = "md-input mask-sales3-currency label-fixed", @tabindex = "-1", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.AdditionalDiscount</label>
+                            @Html.TextBoxFor(model => model.AdditionalDiscount, new { @class = "md-input mask-sales3-currency label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.TradeDisc</label>
+                            @Html.TextBoxFor(model => model.DiscountAmount, new { @class = "md-input mask-sales3-currency label-fixed", @tabindex = "-1", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.TurnoverDisc</label>
+                            @Html.TextBoxFor(model => model.TurnoverDiscount, new { @class = "md-input mask-sales3-currency label-fixed", @tabindex = "-1", @disabled = "disabled" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.TaxableAmount</label>
+                            @Html.TextBoxFor(model => model.TaxableAmount, new { @class = "md-input mask-sales3-currency label-fixed", @tabindex = "-1", @disabled = "disabled" })
+                        </div>
+                        @if (Model.IsGST == 1)
+                        {
+                            <div class="uk-width-medium-1-8">
+                                <label>@Sales.SGST</label>
+                                @Html.TextBoxFor(model => model.SGSTAmount, new { @class = "md-input mask-sales3-currency label-fixed", @tabindex = "-1", @disabled = "disabled" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Sales.CGST</label>
+                                @Html.TextBoxFor(model => model.CGSTAmount, new { @class = "md-input mask-sales3-currency label-fixed", @tabindex = "-1", @disabled = "disabled" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Sales.IGST</label>
+                                @Html.TextBoxFor(model => model.IGSTAmount, new { @class = "md-input mask-sales3-currency label-fixed", @tabindex = "-1", @disabled = "disabled" })
+                            </div>
+                        }
+                        @if (Model.IsVat == 1)
+                        {
+                            <div class="uk-width-medium-1-8">
+                                <label>@Sales.VATPercentage</label>
+                                @Html.DropDownListFor(Model => Model.VATPercentageID, new SelectList(Model.VATPercentageList, "Value", "Text"), new { @class = "md-input label-fixed", @disabled = "disabled" })
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <label>@Sales.VATAmount</label>
+                                @Html.TextBoxFor(model => model.VATAmount, new { @class = "md-input mask-sales3-currency label-fixed", @tabindex = "-1", @disabled = "disabled" })
+                            </div>
+                            <div>
+                                <label>@Sales.OtherChargesVATAmount</label>
+                                @Html.TextBoxFor(model => model.OtherChargesVATAmount, new { @class = "md-input label-fixed " + Model.normalclass, @disabled = "disabled" })
+                            </div>
+                        }
+
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.OtherCharges</label>
+                            @Html.TextBoxFor(model => model.OtherCharges, new { @class = "md-input label-fixed " + Model.normalclass, @tabindex = "-1", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.CustomerPONo</label>
+                            @Html.TextBoxFor(model => model.CustomerPONo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.CustomerPODate</label>
+                            @Html.TextBoxFor(model => model.CustomerPODate, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8 cess-enabled">
+                            <label>@Sales.CessAmount</label>
+                            @Html.TextBoxFor(model => model.CessAmount, new { @class = "md-input mask-sales3-currency label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.CashDiscount</label>
+                            @Html.TextBoxFor(model => model.CashDiscount, new { @class = "md-input mask-sales3-currency label-fixed", @tabindex = "-1", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.RoundOff</label>
+                            @Html.TextBoxFor(model => model.RoundOff, new { @class = "md-input mask-sales3-currency label-fixed", @tabindex = "-1", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.PaymentMode</label>
+                            @Html.TextBoxFor(model => model.PaymentMode, new { @class = "md-input label-fixed", @tabindex = "-1", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Sales.SalesType</label>
+                            @Html.TextBoxFor(model => model.SalesTypeName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        @if (Model.CustomerCategory == "ECOMMERCE")
+                        {
+                            <div class="uk-width-medium-1-8">
+                                <label>@Sales.Freight</label>
+                                @Html.TextBoxFor(model => model.FreightAmount, new { @class = "md-input mask-sales3-currency label-fixed", @disabled = "disabled" })
+                            </div>
+                        }
+                        <div class="uk-width-medium-1-8">
+                            <label>@Sales.Remarks</label>
+                            @Html.TextBoxFor(model => model.Remarks, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-1">
+                            <label>@Sales.NetAmount</label>
+                            @Html.TextBoxFor(model => model.NetAmount, new { @class = "md-input mask-sales3-currency label-fixed x-large", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-1">
+                            <label>@Masters.CurrencyCode</label>
+                            @Html.TextBoxFor(model => model.CurrencyCode, new { @class = "md-input label-fixed", @tabindex = "-1", @Disabled = "disabled" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <div class="uk-grid">
+        <div class="uk-width-1-1">
+            <ul class="uk-tab" data-uk-tab="{connect:'#tabs-invoice-content',animation:'slide-horizontal'}" id="tabs-invoice">
+                <li class="uk-active" id="item-tab"><a>@Sales.ItemDetails</a></li>
+                <li id="amount-tab"><a>@Sales.TaxDetails</a></li>
+                <li id="packing-tab"><a>@Sales.PackingDetails</a></li>
+            </ul>
+            <ul id="tabs-invoice-content" class="uk-switcher uk-margin">
+                <li>
+                    <table id="sales-invoice-items-list" class="uk-table" cellspacing="0">
+                        <thead>
+                            @if (Model.IsGST == 1)
+                            {
+                                <tr>
+                                    <th class="width-10">@Common.SerialNo</th>
+                                    <th class="width-60">@Sales.Code</th>
+                                    <th class="width-120">@Sales.ItemName</th>
+                                    <th class="width-10">@Sales.Unit</th>
+                                    <th class="width-60">@Sales.PartsNumber</th>
+                                    <th class="width-60">@Sales.DeliveryTerm</th>
+                                    <th class="width-120">@Masters.Model_Make</th>
+                                    @*<th class="width-10">@Sales.BatchType</th>
+                                        <th class="width-40">@Sales.Batch</th>*@
+                                    <th class="width-60">@Sales.Qty</th>
+                                    <th class="width-20">@Masters.Currency</th>
+                                    <th class="width-60">@Sales.MRP</th>
+                                    @*<th class="width-60">@Sales.BasicPrice</th>*@
+                                    <th class="width-100">@Sales.GrossAmt</th>
+                                    @*<th class="width-60">@Sales.AdditionalDiscount</th>*@
+                                    <th class="width-60">@Sales.TradeDiscPer</th>
+                                    <th class="width-80">@Sales.TradeDiscAmt</th>
+                                    @*<th class="width-60">@Sales.TurnoverDisc</th>*@
+                                    <th class="width-100">@Sales.TaxableAmount</th>
+                                    <th class="width-40">@Sales.GST</th>
+                                    <th class="width-60">@Sales.GSTAmount</th>
+                                    <th class="width-60">@Sales.CashDiscount</th>
+                                    <th class="width-20 cess-enabled">@Sales.Cess</th>
+                                    <th class="width-40 cess-enabled">@Sales.CessAmount</th>
+                                    <th class="width-100">@Sales.NetAmount</th>
+                                </tr>
+                            }
+                            else if (Model.IsVat == 1)
+                            {
+                                <tr>
+                                    <th class="width-10">@Common.SerialNo</th>
+                                    <th class="width-60">@Sales.Code</th>
+                                    <th class="width-120">@Sales.ItemName</th>
+                                    <th class="width-60">@Sales.PartsNumber</th>
+                                    <th class="width-60">@Sales.DeliveryTerm</th>
+                                    <th class="width-120">@Masters.Model_Make</th>
+                                    <th class="width-10">@Sales.Unit</th>
+                                    @*<th class="width-10">@Sales.BatchType</th>
+                                        <th class="width-40">@Sales.Batch</th>*@
+                                    <th class="width-60">@Sales.Qty</th>
+                                    <th class="width-20">@Masters.Currency</th>
+                                    <th class="width-60 mrp_hidden">@Sales.MRP</th>
+                                    @*<th class="width-60">@Sales.BasicPrice</th>*@
+                                    <th class="width-100">@Sales.GrossAmt</th>
+                                    @*<th class="width-60">@Sales.AdditionalDiscount</th>*@
+                                    <th class="width-60">@Sales.TradeDiscPer</th>
+                                    <th class="width-80">@Sales.TradeDiscAmt</th>
+                                    @*<th class="width-60">@Sales.TurnoverDisc</th>*@
+                                    <th class="width-100">@Sales.TaxableAmount</th>
+                                    <th class="width-40">@Sales.VAT</th>
+                                    <th class="width-60">@Sales.VATAmount</th>
+                                    <th class="width-60">@Sales.CashDiscount</th>
+                                    @*<th class="width-20 cess-enabled">@Sales.Cess</th>
+                                        <th class="width-40 cess-enabled">@Sales.CessAmount</th>*@
+                                    <th class="width-100">@Sales.NetAmount</th>
+                                </tr>
+                            }
+                        </thead>
+                        <tbody>
+                            @if (Model.Items != null)
+                            {
+                                foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                                {
+                                    if (Model.IsGST == 1)
+                                    {
+                                        <tr>
+                                            <td class="uk-text-center">
+                                                @item.i
+                                            </td>
+                                            <td class="uk-text-small">@item.value.Code</td>
+                                            <td class="uk-text-small">@item.value.ItemName</td>
+                                            <td>@item.value.PartsNumber</td>
+                                            <td class="uk-text-small DeliveryTerm">@item.value.DeliveryTerm</td>
+                                            <td class="uk-text-small Model">@item.value.Model</td>
+                                            <td>@item.value.SecondaryUnit</td>
+                                            @*<td>@item.value.BatchType</td>
+                                                <td>@item.value.BatchName</td>*@
+                                            <td class="mask-qty">@item.value.SecondaryInvoiceQty</td>
+                                            <td class="CurrencyName"> @item.value.CurrencyName  </td>
+                                            <td class="mask-sales3-currency">@item.value.SecondaryMRP</td>
+                                            <td class="mask-sales3-currency">@item.value.BasicPrice</td>
+                                            <td class="mask-sales3-currency">@item.value.GrossAmount</td>
+                                            @*<td class="mask-sales3-currency">@item.value.AdditionalDiscount</td>*@
+                                            <td class="mask-sales3-currency">@item.value.DiscountPercentage</td>
+                                            <td class="mask-sales3-currency">@item.value.DiscountAmount</td>
+                                            @*<td class="mask-sales3-currency">@item.value.TurnoverDiscount</td>*@
+                                            <td class="mask-sales3-currency">@item.value.TaxableAmount</td>
+                                            <td class="mask-sales3-currency">@item.value.GSTPercentage</td>
+                                            <td class="mask-sales3-currency">@item.value.GSTAmount</td>
+                                            <td class="mask-sales3-currency">@item.value.CashDiscount</td>
+                                            <td class="mask-sales3-currency cess-enabled CessPercentage">@item.value.CessPercentage </td>
+                                            <td class="mask-sales3-currency cess-enabled CessAmount"> @item.value.CessAmount</td>
+                                            <td class="mask-sales3-currency">@item.value.NetAmount</td>
+                                        </tr>
+                                    }
+                                    else if (Model.IsVat == 1)
+                                    {
+                                        <tr>
+                                            <td class="uk-text-center">
+                                                @item.i
+                                            </td>
+                                            <td class="uk-text-small">@item.value.Code</td>
+                                            <td class="uk-text-small">@item.value.ItemName</td>
+                                            <td>@item.value.PartsNumber</td>
+                                            <td class="uk-text-small DeliveryTerm">@item.value.DeliveryTerm</td>
+                                            <td class="uk-text-small Model">@item.value.Model</td>
+                                            <td>@item.value.SecondaryUnit</td>
+                                            @*<td>@item.value.BatchType</td>
+                                                <td>@item.value.BatchName</td>*@
+                                            <td class="mask-qty">@item.value.SecondaryInvoiceQty</td>
+                                            <td class="CurrencyName"> @item.value.CurrencyName  </td>
+                                            <td class="mask-sales3-currency">@item.value.SecondaryMRP</td>
+                                            @*<td class="mask-sales3-currency">@item.value.BasicPrice</td>*@
+                                            <td class="mask-sales3-currency">@item.value.GrossAmount</td>
+                                            @*<td class="mask-sales3-currency">@item.value.AdditionalDiscount</td>*@
+                                            <td class="mask-sales3-currency">@item.value.DiscountPercentage</td>
+                                            <td class="mask-sales3-currency">@item.value.DiscountAmount</td>
+                                            @*<td class="mask-sales3-currency">@item.value.TurnoverDiscount</td>*@
+                                            <td class="mask-sales3-currency">@item.value.TaxableAmount</td>
+                                            <td class="mask-sales3-currency">@item.value.VATPercentage</td>
+                                            <td class="mask-sales3-currency">@item.value.VATAmount</td>
+                                            <td class="mask-sales3-currency">@item.value.CashDiscount</td>
+                                            @*<td class="mask-sales3-currency cess-enabled CessPercentage">@item.value.CessPercentage </td>
+                                                <td class="mask-sales3-currency cess-enabled CessAmount"> @item.value.CessAmount</td>*@
+                                            <td class="mask-sales3-currency">@item.value.NetAmount</td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </li>
+                <li>
+                    <table id="sales-invoice-amount-details-list" class="uk-table" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="width-10">@Common.SerialNo</th>
+                                <th class="width-10">@Sales.Particulars</th>
+                                <th class="width-250">@Sales.Percentage</th>
+                                <th class="width-60">@Sales.TaxableAmount</th>
+                                <th class="width-60">@Sales.Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Items != null)
+                            {
+                                foreach (var item in Model.AmountDetails.Select((value, i) => new { i = (i + 1), value }))
+                                {
+                                    <tr>
+                                        <td class="uk-text-center">
+                                            @item.i
+                                        </td>
+                                        <td>
+                                            @item.value.Particulars
+                                        </td>
+                                        <td class="uk-text-right">
+                                            @item.value.Percentage.ToString("0.00")
+                                        </td>
+                                        <td class="mask-qty">
+                                            @item.value.TaxableAmount
+                                        </td>
+
+                                        <td class="uk-text-right">
+                                            @item.value.Amount.ToString("0.00")
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </li>
+                <li>
+
+                    <table id="packing-detail-list" class="uk-table" width="50" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="width-10">@Common.SerialNo</th>
+                                <th class="width-100">@Sales.PackSize</th>
+                                <th class="width-50">@Sales.Unit</th>
+                                <th class="width-100">@Sales.Nos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Items != null)
+                            {
+                                foreach (var item in Model.PackingDetails.Select((value, i) => new { i = (i + 1), value }))
+                                {
+                                    <tr>
+                                        <td class="uk-text-center">
+                                            @item.i
+                                        </td>
+                                        <td class="uk-text-center">
+                                            @item.value.PackSize
+                                        </td>
+                                        <td class="uk-text-center">
+                                            @item.value.UnitName
+                                        </td>
+                                        <td class="mask-qty">
+                                            @item.value.Quantity
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

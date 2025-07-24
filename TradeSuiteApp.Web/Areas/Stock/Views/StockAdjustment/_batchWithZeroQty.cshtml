@@ -1,0 +1,123 @@
+﻿@model TradeSuiteApp.Web.Areas.Stock.Models.StockAdjustmentModel
+
+<input type="button" id="show-batch-edit" style="display:none;" data-uk-modal="{target:'#batch-edit', center:false}" />
+<div class="uk-modal" id="batch-edit" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">View / Edit Batches<i class="material-icons"></i></h3>
+        </div>
+        <div class="uk-modal-content">
+
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                  
+                    <div class="uk-width-medium-4-10">
+                        <div class="uk-autocomplete " id="add-item-autocomplete">
+                            <div class="uk-input-group">
+                                <label for="uk_dp_start">@Stock.Item</label>
+                                @Html.TextBox("BatchItemName", "", new { @class = "md-input label-fixed", @id = "BatchItemName" })
+
+                                <script type="text/autocomplete">
+                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                        {{~items}}
+                                        <li data-value="{{ $item.Name }}"
+                                            data-primaryunit="{{$item.PrimaryUnit}}"
+                                            data-primaryunit-id="{{$item.PrimaryUnitID}}"
+                                            data-inventoryunit="{{$item.InventoryUnit}}"
+                                            data-inventoryunit-id="{{$item.InventoryUnitID}}"
+                                            data-full-rate="{{$item.Rate}}"
+                                            data-loose-rate="{{$item.LooseRate}}"
+                                            data-id="{{$item.ID}}">
+                                            <a>
+                                                {{ $item.Name }}
+                                            </a>
+                                        </li>
+                                        {{/items}}
+                                    </ul>
+                                </script>
+                            </div>
+                        </div>
+                        <input type="hidden" value="stock" id="type" />
+
+                        @Html.Hidden("BatchItemID")
+                        @Html.Hidden("BatchInventoryUnitID")
+                        @Html.Hidden("BatchInventoryUnit")
+                        @Html.Hidden("BatchPrimaryUnitID")
+                        @Html.Hidden("BatchPrimaryUnit")
+                        @Html.Hidden("FullRate")
+                        @Html.Hidden("LooseRate")
+                    </div>
+                    <div class="uk-width-medium-2-10" id="select_batch_type">
+                        <label>@Stock.Unit <span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.UnitID, Model.UnitList, "Select", new { @class = "md-input label-fixed", @id = "UnitID" })
+                    </div>
+                    <div class="uk-width-medium-2-10" id="select_batch_type">
+                        <label>@Stock.BatchType <span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.BatchTypeID, Model.BatchTypeList, "Select", new { @class = "md-input label-fixed", @id = "BatchType" })
+                    </div>
+
+                    <div class="uk-width-medium-2-10">
+                        <label>@Stock.Batch <span>*</span></label>
+                        <select id="Batch" class="md-input label-fixed">
+                            <option value="0">Select</option>
+                            @foreach (var batch in Model.BatchList)
+                            {
+                                <option @(Model.BatchID == batch.BatchID ? "selected='selected'" : "") value="@batch.BatchID" data-batchtypeid="@batch.BatchTypeID" data-batchType="@batch.BatchType" data-unitName="@batch.UnitName" data-itemID="@batch.ItemID" data-itemName="@batch.ItemName" data-unitID="@batch.UnitID" data-expiryDateString="@batch.ExpiryDate">@batch.Batch</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+
+                        <div class="uk-width-medium-2-10" id="select_batch_type">
+                            <label>@Stock.Reason <span>*</span></label>
+                            @Html.DropDownListFor(Model => Model.DamageTypeID, Model.DamageTypeList, "Select", new { @class = "md-input label-fixed", @id = "DamageType" })
+                        </div>
+                        <div class="uk-width-medium-2-10">
+                            <label>@Stock.PhysicalQty <span>*</span></label>
+                            <input type="text" id="txtRequiredQty" min="0" class="md-input label-fixed uk-text-right mask-production-qty " />
+                        </div>
+                        <div class="uk-width-medium-2-10">
+                            <label>@Stock.Remarks<span></span></label>
+                            <input type="text" id="Remark" min="0" class="md-input label-fixed uk-text" />
+                        </div>
+                        <input type="hidden" id="DDLItemCategory">
+                        <input type="hidden" id="DDLSalesCategory">
+                        @*<button type="button" class="md-btn md-btn-primary" id="AddItem">@Common.Add</button>*@
+                        </div>
+                    </div>
+                    <div class="uk-modal-footer uk-text-right">
+                        <button type="button" class="md-btn uk-modal-close">Close</button>
+                        <button type="button" class="md-btn md-btn-primary" id="btnOkBatches">Ok</button>
+                        @Html.Hidden("Index")
+                    </div>
+                </div>
+            </div>
+            @*<div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-6-10">
+                            <label>@Stock.ItemName</label>
+                            <input type="text" class="md-input" readonly id="BatchItemName" />
+                            <input type="hidden" id="BatchItemID" />
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <table id="batch-list" class="uk-table">
+                        <thead>
+                            <tr>
+                                <th>@Common.SerialNo</th>
+                                <th>@Sales.Batch</th>
+                                <th>@Sales.Qty</th>
+
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>*@
+        </div>
+       

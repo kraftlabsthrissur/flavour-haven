@@ -1,0 +1,22 @@
+﻿
+@RenderBody()
+
+<script>
+    @Html.Raw(ViewBag.StartupScript)
+</script>
+@if (ViewBag.Statuses != null)
+{
+    <div id="ViewBagStatuses" class="uk-hidden">
+        @foreach (var Status in ViewBag.Statuses)
+        {
+            <span class="@Status.ToLower()">
+                <i class="v-icon-circle"></i>
+                @Status
+            </span>
+        }
+    </div>
+}
+@if (ViewBag.Title != null)
+{
+    <div id="ViewBagTitle" class="uk-hidden">@ViewBag.Title</div>
+}

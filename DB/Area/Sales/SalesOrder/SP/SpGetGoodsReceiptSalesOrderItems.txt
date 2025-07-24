@@ -1,0 +1,32 @@
+                                  
+ALTER  PROCEDURE [Sales].[SpGetGoodsReceiptSalesOrderItems](                       
+ @SalesOrderIDs varchar(max),                                                                
+ @FinYear int,                       
+ @LocationID int,                       
+ @ApplicationID int                      
+) AS                      
+BEGIN                      
+ SET NOCOUNT ON;                      
+      
+;WITH CTESalesOrder AS (SELECT SO.OrderDate, SOT.ItemID,  ISNULL(SOT.ItemName,'')ItemName,ISNULL(SOT.PartsNumber,'')PartsNumber,ISNULL(SOT.Remarks,'')Remarks,          
+ISNULL(SOT.Model,'')Model,0 BatchID,  '' BatchNo,ISNULL(SOT.BatchTypeID,0) BatchTypeID,                      
+  I.BatchType BatchTypeName,   dbo.FnGetAvailableStock(SOT.ItemID,I.BatchID,SOT.BatchTypeID,I.WareHouseID, @FinYear, @LocationID, @ApplicationID) Stock,      
+  SOT.Quantity Qty,SOT.OfferQty,SOT.MRP Rate, SOT.IGSTPercentage, SOT.CGSTPercentage, SOT.SGSTPercentage,SOT.VATPercentage,      
+  SO.IsGST,SO.IsVat,SO.CurrencyID,ISNULL(Cu.Name,'')CurrencyName, U.UOM as  Unit, U.ID as UnitID,                       
+  SOT.SalesOrderID, SOT.ID SalesOrderTransID, SOT.DiscountPercentage, SO.SalesOrderNo, SOT.FullOrLoose, I.CategoryID,                       
+  I.ItemCode Code, I.SalesUnitID, SOT.CessPercentage, SOT.CessAmount,SOT.SecondaryQty,SOT.SecondaryMRP,SOT.SecondaryUnit,                       
+  SOT.MRP LooseRate,ISNULL(SO.FreightAmount,0.00) as  FreightAmount,CA.Name AS CategoryName,      
+  I.PackSize,US.UOM AS PrimaryUnit,ISNULL(SO.PrintWithItemName,0)PrintWithItemName                      
+ FROM Sales.SalesOrder SO                       
+ INNER JOIN Sales.SalesOrderTrans SOT ON SO.ID = SOT.SalesOrderID                      
+ INNER JOIN viItemCostWithoutBatch I ON I.ItemID = SOT.ItemID AND I.LocationID = SO.LocationID               
+ Inner join Unit U On U.ID=SOT.UnitID   LEFT JOIN Currency Cu on Cu.ID=SO.CurrencyID                
+ LEFT JOIN Unit US ON US.ID = I.PrimaryUnitID   LEFT JOIN Category CA ON CA.ID = I.CategoryID                                  
+ WHERE SO.LocationID=@LocationID AND  SO.ID IN (Select * from dbo.fnSplitString(@SalesOrderIDs,','))                                  
+ AND SO.ApplicationID = @ApplicationID)                
+ SELECT ItemID,ItemName,PartsNumber,Remarks,Model,BatchID,BatchNo,BatchTypeID,BatchTypeName,Stock,SecondaryMRP,SecondaryQty,SecondaryUnit,Qty,OfferQty,Rate,IGSTPercentage,
+ CGSTPercentage,SGSTPercentage,VATPercentage,IsGST,IsVat,CurrencyID,CurrencyName,Unit,UnitID,SalesOrderID,SalesOrderTransID,SalesOrderNo,OrderDate,DiscountPercentage,
+ FullOrLoose,CategoryID,Code,SalesUnitID,CessPercentage,CessAmount,LooseRate,FreightAmount,CategoryName,PackSize,PrimaryUnit,PrintWithItemName FROM CTESalesOrder                
+ORDER BY SalesOrderTransID ASC, BatchID ASC                
+                      
+END 

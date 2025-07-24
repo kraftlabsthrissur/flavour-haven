@@ -1,0 +1,143 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.TreasuryModel
+@{
+    ViewBag.Title = @Masters.TreasuryDetails;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Masters.Treasury</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.TreasuryDetails</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Edit", Html.ActionLink(Common.Edit, "Edit", "Treasury", new { Area = "Masters", id = (Model != null) ? Model.ID : 0 }, new { @class = "md-btn " }))
+
+            @Html.HiddenFor(m => m.ID)
+            @Html.ActionLink(Common.Back, "Index", "Treasury", new { Area = "Masters" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="details-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.Type </label>
+                                            @Html.TextBoxFor(m => m.Type, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Masters.Name </label>
+                                            @Html.TextBoxFor(m => m.AliasName, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Masters.Remarks </label>
+                                            @Html.TextBoxFor(m => m.remarks, "", new { @class = "md-input label-fixed", @disabled = "disabled" })<br />
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.ForPayment</label>
+                                            <div class="uk-grid uk-margin-small-top" data-uk-grid-margin="">
+                                                @Html.HiddenFor(m => m.IsPayment)
+                                                <div class="uk-input-group">
+                                                    <input type="checkbox" class="icheckbox IsPayment" data-md-icheck disabled checked />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.ForCollection</label>
+                                            <div class="uk-grid uk-margin-small-top" data-uk-grid-margin="">
+                                                @Html.HiddenFor(m => m.IsReceipt)
+                                                <div class="uk-input-group">
+                                                    <input type="checkbox" class="icheckbox IsReceipt" data-md-icheck disabled checked />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                            <label>@Masters.BankCode </label>
+                                            @Html.TextBoxFor(m => m.BankCode, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                            <label>@Masters.AccountCode </label>
+                                            @Html.TextBoxFor(m => m.AccountCode, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                            <label>@Masters.AccountName </label>
+                                            @Html.TextBoxFor(m => m.AccountName, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                            <label>@Masters.BankName </label>
+                                            @Html.TextBoxFor(m => m.BankName, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                            <label>@Masters.BankBranchName </label>
+                                            @Html.TextBoxFor(m => m.BankBranchName, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                            <label>@Masters.CoBranchName </label>
+                                            @Html.TextBoxFor(m => m.CoBranchName, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        
+                                        <div class="uk-width-medium-2-8 uk-hidden">
+                                            <label>@Masters.AccountNumber </label>
+                                            @Html.TextBoxFor(m => m.AccountNo, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                            <label>@Masters.IFSC </label>
+                                            @Html.TextBoxFor(m => m.IFSC, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                            <label>@Masters.AccountType1 </label>
+                                            @Html.TextBoxFor(m => m.AccountType1, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                            <label>@Masters.AccountType2 </label>
+                                            @Html.TextBoxFor(m => m.AccountType2, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                            <label>@Masters.Location</label>
+                                            @Html.TextBoxFor(m => m.LocationMapping, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                            <label>@Masters.StartDate </label>
+                                            @Html.TextBoxFor(m => m.StartDate, "", new { @class = "md-input label-fixed", @disabled = "disabled" })<br />
+                                        </div>
+                                        <div class="uk-width-medium-1-8 uk-hidden">
+                                            <label>@Masters.EndDate </label>
+                                            @Html.TextBoxFor(m => m.EndDate, "", new { @class = "md-input label-fixed", @disabled = "disabled" })<br />
+                                        </div>
+                                    
+                                    </div>
+                                    <div class="uk-form-row">
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                          
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/Treasury")

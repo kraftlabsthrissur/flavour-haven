@@ -1,0 +1,65 @@
+  
+--EXEC Sales.[SpGetGoodsReceiptList] null,null,null,null,null,'cancelled',0,0,'transno','desc',0,20,2018,7,1  
+  
+ALTER PROCEDURE [Sales].[SpGetGoodsReceiptList](        
+ @TransNoHint VARCHAR(20),         
+ @ReceiptDateHint VARCHAR(100),        
+ @CustomerNameHint VARCHAR(100),        
+ @NetAmount VARCHAR(100),        
+ @Type VARCHAR(50),                      
+ @SortField VARCHAR(100),        
+ @SortOrder VARCHAR(10),        
+ @Offset INT = 0,        
+ @Limit INT = 20,        
+ @FinYear INT,         
+ @LocationID INT,        
+ @ApplicationID INT        
+)        
+AS        
+BEGIN        
+         
+SET @Offset = @Offset + 1        
+DECLARE @totalRecords int = 0;        
+                     
+SELECT @totalRecords =  Count(DISTINCT P.ID) FROM sales.GoodsReceiptNote P  
+  left join Customer c on c.ID=p.CustomerID   
+  WHERE (@Type = P.GoodsReceiptStatus)          
+  AND (@TransNoHint IS NULL OR TransNo LIKE '%' + @TransNoHint+ '%' )        
+  AND (@ReceiptDateHint IS NULL OR p.ReceiptDate LIKE '%' + @ReceiptDateHint+'%')              
+  AND (@CustomerNameHint IS NULL OR c.Name LIKE '%' + @CustomerNameHint+'%' )            
+  AND P.LocationID = @LocationID  AND P.ApplicationID = @ApplicationID          
+          
+ ;WITH GoodsReceiptNote_CTE AS        
+ (        
+  SELECT top 10000  Count(P.ID) OVER(Partition By 1) AS recordsFiltered,        
+    P.ID, P.TransNo, p.ReceiptDate,c.Name CustomerName, P.NetAmount,P.IsDraft,P.IsCancelled,P.GoodsReceiptStatus,       
+   ROW_NUMBER() OVER (        
+    ORDER BY         
+     CASE WHEN @SortField+@SortOrder = 'TransNoASC' THEN P.ID END ASC,        
+     CASE WHEN @SortField+@SortOrder = 'TransNoDESC' THEN P.ID END DESC,        
+      
+     CASE WHEN @SortField+@SortOrder = 'ReceiptDateASC' THEN ReceiptDate END ASC,        
+     CASE WHEN @SortField+@SortOrder = 'ReceiptDateDESC' THEN ReceiptDate END DESC,        
+      
+     CASE WHEN @SortField+@SortOrder = 'CustomerNameASC' THEN c.Name END ASC,        
+     CASE WHEN @SortField+@SortOrder = 'CustomerNameDESC' THEN c.Name END DESC,        
+             
+     CASE WHEN @SortField+@SortOrder = 'NetAmountASC' THEN NetAmount END ASC,        
+     CASE WHEN @SortField+@SortOrder = 'NetAmountDESC' THEN NetAmount END DESC        
+    ) AS RowNum        
+  FROM GoodsReceiptNote P 
+  left join Customer c on c.ID=p.CustomerID       
+  WHERE (@Type = P.GoodsReceiptStatus)          
+  AND (@TransNoHint IS NULL OR TransNo LIKE '%' + @TransNoHint+ '%' )        
+  AND (@ReceiptDateHint IS NULL OR p.ReceiptDate LIKE '%' + @ReceiptDateHint+'%')              
+  AND (@CustomerNameHint IS NULL OR c.Name LIKE '%' + @CustomerNameHint+'%' )            
+  AND P.LocationID = @LocationID  AND P.ApplicationID = @ApplicationID        
+ )        
+ SELECT ID, TransNo, ReceiptDate,CustomerName, NetAmount,IsDraft,IsCancelled,       
+ GoodsReceiptStatus,@totalRecords AS totalRecords ,recordsFiltered       
+ FROM GoodsReceiptNote_CTE        
+ WHERE RowNum >= @Offset        
+ AND RowNum < @Offset + @Limit        
+END   
+  
+  

@@ -1,0 +1,114 @@
+﻿@model List<BusinessObject.GRNTransItemBO>
+
+<table id="tblPurchaseReturnItems" class="uk-table" cellspacing="0">
+    <thead>
+        <tr>
+            <th class="width-10">@Common.SerialNo</th>
+            <th class="width-10"></th>
+            <th class="width-250">Item</th>
+            <th class="width-120">GRN</th>
+            <th class="width-40">Unit</th>
+            <th class="width-40">Accepted Qty</th>
+            <th class="width-40">Return Qty</th>
+            <th class="width-40">Rate</th>
+            <th class="width-40">GST %</th>
+            <th class="width-60">GST Amount</th>
+            <th class="width-40">Total</th>
+            <th class="width-250">Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count() > 0)
+        {
+            foreach (var grn in Model.Select((value, i) =>
+            new
+            {
+                i = i + 1,
+                dynChkId = "chk_PurchaseGRN_" + value.Id,
+                value
+            }))
+            {
+                <tr>
+                    <input type="hidden" class="hdnItemID" value="@grn.value.ItemID" />
+                    <input type="hidden" class="hdnId" value="@grn.value.Id" />
+
+                    <td class="uk-text-center">@grn.i</td>
+                    <td class="checked uk-text-center" data-md-icheck> <input type="checkbox" id="@grn.dynChkId" class="chkPurchaseReturnTransItems" value="@grn.value.Id" /></td>
+                    <td>@grn.value.ItemName</td>
+                    <td></td>
+                    <td>@grn.value.Unit</td>
+                    <td class="uk-text-right">@grn.value.AcceptedQty</td>
+                    <td><input type="text" class="md-input uk-text-right txtEditableCtrl decimalnum txtGRNReturnQty" readonly /></td>
+                    <td><input type="text" class="md-input uk-text-right txtEditableCtrl decimalnum txtGRNRate" readonly /></td>
+                    <td><input type="text" class="md-input uk-text-right txtEditableCtrl decimalnum txtGRNGSTPercentage" readonly /></td>
+                    <td><input type="text" class="md-input uk-text-right txtEditableCtrl decimalnum txtGRNGSTAmt" readonly /></td>
+                    <td class="uk-text-right"><input type="text" class="md-input txtEditableCtrl decimalnum txtGRNTotal" readonly /></td>
+                    <td><input type="text" class="md-input label-fixed txtEditableCtrl txtGRNRemarks" readonly /></td>
+                </tr>
+            }
+        }
+
+        @*<tr>
+                <input type="hidden" class="hdnItemID" value="1" />
+                <input type="hidden" class="hdnId" value="5" />
+                <td class="uk-text-center">1</td>
+                <td class="checked uk-text-center" data-md-icheck> <input type="checkbox" class="chkPurchaseReturnTransItems" value="5" /></td>
+                <td>Item 1</td>
+                <td></td>
+                <td>KG</td>
+                <td class="uk-text-right">250</td>
+                <td><input type="text" class="md-input uk-text-right txtEditableCtrl decimalnum txtGRNReturnQty" readonly /></td>
+                <td><input type="text" class="md-input uk-text-right txtEditableCtrl decimalnum txtGRNRate" readonly /></td>
+                <td><input type="text" class="md-input uk-text-right txtEditableCtrl decimalnum txtGRNGSTPercentage" readonly /></td>
+                <td><input type="text" class="md-input uk-text-right txtEditableCtrl decimalnum txtGRNGSTAmt" readonly /></td>
+                <td class="uk-text-right"><input type="text" class="md-input txtEditableCtrl decimalnum txtGRNTotal" readonly /></td>
+                <td><input type="text" class="md-input label-fixed txtEditableCtrl txtGRNRemarks" readonly /></td>
+            </tr>
+            <tr>
+                <input type="hidden" class="hdnItemID" value="2" />
+                <input type="hidden" class="hdnId" value="6" />
+                <td class="uk-text-center">2</td>
+                <td class="checked uk-text-center" data-md-icheck> <input type="checkbox" class="chkPurchaseReturnTransItems" value="6" /></td>
+                <td>Item 2</td>
+                <td></td>
+                <td>KG</td>
+                <td class="uk-text-right">280</td>
+                <td><input type="text" class="md-input uk-text-right txtEditableCtrl decimalnum txtGRNTransReturnQty" readonly /></td>
+                <td><input type="text" class="md-input uk-text-right txtEditableCtrl decimalnum txtGRNTransRate" readonly /></td>
+                <td><input type="text" class="md-input uk-text-right txtEditableCtrl decimalnum txtGRNTransGSTPercentage" readonly /></td>
+                <td><input type="text" class="md-input uk-text-right txtEditableCtrl decimalnum txtGRNTransGSTAmt" readonly /></td>
+                <td class="uk-text-right"><input type="text" class="md-input txtEditableCtrl decimalnum txtGRNTransTotal" readonly /></td>
+                <td><input type="text" class="md-input label-fixed txtEditableCtrl txtGRNTransRemarks" readonly /></td>
+            </tr>*@
+
+        @*<tr>
+                <td class="uk-text-center">1</td>
+                <td class="checked uk-text-center" data-md-icheck> <input type="checkbox" /></td>
+                <td>Item 1</td>
+                <td></td>
+                <td>0</td>
+                <td class="uk-text-right">0</td>
+                <td><input type="text" class="md-input uk-text-right" /></td>
+                <td><input type="text" class="md-input uk-text-right" /></td>
+                <td><input type="text" class="md-input uk-text-right" /></td>
+                <td><input type="text" class="md-input uk-text-right" /></td>
+                <td class="uk-text-right"><input type="text" class="md-input" /></td>
+                <td><input type="text" class="md-input label-fixed" /></td>
+            </tr>
+            <tr>
+                <td class="uk-text-center">2</td>
+                <td class="checked uk-text-center" data-md-icheck> <input type="checkbox" /></td>
+                <td>Item 2</td>
+                <td></td>
+                <td>0</td>
+                <td class="uk-text-right">0</td>
+                <td><input type="text" class="md-input uk-text-right" /></td>
+                <td><input type="text" class="md-input uk-text-right" /></td>
+                <td><input type="text" class="md-input uk-text-right" /></td>
+                <td><input type="text" class="md-input uk-text-right" /></td>
+                <td><input type="text" class="md-input uk-text-right" /></td>
+
+                <td><input type="text" class="md-input label-fixed" /></td>
+            </tr>*@
+    </tbody>
+</table>

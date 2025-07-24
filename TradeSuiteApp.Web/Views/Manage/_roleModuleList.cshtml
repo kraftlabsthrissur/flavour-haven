@@ -1,0 +1,40 @@
+﻿@model TradeSuiteApp.Web.Models.ManageRolePermissionViewModel
+@{
+}
+
+<table id="tblProcessProductionIssue" class="uk-table" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Sno</th>
+            <th>Module</th>
+            <th>PermissionKey</th>
+            <th>Permission</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.RolePermissionViewModelList!=null  && Model.RolePermissionViewModelList.Count > 0)
+        {
+            for (int i = 0; i < Model.RolePermissionViewModelList.Count; i++)
+            {
+                string dynChkName = $"RolePermissionViewModelList[{i}].IsHaveAccess";
+                string dynModuleID = $"RolePermissionViewModelList[{i}].ID";
+
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@Model.RolePermissionViewModelList[i].Area</td>
+                    <td>@Model.RolePermissionViewModelList[i].Key</td>
+                    <td>
+                        @Html.HiddenFor(m => m.RolePermissionViewModelList[i].RoleID)
+                        @Html.HiddenFor(m => m.RolePermissionViewModelList[i].ModuleID)
+                        @*@Html.HiddenFor(m => m.RolePermissionViewModelList[i].RoleModuleID)*@
+                        @Html.CheckBoxFor(m => m.RolePermissionViewModelList[i].IsHaveAccess)
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

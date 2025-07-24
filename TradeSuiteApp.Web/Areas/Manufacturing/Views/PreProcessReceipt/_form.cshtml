@@ -1,0 +1,159 @@
+﻿@model  TradeSuiteApp.Web.Areas.Manufacturing.Models.PreProcessReceiptViewModel
+@{
+    ViewBag.Title = "Form";
+}
+
+@Html.HiddenFor(m => m.ID, new { @id = "hdnPreprocessReceiptID" })
+@Html.Hidden("hdnCurrDate", DateTime.Now.ToString("dd-MM-yyyy"), new { @id = "hdnCurrDate" })
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <label>@Manufacturing.TransNo</label>
+                            @Html.TextBoxFor(model => model.TransNo, new { @class = "md-input label-fixed", @id = "txtTransNo", @readonly = "readonly" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Manufacturing.TransDate</label>
+                            @Html.TextBoxFor(model => model.TransDateStr, new { @class = "md-input label-fixed", @id = "txtTransDate", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-autocomplete " id="preprocess-receipt-autocomplete">
+                    <div class="uk-input-group">
+                        <label>@Manufacturing.IssuedItem<span>*</span></label>
+                        @Html.TextBox("IssuedItem", "", new { @class = "md-input label-fixed", @id = "txtItemName" })
+                        <span class="uk-input-group-addon">
+                            <a data-uk-modal="{target:'#select-issueditem', center:false}">
+                                <i class="uk-input-group-icon uk-icon-search"></i>
+                            </a>
+                        </span>
+                        <script type="text/autocomplete">
+                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                {{~items}}
+                                <li data-value="{{ $item.ItemName }}"
+                                    data-id="{{$item.ID}}"
+                                    data-itemid="{{$item.ItemID}}"
+                                    data-purified-item-id="{{$item.PurifiedItemID}}"
+                                    data-purified-item-name="{{$item.PurifiedItemName}}"
+                                    data-purified-item-unit="{{$item.PurifiedItemUnit}}"
+                                    data-purificationissueid="{{$item.PurificationIssueID}}"
+                                    data-unit="{{$item.Unit}}"
+                                    data-unitid="{{$item.PurifiedItemUnitID}}"
+                                    data-quantity="{{$item.Quantity}}"
+                                    data-qtymet="{{$item.QtyMet}}"
+                                    data-balanceqty="{{$item.BalanceQty}}"
+                                    data-processid="{{$item.ProcessID}}"
+                                    data-processname="{{$item.ProcessName}}"
+                                    data-transdate="{{$item.TransDateStr}}"
+                                    data-transtime="{{$item.TransTime}}">
+                                    <a>
+                                        {{ $item.ItemName }} ({{{ $item.Unit }}})
+                                    </a>
+                                </li>
+                                {{/items}}
+                            </ul>
+                        </script>
+                    </div>
+                </div>
+                @Html.Hidden("ItemID")
+                @Html.Hidden("PurifiedItemID")
+                @Html.Hidden("PurifiedItemName")
+                @Html.Hidden("PurifiedItemUnit")
+                @Html.Hidden("PurificationIssueTransID")
+                @Html.Hidden("QtyMet")
+                @Html.Hidden("BalanceQty")
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label for="uk_dp_start">@Manufacturing.UOM</label>
+                @Html.TextBox("UOM", "", new { @class = "md-input label-fixed", @id = "txtUOM", @readonly = "readonly" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label for="uk_dp_start">@Manufacturing.IssuedQty</label>
+                @Html.TextBox("IssuedQty", "", new { @class = "md-input label-fixed mask-production-qty", @id = "txtIssuedQty", @readonly = "readonly" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label for="uk_dp_start">@Manufacturing.IssueDate</label>
+                @Html.TextBox("IssueDate", "", new { @class = "md-input label-fixed", @id = "txtIssuedDate", @readonly = "readonly" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label for="uk_dp_start">@Manufacturing.Activity</label>
+                @Html.TextBoxFor(model => model.Activity, new { @class = "md-input label-fixed", @id = "txtActivity", @readonly = "readonly" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label for="uk_dp_start">@Manufacturing.ReceiptQty</label>
+                @Html.TextBox("ReceiptQty", "", new { @class = "md-input label-fixed mask-production-qty", @id = "txtReceiptQty" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="uk-input-group">
+                    <label for="uk_dp_start">@Manufacturing.RecieptDate</label>
+                    @Html.TextBox("ReceiptDate", "", new { @class = "md-input label-fixed past-date date", @id = "txtReceiptDate", @readonly = "readonly" })
+                    <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                </div>
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="md-input-wrapper md-input-filled">
+                    <label>&nbsp;</label>
+                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddItem">@Common.Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <table id="preprocess-receipt-items-list" class="uk-table" cellspacing="0">
+        <thead>
+            <tr>
+                <th class="width-10">@Common.SerialNo</th>
+                <th>@Manufacturing.IssuedItem</th>
+                <th class="width-60">@Manufacturing.UOM</th>
+
+                <th class="width-80">@Manufacturing.IssuedQty</th>
+                <th class="width-80">@Manufacturing.PendingQuantity</th>
+                <th class="width-80">@Manufacturing.IssueDate</th>
+                <th class="width-80">@Manufacturing.Activity</th>
+                <th>@Manufacturing.ReceiptItem</th>
+                <th class="width-60">@Manufacturing.UOM</th>
+                <th class="width-80">@Manufacturing.ReceiptQty</th>
+                <th class="width-100">@Manufacturing.RecieptDate</th>
+                <th class="width-100">@Manufacturing.IsCompleted</th>
+                <th class="width-10"></th>
+        </thead>
+        <tbody>
+            @if (Model.PreProcessReceiptPurificationItemModelList != null)
+            {
+                { Html.RenderPartial("_items", Model.PreProcessReceiptPurificationItemModelList); }
+            }
+        </tbody>
+    </table>
+   
+
+    <input type="hidden" id="item-count" value="@Model.PreProcessReceiptPurificationItemModelList.Count" />
+</div>
+<div class="uk-modal" id="select-issueditem" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog uk-modal-dialog-large" style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">@Manufacturing.Item<i class="material-icons" data-uk-tooltip="{pos:'top'}" title="headline tooltip"></i></h3>
+        </div>
+        @{Html.RenderAction("GetUnProcessedMaterialPrurificationIssueItemListView", "PreProcessReceipt", new { area = "Manufacturing" }); }
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn uk-modal-close">Close</button>
+            <button type="button" class="md-btn md-btn-primary uk-modal-close" id="btnOKUnProcessedMaterialPurification">Ok</button>
+        </div>
+    </div>
+</div>

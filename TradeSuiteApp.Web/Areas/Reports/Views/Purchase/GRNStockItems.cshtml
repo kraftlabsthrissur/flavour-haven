@@ -1,0 +1,32 @@
+﻿@using ReportViewerForMvc;
+<div class="uk-grid" data-uk-grid-margin>
+    <div class="uk-width-medium-1-1">
+        <form action="" method="POST">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-10">
+                        <label>@Purchase.GRNNo</label>
+                        <input type="text" class="md-input label-fixed" value="" name="GRNNo">
+                    </div>
+                    <div class="uk-width-medium-1-10">
+                        <label>@Purchase.PONo</label>
+                        <input type="text" class="md-input label-fixed" value="" name="PurchaseOrderNo">
+                    </div>
+                    <div class="uk-width-medium-1-10">
+                        <label>@Purchase.InvoiceNo</label>
+                        <input type="text" class="md-input label-fixed" value="" name="InvoiceNo">
+                    </div>
+                    <div class="uk-width-medium-1-10">
+                        <input type="submit" class="md-btn" value="Show" />
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="uk-form-row">
+    <div class="uk-grid" data-uk-grid-margin>
+        @Html.ReportViewer(ViewBag.ReportViewer as Microsoft.Reporting.WebForms.ReportViewer)
+    </div>
+</div>

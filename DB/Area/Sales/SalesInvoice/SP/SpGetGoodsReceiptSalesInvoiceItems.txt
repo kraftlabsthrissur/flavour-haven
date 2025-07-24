@@ -1,0 +1,37 @@
+              
+ALTER PROCEDURE [Sales].[SpGetGoodsReceiptSalesInvoiceItems](                      
+ @SalesInvoiceIDs VARCHAR(MAX),                      
+ @FinYear INT,                       
+ @LocationID INT,                      
+ @ApplicationID INT                      
+)                      
+AS                  
+BEGIN                      
+                      
+ SET NOCOUNT ON;                           
+                      
+ SELECT SIT.ID, SIT.SalesInvoiceID,SI.InvoiceDate,SI.TransNo, SIT.ItemID,SIT.InvoiceQty, SIT.InvoiceOfferQty,                      
+  SIT.Quantity, SIT.MRP, SIT.BasicPrice, SIT.OfferQty, SIT.GrossAmount, SIT.DiscountPercentage, SIT.BatchID, SIT.BatchTypeID,                      
+  SIT.DiscountAmount, SIT.AdditionalDiscount, SIT.TurnoverDiscount, SIT.TaxableAmount, SIT.SGSTPercentage, SIT.CGSTPercentage, SIT.IGSTPercentage,            
+  SIT.IsGST,SIT.IsVat,SIT.VATPercentage,SIT.VATAmount,SIT.SGSTAmt, SIT.CGSTAmt, SIT.IGSTAmt, SIT.NetAmt, SIT.WareHouseID, SIT.ItemName,SIT.PartsNumber,          
+  SIT.Remarks,SIT.Model,ISNULL(CU.Name,'')CurrencyName, U.UOM AS UnitName, I.Code, B.BatchNo BatchName,SIT.UnitID,SIT.MRP AS Rate,SIT.CashDiscount,0.0 LooseRate,I.SalesUnitID,      
+  dbo.FnGetAvailableStock(SIT.ItemID,SIT.BatchID,SIT.BatchTypeID,SIT. WareHouseID, @FinYear, @LocationID, @ApplicationID) Stock ,SIT.CurrencyID,   
+  SIT.SecondaryQty,SIT.SecondaryMRP,SIT.SecondaryUnit,ISNULL(POT.ID,0) as POTransID,ISNULL(POT.PurchaseOrderID,0) as PurchaseOrderID,ISNULL(POT.Rate,0.0) as PORate,SIT.PrintWithItemName,                    
+  ISNULL(POT.Quantity,0.0) as POQuantity   ,SIT.CessPercentage,SIT.CessAmount, B.ExpiryDate, I.PackSize ,US.UOM AS PrimaryUnit,                  
+  Case when I.CategoryID=222 then BT.Name else '' end as BatchType, I.CategoryID                             
+  FROM Sales.SalesInvoiceTrans SIT    
+  INNER JOIN Sales.SalesInvoice SI ON SI.ID = SIT.SalesInvoiceID      
+  INNER JOIN viItem I ON I.ID = SIT.ItemID                      
+  INNER JOIN Batch B ON B.ID = SIT.BatchID                       
+  INNER JOIN Unit U on SIT.UnitID =u.ID                   
+  LEFT JOIN Unit US ON US.ID = I.UnitID                           
+  LEFT join sales.SalesOrderTrans SOT on SOT.Id=SIT.SalesOrderTransID               
+  LEFT JOIN Currency CU on CU.ID=SIT.CurrencyID                         
+  left join   sales.ProformaInvoiceTrans POoT on POoT.Id=SIT.ProformaInvoiceTransID                      
+  left join Sales.ProformaInvoice PO on PO.ID=POoT.ProformaInvoiceID                    
+  left join   sales.SalesOrderTrans SOoT on SOoT.Id=POoT.SalesOrderTranID                                 
+  left join PurchaseOrderTrans POT on (POT.ID=SOT.POTransID or POT.ID=SOoT.POTransID ) and POT.ItemID=SIT.ItemID                              
+  Left Join BatchType BT on BT.ID=SIT.BatchTypeID                               
+  WHERE SIT.SalesInvoiceID IN (Select * from dbo.fnSplitString(@SalesInvoiceIDs,','))  AND SIT.Finyear = @FinYear AND SIT.LocationID = @LocationID AND SIT.ApplicationID = @ApplicationID                       
+  ORDER BY I.PackSize DESC,I.Unit DESC,I.SalesCategory,I.Name                      
+END 

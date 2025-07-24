@@ -1,0 +1,169 @@
+﻿@model TradeSuiteApp.Web.Areas.Accounts.Models.PaymentReturnVoucherModel
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-1-10">
+                <label>@Accounts.TransNo</label>
+                @Html.TextBoxFor(model => model.VoucherNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label>@Accounts.TransDate</label>
+                @Html.TextBoxFor(model => model.VoucherDate, new { @class = "md-input label-fixed", @disabled = "disabled" })
+            </div>
+            @Html.HiddenFor(Model => Model.ID)
+
+
+
+            <div class="uk-width-medium-2-8">
+                <div class="uk-autocomplete " id="supplier-autocomplete">
+                    <div class="uk-input-group">
+                        <label>@Purchase.Supplier<span>*</span></label>
+                        @Html.TextBoxFor(model => model.SupplierName, "", new { @class = "md-input label-fixed" })
+                        <span class="uk-input-group-addon">
+                            <a data-uk-modal="{target:'#select-supplier',center:false }">
+                                <i class="uk-input-group-icon uk-icon-search"></i>
+                            </a>
+                        </span>
+                        <script type="text/autocomplete">
+                            <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                {{~items}}
+                                <li data-value="{{ $item.Name }}"
+                                    data-id="{{$item.ID}}"
+                                    data-location="{{$item.Location}}"
+                                    data-state-id="{{$item.StateID}}"
+                                    data-Item-Category="{{$item.ItemCategory}}"
+                                    data-is-gst-registered="{{$item.IsGSTRegistered}}"
+                                    data-Account-No="{{$item.BankACNo}}">
+                                    <a>
+                                        {{ $item.Name }} ({{ $item.Code }})
+                                        <div>{{{ $item.Location }}}</div>
+
+                                    </a>
+                                </li>
+                                {{/items}}
+                            </ul>
+                        </script>
+                    </div>
+                </div>
+                @Html.Hidden("SupplierID")
+                @Html.Hidden("StateId")
+                @Html.Hidden("IsGSTRegistred")
+            </div>
+            <div class="uk-width-medium-1-8 grn">
+                <div class="uk-input-group">
+                    <label>Select DebitNote</label>
+                    <input type="text" class="md-input label-fixed" id="debitnote_for_return" />
+                    <span class="uk-input-group-addon" data-uk-modal="{target:'#select_debitnote',center:false }">
+                        <i class="uk-input-group-icon uk-icon-search"></i>
+                    </span>
+                </div>
+            </div>
+            @Html.Hidden("DebitNoteID")
+            @Html.Hidden("DebitAccountCode")
+
+            <div class="uk-width-medium-1-10">
+                <label>@Accounts.Amount<span>*</span></label>
+                @Html.TextBoxFor(model => model.Amount, new { @class = "md-input label-fixed mask-positive-currency" })
+            </div>
+            <div class="uk-width-medium-2-10">
+                <label>Customer Bank Name/ Remarks</label>
+                @Html.TextBoxFor(model => model.Remarks, new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <div class="md-input-wrapper md-input-filled">
+                    <label>&nbsp;</label>
+                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddItem">@Common.Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin>
+            <div class="uk-width-medium-1-10">
+                <label>@Accounts.ModeOfPayment<span>*</span></label>
+                @Html.DropDownListFor(Model => Model.PaymentTypeID, Model.PaymentTypeList, "Select", new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-1-10">
+                <label for="uk_dp_start">@Accounts.BankName<span>*</span></label>
+                @Html.DropDownListFor(Model => Model.BankID, Model.BankList, "Select", new { @class = "md-input label-fixed" })
+            </div>
+            <div class="uk-width-medium-2-10">
+                <label>@Accounts.ReferenceNumber</label>
+                @Html.TextBoxFor(Model => Model.BankReferenceNumber, new { @class = "md-input label-fixed" })
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section-group">
+    <table id="payment-return-list" class="uk-table" cellspacing="0">
+        <thead>
+            <tr>
+                <th class="width-20">@Common.SerialNo</th>
+                <th class="width-60">@Accounts.Supplier</th>
+                <th class="width-60">@Accounts.Amount</th>
+                <th class="width-60">@Accounts.Remarks</th>
+                <th class="width-10"></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @if (Model.Items != null)
+            {
+
+                foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                {
+                    <tr>
+                        <td class="uk-text-center">@item.i</td>
+                        <td class="uk-text-center SupplierName">@Model.SupplierName</td>
+                        <td><input type="text" class="md-input mask-currency amount" value="@item.value.Amount" /></td>
+                        <td class="uk-text-center remarks">@item.value.Remarks</td>
+                        <td class="uk-text-center"><a class="remove-item"><i class="uk-icon-remove"></i></a></td>
+                    </tr>;
+                }
+            }
+        </tbody>
+
+    </table>
+    <input type="hidden" id="item-count" />
+</div>
+<div class="uk-modal " id="select_debitnote" aria-hidden="true" style="display: none; overflow-y: scroll;">
+    <div class="uk-modal-dialog " style="">
+        <div class="uk-modal-header">
+            <h3 class="uk-modal-title">Select Debit Note <i class="material-icons" data-uk-tooltip="{pos:'top'}" title="headline tooltip"></i></h3>
+        </div>
+        <table id="debitnote-list" class="uk-table" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-10"></th>
+                    <th class="width-40">@Accounts.TransNo</th>
+                    <th class="width-250">@Accounts.TransDate</th>
+                    <th class="width-250">@Accounts.DebitAccount</th>
+                    <th class="width-250">@Accounts.Amount</th>
+
+
+                </tr>
+            </thead>
+            <thead class="search">
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th class="width-10"></th>
+                    <th class="width-40">@Accounts.TransNo</th>
+                    <th class="width-250">@Accounts.TransDate</th>
+                    <th class="width-250">@Accounts.DebitAccount</th>
+                    <th class="width-250">@Accounts.Amount</th>
+
+
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="uk-modal-footer uk-text-right">
+            <button type="button" class="md-btn uk-modal-close">Close</button>
+            <button type="button" class="md-btn md-btn-primary uk-modal-close" id="btnOKDebitNote">Ok</button>
+
+        </div>
+    </div>
+</div>
+@Html.Partial("~/Areas/Masters/Views/Supplier/PartialList.cshtml")
+@Scripts.Render("~/Js/Page/Supplier")

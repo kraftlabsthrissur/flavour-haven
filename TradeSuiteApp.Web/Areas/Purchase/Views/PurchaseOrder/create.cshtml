@@ -1,0 +1,521 @@
+﻿@model BusinessObject.PurchaseOrderBO
+@{
+    ViewBag.Title = Purchase.CreatePurchaseOrder;
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Purchase.PurchseOrdersForStockItems</h1>
+            <span class="uk-text-upper uk-text-small">@Purchase.CreatePurchaseOrder</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSaveAndMail'>" + Common.SaveAndMail + "</a>")
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSavePO'>" + Common.Save + "</a>")
+            @ActionAuthorization.IsAuthorized("SaveAsDraft", "<a class='md-btn btnSaveASDraftPO'>" + Common.SaveAsDraft + "</a>")
+
+            @Html.HiddenFor(m => m.ID)
+            @Html.HiddenFor(m => m.CashPaymentLimit)
+            @Html.ActionLink(Common.Close, "Index", "PurchaseOrder", new { Area = "Purchase" }, new { @class = "md-btn " })
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-8-10">
+                            <div class="le ft-block">
+
+                                <div class="md-card-content">
+                                    <ul class="uk-tab" data-uk-tab="{connect:'#tabs-purchase-order-create-content',animation:'slide-horizontal'}" id="tabs-purchase-order-create">
+                                        <li class="uk-active" data-tab="main"><a>Main Fields</a></li>
+                                        <li class="" data-tab="optional"><a>Optional Fields</a></li>
+                                    </ul>
+                                    <ul id="tabs-purchase-order-create-content" class="uk-switcher uk-margin">
+                                        <li>
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin="">
+                                                    <div class="uk-width-medium-1-8 uk-row-first">
+                                                        <label>@Purchase.PONumber</label>
+                                                        @Html.TextBoxFor(model => model.PurchaseOrderNo, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label for="uk_dp_start">@Purchase.PODate</label>
+                                                        @Html.TextBoxFor(model => model.PurchaseOrderDate, "{0:dd-MMM-yyyy}", new { @class = "md-input", @disabled = "disabled" })
+                                                    </div>
+
+                                                    <div class="uk-width-medium-1-8 ">
+                                                        <label>@Purchase.PaymentTerms<span>*</span></label>
+                                                        @Html.DropDownList("PaymentModeID", new SelectList(Model.DDLPaymentMode, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8 ">
+                                                        <label>@Purchase.ShippingAddress</label>
+                                                        <select id="ShippingToId" class="md-input">
+                                                            @foreach (var item in Model.ShippingAddressList)
+                                                            {
+                                                                <option value="@item.AddressID"
+                                                                        @(item.AddressID == (int)Model.ShippingAddressID ? "selected" : "")
+                                                                        data-state-id="@item.StateID">
+                                                                    @item.Place
+                                                                </option>
+                                                            }
+                                                        </select>
+                                                        @Html.HiddenFor(model => model.ShippingStateID, new { @id = "ShippingStateId" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.BillingAddress</label>
+                                                        <select id="DDLBillTo" class="md-input">
+                                                            @foreach (var item in Model.BillingAddressList)
+                                                            {
+                                                                <option value="@item.AddressID"
+                                                                        @(item.AddressID == (int)Model.BillingAddressID ? "selected" : "")
+                                                                        data-state-id="@item.StateID">
+                                                                    @item.Place
+                                                                </option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.SupplyWithinDays<span>*</span></label>
+                                                        @Html.TextBoxFor(model => model.DeliveryWithin, "", new { @class = "md-input label-fixed uk-text-right", @Value = "1" })
+
+                                                    </div>
+
+
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.GrossAmount</label>
+                                                        @Html.TextBoxFor(model => model.GrossAmount, new { @class = "md-input label-fixed " + Model.normalclass, @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.TaxableAmount</label>
+                                                        @Html.TextBoxFor(model => model.TaxableAmount, new { @class = "md-input label-fixed " + Model.normalclass, @tabindex = "-1", @disabled = "disabled" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin="">
+
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.Advance</label>
+                                                        @Html.TextBoxFor(model => model.AdvanceAmount, new { @class = "md-input label-fixed " + Model.normalclass })
+                                                    </div>
+                                                    @*<div class="uk-width-medium-2-8">
+                                                            <label>@Purchase.TermsOfPrice</label>
+                                                            @Html.TextBoxFor(model => model.TermsOfPrice, new { @class = "md-input label-fixed " })
+                                                        </div>*@
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>VAT<span>*</span></label>
+                                                        @Html.DropDownListFor(model => model.GSTID, new SelectList(Model.GSTList, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @id = "GST" })
+                                                        @*<select id="GST" class="md-input label-fixed" name="test">
+                                                            <option value="">Select</option>
+                                                            <option value="1">@Purchase.IncGST</option>
+                                                            <option value="2">@Purchase.GSTExtra</option>
+                                                            </select>*@
+                                                    </div>
+                                                    @Html.HiddenFor(m => m.GSTID)
+
+                                                    @Html.HiddenFor(m => m.IsVATExtra)
+
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.DiscountPercentage</label>
+                                                        @Html.TextBoxFor(model => model.DiscountPercentage, new { @class = "md-input label-fixed mask-sales2-currency", @tabindex = "-1" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.Discount</label>
+                                                        @Html.TextBoxFor(model => model.Discount, new { @class = "md-input label-fixed " + Model.normalclass, @tabindex = "-1" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.VATPercentage</label>
+                                                        @Html.TextBoxFor(model => model.VATPercentage, new { @class = "md-input label-fixed mask-sales2-currency", @tabindex = "-1" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.VATAmount</label>
+                                                        @Html.TextBoxFor(model => model.VATAmount, new { @class = "md-input label-fixed " + Model.normalclass, @tabindex = "-1" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.SuppDocAmount</label>
+                                                        @Html.TextBoxFor(model => model.SuppDocAmount, new { @class = "md-input label-fixed " + Model.normalclass, @tabindex = "-1" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.SuppShipAmount</label>
+                                                        @Html.TextBoxFor(model => model.SuppShipAmount, new { @class = "md-input label-fixed " + Model.normalclass, @tabindex = "-1" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.SupplierOtherCharges</label>
+                                                        @Html.TextBoxFor(model => model.SuppOtherCharge, new { @class = "md-input label-fixed " + Model.normalclass, @tabindex = "-1" })
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </li>
+
+                                        <li>
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin="">
+
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.PaymentWithinDays</label>
+                                                        @Html.DropDownList("DDLPaymentWithin", new SelectList(Model.PaymentDaysList, "Value", "Text"), "Select", new { @class = "md-input label-fixed uk-text-leftb", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8 supplierLocation">
+                                                        <label>@Purchase.SupplierLocation</label>
+                                                        @Html.TextBoxFor(model => model.SupplierLocation, "", new { @class = "md-input label-fixed", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8 uk-hidden intercompanySupplierlocation">
+                                                        <label>@Purchase.SupplierLocation</label>
+                                                        @Html.DropDownListFor(Model => Model.LocationID, new SelectList(Model.DDLLocation, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @id = "LocationID" })
+
+
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.CurrencyName</label>
+                                                        @Html.TextBoxFor(model => model.CurrencyName, new { @class = "md-input label-fixed", @tabindex = "-1", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Masters.ExchangeRate</label>
+                                                        @Html.TextBoxFor(model => model.CurrencyExchangeRate, new { @class = "md-input label-fixed " + Model.normalclass, @tabindex = "-1", @disabled = "disabled" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.ItemCategory</label>
+                                                        @Html.DropDownList("DDLItemCategory", new SelectList(Model.DDLItemCategory, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.PurchaseCategory</label>
+                                                        @Html.DropDownList("DDLPurchaseCategory", new SelectList(Model.DDLPurchaseCategory, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.Remarks</label>
+                                                        @Html.TextBoxFor(model => model.Remarks, new { @class = "md-input label-fixed " })
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="uk-form-row">
+                                                <div class="uk-grid" data-uk-grid-margin="">
+
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.SuppQuotNo</label>
+                                                        @Html.TextBoxFor(model => model.SuppQuotNo, new { @class = "md-input label-fixed " })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.SuppDocCode</label>
+                                                        @Html.TextBoxFor(model => model.SuppDocCode, new { @class = "md-input label-fixed " })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.SuppShipCode</label>
+                                                        @Html.TextBoxFor(model => model.SuppShipCode, new { @class = "md-input label-fixed " })
+                                                    </div>
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.SuppOtherRemark </label>
+                                                        @Html.TextBoxFor(model => model.SuppOtherRemark, new { @class = "md-input label-fixed " })
+                                                    </div>
+
+
+                                                    @*<div class="uk-width-medium-1-8">
+                                                            <label>@Purchase.OrderType</label>
+                                                            @Html.TextBoxFor(model => model.OrderType, new { @class = "md-input label-fixed " })
+                                                        </div>*@
+                                                    <div class="uk-width-medium-1-8 ">
+                                                        <label>@Purchase.OrderType</label>
+                                                        @Html.DropDownList("OrderType", new SelectList(Model.OrderTypeList, "Value", "Text"), "Select", new { @class = "md-input label-fixed" })
+                                                    </div>
+
+                                                    <div class="uk-width-medium-1-8">
+                                                        <label>@Purchase.Shipment</label>
+                                                        @Html.TextBoxFor(model => model.Shipment, new { @class = "md-input label-fixed " })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="uk-width-medium-2-10">
+                            <div class="right-block">
+                                <div class="uk-form-row">
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="md-input-wrapper md-input-filled">
+                                            <label>@Purchase.SelectedQuotation</label>
+                                            <div class="uk-form-file v1">
+                                                <label id="selected-quotation">
+                                                </label>
+                                                <label for="select-quotation" class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                                                    <i class="uk-icon-upload"></i>
+                                                </label>
+                                                <input id="select-quotation" type="file" tabindex="-1">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="md-input-wrapper md-input-filled">
+                                            <label>@Purchase.OtherQuotation</label>
+                                            <div class="uk-form-file v1">
+                                                <div id="other-quotation-list">
+                                                    <div class="uk-button-dropdown" data-uk-dropdown>
+                                                        <a><span id="file-count">0 File(s)</span> <i class="material-icons">&#xE313;</i></a>
+                                                        <div class="uk-dropdown">
+                                                            <ul class="uk-nav uk-nav-dropdown"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <label for="other-quotations" class="upload-btn md-btn md-btn-flat md-btn-wave waves-effect waves-button text-capitalize">
+                                                    <i class="uk-icon-upload"></i>
+                                                </label>
+                                                <input id="other-quotations" type="file" multiple tabindex="-1">
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-width-medium-1-1">
+                                        <label>@Purchase.NetAmount</label>
+                                        @Html.TextBoxFor(model => model.NetAmount, new { @class = "md-input label-fixed " + Model.normalclass, @tabindex = "-1", @disabled = "disabled" })
+                                    </div>
+                                    <div class="uk-width-medium-1-1">
+                                        <label>@Masters.CurrencyCode</label>
+                                        @Html.TextBoxFor(model => model.CurrencyCode, new { @class = "md-input label-fixed", @tabindex = "-1", @Disabled = "disabled" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-group">
+                        <div class="uk-grid" data-uk-grid-margin="">
+
+                            <div class="uk-width-medium-1-8">
+                                <div class="uk-autocomplete " id="supplier-autocomplete">
+                                    <div class="uk-input-group">
+                                        <label>@Purchase.Supplier<span>*</span></label>
+                                        @Html.TextBox("SupplierName", "", new { @class = "md-input label-fixed" })
+                                        <span class="uk-input-group-addon">
+                                            <a data-uk-modal="{target:'#select-supplier',center:false }">
+                                                <i class="uk-input-group-icon uk-icon-search"></i>
+                                            </a>
+                                        </span>
+                                        <script type="text/autocomplete">
+                                  <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                      {{~items}}
+                                      <li data-value="{{ $item.Name }}"
+                                          data-id="{{$item.ID}}"
+                                          data-location="{{$item.Location}}"
+                                          data-state-id="{{$item.StateID}}"
+                                          data-Item-Category="{{$item.ItemCategory}}"
+                                          data-payment-days="{{$item.PaymentDays}}"
+                                          data-inter-company-locationID="{{$item.InterCompanyLocationID}}"
+                                          data-IsInterCompany="{{$item.IsInterCompany}}"
+                                          data-decimalplaces="{{$item.DecimalPlaces}}"
+                                          data-currencyid="{{$item.CurrencyID}}"
+                                          data-currencyname="{{$item.CurrencyName}}"
+                                          data-currencycode="{{$item.CurrencyCode}}"
+                                          data-currencyconversionrate="{{$item.CurrencyConversionRate}}"
+                                          data-email="{{$item.Email}}"
+                                          data-is-gst-registered="{{$item.IsGSTRegistered}}">
+                                          <a>
+                                              {{ $item.Name }} ({{ $item.Code }})
+                                              <div>{{{ $item.Location }}}</div>
+
+                                          </a>
+                                      </li>
+                                      {{/items}}
+                                  </ul>
+                                        </script>
+                                    </div>
+                                    @Html.HiddenFor(model => model.SupplierID, new { @class = "md-input label-fixed" })
+                                    @Html.Hidden("StateId")
+                                    @Html.Hidden("IsGSTRegistred")
+                                    @Html.Hidden("PriceListID")
+                                    @Html.Hidden("Email")
+                                    @Html.HiddenFor(model => model.IsInterCompany)
+                                    @Html.HiddenFor(model => model.InterCompanyLocationID)
+                                    @Html.HiddenFor(model => model.IsGST)
+                                    @Html.HiddenFor(model => model.IsVat)
+                                    @Html.HiddenFor(model => model.TaxTypeID)
+                                    @Html.HiddenFor(model => model.CurrencyID)
+                                    @Html.HiddenFor(model => model.DecimalPlaces)
+                                    @Html.HiddenFor(model => model.normalclass)
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                                <div class="uk-autocomplete " id="item-autocomplete">
+                                    <label>@Purchase.Item <span>*</span></label>
+                                    <input type="text" id="ItemName" class="md-input label-fixed" />
+                                    <span class="uk-input-group-addon">
+                                        <a data-uk-modal="{target:'#select-item',center:false} ">
+                                            <i class="uk-input-group-icon uk-icon-search"></i>
+                                        </a>
+                                    </span>
+                                    <script type="text/autocomplete">
+                              <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                  {{~items}}
+                                  <li data-value="{{ $item.Name }}"
+                                      data-id="{{$item.ID}}"
+                                      data-primary-unit="{{$item.Unit}}"
+                                      data-primary-unit-id="{{$item.UnitID}}"
+                                      data-purchase-unit="{{$item.PurchaseUnit}}"
+                                      data-purchase-unit-id="{{$item.PurchaseUnitID}}"
+                                      data-last-pr="{{$item.LastPR}}"
+                                      data-lowest-pr="{{$item.LowestPR}}"
+                                      data-pending-order-qty="{{$item.PendingOrderQty}}"
+                                      data-qty-with-qc="{{$item.QtyUnderQC}}"
+                                      data-qty-available="{{$item.QtyAvailable}}"
+                                      data-Item-Category="{{$item.FGCategoryID}}"
+                                      data-gst-percentage="{{$item.GSTPercentage}}">
+                                      <a>
+                                          {{ $item.Name }}
+                                          <div>{{$item.Code}}({{$item.Unit}})</div>
+                                      </a>
+                                  </li>
+                                  {{/items}}
+                              </ul>
+                                    </script>
+                                </div>
+                                @Html.Hidden("ItemID")
+                                @Html.Hidden("LastPr")
+                                @Html.Hidden("LowestPr")
+                                @Html.Hidden("PendingOrderQty")
+                                @Html.Hidden("QtyWithQc")
+                                @Html.Hidden("QtyAvailable")
+                                @Html.Hidden("GSTPercentage")
+                                @Html.Hidden("CategoryID")
+                                @Html.Hidden("PrimaryUnit")
+                                @Html.Hidden("PrimaryUnitID")
+                                @Html.Hidden("PurchaseUnit")
+                                @Html.Hidden("PurchaseUnitID")
+                                @Html.Hidden("Code")
+                                @Html.Hidden("PartsNumber")
+                                @Html.Hidden("Remark")
+                                @Html.Hidden("Model")
+                                @Html.Hidden("HistoryItemID")
+                                @Html.Hidden("SecondaryUnits")
+                            </div>
+                            <input type="hidden" value="stock" id="type" />
+                            <div class="uk-width-medium-1-10">
+                                <label>@Sales.Unit </label>
+                                @Html.DropDownListFor(Model => Model.UnitID, Model.UnitList, "Select", new { @class = "md-input label-fixed" })
+                            </div>
+                            <div class="uk-width-medium-1-10">
+                                <label>@Purchase.Qty <span>*</span></label>
+                                <input type="text" id="Qty" class="md-input label-fixed mask-sales2-currency" />
+                            </div>
+                            <div class="uk-width-medium-1-10 uk-hidden">
+                                <label>@Purchase.Value</label>
+                                <input type="text" min="0" id="txtValue" value="0" disabled tabindex="-1" class="md-input uk-text-left" />
+                            </div>
+                            <div class="uk-width-medium-1-10">
+                                <label>@Purchase.Rate</label>
+                                @Html.TextBoxFor(model => model.PurchaseRate, new { @class = "md-input label-fixed " + Model.normalclass, @tabindex = "-1" })
+                            </div>
+                            <div class="uk-width-medium-1-10">
+                                <div class="md-input-wrapper md-input-filled">
+                                    <label>&nbsp;</label>
+                                    <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddProduct">@Common.Add</button>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-1-8">
+                                <div class="uk-autocomplete " id="item-autocomplete">
+                                    <label>@Purchase.PurchaseRequisition <span>*</span></label>
+                                    <input type="text" id="purchaserequisition" class="md-input label-fixed" />
+                                    <span class="uk-input-group-addon">
+                                        <a data-uk-modal="{target:'#select-purchase-requisition',center:false} ">
+                                            <i class="uk-input-group-icon uk-icon-search"></i>
+                                        </a>
+                                    </span>
+                                    <script type="text/autocomplete">
+                               <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                   {{~items}}
+                                   <li data-value="{{ $item.Name }}"
+                                       data-id="{{$item.ID}}"
+                                       data-primary-unit="{{$item.Unit}}"
+                                       data-primary-unit-id="{{$item.UnitID}}"
+                                       data-purchase-unit="{{$item.PurchaseUnit}}"
+                                       data-purchase-unit-id="{{$item.PurchaseUnitID}}"
+                                       data-last-pr="{{$item.LastPR}}"
+                                       data-lowest-pr="{{$item.LowestPR}}"
+                                       data-pending-order-qty="{{$item.PendingOrderQty}}"
+                                       data-qty-with-qc="{{$item.QtyUnderQC}}"
+                                       data-qty-available="{{$item.QtyAvailable}}"
+                                       data-Item-Category="{{$item.FGCategoryID}}"
+                                       data-gst-percentage="{{$item.GSTPercentage}}">
+                                       <a>
+                                           {{ $item.Name }}
+                                           <div>{{$item.Code}}({{$item.Unit}})</div>
+                                       </a>
+                                   </li>
+                                   {{/items}}
+                               </ul>
+                                    </script>
+                                </div>
+
+                                @Html.Hidden("CategoryID")
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="section-group">
+                        <div class="tablescroll">
+                            <table id="purchase-order-items-list" class="uk-table" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="width-10"></th>
+                                        <th class="width-10">@Common.SerialNo</th>
+                                        <th class="width-20">
+                                            <div class="checkbox-container">
+                                                <input type='checkbox' data-md-icheck class='select-all-item' checked />
+                                            </div>
+                                        </th>
+                                        <th class="width-50">@Purchase.Code</th>
+                                        <th class="width-100">@Purchase.ItemName</th>
+                                        @*<th class="width-100">@Purchase.PartsNumber</th>*@
+                                        <th class="width-50">@Purchase.Unit</th>
+                                        <th class="width-30">@Purchase.Qty</th>
+                                        <th class="width-50">@Purchase.Rate</th>
+                                        <th class="width-50">@Purchase.GrossAmount</th>
+                                        <th class="width-30">@Purchase.DiscountPer</th>
+                                        <th class="width-50">@Purchase.Discount</th>
+                                        <th class="width-30">@Purchase.LastPR</th>
+                                        <th class="width-30">@Purchase.LowestPR</th>
+                                        <th class="width-30">@Purchase.QuantityOrdered</th>
+                                        <th class="width-30">@Purchase.QuantityAvailable</th>
+                                        <th class="width-50">@Purchase.VATPercentage</th>
+                                        <th class="width-50">@Purchase.VATAmount</th>
+                                        <th class="width-50">@Purchase.TaxableAmount</th>
+                                        <th class="width-50">@Purchase.NetAmount</th>
+                                        <th class="width-80">@Purchase.ItemStatus</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="poTbody"></tbody>
+                            </table>
+                            <input type="hidden" id="item-count" value="0" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    @Html.Partial("~/Areas/Masters/Views/Supplier/PartialList.cshtml")
+    @Html.Partial("~/Areas/Masters/Views/Item/ItemList.cshtml")
+    @Html.Partial("~/Areas/Purchase/Views/PurchaseOrder/HistoryList.cshtml")
+    @Html.Partial("~/Areas/Purchase/Views/PurchaseRequisition/PartialList.cshtml")
+    @Scripts.Render(System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/Js/Page/Supplier"))
+    @Scripts.Render(System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/Js/Page/Item"))
+    @Scripts.Render(System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/Js/Page/PurchaseOrder"))
+    <script type="text/javascript">
+        purchase_order.init();
+    </script>

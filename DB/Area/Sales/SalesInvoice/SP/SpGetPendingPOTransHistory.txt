@@ -1,0 +1,84 @@
+                   
+ALTER PROCEDURE [sales].[SpGetPendingPOTransHistory]                      
+(                      
+@ItemID INT,            
+@LocationID INT,       
+@PurchaseOrderNo varchar(200),        
+@PurchaseOrderDate varchar(200),        
+@SupplierName varchar(200),        
+@ItemName varchar(200),        
+@PartsNumber varchar(200),        
+@SortField varchar(100),                
+@SortOrder varchar(10),                
+@Offset int = 0,                
+@Limit int = 20            
+)                      
+AS                      
+BEGIN            
+            
+                
+ Set @Offset = @Offset + 1                
+ Declare @totalRecords int = 0;                
+  SELECT @totalRecords =  COUNT(*)                 
+   from PurchaseOrderTrans p  join Item i on p.ItemID=i.ID  join PurchaseOrder o on o.ID=p.PurchaseOrderID 
+   left join GoodsReceiptNoteTrans gt on gt.PurchaseOrderID=p.PurchaseOrderID
+   left join GoodsReceiptNote g on g.ID=gt.GoodsReceiptNoteID left join Supplier s on s.ID = o.SupplierID          
+   WHERE  p.ItemID=@ItemID  AND (o.OrderMet=0 )   --AND g.PurchaseCompleted=0  
+   AND (@PurchaseOrderNo IS NULL OR o.PurchaseOrderNo like '%'+ @PurchaseOrderNo +'%')         
+   AND (@PurchaseOrderDate IS NULL OR CONVERT(VARCHAR,o.PurchaseOrderDate, 106) like '%'+ @PurchaseOrderDate +'%')         
+   AND (@SupplierName IS NULL OR s.Name like '%'+ @SupplierName +'%')         
+   AND (@ItemName IS NULL OR p.ItemName like '%'+ @ItemName +'%')        
+   AND (@PartsNumber IS NULL OR p.PartsNumber like '%'+ @PartsNumber +'%');               
+  ;WITH Invoice_CTE AS                
+  (                
+  select top 10000  Count(*) OVER (Partition by 1) AS recordsFiltered,p.ID,o.PurchaseOrderNo,o.PurchaseOrderDate,ISNULL(s.Name,'')SupplierName,          
+  i.Code Itemcode,p.ItemName,p.PartsNumber,p.Model,p.SecondaryRate,p.SecondaryQty,p.SecondaryUnit,p.DiscountPercent,p.VATPercent,p.NetAmount,(p.QtyMet/p.SecondaryUnitSize)QtyMet,  
+  ISNULL((SELECT top 1 g.LandingCost FROM PurchaseOrderTrans p1 JOIN GoodsReceiptNoteTrans g ON p1.PurchaseOrderID = g.PurchaseOrderID AND p1.ItemID = g.ItemID   
+  JOIN PurchaseInvoiceTrans i ON i.GRNID = g.GoodsReceiptNoteID AND i.ItemID = g.ItemID WHERE p1.ID= p.ID ),0)GLandingCost,  
+  ISNULL((SELECT top 1 i.LandingCost FROM PurchaseOrderTrans p1 JOIN GoodsReceiptNoteTrans g ON p1.PurchaseOrderID = g.PurchaseOrderID AND p1.ItemID = g.ItemID   
+  JOIN PurchaseInvoiceTrans i ON i.GRNID = g.GoodsReceiptNoteID AND i.ItemID = g.ItemID WHERE p1.ID= p.ID),0)ILandingCost,  
+  ISNULL((select b.LandedCost from Batch b where b.ItemID=p.ItemID and b.LocationID=@LocationID),0)LandedCost,  
+  ROW_NUMBER() OVER             
+   (ORDER BY                 
+   case when @SortField+@SortOrder = 'PurchaseOrderNoASC' then o.PurchaseOrderNo End ASC,                
+   case when @SortField+@SortOrder = 'PurchaseOrderNoDESC' then o.PurchaseOrderNo End DESC,                
+   case when @SortField+@SortOrder = 'PurchaseOrderDateASC' then o.PurchaseOrderDate End ASC,                
+   case when @SortField+@SortOrder = 'PurchaseOrderDateDESC' then o.PurchaseOrderDate End DESC,            
+   case when @SortField+@SortOrder = 'ItemNameASC' then p.ItemName End ASC,                
+   case when @SortField+@SortOrder = 'ItemNameDESC' then p.ItemName End DESC,            
+   case when @SortField+@SortOrder = 'ItemcodeASC' then i.Code End ASC,                
+   case when @SortField+@SortOrder = 'ItemcodeDESC' then i.Code End DESC,            
+   case when @SortField+@SortOrder = 'PartsNumberASC' then p.PartsNumber End ASC,                
+   case when @SortField+@SortOrder = 'PartsNumberDESC' then p.PartsNumber  End DESC,               
+   case when @SortField+@SortOrder = 'QuantityASC' then p.Quantity  End ASC,                
+   case when @SortField+@SortOrder = 'QuantityDESC' then p.Quantity  End DESC,            
+   case when @SortField+@SortOrder = 'RateASC' then p.Rate  End ASC,                
+   case when @SortField+@SortOrder = 'RateDESC' then p.Rate  End DESC,            
+   case when @SortField+@SortOrder = 'MRPASC' then p.MRP  End ASC,                
+   case when @SortField+@SortOrder = 'MRPDESC' then p.MRP  End DESC,            
+   case when @SortField+@SortOrder = 'PurchaseLoosePriceASC' then p.PurchaseLoosePrice  End ASC,                
+   case when @SortField+@SortOrder = 'PurchaseLoosePriceDESC' then p.PurchaseLoosePrice  End DESC,            
+   case when @SortField+@SortOrder = 'RetailMRPASC' then p.RetailMRP  End ASC,                
+   case when @SortField+@SortOrder = 'RetailMRPDESC' then p.RetailMRP  End DESC,            
+   case when @SortField+@SortOrder = 'RetailLoosePriceASC' then p.RetailLoosePrice  End ASC,                
+   case when @SortField+@SortOrder = 'RetailLoosePriceDESC' then p.RetailLoosePrice  End DESC,            
+   case when @SortField+@SortOrder = 'NetAmountASC' then p.NetAmount End ASC,                
+   case when @SortField+@SortOrder = 'NetAmountDESC' then p.NetAmount End DESC            
+   ) AS RowNum                
+   from PurchaseOrderTrans p  join Item i on p.ItemID=i.ID   join PurchaseOrder o on o.ID=p.PurchaseOrderID 
+   left join GoodsReceiptNoteTrans gt on gt.PurchaseOrderID=p.PurchaseOrderID
+   left join GoodsReceiptNote g on g.ID=gt.GoodsReceiptNoteID left join Supplier s on s.ID = o.SupplierID          
+   WHERE  p.ItemID=@ItemID  AND (o.OrderMet=0 )--AND g.PurchaseCompleted=0   
+   AND (@PurchaseOrderNo IS NULL OR o.PurchaseOrderNo like '%'+ @PurchaseOrderNo +'%')         
+   AND (@PurchaseOrderDate IS NULL OR CONVERT(VARCHAR,o.PurchaseOrderDate, 106) like '%'+ @PurchaseOrderDate +'%')         
+   AND (@SupplierName IS NULL OR s.Name like '%'+ @SupplierName +'%')         
+   AND (@ItemName IS NULL OR p.ItemName like '%'+ @ItemName +'%')        
+   AND (@PartsNumber IS NULL OR p.PartsNumber like '%'+ @PartsNumber +'%')               
+  )                 
+ select recordsFiltered, @totalRecords as totalRecords,SupplierName,PurchaseOrderNo,PurchaseOrderDate,ItemName,Itemcode,PartsNumber,Model,  
+ (CASE WHEN ILandingCost>0 THEN ILandingCost WHEN GLandingCost >0 THEN  GLandingCost ELSE LandedCost END)LandedCost,SecondaryRate,SecondaryQty,QtyMet,SecondaryUnit,
+ DiscountPercent,VATPercent,NetAmount  FROM Invoice_CTE  WHERE RowNum >= @Offset                
+ AND RowNum < @Offset + @Limit                
+ order by ID   desc              
+                                 
+END 

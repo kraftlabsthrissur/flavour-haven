@@ -1,0 +1,331 @@
+﻿@model TradeSuiteApp.Web.Areas.Masters.Models.LocationModel
+<div class="uk-width-medium-8-10">
+    <div class="md-card">
+        <div class="md-card-content master-card-padding">
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin>
+                    <div class="uk-width-medium-1-8">
+                        <label>@Masters.Code<span>*</span></label>
+                        @Html.TextBoxFor(m => m.Code, new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-2-8">
+                        <label>@Masters.Name<span>*</span></label>
+                        @Html.TextBoxFor(m => m.Name, new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-1-8">
+                        <label>@Masters.LocationGroup<span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.LocationTypeID, Model.LocationTypeList, "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-1-8">
+                        <label>@Masters.LocationHead<span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.LocationHeadID, Model.LocationHeadList, "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-1-8">
+                        <label>@Masters.Place<span>*</span></label>
+                        @Html.TextBoxFor(m => m.Place, new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-1-8">
+                        <label>@Masters.States<span>*</span></label>
+                        @Html.DropDownListFor(Model => Model.LocationStateID, Model.StateList, "Select", new { @class = "md-input label-fixed" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-1-8">
+                        <label>@Masters.Company</label>
+                        @Html.TextBoxFor(m => m.CompanyName, new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-1-8">
+                        <label>@Masters.Owner</label>
+                        @Html.TextBoxFor(m => m.OwnerName, new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-1-8">
+                        <label>@Masters.GSTNo</label>
+                        @Html.TextBoxFor(m => m.GSTNo, new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-1-8">
+                        <label>VatRegNo</label>
+                        @Html.TextBoxFor(m => m.VatRegNo, new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-1-8">
+                        <label>@Masters.Jurisdiction</label>
+                        @Html.TextBoxFor(m => m.Jurisdiction, new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-1-8">
+                        <label>@Masters.AuthorizedSignature</label>
+                        @Html.TextBoxFor(m => m.AuthorizedSignature, new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-1-8">
+                        <label>@Masters.URL</label>
+                        @Html.TextBoxFor(m => m.URL, new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-1-8">
+                        <div class="uk-input-group">
+                            <label>@Masters.StartDate</label>
+                            @Html.TextBoxFor(m => m.StartDate, new { @class = "md-input label-fixed" })
+                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                        </div>
+                    </div>
+                    <div class="uk-width-medium-1-8">
+                        <div class="uk-input-group">
+                            <label>@Masters.EndDate</label>
+                            @Html.TextBoxFor(m => m.EndDate, new { @class = "md-input label-fixed" })
+                            <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="uk-form-row">
+                <div class="uk-grid" data-uk-grid-margin="">
+                    <div class="uk-width-medium-2-8">
+                        <div class="uk-autocomplete " id="supplier-autocomplete">
+                            <label>@Purchase.Supplier</label>
+                            @Html.TextBox("SupplierName", Model.SupplierName, new { @class = "md-input label-fixed" })
+                            <span class="uk-input-group-addon">
+                                <a data-uk-modal="{target:'#select-supplier',center:false }">
+                                    <i class="uk-input-group-icon uk-icon-search"></i>
+                                </a>
+                            </span>
+                            <script type="text/autocomplete">
+                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                    {{~items}}
+                                    <li data-value="{{ $item.Name }}"
+                                        data-id="{{$item.ID}}"
+                                        data-location="{{$item.Location}}"
+                                        data-state-id="{{$item.StateID}}"
+                                        data-Item-Category="{{$item.ItemCategory}}"
+                                        data-payment-days="{{$item.PaymentDays}}"
+                                        data-customer-id="{{$item.CustomerID}}"
+                                        data-location-id="{{$item.LocationID}}"
+                                        data-is-gst-registered="{{$item.IsGSTRegistered}}">
+                                        <a>
+                                            {{ $item.Name }} ({{ $item.Code }})
+                                            <div>{{{ $item.Location }}}</div>
+
+                                        </a>
+                                    </li>
+                                    {{/items}}
+                                </ul>
+                            </script>
+                        </div>
+                        @Html.HiddenFor(model => model.SupplierID, new { @class = "md-input label-fixed" })
+                    </div>
+                    <div class="uk-width-medium-2-8">
+                        <div class="uk-autocomplete " id="customer-autocomplete">
+
+                            <label for="uk_dp_start">@Sales.CustomerName</label>
+                            @Html.TextBox("CustomerName", Model.CustomerName, new { @class = "md-input label-fixed" })
+                            <span class="uk-input-group-addon">
+                                <a data-uk-modal="{target:'#select-customer',center:false}">
+                                    <i class="uk-input-group-icon uk-icon-search"></i>
+                                </a>
+                            </span>
+                            <script type="text/autocomplete">
+                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                    {{~items}}
+                                    <li data-value="{{ $item.Name }}"
+                                        data-id="{{$item.ID}}"
+                                        data-code="{{$item.Code}}"
+                                        data-CustomerCategoryID="{{$item.CustomerCategoryID}}"
+                                        data-location="{{$item.Location}}"
+                                        data-state-id="{{$item.StateID}}"
+                                        data-price-list-id="{{$item.PriceListID}}"
+                                        data-scheme-id="{{$item.SchemeID}}"
+                                        data-is-gst-registered="{{$item.IsGSTRegistered}}">
+                                        <a>
+                                            {{ $item.Name }} ({{{ $item.Code }}})
+                                            <div>{{{ $item.Location }}}</div>
+                                        </a>
+                                    </li>
+                                    {{/items}}
+                                </ul>
+                            </script>
+                        </div>
+                    </div>
+                    @Html.HiddenFor(model => model.CustomerID)
+                    <div class="uk-width-medium-2-8">
+                        <div class="uk-autocomplete " id="currency-autocomplete">
+                            <label for="uk_dp_start">@Masters.CurrencyName</label>
+                            @Html.TextBoxFor(x => Model.CurrencyName, new { @class = "md-input label-fixed" })
+                            <span class="uk-input-group-addon">
+                                <a data-uk-modal="{target:'#select-currency',center:false}">
+                                    <i class="uk-input-group-icon uk-icon-search"></i>
+                                </a>
+                            </span>
+                            <script type="text/autocomplete">
+                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                    {{~items}}
+                                    <li data-value="{{ $item.Name }}"
+                                        data-id="{{$item.ID}}"
+                                        data-code="{{$item.Code}}"
+                                        data-CountryID="{{$item.CountryID}}"
+                                        data-CountryName="{{$item.CountryName}}"
+                                        <a>
+                                            {{ $item.Name }} ({{{ $item.Code }}}) ({{{ $item.CountryName }}})
+                                        </a>
+                                    </li>
+                                    {{/items}}
+                                </ul>
+                            </script>
+                        </div>
+                    </div>
+                    @Html.HiddenFor(model => model.CurrencyID)
+                    <div class="uk-width-medium-2-8">
+                        <div class="uk-input-group">
+                            <label for="uk_dp_start">@Masters.CountryName</label>
+                            @Html.TextBoxFor(x => Model.CountryName, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                    </div>
+                    @Html.HiddenFor(model => model.CountryID)
+                </div>
+            </div>
+            </br>
+            <div class="uk-width-1-1">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid">
+                            <div class="uk-width-1-1">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="panel master-heading-top">
+                                            <label class="uk-text-uppercase uk-text-bold">@Masters.Address</label>
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Html.Label("Billing Address")</label>
+                                                    <div class="uk-grid uk-margin-small-top" data-uk-grid-margin="">
+                                                        <div class="uk-width-medium-5-10">
+                                                            @Html.HiddenFor(m => m.IsBilling)
+                                                            <div class="uk-input-group">
+                                                                <input type="checkbox" class="icheckbox" id="IsBillingAddress" data-md-icheck />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Html.Label("Shipping Address")</label>
+                                                    <div class="uk-grid uk-margin-small-top" data-uk-grid-margin="">
+                                                        <div class="uk-width-medium-5-10">
+                                                            @Html.HiddenFor(m => m.IsShipping)
+                                                            <div class="uk-input-group">
+                                                                <input type="checkbox" class="icheckbox" id="IsShippingAddress" data-md-icheck />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.Address1 *</label>
+                                                    @Html.TextBox("Address1", "", new { maxlength = 512, @class = "md-input label-fixed" })
+                                                    <input type="hidden" id="FormIndex" />
+                                                    <input type="hidden" id="AddressID" />
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.Address2 *</label>
+                                                    @Html.TextBox("Address2", "", new { maxlength = 512, @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-2-8">
+                                                    <label>@Masters.Address3</label>
+                                                    @Html.TextBox("Address3", "", new { maxlength = 512, @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.Place *</label>
+                                                    @Html.TextBox("AddressPlace", "", new { maxlength = 512, @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.PIN *</label>
+                                                    @Html.TextBox("PIN", "", new { maxlength = 12, @class = "md-input label-fixed" })
+                                                </div>
+
+                                                <div class="uk-width-medium-1-4">
+                                                    <label>State *</label>
+                                                    @Html.DropDownListFor(Model => Model.StateID, new SelectList(Model.StateList, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @id = "State" })
+                                                </div>
+                                                <div class="uk-width-medium-1-4">
+                                                    <label>@Masters.District *</label>
+                                                    <select id="DistrictID" class="md-input label-fixed District">
+                                                        <option>Select</option>
+                                                    </select>
+                                                </div>
+                                                <div class="uk-width-medium-1-4">
+                                                    <label>@Masters.ContactPerson</label>
+                                                    @Html.TextBox("ContactPerson", "", new { maxlength = 512, @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.LandLine1</label>
+                                                    @Html.TextBox("LandLine1", "", new { maxlength = 50, @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-1-8">
+                                                    <label>@Masters.LandLine2</label>
+                                                    @Html.TextBox("LandLine2", "", new { maxlength = 50, @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-1-4">
+                                                    <label>@Masters.MobileNo *</label>
+                                                    @Html.TextBox("MobileNo", "", new { maxlength = 20, @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-1-4">
+                                                    <label>@Masters.Email</label>
+                                                    @Html.TextBox("Email", "", new { maxlength = 255, @class = "md-input label-fixed" })
+                                                </div>
+                                                <div class="uk-width-medium-1-4">
+                                                    <label>@Masters.Fax</label>
+                                                    @Html.TextBox("Fax", "", new { maxlength = 200, @class = "md-input label-fixed" })
+                                                    <input type="hidden" id="IsDefault" value="">
+                                                    <input type="hidden" id="IsDefaultShipping" value="">
+                                                </div>
+                                                <div class="uk-width-medium-5-10">
+                                                    <div class="uk-grid" data-uk-grid-margin>
+                                                        <div class="uk-width-medium-1-4">
+                                                            <label>&nbsp;</label>
+                                                            <button class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="btnAddAddress">@Common.Add</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="uk-width-medium-1-4">
+                                                    <label>&nbsp;</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-1">
+                                        <div class="panel master-heading-top">
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-1-1">
+                                                    <table id="tbl-address" class="uk-table address-list" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="width-10">@Masters.BillingShipping</th>
+                                                                <th class="width-10">@Masters.DefaultBilling</th>
+                                                                <th class="width-10">@Masters.DefaultShipping</th>
+                                                                <th class="width-50">@Masters.ContactPerson</th>
+                                                                <th class="width-50">@Masters.Address</th>
+                                                                <th class="width-40">@Masters.Phone</th>
+                                                                <th class="width-40">@Masters.MobileNo</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody></tbody>
+                                                    </table>
+                                                    <input type="hidden" id="address-count" value="0">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("~/Areas/Masters/Views/Supplier/PartialList.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Customer/PartialList.cshtml")
+@Html.Partial("~/Areas/Masters/Views/Currency/CurrencyList.cshtml")
+@Scripts.Render("~/Js/Page/Supplier")
+@Scripts.Render("~/Js/Page/Customer")

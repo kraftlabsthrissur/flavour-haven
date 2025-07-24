@@ -1,0 +1,69 @@
+﻿@model TradeSuiteApp.Web.Areas.User.Models.DashboardModel
+@{
+    ViewBag.Title = Common.Home;
+}
+@Styles.Render("~/Css/Dashboard")
+
+<div id="page_content">
+    <div id="page_content_inner" class="dashboard uk-hidden">
+        <br />
+        @if (TabAuthorization.IsAuthorized("User", "Dashboard", "Tikers"))
+        {
+            <marquee id="tickers" onmouseover="this.stop();" onmouseout="this.start();">
+                @{Html.RenderPartial("/Areas/User/Views/Dashboard/Tickers.cshtml", Model.LocationList);}
+            </marquee>
+                    }
+
+        <div class="uk-form-row">
+            <div class="uk-grid" data-uk-grid-margin="" data-uk-grid-match="{target:'.md-card-content'}">
+                @if (TabAuthorization.IsAuthorized("User", "Dashboard", "MonthWiseSalesInKg"))
+                {
+                    <div class="uk-width-medium-1-2 uk-row-first">
+                        @{Html.RenderPartial("/Areas/User/Views/Dashboard/MonthWiseSalesInKg.cshtml", Model);}
+                    </div>
+                            }
+                @if (TabAuthorization.IsAuthorized("User", "Dashboard", "MonthWiseSalesInRupees"))
+                {
+                    <div class="uk-width-medium-1-2">
+                        @{Html.RenderPartial("/Areas/User/Views/Dashboard/MonthWiseSalesInRupees.cshtml", Model); }
+                    </div>
+                            }
+                @if (TabAuthorization.IsAuthorized("User", "Dashboard", "CategoryWiseSales"))
+                {
+                    <div class="uk-width-medium-1-2">
+                        @{Html.RenderPartial("/Areas/User/Views/Dashboard/CategoryWiseSales.cshtml", Model); }
+                    </div>
+                            }
+               
+                @if (TabAuthorization.IsAuthorized("User", "Dashboard", "LocationWiseSales"))
+                {
+                    <div class="uk-width-medium-1-2">
+                        @{Html.RenderPartial("/Areas/User/Views/Dashboard/LocationWiseSales.cshtml", Model); }
+                    </div>
+                            }
+
+               
+                @if (TabAuthorization.IsAuthorized("User", "Dashboard", "MonthWiseProduction"))
+                {
+                    <div class="uk-width-medium-1-2">
+                        @{Html.RenderPartial("/Areas/User/Views/Dashboard/MonthWiseProduction.cshtml", Model); }
+                    </div>
+                            }
+                @if (TabAuthorization.IsAuthorized("User", "Dashboard", "ProductionInProgress"))
+                {
+                    <div class="uk-width-medium-1-2">
+                        @{Html.RenderPartial("/Areas/User/Views/Dashboard/ProductionInProgress.cshtml", Model); }
+                    </div>
+                            }
+            </div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/Js/Dashboard")
+@Scripts.Render("~/Js/SignalR")
+<script src="~/signalr/Hubs"></script>
+<script type="text/javascript">
+    SignalRClient.init();
+    SignalRClient.notification.connect();
+</script>

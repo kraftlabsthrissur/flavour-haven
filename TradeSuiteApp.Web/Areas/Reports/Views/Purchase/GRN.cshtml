@@ -1,0 +1,389 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Reports.Models.ReportViewModel
+@using ReportViewerForMvc;
+@{
+    ViewBag.ReportTitle = "Goods Receipt Note Report";
+}
+
+@Scripts.Render("~/Js/Page/Purchase")
+
+<div id="page_content_inner" class="purchase-report">
+    <div class="md-card uk-margin-medium-bottom">
+        <div class="md-card-content">
+            <div class="section-group">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-2-10">
+                            <form action="/Reports/Purchase/GRN" id="report-filter-form" method="POST">
+                                <div class="uk-form-row">
+                                    <div class="panel">
+                                        <label>Item Type</label>
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            @if (TabAuthorization.IsAuthorized("Stock Report"))
+                                            {
+                                                <div class="uk-width-medium-1-2">
+                                                    <input type="radio" name="Type" class="grn_type" data-md-icheck checked="" value="Stock" /> @Html.Label("GRN")
+                                                </div>
+                                            }
+                                            @if (TabAuthorization.IsAuthorized("Service Report"))
+                                            {
+                                                <div class="uk-width-medium-1-2">
+                                                    <input type="radio" name="Type" class="grn_type" data-md-icheck value="Service" /> @Html.Label("SRN")
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="uk-form-row">
+                                    <div class="panel">
+                                        <label>Report Type</label>
+                                        <div class="uk-grid" data-uk-grid-margin>
+                                            <div class="uk-width-medium-1-2">
+                                                <input type="radio" name="Summary" class="grn-summary" data-md-icheck checked="" value="Summary" /> @Html.Label("Summary")
+                                            </div>
+                                            <div class="uk-width-medium-1-2">
+                                                <input type="radio" name="Summary" class="grn-summary" data-md-icheck value="Detail" /> @Html.Label("Detail")
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" value="Stock" id="ItemAutoType" />
+                                @*<to implement login date>*@
+                                @*<div class="uk-form-row login-date uk-hidden">
+                                        <div class="panel">
+                                            <label>Login Date</label>
+                                            <div class="uk-grid" data-uk-grid-margin>
+                                                <div class="uk-width-medium-1-3">
+                                                    <input type="radio" name="login-date" class="srn-detailed" data-md-icheck checked="" value="LoginDateYes" /> @Html.Label("Yes")
+                                                </div>
+                                                <div class="uk-width-medium-1-3">
+                                                    <input type="radio" name="login-date" class="srn-detailed" data-md-icheck value="LoginDateNo" /> @Html.Label("No")
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>*@
+
+                                <div class="uk-form-row ">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2 ">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start" class="fromgrndate">@Reports.GRNFromDate</label>
+                                                @Html.TextBoxFor(model => model.FromDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2 ">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start" class="togrndate">@Reports.GRNToDate</label>
+                                                @Html.TextBoxFor(model => model.ToDate, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="uk-form-row summary">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-2 ">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.PODateFrom</label>
+                                                @Html.TextBoxFor(model => model.PODateFrom, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-2 ">
+                                            <div class="uk-input-group">
+                                                <label for="uk_dp_start">@Reports.PODateTo</label>
+                                                @Html.TextBoxFor(model => model.PODateTo, new { @class = "md-input label-fixed  past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row GRN" @*id="select-type"*@>
+                                    <div class="uk-grid ">
+                                        <div class="uk-width-medium-1-2  summary detail  ">
+                                            <div class="uk-autocomplete " id="grn-grnno-autocomplete">
+                                                <label class="grnfrom">@Reports.GRNNOFrom</label>
+                                                @Html.TextBox("GRNNOFrom", "", new { @class = "md-input label-fixed" })
+
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Code }}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                                @*<div>{{{ $item.ID }}}</div>*@
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.GRNNOFromID)
+                                        </div>
+
+                                        <div class="uk-width-medium-1-2  summary detail">
+                                            <div class="uk-autocomplete " id="grn-grnnoTo-autocomplete">
+                                                <label>@Reports.GRNNOTo</label>
+                                                @Html.TextBox("GRNNOTo", "", new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Code }}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                                @*<div>{{{ $item.ID }}}</div>*@
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.GRNNOToID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row uk-hidden SRN">
+                                    <div class="uk-grid ">
+                                        <div class="uk-width-medium-1-2  summary detail">
+                                            <div class="uk-autocomplete " id="grn-srnno-autocomplete">
+                                                <label class="srnfrom">@Reports.SrnNoFrom</label>
+                                                @Html.TextBox("SRNFrom", "", new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{$item.Code}}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.SRNNOFromID)
+                                        </div>
+                                        <div class="uk-width-medium-1-2 uk-hidden SRN summary detail">
+                                            <div class="uk-autocomplete " id="grn-srnnoTo-autocomplete">
+                                                <label>@Reports.SrnNoTo</label>
+                                                @Html.TextBox("SRNTo", "", new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Code }}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.SRNNOToID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row " @*id="select-type"*@>
+                                    <div class="uk-grid ">
+                                        <div class="uk-width-medium-1-2 summary detail">
+                                            <div class="uk-autocomplete " id="grn-pono-autocomplete">
+                                                <label class="pofrom">@*@Stock.Item*@ PO No From</label>
+                                                @Html.TextBox("PONOFrom", "", new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Code }}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                                @*<div>{{{ $item.ID }}}</div>*@
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.PONOFromID)
+                                        </div>
+                                        <div class="uk-width-medium-1-2  summary detail">
+                                            <div class="uk-autocomplete " id="grn-ponoTo-autocomplete">
+                                                <label>@*@Stock.Item*@ PO No To</label>
+                                                @Html.TextBox("PONOTo", "", new { @class = "md-input label-fixed" })
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Code }}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Code }}
+                                                                @*<div>{{{ $item.ID }}}</div>*@
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.HiddenFor(m => m.PONOToID)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row summary supplier-wise">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-2">
+                                            <label>@Reports.ItemNameFrom</label>
+                                            @Html.DropDownListFor(Model => Model.FromItemNameRange, Model.FromItemNameRangeList, "Select", new { @class = "md-input label-fixed", @id = "FromItemNameRange" })
+                                        </div>
+                                        <div class="uk-width-medium-1-2">
+                                            <label>@Reports.ItemNameTo</label>
+                                            @Html.DropDownListFor(Model => Model.ToItemNameRange, Model.ToItemNameRangeList, "Select", new { @class = "md-input label-fixed", @id = "ToItemNameRange" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row summary detail">
+                                    <div class="uk-grid ">
+                                        <div class="uk-width-medium-2-2  ">
+                                            <div class="uk-autocomplete " id="item-autocomplete">
+                                                <label>@Stock.Item</label>
+                                                @Html.TextBox("ItemName", "", new { @class = "md-input label-fixed" })
+
+                                                <script type="text/autocomplete">
+                                                    <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                        {{~items}}
+                                                        <li data-value="{{ $item.Name }}"
+                                                            data-id="{{$item.ID}}">
+                                                            <a>
+                                                                {{ $item.Name }}
+                                                                <div>{{{ $item.Code }}}</div>
+                                                            </a>
+                                                        </li>
+                                                        {{/items}}
+                                                    </ul>
+                                                </script>
+                                            </div>
+                                            @Html.Hidden("ItemID")
+                                            @Html.Hidden("ItemTypeID")
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row  supplier">
+                                    @* uk-hidden *@
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-2-2">
+                                        <div class="uk-autocomplete " id="SupplierName-autocomplete">
+                                            <label for="uk_dp_start">@Reports.Supplier</label>
+                                            @Html.TextBox("SupplierName", "", new { @class = "md-input label-fixed" })
+                                            <script type="text/autocomplete">
+                                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                    {{~items}}
+                                                    <li data-value="{{ $item.Name }}"
+                                                        data-id="{{$item.ID}}"
+                                                        data-location="{{$item.Location}}"
+                                                        data-state-id="{{$item.StateID}}"
+                                                        data-is-gst-registered="{{$item.IsGSTRegistered}}">
+                                                        <a>
+                                                            {{ $item.Name }} ({{{ $item.Code }}})
+                                                            <div>{{{ $item.Location }}}</div>
+                                                        </a>
+                                                    </li>
+                                                    {{/items}}
+                                                </ul>
+                                            </script>
+                                        </div>
+                                        @Html.Hidden("SupplierID")
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="uk-form-row " @*id="select-type"*@>
+                                <div class="uk-grid ">
+                                    <div class="uk-width-medium-2-2 uk-hidden invoice">
+                                        <div class="uk-autocomplete " id="supplierinvoiceno-autocomplete">
+                                            <label>@Reports.SupplierInvoiceNO</label>
+                                            @Html.TextBox("SupplierInvoiceNO", "", new { @class = "md-input label-fixed" })
+
+                                            <script type="text/autocomplete">
+                                                <ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">
+                                                    {{~items}}
+                                                    <li data-value="{{ $item.Code }}"
+                                                        data-id="{{$item.ID}}">
+                                                        <a>
+                                                            {{ $item.Code }}
+                                                            @*<div>{{{ $item.ID }}}</div>*@
+                                                        </a>
+                                                    </li>
+                                                    {{/items}}
+                                                </ul>
+                                            </script>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @*<div class="uk-form-row  summary">
+                                    <div class="uk-grid" data-uk-grid-margin>
+                                        <div class="uk-width-medium-1-3">
+                                            <label>@Reports.UserFrom</label>
+                                            @Html.DropDownListFor(Model => Model.FromUserRange, Model.UserFromRangeList, "Select", new { @class = "md-input label-fixed", @id = "FromUserRange" })
+                                        </div>
+                                        <div class="uk-width-medium-1-3">
+                                            <label>@Reports.UserTo</label>
+                                            @Html.DropDownListFor(Model => Model.ToUserRange, Model.UserToRangeList, "Select", new { @class = "md-input label-fixed", @id = "ToUserRange" })
+                                        </div>
+                                    </div>
+                                </div>*@
+                            <div class="uk-form-row summary">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-2-2 summary detail">
+                                        <label for="uk_dp_start">@Reports.LoginName</label>
+                                        @Html.DropDownListFor(Model => Model.UserID, new SelectList(Model.UsersList, "Value", "Text"), "Select", new { @class = "md-input label-fixed", @id = "Userslist" })
+                                    </div>
+                                </div>
+                            </div>
+                            @*Item Name Laguage fiter commented*@
+                            @*<div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-2-3">
+                                        <label>@Reports.ItemNameLanguage</label>
+                                        @Html.DropDownListFor(Model => Model.ItemNameLanguageRange, Model.ItemNameLanguageRangeList, "Select", new { @class = "md-input label-fixed", @id = "FromItemNameRange" })
+                                    </div>
+                                </div>*@
+                            @*<br />*@
+                            <div class="uk-form-row">
+                                <div class="uk-grid" data-uk-grid-margin>
+                                    <div class="uk-width-medium-1-2">
+                                        <div class="md-input-wrapper md-input-filled">
+                                            <label>&nbsp;</label>
+                                            <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light" id="report-filter-submit">Show</button>
+                                        </div>
+                                    </div>
+                                    <div class="uk-width-medium-1-2">
+                                        <div class="md-input-wrapper md-input-filled">
+                                            <label>&nbsp;</label>
+                                            <a class="md-btn md-btn-primary md-btn-block md-btn-wave-light waves-effect waves-button waves-light " id="Refresh">Reset</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="uk-width-medium-8-10 ">
+                        <div class="uk-form-row">
+                            <div class="uk-grid" data-uk-grid-margin="" id="report-viewer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript">
+    purchase.GRNinit();
+</script>
+

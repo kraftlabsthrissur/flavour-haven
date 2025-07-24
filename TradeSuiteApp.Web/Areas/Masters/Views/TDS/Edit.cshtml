@@ -1,0 +1,109 @@
+﻿
+@model TradeSuiteApp.Web.Areas.Masters.Models.TDSModel
+@{
+    ViewBag.Title = @Masters.EditTDS;
+
+}
+<div id="page_content">
+    <div id="page_heading" data-uk-sticky="{ top: 54, media: 960 }">
+        <div class="heading_title">
+            <h1>@Common.TDS</h1>
+            <span class="uk-text-upper uk-text-small">@Masters.EditTDS</span>
+        </div>
+        <div class="heading_actions">
+            @ActionAuthorization.IsAuthorized("Save", "<a class='md-btn btnSave'>" + Common.Save + "</a>")
+
+            @Html.ActionLink(Common.Close, "Index", "TDS", new { Area = "Masters" }, new { @class = "md-btn " })
+            @Html.HiddenFor(m => m.ID);
+            <div data-uk-dropdown>
+                <i class="md-icon material-icons">&#xE5D4;</i>
+                <div class="uk-dropdown uk-dropdown-small">
+                    <ul class="uk-nav">
+                        <li><a>Print</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="page_content_inner" class="form-view">
+        <div class="md-card uk-margin-medium-bottom">
+            <div class="md-card-content">
+                <div class="section-group">
+                    <div class="uk-form-row">
+                        <div class="uk-grid" data-uk-grid-margin="">
+                            <div class="uk-width-medium-8-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.Code</label>
+                                            @Html.TextBoxFor(m => m.Code, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Masters.Name</label>
+                                            @Html.TextBoxFor(m => m.Name, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-2-8">
+                                            <label>@Masters.ItemAccountCategory</label>
+                                            @Html.TextBoxFor(m => m.ItemAccountCategory, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.TDSRate</label>
+                                            @Html.TextBoxFor(m => m.TDSRate, new { @class = "md-input label-fixed mask-currency " })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.CompanyType</label>
+                                            @Html.TextBoxFor(m => m.CompanyType, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.ExpenseType</label>
+                                            @Html.TextBoxFor(m => m.ExpenseType, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.ITSection</label>
+                                            @Html.TextBoxFor(m => m.ITSection, new { @class = "md-input label-fixed" })
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <div class="uk-input-group">
+                                                <label>@Masters.StartDate </label>
+                                                @Html.TextBoxFor(m => m.StartDate, new { @class = "md-input label-fixed past-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <div class="uk-input-group">
+                                                <label>@Masters.EndDate </label>
+                                                @Html.TextBoxFor(m => m.EndDate, new { @class = "md-input label-fixed future-date date" })
+                                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar future-date"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="uk-width-medium-1-8">
+                                            <label>@Masters.Remarks</label>
+                                            @Html.TextBoxFor(m => m.Remarks, new { @class = "md-input label-fixed" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-width-medium-2-10">
+                                <div class="uk-form-row">
+                                    <div class="uk-grid" data-uk-grid-margin="">
+                                        <div class="uk-width-medium-1-1">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/Js/Page/TDS")
+<script type="text/javascript">
+    TDS.init();
+</script>

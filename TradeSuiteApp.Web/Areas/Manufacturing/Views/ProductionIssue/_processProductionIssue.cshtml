@@ -1,0 +1,83 @@
+﻿@model  List<TradeSuiteApp.Web.Areas.Manufacturing.Models.ProductionIssueProcessItemModel>
+@{
+    var tempSequence = 0;
+    var increment = 0;
+}
+
+@if (Model != null)
+{
+    foreach (var item in Model.Select((value, i) => new { i = (i + 1), value }))
+    {
+        if (item.value.ProductionSequence != tempSequence)
+        {
+            tempSequence = item.value.ProductionSequence;
+            increment = 0;
+        }
+        increment++;
+        <tr data-production-sequence="@item.value.ProductionSequence">
+            <td>
+                @increment
+            </td>
+            <td>
+                <input type="text" class="md-input txtStage" value="@item.value.Stage" readonly />
+                <input type="hidden" class="hdnProcessProductionIssueID" value="@item.value.ProcessProductionIssueID" />
+                <input type="hidden" class="ProcessDefinitionTransID" value="@item.value.ProcessDefinitionTransID" />
+                <input type="hidden" class="ProductionSequence" value="@item.value.ProductionSequence" />
+                <input type="hidden" class="SkilledLaboursStandard" value="@item.value.SkilledLaboursStandardForStandardBatchSize" />
+                <input type="hidden" class="UnSkilledLabourStandard" value="@item.value.UnSkilledLabourStandardForStandardBatchSize" />
+                <input type="hidden" class="MachineHoursStandard" value="@item.value.MachineHoursStandardForStandardBatchSize" />
+            </td>
+            <td>
+                <input type="text" class="md-input txtProcessName" value="@item.value.ProcessName" readonly />
+            </td>
+            <td>
+                <div>
+                    <div class="uk-input-group">
+                        <input type="text" class="md-input label-fixed current-date date txtStartDate mask-date" value="@item.value.StartDateStr" />
+                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar current-date"></i></span>
+                    </div>
+                </div>
+                </td>
+            <td>
+                <input type="text" class="md-input time txtStartTime" value="@item.value.StartTimeStr" />
+
+            </td>
+
+            <td>
+                <div>
+                    <div class="uk-input-group">
+                        <input type="text" class="md-input label-fixed current-date date txtEndDate mask-date" value="@item.value.EndDateStr" />
+                        <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar current-date"></i></span>
+                    </div>
+                </div>
+                </td>
+            <td>
+                <input type="text" class="md-input time txtEndTime" value="@item.value.EndTimeStr" />
+            </td>
+            <td>
+                <input type="text" class="md-input mask-qty txtStandardSkilledLabourHour" value="@item.value.SkilledLaboursStandard" readonly />
+            </td>
+            <td>
+                <input type="text" class="md-input mask-qty txtActualSkilledLabourHour" value="@item.value.SkilledLaboursActual" />
+            </td>
+            <td>
+                <input type="text" class="md-input mask-qty txtStandardUnSkilledLabourHour" value="@item.value.UnSkilledLabourStandard" readonly />
+            </td>
+            <td>
+                <input type="text" class="md-input mask-qty txtActualUnSkilledLabourHour" value="@item.value.UnSkilledLabourActual" />
+            </td>
+            <td>
+                <input type="text" class="md-input mask-qty txtStandardMachineHour" value="@item.value.MachineHoursStandard" readonly />
+            </td>
+            <td>
+                <input type="text" class="md-input mask-qty txtActualMachineHour" value="@item.value.MachineHoursActual" />
+            </td>
+            <td>
+                <input type="text" class="md-input txtDone" value="@item.value.DoneBy" />
+            </td>
+            <td>
+                <input type="text" class="md-input txtStatus" value="@item.value.Status" />
+            </td>
+        </tr>
+    }
+}

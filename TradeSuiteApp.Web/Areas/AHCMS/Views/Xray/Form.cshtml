@@ -1,0 +1,131 @@
+﻿
+@model TradeSuiteApp.Web.Areas.AHCMS.Models.LabTestModel
+@{
+    ViewBag.Title = "Form";
+}
+<div class="section-group">
+    <div class="uk-form-row">
+        <div class="uk-grid" data-uk-grid-margin="">
+            <div class="uk-width-medium-8-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-8">
+                            <div class="uk-input-group">
+                                <label for="uk_dp_start">@AHCMS.Date</label>
+                                @Html.TextBoxFor(model => model.Date, new { @class = "md-input label-fixed date future-date", @disabled = "disable" })
+                                <span class="uk-input-group-addon"><i class="uk-input-group-icon uk-icon-calendar past-date"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="uk-width-medium-1-8">
+                            <label>Patient Type</label>
+                            @Html.DropDownListFor(model => model.PatientTypeID, Model.PatientTypeList, new { @class = "md-input label-fixed", @disabled = "disabled" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label for="uk_dp_start">@Sales.SalesType</label>
+                            @Html.DropDownListFor(model => model.SalesTypeID, Model.SalesTypeList, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@AHCMS.PatientCode </label>
+                            @Html.TextBoxFor(model => model.PatientCode, new { @class = "md-input", @disabled = "disable" })
+                            @Html.HiddenFor(model => model.AppointmentProcessID)
+                            @Html.HiddenFor(model => model.PatientLabTestID)
+                            @Html.HiddenFor(model => model.IPID)
+                            @Html.HiddenFor(model => model.PatientID)
+                        </div>
+                        <div class="uk-width-medium-1-6">
+                            <label>@AHCMS.Patient </label>
+                            @Html.TextBoxFor(model => model.Patient, new { @class = "md-input", @disabled = "disable" })
+                        </div>
+
+                        <div class="uk-width-medium-1-6">
+                            <label>@AHCMS.Doctor </label>
+                            @Html.TextBoxFor(model => model.Doctor, new { @class = "md-input", @disabled = "disable" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@AHCMS.MobileNumber </label>
+                            @Html.TextBoxFor(model => model.Mobile, new { @class = "md-input", @disabled = "disable" })
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin>
+                        <div class="uk-width-medium-1-8">
+                            <label>@AHCMS.Age </label>
+                            @Html.TextBoxFor(model => model.Age, new { @class = "md-input", @disabled = "disable" })
+                        </div>
+                        <div class="uk-width-medium-1-8">
+                            <label>@AHCMS.Sex </label>
+                            @Html.TextBoxFor(model => model.Sex, new { @class = "md-input", @disabled = "disable" })
+                        </div>
+
+                        <div class="uk-width-medium-1-8 CreditSale">
+                            <label>@Sales.PaymentMode</label>
+                            @Html.DropDownListFor(Model => Model.PaymentModeID, Model.PaymentModeList, new { @class = "md-input label-fixed" })
+                        </div>
+                        <div class="uk-width-medium-1-8 CreditSale">
+                            <label>@Sales.BankName</label>
+                            @Html.DropDownListFor(Model => Model.BankID, Model.BankList, new { @class = "md-input label-fixed" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="uk-width-medium-2-10">
+                <div class="uk-form-row">
+                    <div class="uk-grid" data-uk-grid-margin="">
+                        <div class="uk-width-medium-1-1">
+                            <label>@AHCMS.NetAmount</label>
+                            @Html.TextBoxFor(model => model.NetAmount, new { @class = "md-input mask-sales-currency label-fixed x-large", @readonly = "readonly" })
+                            <input type="hidden" id="item-count" value="0" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="uk-form-row">
+    <div>
+        <table id="labtest_list" class="uk-table " cellspacing="0" width=100">
+            <thead>
+                <tr>
+                    <th class="width-10">@Common.SerialNo</th>
+                    <th></th>
+                    <th>@AHCMS.LabTest</th>
+                    <th class="width-60">@AHCMS.Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items != null)
+                {
+                    foreach (var item in Model.Items.Select((value, i) => new { i = (i + 1), value }))
+                    {
+                        <tr>
+                            <td class="uk-text-center">
+                                @item.i
+                                <input type="hidden" class="ItemID" value="@item.value.ItemID" />
+                                <input type="hidden" class="ID" value="@item.value.ID" />
+                                <input type="hidden" class="SupplierID" value=0 />
+                                <input type="hidden" class="Type" value=@item.value.LabtestType />
+                                <input type="hidden" class="IssueDate" value="@item.value.IssueDate" />
+                                <input type="hidden" class="IsBillGenerated" value="@item.value.IsBillGenerated" />
+                            </td>
+                            @if (item.value.IsBillGenerated == true)
+                            {
+                                <td class="uk-text-center checked width-20" data-md-icheck><input type="checkbox" class="chkCheck disable" disabled="disabled" checked /></td>
+                            }
+                            else
+                            {
+                                <td class="uk-text-center checked width-20" data-md-icheck><input type="checkbox" class="chkCheck" /></td>
+                            }
+                            <td>@item.value.ItemName</td>
+                            <td><input type="text" name="price" class="price mask-sales-currency md-input" disabled="disabled" value=@item.value.Price /></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
