@@ -1,7 +1,4 @@
 ﻿
-
-///This GRN.js For AyushmanBhava-Created By neethu
-
 GRN.bind_events = function () {
     $.UIkit.autocomplete($('#supplier-autocomplete'), { 'source': GRN.get_suppliers, 'minLength': 1 });
     $('#supplier-autocomplete').on('selectitem.uk.autocomplete', GRN.set_supplier_details);
