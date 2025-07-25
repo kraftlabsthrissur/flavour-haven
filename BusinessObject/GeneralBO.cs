@@ -9,8 +9,8 @@ namespace BusinessObject
 {
     public static class GeneralBO
     {
-        private static int _FinYear = 2022;
-        private static int _LocationID = 1;
+        private static int _FinYear = 2025;
+        private static int _LocationID = 99;
         private static int _ApplicationID = 1;
 
         private static int _CreatedUserID = 1;
